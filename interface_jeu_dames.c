@@ -1,49 +1,16 @@
-#include <SDL2/SDL.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <stdbool.h>
-#include <assert.h>
 #include <SDL2/SDL_ttf.h>
+#include "game_functions_draughts.h"
+// Window pmetre
 #define LG_WINDOW 640
-#define NB_CASE_LG 8
-#define NB_CASE NB_CASE_LG *NB_CASE_LG
-#define LG_CASE (LG_WINDOW / NB_CASE_LG)
-#define NB_PAWNS (NB_CASE_LG)
 #define FRAME 16
-#define PREC LG_CASE
 #define MAX_TICKS 20
-#define IND_PB -3
-#define IND_CHANGE_ALLOWED -2
-#define NEUTRAL_IND -1
-#define LEFT_BACK 0
-#define LEFT_FORWARD 1
-#define RIGHT_BACK 2
-#define RIGHT_FORWARD 3
+#define PREC LG_CASE
+#define LG_CASE (LG_WINDOW / NB_CASE_LG)
 // #define LEN 200
 
-// Compile : gcc damier.c $(sdl2-config --cflags --libs) -lSDL2_ttf -o a && ./a
+// Compile : gcc interface_jeu_dames.c game_functions_draughts.c $(sdl2-config --cflags --libs) -lSDL2_ttf -o a && ./a
 
-typedef struct
-{
-    int occupied;
-    SDL_Rect rect;
-    bool color;
-} Case;
-
-typedef struct Rafle Rafle;
-struct Rafle {
-    int ind_eat;
-    Rafle *pt;
-};
-
-typedef struct Liste Liste;
-struct Liste {Rafle *first;};
-
-typedef struct
-{
-    int lig, col, alive;
-    bool queen;
-} pawn;
+// Interface structure
 
 typedef struct
 {
@@ -55,6 +22,8 @@ typedef struct
     SDL_Color color;
 } text;
 
+// Color constants
+
 SDL_Color orange = {255, 127, 40, 255};
 SDL_Color blue = {0, 0, 255, 255};
 SDL_Color red = {255, 0, 0, 255};
@@ -62,66 +31,20 @@ SDL_Color green = {0, 255, 0, 255};
 SDL_Color white = {255, 255, 255, 255};
 SDL_Color black = {0, 0, 0, 255};
 
-bool pawnAlive(pawn p)
-{
-    return (p.alive != 0);
-}
+// Aux functions
 
-Rafle *createRafle()
-{
-    Rafle *rafle = malloc(sizeof(Rafle));
-    rafle->pt = NULL;
-    rafle->ind_eat = -1;
-    return rafle;
-}
-
-bool isEmpty(Rafle *rafle)
-{
-    return (rafle->pt == NULL);
-}
-
-void addRafle(Rafle *rafle, int ind_eat)
-{
-    rafle->ind_eat = ind_eat;
-    rafle->pt = createRafle();
-}
-
-void destroyRafle(Rafle *rafle)
-{
-    Rafle *rafle_a_sup;
-    while (!isEmpty(rafle)) {
-        rafle_a_sup = rafle;
-        rafle = rafle->pt;
-        free(rafle_a_sup);
-    }
-    rafle->ind_eat = -1;
-}
-
-// void printRafle(Rafle *rafle) {
-//     while (!isEmpty(rafle)) {
-//         rafle_a_sup = rafle;
-//         rafle = rafle->pt;
-//         free(rafle_a_sup);
+// SDL_Point *arrayToPoint(int tab_pts[][2], int len)
+// {
+//     static SDL_Point Points[NB_CASE];
+//     for (int j = 0; j < len; j++)
+//     {
+//         Points[j].x = tab_pts[j][0];
+//         Points[j].y = tab_pts[j][1];
 //     }
+//     return Points;
 // }
 
-void delete_liste(Liste *liste) {
-	// Libère proprement tous les maillons
-	for (Rafle *Maillon_present = liste->first; Maillon_present != NULL; Maillon_present = Maillon_present->pt) {
-		free(Maillon_present);
-	}
-}
-
-SDL_Point *arrayToPoint(int tab_pts[][2], int len)
-{
-    static SDL_Point Points[NB_CASE];
-    for (int j = 0; j < len; j++)
-    {
-        Points[j].x = tab_pts[j][0];
-        Points[j].y = tab_pts[j][1];
-    }
-    return Points;
-}
+// Geometric functions
 
 void drawPoint(SDL_Renderer *render, SDL_Color color, int x, int y)
 {
@@ -137,13 +60,6 @@ void drawLine(SDL_Renderer *render, SDL_Color color, int x0, int y0, int x1, int
     SDL_RenderDrawLine(render, x0, y0, x1, y1);
 }
 
-SDL_bool closeTo(int x0, int y0, int x1, int y1, int prec)
-{
-    SDL_Point pt = {x0, y0};
-    SDL_Rect rect = {x1 - (prec / 2), y1 - (prec / 2), prec, prec};
-    return SDL_PointInRect(&pt, &rect);
-}
-
 void drawRect(SDL_Renderer *render, SDL_Color color, const SDL_Rect rect)
 {
     SDL_SetRenderDrawColor(render, color.r, color.g, color.b, color.a);
@@ -157,10 +73,79 @@ void drawRects(SDL_Renderer *render, SDL_Color color, const SDL_Rect rect[], int
     SDL_RenderFillRects(render, rect, len);
 }
 
-int NON(int b)
+SDL_bool closeTo(int x0, int y0, int x1, int y1, int prec)
 {
-    return (b + 1) % 2;
+    SDL_Point pt = {x0, y0};
+    SDL_Rect rect = {x1 - (prec / 2), y1 - (prec / 2), prec, prec};
+    return SDL_PointInRect(&pt, &rect);
 }
+
+void drawLosange(SDL_Renderer *render, Case c)
+{
+
+    SDL_Vertex vertices[6];
+
+    vertices[0].position.x = c.rect.x;
+    vertices[0].position.y = c.rect.y + LG_CASE / 2;
+    vertices[1].position.x = c.rect.x + LG_CASE / 2;
+    ;
+    vertices[1].position.y = c.rect.y;
+    vertices[2].position.x = c.rect.x + LG_CASE;
+    vertices[2].position.y = c.rect.y + LG_CASE / 2;
+    vertices[3].position.x = c.rect.x;
+    vertices[3].position.y = c.rect.y + LG_CASE / 2;
+    vertices[4].position.x = c.rect.x + LG_CASE;
+    vertices[4].position.y = c.rect.y + LG_CASE / 2;
+    vertices[5].position.x = c.rect.x + LG_CASE / 2;
+    vertices[5].position.y = c.rect.y + LG_CASE;
+
+    if (c.occupied == 1)
+    {
+
+        for (int i = 0; i < 6; i++)
+        {
+            vertices[i].tex_coord.x = 1;
+            vertices[i].tex_coord.y = 1;
+            vertices[i].color.a = 255;
+            vertices[i].color.r = 255;
+            vertices[i].color.g = 255;
+            vertices[i].color.b = 255;
+        }
+
+        SDL_RenderGeometry(render, NULL, vertices, 6, NULL, 0);
+    }
+    else
+    {
+
+        SDL_SetRenderDrawColor(render, white.r, white.g, white.b, white.a);
+        SDL_RenderDrawLine(render, vertices[0].position.x, vertices[0].position.y, vertices[1].position.x, vertices[1].position.y);
+        SDL_RenderDrawLine(render, vertices[1].position.x, vertices[1].position.y, vertices[2].position.x, vertices[2].position.y);
+        SDL_RenderDrawLine(render, vertices[2].position.x, vertices[2].position.y, vertices[5].position.x, vertices[5].position.y);
+        SDL_RenderDrawLine(render, vertices[5].position.x, vertices[5].position.y, vertices[0].position.x, vertices[0].position.y);
+    }
+}
+
+int selectPawn(pawn pawns[], int x_mouse, int y_mouse, bool is_white)
+{
+    // printf("pt\n");
+    if (is_white)
+        y_mouse = LG_WINDOW - y_mouse;
+    // printf("%d, %d\n", x_mouse, y_mouse);
+    for (int i = 0; i < NB_PAWNS; i++)
+    {
+        // printf("index %d\n", i);
+        // printf("CASE %d %d\n", pawns[i].col * LG_CASE + LG_CASE / 2, pawns[i].lig * LG_CASE + LG_CASE / 2);
+        if (closeTo(x_mouse, y_mouse, pawns[i].col * LG_CASE + LG_CASE / 2, pawns[i].lig * LG_CASE + LG_CASE / 2, PREC) && pawnAlive(pawns[i]))
+        {
+            // printf("index %d\n", i);
+            // printf("CASE %d %d\n", pawns[i].col * LG_CASE + LG_CASE / 2, pawns[i].lig * LG_CASE + LG_CASE / 2);
+            return i;
+        }
+    }
+    return NEUTRAL_IND;
+}
+
+// Init functions
 
 void init_pawn(pawn pawns[], Case damier[NB_CASE_LG][NB_CASE_LG], bool is_white, int i, int init_place, int add)
 {
@@ -209,218 +194,6 @@ void init_pawns(pawn pawns[], Case damier[NB_CASE_LG][NB_CASE_LG], bool is_white
     }
 }
 
-void print_pawns(pawn pawns[])
-{
-    for (int i = 0; i < NB_PAWNS; i++)
-    {
-        printf("Sel %d\n", pawns[i].alive);
-    }
-}
-
-int pawn_move(pawn pawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int ind, bool gauche)
-{
-    printf("call pawn_move\n");
-    if (ind > -1 && pawnAlive(pawns[ind]))
-    {
-        int i = pawns[ind].lig;
-        int j = pawns[ind].col;
-        // printf("%d %d", i, j);
-        if (pawns[ind].alive == 1 && i < NB_CASE_LG - 1)
-        {
-            if (gauche && j > 0 && damier[i + 1][j - 1].occupied == 0)
-            {
-                damier[i + 1][j - 1].occupied = 1;
-                damier[i][j].occupied = 0;
-                pawns[ind].lig = i + 1;
-                pawns[ind].col = j - 1;
-            }
-            else if (!gauche && j < NB_CASE_LG - 1 && damier[i + 1][j + 1].occupied == 0)
-            {
-                damier[i + 1][j + 1].occupied = 1;
-                damier[i][j].occupied = 0;
-                pawns[ind].lig = i + 1;
-                pawns[ind].col = j + 1;
-            }
-            else
-            {
-                printf("white ind pb occ\n");
-                return IND_PB;
-            }
-        }
-        else if (i > 0)
-        {
-            if (gauche && j > 0 && damier[i - 1][j - 1].occupied == 0)
-            {
-                damier[i - 1][j - 1].occupied = 2;
-                damier[i][j].occupied = 0;
-                pawns[ind].lig = i - 1;
-                pawns[ind].col = j - 1;
-            }
-            else if (!gauche && j < NB_CASE_LG - 1 && damier[i - 1][j + 1].occupied == 0)
-            {
-                damier[i - 1][j + 1].occupied = 2;
-                damier[i][j].occupied = 0;
-                pawns[ind].lig = i - 1;
-                pawns[ind].col = j + 1;
-            }
-
-            // printf("ind %d\n", ind);
-            // printf("%d %d\n", i, j);
-            // printf("%d %d\n", pawns[ind].lig, pawns[ind].col);
-
-            else
-            {
-                printf("black idn pb occ\n");
-                return IND_PB;
-            }
-        }
-        else
-        {
-            printf("color pb\n");
-            return IND_PB;
-        }
-        return IND_CHANGE_ALLOWED;
-    }
-    printf("pawn alive %d or ind = %d", pawnAlive(pawns[ind]), ind);
-    return IND_PB;
-}
-
-int giveIndPawn(int lig, int col, pawn pawns[])
-{
-    for (int i = 0; i < NB_PAWNS; i++)
-    {
-        if (pawns[i].lig == lig && pawns[i].col == col && pawnAlive(pawns[i]))
-        {
-            return i;
-        }
-    }
-    return -1;
-}
-
-bool canEat(pawn pawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int ind, int i, int j, int add0, int add1)
-{
-    return (damier[i + 2 * add0][j + 2 * add1].occupied == 0 && damier[i + add0][j + add1].occupied == NON(pawns[ind].alive - 1) + 1);
-}
-
-int changeForEat(pawn pawns[], pawn Npawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int ind, int i, int j, int add0, int add1)
-{
-    assert(ind > -1);
-    damier[i + add0][j + add1].occupied = 0;
-    damier[i][j].occupied = 0;
-    damier[i + 2 * add0][j + 2 * add1].occupied = pawns[ind].alive;
-    printf("pawn which is eaten %d\n", giveIndPawn(i + add0, j + add1, Npawns));
-
-    Npawns[giveIndPawn(i + add0, j + add1, Npawns)].alive = 0;
-    pawns[ind].lig = i + 2 * add0;
-    pawns[ind].col = j + 2 * add1;
-    printf("change allowed %d %d", i + 2 * add0, j + 2 * add1);
-    return IND_CHANGE_ALLOWED;
-}
-
-int eatPawn(pawn pawns[], pawn Npawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int ind)
-{
-    printf("call EatPawn \nind pawn which eat %d\n", ind);
-    if (ind > -1)
-    {
-        int i = pawns[ind].lig;
-        int j = pawns[ind].col;
-        // printf("%d %d move %d NcanEat %d", i, j, move_direction, canEat(pawns, damier, ind, i, j, 1, -1));
-        printf("%d %d", i, j);
-
-        if (i > 1 && j > 1 && canEat(pawns, damier, ind, i, j, -1, -1))
-            return changeForEat(pawns, Npawns, damier, ind, i, j, -1, -1);
-        else if (i < NB_CASE_LG - 2 && j > 1 && canEat(pawns, damier, ind, i, j, 1, -1))
-            return changeForEat(pawns, Npawns, damier, ind, i, j, 1, -1);
-        else if (i > 1 && j < NB_CASE_LG - 2 && canEat(pawns, damier, ind, i, j, -1, 1))
-            return changeForEat(pawns, Npawns, damier, ind, i, j, -1, 1);
-        else if (i < NB_CASE_LG - 2 && j < NB_CASE_LG - 2 && canEat(pawns, damier, ind, i, j, 1, 1))
-            return changeForEat(pawns, Npawns, damier, ind, i, j, 1, 1);
-        else
-        {
-            printf("no condition satisfied");
-            return IND_PB;
-        }
-    }
-    printf("ind = -1\n");
-    return NEUTRAL_IND;
-}
-
-void drawLosange(SDL_Renderer *render, Case c)
-{
-
-    SDL_Vertex vertices[6];
-
-    vertices[0].position.x = c.rect.x;
-    vertices[0].position.y = c.rect.y + LG_CASE / 2;
-    vertices[1].position.x = c.rect.x + LG_CASE / 2;
-    ;
-    vertices[1].position.y = c.rect.y;
-    vertices[2].position.x = c.rect.x + LG_CASE;
-    vertices[2].position.y = c.rect.y + LG_CASE / 2;
-    vertices[3].position.x = c.rect.x;
-    vertices[3].position.y = c.rect.y + LG_CASE / 2;
-    vertices[4].position.x = c.rect.x + LG_CASE;
-    vertices[4].position.y = c.rect.y + LG_CASE / 2;
-    vertices[5].position.x = c.rect.x + LG_CASE / 2;
-    vertices[5].position.y = c.rect.y + LG_CASE;
-
-    if (c.occupied == 1)
-    {
-
-        for (int i = 0; i < 6; i++)
-        {
-            vertices[i].tex_coord.x = 1;
-            vertices[i].tex_coord.y = 1;
-            vertices[i].color.a = 255;
-            vertices[i].color.r = 255;
-            vertices[i].color.g = 255;
-            vertices[i].color.b = 255;
-        }
-
-        SDL_RenderGeometry(render, NULL, vertices, 6, NULL, 0);
-    }
-    else
-    {
-
-        SDL_SetRenderDrawColor(render, white.r, white.g, white.b, white.a);
-        SDL_RenderDrawLine(render, vertices[0].position.x, vertices[0].position.y, vertices[1].position.x, vertices[1].position.y);
-        SDL_RenderDrawLine(render, vertices[1].position.x, vertices[1].position.y, vertices[2].position.x, vertices[2].position.y);
-        SDL_RenderDrawLine(render, vertices[2].position.x, vertices[2].position.y, vertices[5].position.x, vertices[5].position.y);
-        SDL_RenderDrawLine(render, vertices[5].position.x, vertices[5].position.y, vertices[0].position.x, vertices[0].position.y);
-    }
-}
-
-void print_damier(Case damier[NB_CASE_LG][NB_CASE_LG])
-{
-    for (int i = 0; i < NB_CASE_LG; i++)
-    {
-        for (int j = 0; j < NB_CASE_LG; j++)
-        {
-            printf("Case ligne %d col %d pos: %d, %d\n", i, j, damier[i][j].rect.x, damier[i][j].rect.y);
-        }
-    }
-}
-
-int selectPawn(pawn pawns[], int x_mouse, int y_mouse, bool is_white)
-{
-    // printf("pt\n");
-    if (is_white)
-        y_mouse = LG_WINDOW - y_mouse;
-    // printf("%d, %d\n", x_mouse, y_mouse);
-    for (int i = 0; i < NB_PAWNS; i++)
-    {
-        // printf("index %d\n", i);
-        // printf("CASE %d %d\n", pawns[i].col * LG_CASE + LG_CASE / 2, pawns[i].lig * LG_CASE + LG_CASE / 2);
-        if (closeTo(x_mouse, y_mouse, pawns[i].col * LG_CASE + LG_CASE / 2, pawns[i].lig * LG_CASE + LG_CASE / 2, PREC) && pawnAlive(pawns[i]))
-        {
-            // printf("index %d\n", i);
-            // printf("CASE %d %d\n", pawns[i].col * LG_CASE + LG_CASE / 2, pawns[i].lig * LG_CASE + LG_CASE / 2);
-            return i;
-        }
-    }
-    return NEUTRAL_IND;
-}
-
 void init_damier(Case damier[NB_CASE_LG][NB_CASE_LG])
 {
     for (int i = 0; i < NB_CASE_LG; i++)
@@ -439,6 +212,8 @@ void init_damier(Case damier[NB_CASE_LG][NB_CASE_LG])
         }
     }
 }
+
+// Display functions
 
 void change_damier(Case damier[NB_CASE_LG][NB_CASE_LG], bool is_white)
 {
@@ -495,6 +270,8 @@ void prepareText(SDL_Renderer *render, text *txt, char *string)
     txt->rect->h = texH;
 }
 
+// Run the game
+
 int main(int argc, char *argv[])
 {
 
@@ -517,13 +294,6 @@ int main(int argc, char *argv[])
     // print_damier(damier);
     // printf("Lg case %d\n", LG_CASE);
 
-    // Init window
-
-    int statut = EXIT_FAILURE;
-    SDL_Window *window = NULL;
-    SDL_Renderer *draw = NULL;
-    SDL_Event event;
-
     // Init text
     text *txtMessage = malloc(sizeof(text));
     txtMessage->font = NULL;
@@ -531,6 +301,13 @@ int main(int argc, char *argv[])
     txtMessage->texture = NULL;
     txtMessage->rect = malloc(sizeof(SDL_Rect));
     txtMessage->color = red;
+
+    // Init window
+
+    int statut = EXIT_FAILURE;
+    SDL_Window *window = NULL;
+    SDL_Renderer *draw = NULL;
+    SDL_Event event;
 
     if (0 != SDL_Init(SDL_INIT_VIDEO))
     {
@@ -575,7 +352,7 @@ int main(int argc, char *argv[])
         {
             last_time = time_now;
 
-            SDL_RenderClear(draw);
+            SDL_RenderClear(draw); // Clear the window
 
             // Drawing part
 
