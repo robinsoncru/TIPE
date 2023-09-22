@@ -30,7 +30,8 @@ Rafle *createRafle(int x, int y)
 {
     Rafle* res = malloc(sizeof(Rafle));
     res -> taille = 0;
-    res -> pile = NULL;   
+    res -> pile = NULL;
+    return res;
 }
 
 bool isEmpty(Rafle *rafle)

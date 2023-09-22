@@ -1,3 +1,4 @@
+#include <stdbool.h>
 // Operators for Rafle structure
 
 typedef struct Rafle Rafle;
