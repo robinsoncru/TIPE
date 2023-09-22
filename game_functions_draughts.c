@@ -24,18 +24,13 @@ typedef struct
     bool color;
 } Case;
 
-typedef struct Rafle Rafle;
-struct Rafle
-{
-    int ind_eat;
-    Rafle *pt;
-};
-
+/*
+A quoi sert cette structure, Gasse ?
 typedef struct Liste Liste;
 struct Liste
 {
     Rafle *first;
-};
+};*/
 
 typedef struct
 {
@@ -56,39 +51,6 @@ int NON(int b)
     return (b + 1) % 2;
 }
 
-// Operators for Rafle structure
-
-Rafle *createRafle()
-{
-    Rafle *rafle = malloc(sizeof(Rafle));
-    rafle->pt = NULL;
-    rafle->ind_eat = -1;
-    return rafle;
-}
-
-bool isEmpty(Rafle *rafle)
-{
-    return (rafle->pt == NULL);
-}
-
-void addRafle(Rafle *rafle, int ind_eat)
-{
-    rafle->ind_eat = ind_eat;
-    rafle->pt = createRafle();
-}
-
-void destroyRafle(Rafle *rafle)
-{
-    Rafle *rafle_a_sup;
-    while (!isEmpty(rafle))
-    {
-        rafle_a_sup = rafle;
-        rafle = rafle->pt;
-        free(rafle_a_sup);
-    }
-    rafle->ind_eat = -1;
-}
-
 // void printRafle(Rafle *rafle) {
 //     while (!isEmpty(rafle)) {
 //         rafle_a_sup = rafle;
@@ -97,6 +59,9 @@ void destroyRafle(Rafle *rafle)
 //     }
 // }
 
+/*
+D'accord, je pense voir ce que tu as essayé de faire, mais il y a des moyens beaucoup plus simples
+de libérer des piles.
 void delete_liste(Liste *liste)
 {
     // Libère proprement tous les maillons
@@ -104,7 +69,7 @@ void delete_liste(Liste *liste)
     {
         free(Maillon_present);
     }
-}
+}*/
 
 int giveIndPawn(int lig, int col, pawn pawns[])
 {
