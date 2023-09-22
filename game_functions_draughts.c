@@ -20,6 +20,7 @@
 typedef struct
 {
     int occupied;
+    int ind_pawn;
     SDL_Rect rect;
     bool color;
 } Case;
@@ -54,6 +55,29 @@ bool pawnAlive(pawn p)
 int NON(int b)
 {
     return (b + 1) % 2;
+}
+
+bool becomeDame(pawn p)
+{
+    if (!p.queen)
+    {
+        if (p.alive == 1)
+        {
+            if (p.lig == NB_CASE_LG - 1)
+                return true;
+            else
+                return false;
+        }
+        else if (p.alive == 2)
+        {
+            if (p.lig == 0)
+                return true;
+            else
+                return false;
+        }
+    }
+    else
+        return false;
 }
 
 // Operators for Rafle structure
@@ -106,18 +130,6 @@ void delete_liste(Liste *liste)
     }
 }
 
-int giveIndPawn(int lig, int col, pawn pawns[])
-{
-    for (int i = 0; i < NB_PAWNS; i++)
-    {
-        if (pawns[i].lig == lig && pawns[i].col == col && pawnAlive(pawns[i]))
-        {
-            return i;
-        }
-    }
-    return -1;
-}
-
 // Aux functions
 
 bool canEat(pawn pawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int ind, int i, int j, int add0, int add1)
@@ -132,10 +144,13 @@ int changeForEat(pawn pawns[], pawn Npawns[], Case damier[NB_CASE_LG][NB_CASE_LG
     assert(ind > -1);
     damier[i + add0][j + add1].occupied = 0;
     damier[i][j].occupied = 0;
+    damier[i][j].ind_pawn = -1;
     damier[i + 2 * add0][j + 2 * add1].occupied = pawns[ind].alive;
-    printf("pawn which is eaten %d\n", giveIndPawn(i + add0, j + add1, Npawns));
+    damier[i + 2 * add0][j + 2 * add1].ind_pawn = ind;
+    printf("pawn which is eaten %d\n", damier[i + add0][j + add1].ind_pawn);
 
-    Npawns[giveIndPawn(i + add0, j + add1, Npawns)].alive = 0;
+    Npawns[damier[i + add0][j + add1].ind_pawn].alive = 0;
+    damier[i + add0][j + add1].ind_pawn = -1;
     pawns[ind].lig = i + 2 * add0;
     pawns[ind].col = j + 2 * add1;
     printf("change allowed %d %d", i + 2 * add0, j + 2 * add1);
@@ -227,6 +242,8 @@ int pawn_move(pawn pawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int ind, bool g
             printf("color pb\n");
             return IND_PB;
         }
+        damier[i][j].ind_pawn = -1;
+        damier[pawns[ind].lig][pawns[ind].col].ind_pawn = i;
         return IND_CHANGE_ALLOWED;
     }
     printf("pawn alive %d or ind = %d", pawnAlive(pawns[ind]), ind);
