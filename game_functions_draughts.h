@@ -20,6 +20,7 @@
 typedef struct
 {
     int occupied;
+    int ind_pawn;
     SDL_Rect rect;
     bool color;
 } Case;
@@ -43,6 +44,15 @@ typedef struct
     bool queen;
 } pawn;
 
+/* NOTES :
+
+pawn.alive: 1 for white, 2 for black and 0 for dead
+Whites start at lig 0
+Blacks start at lig NB_CASE_LG - 1
+Case.occupied: 0 for free, 1 for white, 2 for black
+Case.ind_pawn: -1 if no pawn
+*/
+
 bool pawnAlive(pawn p);
 int NON(int b);
 Rafle *createRafle();
@@ -57,3 +67,4 @@ void print_pawns(pawn pawns[]);
 void print_damier(Case damier[NB_CASE_LG][NB_CASE_LG]);
 int pawn_move(pawn pawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int ind, bool gauche);
 int eatPawn(pawn pawns[], pawn Npawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int ind);
+bool becomeDame(pawn p);
