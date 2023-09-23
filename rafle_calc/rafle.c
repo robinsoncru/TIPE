@@ -65,11 +65,11 @@ coord popRafle(Rafle* rafle){
     return res;
 }
 
+void EmptyRafle(Rafle* rafle);
+
 void destroyRafle(Rafle *rafle)
 {
-    while (!isEmpty(rafle)) {
-        popRafle(rafle);
-    }
+    EmptyRafle(rafle);
     free(rafle);
 }
 
@@ -88,4 +88,10 @@ void addWithoutIncrRafle(Rafle* rafle, int x, int y){
     m -> point = point;
     m -> next = rafle -> pile;
     rafle -> pile = m;
+}
+
+void EmptyRafle(Rafle* rafle){
+    while (!isEmpty(rafle)) {
+        popRafle(rafle);
+    }
 }
