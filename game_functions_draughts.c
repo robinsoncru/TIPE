@@ -63,21 +63,18 @@ bool becomeDame(pawn p)
     {
         if (p.alive == 1)
         {
-            if (p.lig == NB_CASE_LG - 1)
+            if (p.lig == NB_CASE_LG - 1){
                 return true;
-            else
-                return false;
+            }
         }
         else if (p.alive == 2)
         {
-            if (p.lig == 0)
+            if (p.lig == 0){
                 return true;
-            else
-                return false;
+            }
         }
     }
-    else
-        return false;
+    return false;
 }
 
 // Operators for Rafle structure
