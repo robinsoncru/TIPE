@@ -1,9 +1,10 @@
 #include <stdbool.h>
 #include <stdlib.h>
+#include <stdio.h>
 
 // Operators for Rafle structure
 typedef struct Coord{
-    int x, y;
+    int i, j;
 } coord;
 
 typedef struct Maillon
@@ -15,18 +16,14 @@ typedef struct Maillon
 typedef struct Rafle {
     /*Une rafle est une simple pile de coordonnees
     correspondant à des points, l'origine du repere est en
-    la case inférieure gauche du plateau, et les cases sonr reperees ainsi :
-    y---------------p
-                    |
-                    |
-                    |
-                    x*/
+    [A completer]*/
+
     int taille;
     maillon* pile;
 
 } Rafle;
 
-Rafle *createRafle(int x, int y)
+Rafle *createRafle()
 {
     Rafle* res = malloc(sizeof(Rafle));
     res -> taille = 0;
@@ -39,11 +36,11 @@ bool isEmpty(Rafle *rafle)
     return rafle -> pile == NULL;
 }
 
-void addWithoutIncrRafle(Rafle* rafle, int x, int y);
+void addWithoutIncrRafle(Rafle* rafle, int i, int j);
 
-void addRafle(Rafle *rafle, int x, int y)
+void addRafle(Rafle *rafle, int i, int j)
 {
-    addWithoutIncrRafle(rafle, x, y);
+    addWithoutIncrRafle(rafle, i, j);
     rafle -> taille++;
 }
 
@@ -65,11 +62,27 @@ coord popRafle(Rafle* rafle){
     return res;
 }
 
-void EmptyRafle(Rafle* rafle);
+void printCoord(coord point){
+    printf("(%d, %d)", point.i, point.j);
+}
+
+void printRafle(Rafle* rafle){
+    maillon* p = rafle -> pile;
+    printCoord(p -> point);
+    p = p -> next;
+
+    while (p != NULL) {
+        printf(" -> ");
+        printCoord(p -> point);
+        p = p -> next;
+    }
+}
+
+void emptyRafle(Rafle* rafle);
 
 void destroyRafle(Rafle *rafle)
 {
-    EmptyRafle(rafle);
+    emptyRafle(rafle);
     free(rafle);
 }
 
@@ -80,18 +93,19 @@ void changeLengthOfRafle(Rafle* rafle, int new_length){
     rafle -> taille = new_length;
 }
 
-void addWithoutIncrRafle(Rafle* rafle, int x, int y){
+void addWithoutIncrRafle(Rafle* rafle, int i, int j){
     maillon* m = malloc(sizeof(maillon));
     coord point;
-    point.x = x;
-    point.y = y;
+    point.i = i;
+    point.j = j;
     m -> point = point;
     m -> next = rafle -> pile;
     rafle -> pile = m;
 }
 
-void EmptyRafle(Rafle* rafle){
+void emptyRafle(Rafle* rafle){
     while (!isEmpty(rafle)) {
         popRafle(rafle);
     }
+    rafle -> taille = 0;
 }
