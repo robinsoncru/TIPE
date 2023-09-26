@@ -1,5 +1,6 @@
 #include <SDL2/SDL_ttf.h>
 #include "game_functions_draughts.h"
+#include "rafle_calc/rafle_calc.h"
 // Window pmetre
 #define LG_WINDOW 640
 #define FRAME 16
@@ -413,6 +414,9 @@ int main(int argc, char *argv[])
                         ind_move = eatPawn(allPawns[is_white], allPawns[!is_white], damier, ind_move);
                     else if (event.key.keysym.sym == SDLK_ESCAPE)
                         is_playing = false;
+                    else if (event.key.keysym.sym == SDLK_r) {
+                        printBestRafle(allPawns[is_white], allPawns[!is_white], damier, ind_move);
+                    }
                     else
                         ind_move = NEUTRAL_IND;
                     break;

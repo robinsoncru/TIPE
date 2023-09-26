@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include "rafle_aux.h"
 #include "../game_functions_draughts.h"
 #define WHITE_CAMP 1
@@ -91,7 +92,7 @@ void bestRafleAux(pawn pawns[],pawn Npawns[], Case damier[NB_CASE_LG][NB_CASE_LG
     spitOut(pawns, Npawns, damier, pawns[indEater].alive, indEater, i, j, indVictim, add0, add1);
 }
 
-Rafle* BestRafle(pawn pawns[],pawn Npawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int indSerialKiller){
+Rafle* bestRafle(pawn pawns[],pawn Npawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int indSerialKiller){
     //Entree : deux tableaux de pions, un damier, l'index du pion qui commet la rafle
     //Sortie : meilleure rafle faisable a partir de la position dudit pion
     //l'algorithme de calcul est reccursif, et la fonction auxiliaire a besoin de la donnee d'une direction
@@ -111,4 +112,11 @@ Rafle* BestRafle(pawn pawns[],pawn Npawns[], Case damier[NB_CASE_LG][NB_CASE_LG]
         }
     }
     return res; //bah putain ! c'etait pas trivial ! mais je suis fier de moi !
+}
+
+void printBestRafle(pawn pawns[],pawn Npawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int indSerialKiller){
+    printf("rafle departure : (%d, %d)\n", pawns[indSerialKiller].lig, pawns[indSerialKiller].col);
+    Rafle* r = bestRafle(pawns, Npawns, damier, indSerialKiller);
+    printRafle(r);
+    printf("\n");
 }
