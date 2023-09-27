@@ -472,6 +472,11 @@ int main(int argc, char *argv[])
                     else if (event.key.keysym.sym == SDLK_RIGHT)
                         ind_move = pawn_move(allPawns[is_white], damier, ind_move, false);
                     else if (event.key.keysym.sym == SDLK_UP)
+                        /*D'accord, je vois : si j'appuye sur haut, ça va manger le premier pion disponible selon l'ordre
+                        horaire ou anti-horaire. Je suppose que c'est plus simple à coder mais j'admets etre dubitatif quand
+                        au fait que les regles forcent un joueur a manger un pion en particulier. Ne serait-il pas plus judicieux de
+                        laisser au joueur dont c'est le trait de choisir le pion qu'il mange ?
+                        Quoique, il est vrai que la regle des rafles impose de choisir la meilleure, je suppose ce changement provisoire.*/
                         ind_move = eatPawn(allPawns[is_white], allPawns[!is_white], damier, ind_move);
                     else if (event.key.keysym.sym == SDLK_ESCAPE)
                         is_playing = false;

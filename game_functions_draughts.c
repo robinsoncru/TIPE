@@ -79,8 +79,7 @@ bool becomeDame(pawn p)
         else
             return false;
     }
-    else
-        return false;
+    return false;
 }
 
 // Operators for Rafle structure
