@@ -57,27 +57,22 @@ int NON(int b)
 
 bool becomeDame(pawn p)
 {
-    if (p.alive)
+    if (p.alive && !p.queen)
     {
-        if (!p.queen)
+        if (p.color)
         {
-            if (p.color)
-            {
-                if (p.lig == NB_CASE_LG - 1)
-                    return true;
-                else
-                    return false;
-            }
+            if (p.lig == NB_CASE_LG - 1)
+                return true;
             else
-            {
-                if (p.lig == 0)
-                    return true;
-                else
-                    return false;
-            }
+                return false;
         }
         else
-            return false;
+        {
+            if (p.lig == 0)
+                return true;
+            else
+                return false;
+        }
     }
     return false;
 }
@@ -138,7 +133,7 @@ bool canEat(pawn pawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int ind, int i, i
 {
     // For eatPawn
     return (freeCase(damier[i + 2 * add0][j + 2 * add1]) && damier[i + add0][j + add1].pawn_color == !pawns[ind].color &&
-    !freeCase(damier[i + add0][j + add1]));
+            !freeCase(damier[i + add0][j + add1]));
 }
 
 int changeForEat(pawn pawns[], pawn Npawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int ind, int i, int j, int add0, int add1)

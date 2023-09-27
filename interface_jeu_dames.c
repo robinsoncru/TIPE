@@ -135,24 +135,20 @@ void drawLosange(SDL_Renderer *render, Case c, pawn p)
     }
 }
 
-int selectPawn(pawn pawns[], int x_mouse, int y_mouse, bool is_white)
+int selectPawn(Case damier[NB_CASE_LG][NB_CASE_LG], int x_mouse, int y_mouse, bool is_white)
 {
     // printf("pt\n");
     if (is_white)
         y_mouse = LG_WINDOW - y_mouse;
     // printf("%d, %d\n", x_mouse, y_mouse);
-    for (int i = 0; i < NB_PAWNS; i++)
-    {
-        // printf("index %d\n", i);
-        // printf("CASE %d %d\n", pawns[i].col * LG_CASE + LG_CASE / 2, pawns[i].lig * LG_CASE + LG_CASE / 2);
-        if (closeTo(x_mouse, y_mouse, pawns[i].col * LG_CASE + LG_CASE / 2, pawns[i].lig * LG_CASE + LG_CASE / 2, PREC) && pawns[i].alive)
-        {
-            // printf("index %d\n", i);
-            // printf("CASE %d %d\n", pawns[i].col * LG_CASE + LG_CASE / 2, pawns[i].lig * LG_CASE + LG_CASE / 2);
-            return i;
-        }
-    }
-    return NEUTRAL_IND;
+    int lig = y_mouse / LG_CASE;
+    int col = x_mouse / LG_CASE;
+    printf("lig %d col %d\n", lig, col);
+    fflush(stdout);
+    if (damier[lig][col].pawn_color == is_white)
+        return damier[lig][col].ind_pawn; // Return NEUTRAL_IND if no pawn in the case
+    else
+        return NEUTRAL_IND;
 }
 
 // Modif for queen
@@ -458,7 +454,7 @@ int main(int argc, char *argv[])
 
                 case SDL_MOUSEBUTTONDOWN:
                     if (ind_move == NEUTRAL_IND)
-                        ind_move = selectPawn(allPawns[is_white], event.button.x, event.button.y, is_white);
+                        ind_move = selectPawn(damier, event.button.x, event.button.y, is_white);
                     else if (ind_move > -1 && allPawns[is_white][ind_move].queen)
                         ind_move = queen_move(event.button.x, event.button.y, is_white, allPawns[is_white], damier, ind_move);
                     if (ind_move == NEUTRAL_IND)
