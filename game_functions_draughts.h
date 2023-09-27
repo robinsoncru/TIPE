@@ -5,7 +5,7 @@
 #include <assert.h>
 // Game pmetre
 #define NB_CASE_LG 8
-#define NB_CASE NB_CASE_LG *NB_CASE_LG
+#define NB_CASE (NB_CASE_LG * NB_CASE_LG)
 #define NB_PAWNS (NB_CASE_LG)
 #define IND_PB -3
 #define IND_CHANGE_ALLOWED -2
@@ -19,10 +19,9 @@
 
 typedef struct
 {
-    int occupied;
+    bool pawn_color, color;
     int ind_pawn;
     SDL_Rect rect;
-    bool color;
 } Case;
 
 typedef struct Rafle Rafle;
@@ -40,21 +39,24 @@ struct Liste
 
 typedef struct
 {
-    int lig, col, alive;
-    bool queen;
+    int lig, col;
+    bool alive, color, queen;
 } pawn;
 
 /* NOTES :
 
-pawn.alive: 1 for white, 2 for black and 0 for dead
+pawn.alive:
+pawn.color: true if white, false if black
 Whites start at lig 0
 Blacks start at lig NB_CASE_LG - 1
-Case.occupied: 0 for free, 1 for white, 2 for black
+Case.pawn_color: true for white, false for black
 Case.ind_pawn: -1 if no pawn
 */
 
-bool pawnAlive(pawn p);
+
+bool freeCase(Case c);
 int NON(int b);
+bool becomeDame(pawn p);
 Rafle *createRafle();
 bool isEmpty(Rafle *rafle);
 void addRafle(Rafle *rafle, int ind_eat);

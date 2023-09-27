@@ -99,7 +99,7 @@ void drawLosange(SDL_Renderer *render, Case c, pawn p)
     vertices[5].position.x = c.rect.x + LG_CASE / 2;
     vertices[5].position.y = c.rect.y + LG_CASE;
 
-    if (c.occupied == 1)
+    if (p.color)
     {
 
         for (int i = 0; i < 6; i++)
@@ -145,7 +145,7 @@ int selectPawn(pawn pawns[], int x_mouse, int y_mouse, bool is_white)
     {
         // printf("index %d\n", i);
         // printf("CASE %d %d\n", pawns[i].col * LG_CASE + LG_CASE / 2, pawns[i].lig * LG_CASE + LG_CASE / 2);
-        if (closeTo(x_mouse, y_mouse, pawns[i].col * LG_CASE + LG_CASE / 2, pawns[i].lig * LG_CASE + LG_CASE / 2, PREC) && pawnAlive(pawns[i]))
+        if (closeTo(x_mouse, y_mouse, pawns[i].col * LG_CASE + LG_CASE / 2, pawns[i].lig * LG_CASE + LG_CASE / 2, PREC) && pawns[i].alive)
         {
             // printf("index %d\n", i);
             // printf("CASE %d %d\n", pawns[i].col * LG_CASE + LG_CASE / 2, pawns[i].lig * LG_CASE + LG_CASE / 2);
@@ -169,7 +169,7 @@ bool changeQueenAllowed(pawn p, int lig, int col, Case damier[NB_CASE_LG][NB_CAS
         for (int i = 1; i < abs(dcol) + 1; i++)
         {
             // printf("lig %d col %d\n", p.lig + add_lig * i, p.col + add_col * i);
-            if (damier[p.lig + add_lig * i][p.col + add_col * i].occupied != 0)
+            if (!freeCase(damier[p.lig + add_lig * i][p.col + add_col * i]))
                 return false;
         }
         return true;
@@ -188,7 +188,7 @@ int queen_move(int x_mouse, int y_mouse, bool is_white, pawn pawns[], Case damie
         pawns[ind].col = col;
         pawns[ind].lig = lig;
         printf("lig %d col %d\n", lig, col);
-
+        // Incomplet
         fflush(stdout);
 
         return IND_CHANGE_ALLOWED;
@@ -204,18 +204,17 @@ void init_pawn(pawn pawns[], Case damier[NB_CASE_LG][NB_CASE_LG], bool is_white,
     if (is_white)
     {
         pawns[i].lig = init_place;
-        damier[init_place][add + 2 * i - init_place * NB_CASE_LG].occupied = 1;
+        damier[init_place][add + 2 * i - init_place * NB_CASE_LG].pawn_color = true;
         pawns[i].col = add + 2 * i - init_place * NB_CASE_LG;
-        pawns[i].alive = 1;
     }
     else
     {
         pawns[i].lig = NB_CASE_LG - init_place - 1;
-        damier[NB_CASE_LG - init_place - 1][NON(add) + 2 * i - init_place * NB_CASE_LG].occupied = 2;
+        damier[NB_CASE_LG - init_place - 1][NON(add) + 2 * i - init_place * NB_CASE_LG].pawn_color = false;
         pawns[i].col = NON(add) + 2 * i - init_place * NB_CASE_LG;
-        pawns[i].alive = 2;
     }
     damier[pawns[i].lig][pawns[i].col].ind_pawn = i;
+    pawns[i].color = is_white;
 }
 
 void init_pawns(pawn pawns[], Case damier[NB_CASE_LG][NB_CASE_LG], bool is_white)
@@ -227,8 +226,8 @@ void init_pawns(pawn pawns[], Case damier[NB_CASE_LG][NB_CASE_LG], bool is_white
         if (init_place % 2 == 0)
         {
             if (2 * i - init_place * NB_CASE_LG < NB_CASE_LG)
-                init_pawn(pawns, damier, is_white, i, init_place, 0);                
-                // init_pawn(pawns, damier, is_white, i, init_place+2, 0);
+                init_pawn(pawns, damier, is_white, i, init_place, 0);
+            // init_pawn(pawns, damier, is_white, i, init_place+2, 0);
             else
             {
                 init_place++;
@@ -246,6 +245,7 @@ void init_pawns(pawn pawns[], Case damier[NB_CASE_LG][NB_CASE_LG], bool is_white
                 init_pawn(pawns, damier, is_white, i, init_place, 0);
             }
         }
+        pawns[i].alive = true;
         pawns[i].queen = false;
     }
 }
@@ -260,7 +260,8 @@ void init_damier(Case damier[NB_CASE_LG][NB_CASE_LG])
             damier[i][j].rect.y = LG_CASE * (NB_CASE_LG - i - 1);
             damier[i][j].rect.w = LG_CASE;
             damier[i][j].rect.h = LG_CASE;
-            damier[i][j].occupied = 0;
+            damier[i][j].pawn_color = false;
+            damier[i][j].ind_pawn = -1;
             if ((i + j) % 2 == 0)
                 damier[i][j].color = false;
             else
@@ -305,9 +306,9 @@ void display_damier(SDL_Renderer *render, Case damier[NB_CASE_LG][NB_CASE_LG], p
                 drawRect(render, white, damier[i][j].rect);
             else
                 drawRect(render, black, damier[i][j].rect);
-            if (damier[i][j].occupied != 0)
+            if (!freeCase(damier[i][j]))
             {
-                drawLosange(render, damier[i][j], allPawns[damier[i][j].occupied - 1][damier[i][j].ind_pawn]);
+                drawLosange(render, damier[i][j], allPawns[damier[i][j].pawn_color][damier[i][j].ind_pawn]);
             }
         }
     }
@@ -344,6 +345,8 @@ int main(int argc, char *argv[])
 
     init_pawns(allPawns[1], damier, true);
     init_pawns(allPawns[0], damier, false);
+    // Index 1 is for white pawns
+    // Index 0 is for black pawns
 
     // print_pawns(whites);
     // print_pawns(blacks);
