@@ -13,7 +13,6 @@ int main(int argc, char** argv){
 
     int tabx[] = {};
     int taby[] = {};
-    addWithoutIncrRafle(r, int x, int y)
 
     printf("Supression de la rafle...\n");
     destroyRafle(r);

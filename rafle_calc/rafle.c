@@ -67,14 +67,19 @@ void printCoord(coord point){
 }
 
 void printRafle(Rafle* rafle){
-    maillon* p = rafle -> pile;
-    printCoord(p -> point);
-    p = p -> next;
-
-    while (p != NULL) {
-        printf(" -> ");
+    
+    if (isEmpty(rafle)) {
+        printf("Rafle vide.");
+    }else {
+        maillon* p = rafle -> pile;
         printCoord(p -> point);
         p = p -> next;
+
+        while (p != NULL) {
+            printf(" -> ");
+            printCoord(p -> point);
+            p = p -> next;
+        }
     }
 }
 

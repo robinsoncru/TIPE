@@ -9,7 +9,7 @@
 #define LG_CASE (LG_WINDOW / NB_CASE_LG)
 // #define LEN 200
 
-// Compile : gcc interface_jeu_dames.c game_functions_draughts.c rafle_calc/rafle_calc.c rafle_calc/rafle.c $(sdl2-config --cflags --libs) -lSDL2_ttf -o a && ./a
+// Compile : gcc interface_jeu_dames.c game_functions_draughts.c rafle_calc/rafle_calc.c rafle_calc/rafle.c $(sdl2-config --cflags --libs) -lSDL2_ttf -o dames
 
 // Interface structure
 
@@ -416,6 +416,7 @@ int main(int argc, char *argv[])
                         is_playing = false;
                     else if (event.key.keysym.sym == SDLK_r) {
                         printBestRafle(allPawns[is_white], allPawns[!is_white], damier, ind_move);
+                        ind_move = NEUTRAL_IND;
                     }
                     else
                         ind_move = NEUTRAL_IND;

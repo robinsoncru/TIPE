@@ -50,6 +50,16 @@ int direction(int a){
     return (a == 0) ? 1 : -1;
 }
 
+bool outOfBounds(int i, int j){
+    //Checks if the (i, j) position is out of bounds
+    return i < 0 || i >= NB_CASE_LG || j < 0 || j >= NB_CASE_LG;
+}
+
+bool eatingIsOutOfBounds(int i, int j, int add0, int add1){
+    //Checks if eating from position (i, j) in the (add0, add1) direction leads to an out of bounds position
+    return outOfBounds(i + 2 * add0, j + 2 * add1);
+}
+
 void bestRafleAux(pawn pawns[],pawn Npawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int indEater, int add0, int add1, Rafle* res, int length){
     int oldI = pawns[indEater].lig;
     int oldJ = pawns[indEater].col;
@@ -70,9 +80,10 @@ void bestRafleAux(pawn pawns[],pawn Npawns[], Case damier[NB_CASE_LG][NB_CASE_LG
         deltaI = direction(k%2);
         deltaJ = direction((k >> 1)%2);
 
-        if (canEat(pawns, damier, indEater, i, j, deltaI, deltaJ)) {
+        if (canEat(pawns, damier, indEater, i, j, deltaI, deltaJ) && !eatingIsOutOfBounds(i, j, deltaI, deltaJ)) {
             bestRafleAux(pawns, Npawns, damier, indEater, deltaI, deltaJ, res, length + 1);
         }
+        printf("position (%d, %d) is out of bounds : %s\n",i + add0, j + add1, eatingIsOutOfBounds(i, j, add0, add1) ? "true" : "false");
     }
     /*A partir de ce point, res respecte la contrainte suivante :
         -si on est a la fin d'un chemin plus long que la meilleure rafle calculee jusqu'alors, res est vide
@@ -115,7 +126,7 @@ Rafle* bestRafle(pawn pawns[],pawn Npawns[], Case damier[NB_CASE_LG][NB_CASE_LG]
 }
 
 void printBestRafle(pawn pawns[],pawn Npawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int indSerialKiller){
-    printf("rafle departure : (%d, %d)\n", pawns[indSerialKiller].lig, pawns[indSerialKiller].col);
+    printf("\nrafle departure : (%d, %d)\n", pawns[indSerialKiller].lig, pawns[indSerialKiller].col);
     Rafle* r = bestRafle(pawns, Npawns, damier, indSerialKiller);
     printRafle(r);
     printf("\n");
