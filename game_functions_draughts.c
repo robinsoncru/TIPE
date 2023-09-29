@@ -24,19 +24,19 @@ typedef struct
     SDL_Rect rect;
 } Case;
 
-typedef struct Rafle Rafle;
-struct Rafle
-{
-    int ind_eat;
-    Rafle *pt;
-};
-
+/*
+A quoi sert cette structure, Gasse ?
 typedef struct Liste Liste;
 struct Liste
 {
     Rafle *first;
-};
+};*/
 
+/*Alive n'est pas un booleen ?
+le pion est soit mort soit vivant non ?
+il me semble que tu avais dit que "alive" contenait aussi
+une information sur le camp du pion, mais c'est juste confusionnant
+de confondre ces donnees*/
 typedef struct
 {
     int lig, col;
@@ -118,6 +118,9 @@ void destroyRafle(Rafle *rafle)
 //     }
 // }
 
+/*
+D'accord, je pense voir ce que tu as essayé de faire, mais il y a des moyens beaucoup plus simples
+de libérer des piles.
 void delete_liste(Liste *liste)
 {
     // Libère proprement tous les maillons
@@ -244,7 +247,7 @@ int pawn_move(pawn pawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int ind, bool g
 
 int eatPawn(pawn pawns[], pawn Npawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int ind)
 {
-    printf("call EatPawn \nind pawn which eat %d\n", ind);
+    printf("call EatPawn \nind pawn which eats %d\n", ind);
     if (ind > -1)
     {
         int i = pawns[ind].lig;
@@ -252,6 +255,7 @@ int eatPawn(pawn pawns[], pawn Npawns[], Case damier[NB_CASE_LG][NB_CASE_LG], in
         // printf("%d %d move %d NcanEat %d", i, j, move_direction, canEat(pawns, damier, ind, i, j, 1, -1));
         printf("%d %d", i, j);
 
+        /*wtf, il teste toutes les directions dans lequel le pion peut manger ?*/
         if (i > 1 && j > 1 && canEat(pawns, damier, ind, i, j, -1, -1))
             return changeForEat(pawns, Npawns, damier, ind, i, j, -1, -1);
         else if (i < NB_CASE_LG - 2 && j > 1 && canEat(pawns, damier, ind, i, j, 1, -1))
