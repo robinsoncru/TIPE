@@ -128,10 +128,10 @@ void drawLosange(SDL_Renderer *render, Case c, pawn p)
     if (p.queen)
     {
         SDL_Rect qr;
-        qr.x = c.rect.x + 10;
-        qr.y = c.rect.y + 10;
-        qr.w = c.rect.w - 20;
-        qr.h = c.rect.h - 20;
+        qr.x = c.rect.x + 20;
+        qr.y = c.rect.y + 20;
+        qr.w = c.rect.w - 40;
+        qr.h = c.rect.h - 40;
         drawRect(render, red, qr);
     }
 }
@@ -152,47 +152,6 @@ int selectPawn(Case damier[NB_CASE_LG][NB_CASE_LG], int x_mouse, int y_mouse, bo
         return NEUTRAL_IND;
 }
 
-// Modif for queen
-
-bool changeQueenAllowed(pawn p, int lig, int col, Case damier[NB_CASE_LG][NB_CASE_LG])
-{
-    // Check if the move for the queen is allowed with the selected case
-    int dcol = col - p.col;
-    int dlig = lig - p.lig;
-    if (abs(dlig) == abs(dcol) && dcol != 0)
-    {
-        int add_lig = dlig / abs(dlig);
-        int add_col = dcol / abs(dcol);
-        for (int i = 1; i < abs(dcol) + 1; i++)
-        {
-            // printf("lig %d col %d\n", p.lig + add_lig * i, p.col + add_col * i);
-            if (!freeCase(damier[p.lig + add_lig * i][p.col + add_col * i]))
-                return false;
-        }
-        return true;
-    }
-    return false;
-}
-
-int queen_move(int x_mouse, int y_mouse, bool is_white, pawn pawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int ind)
-{
-    if (is_white)
-        y_mouse = LG_WINDOW - y_mouse;
-    int lig = y_mouse / LG_CASE;
-    int col = x_mouse / LG_CASE;
-    if (changeQueenAllowed(pawns[ind], lig, col, damier))
-    {
-        pawns[ind].col = col;
-        pawns[ind].lig = lig;
-        printf("lig %d col %d\n", lig, col);
-        // Incomplet
-        fflush(stdout);
-
-        return IND_CHANGE_ALLOWED;
-    }
-    else
-        return IND_PB;
-}
 
 // Init functions
 
@@ -345,10 +304,18 @@ int main(int argc, char *argv[])
     // Index 1 is for white pawns
     // Index 0 is for black pawns
 
-    // print_pawns(whites);
-    // print_pawns(blacks);
-    // print_damier(damier);
-    // printf("Lg case %d\n", LG_CASE);
+    // Mes conneries
+    // for (int i = 2; i < NB_PAWNS; i++)
+    // {
+    //     pawn p = allPawns[1][i];
+    //     allPawns[1][i].alive = false;
+    //     damier[p.lig][p.col].ind_pawn = -1;
+    //     p = allPawns[0][i];
+    //     allPawns[0][i].alive = false;
+    //     damier[p.lig][p.col].ind_pawn = -1;
+    // }
+    // change_pawn_place(allPawns[1], damier, 0, 4, 0);
+    // change_pawn_place(allPawns[1], damier, 1, 4, 2);
 
     // Init text
     text *txtMessage = malloc(sizeof(text));
@@ -457,7 +424,8 @@ int main(int argc, char *argv[])
                     if (ind_move == NEUTRAL_IND)
                         ind_move = selectPawn(damier, event.button.x, event.button.y, is_white);
                     else if (ind_move > -1 && allPawns[is_white][ind_move].queen)
-                        ind_move = queen_move(event.button.x, event.button.y, is_white, allPawns[is_white], damier, ind_move);
+                        ind_move = queenDepl(event.button.x / LG_CASE, event.button.y / LG_CASE, is_white, allPawns[is_white], 
+                        allPawns[!is_white], damier, ind_move);
                     if (ind_move == NEUTRAL_IND)
                         printf("No pawn selected");
                     // printf("ind_move %d", ind_move);
@@ -477,8 +445,9 @@ int main(int argc, char *argv[])
                         ind_move = eatPawn(allPawns[is_white], allPawns[!is_white], damier, ind_move);
                     else if (event.key.keysym.sym == SDLK_ESCAPE)
                         is_playing = false;
-                    else if (event.key.keysym.sym == SDLK_r) {
-                        printBestRafle(allPawns[is_white], allPawns[!is_white], damier, ind_move);
+                    else if (event.key.keysym.sym == SDLK_r)
+                    {
+                        // printBestRafle(allPawns[is_white], allPawns[!is_white], damier, ind_move);
                         ind_move = NEUTRAL_IND;
                     }
                     else
@@ -494,8 +463,6 @@ int main(int argc, char *argv[])
                 ind_move = NEUTRAL_IND;
                 change_ticks++;
                 prepareText(draw, txtMessage, "pawn moved");
-                if (becomeDame(allPawns[is_white][ind_move]))
-                    allPawns[is_white][ind_move].queen = true;
             }
             else if (ind_move == IND_PB)
             {

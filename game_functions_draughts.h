@@ -61,11 +61,7 @@ Rafle *createRafle();
 bool isEmpty(Rafle *rafle);
 void addRafle(Rafle *rafle, int ind_eat);
 void destroyRafle(Rafle *rafle);
-
-//void delete_liste(Liste *liste);
-int giveIndPawn(int lig, int col, pawn pawns[]);
-    //Entree : des indices de ligne et de colonne et le tableau de tous les pions
-    //Sortie : si la case est occupee, l'indice du pion qui l'occupe, sinon -1
+void change_pawn_place(pawn pawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int ind, int lig, int col);
 bool canEat(pawn pawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int ind, int i, int j, int add0, int add1);
     //entree : un tableau de pions pawns, un damier, l'index du pion qui mange, les coordonnees i et j dudit pion
     //des entiers add0 et add1 qui indiquent la direction dans laquelle manger
@@ -75,4 +71,4 @@ void print_pawns(pawn pawns[]);
 void print_damier(Case damier[NB_CASE_LG][NB_CASE_LG]);
 int pawn_move(pawn pawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int ind, bool gauche);
 int eatPawn(pawn pawns[], pawn Npawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int ind);
-bool becomeDame(pawn p);
+int queenDepl(int col, int lig, bool is_white, pawn pawns[], pawn Npawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int ind);
