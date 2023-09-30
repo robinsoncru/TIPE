@@ -1,9 +1,4 @@
-#include <stdio.h>
-#include "rafle_aux.h"
-#include "../game_functions_draughts.h"
-#define WHITE_CAMP 1
-#define BLACK_CAMP 2
-#define VOID_CAMP 0 //code les cases vides
+#include "rafle_calc.h"
 
 int nonLoggingChangeForEat(pawn pawns[], pawn Npawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int ind, int i, int j, int add0, int add1){
     //Version de changeForEat qui n'imprime pas les changements effectues
@@ -12,38 +7,37 @@ int nonLoggingChangeForEat(pawn pawns[], pawn Npawns[], Case damier[NB_CASE_LG][
     //Sortie : modifie le plateau de maniere a ce que le pion d'indice ind ait mange dans la direction indique
     //et retourne l'index du pion mange
 
-    int indVictim = giveIndPawn(i + add0, j + add1, Npawns);
+    int indVictim = damier[i + add0][j + add1].ind_pawn;
     //assert(ind > -1);
-    damier[i + add0][j + add1].occupied = 0;
-    damier[i][j].occupied = 0;
-    damier[i + 2 * add0][j + 2 * add1].occupied = pawns[ind].alive;
-    //printf("pawn which is eaten %d\n", giveIndPawn(i + add0, j + add1, Npawns));
+    damier[i][j].ind_pawn = VOID_INDEX;
+    damier[i + 2 * add0][j + 2 * add1].pawn_color = pawns[ind].color;
+    damier[i + 2 * add0][j + 2 * add1].ind_pawn = ind;
+    //printf("pawn which is eaten %d\n", damier[i + add0][j + add1].ind_pawn);
 
-    Npawns[indVictim].alive = 0; 
+    Npawns[indVictim].alive = false;
+    damier[i + add0][j + add1].ind_pawn = VOID_INDEX;
     pawns[ind].lig = i + 2 * add0;
     pawns[ind].col = j + 2 * add1;
     //printf("change allowed %d %d", i + 2 * add0, j + 2 * add1);
     return indVictim;
 }
 
-int ennemyCamp(int camp){
-    return (camp == WHITE_CAMP) ? BLACK_CAMP : WHITE_CAMP;
-}
-
-void spitOut(pawn pawns[], pawn Npawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int camp, int indEater, int iEater, int jEater, int indVictim, int add0, int add1){
+void spitOut(pawn pawns[], pawn Npawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int indEater, int iEater, int jEater, int indVictim, int add0, int add1){
     //fonction reciproque de changeForEat
-    //pour un pion d'index indEater, aux coordonnees (iEater, jEater) dans le camp camp, annule son action de manger indVictim
+    //pour un pion d'index indEater aux coordonnees (iEater, jEater), annule son action de manger indVictim
     //dans la direction add0 et add1
 
-    damier[iEater - add0][jEater - add1].occupied = ennemyCamp(camp);
-    damier[iEater][jEater].occupied = VOID_CAMP;
-    damier[iEater - 2 * add0][jEater - 2 * add1].occupied = camp;
+    damier[iEater - add0][jEater - add1].pawn_color = !pawns[indEater].color;
+    damier[iEater - add0][jEater - add1].ind_pawn = indVictim;
+    damier[iEater][jEater].ind_pawn = VOID_INDEX;
+    damier[iEater - 2 * add0][jEater - 2 * add1].pawn_color = pawns[indEater].color;
+    damier[iEater - 2 * add0][jEater - 2 * add1].ind_pawn = indEater;
 
-    Npawns[indVictim].alive = ennemyCamp(camp);
-    pawns[indEater].lig = iEater - 2 * add0;
-    pawns[indEater].col = jEater - 2 * add1;
+    Npawns[indVictim].alive = true;
     Npawns[indVictim].lig = iEater - add0;
     Npawns[indVictim].col = jEater - add1;
+    pawns[indEater].lig = iEater - 2 * add0;
+    pawns[indEater].col = jEater - 2 * add1;
 }
 
 int direction(int a){
@@ -100,7 +94,7 @@ void bestRafleAux(pawn pawns[],pawn Npawns[], Case damier[NB_CASE_LG][NB_CASE_LG
         addWithoutIncrRafle(res, oldI, oldJ);
     }
 
-    spitOut(pawns, Npawns, damier, pawns[indEater].alive, indEater, i, j, indVictim, add0, add1);
+    spitOut(pawns, Npawns, damier, indEater, i, j, indVictim, add0, add1);
 }
 
 Rafle* bestRafle(pawn pawns[],pawn Npawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int indSerialKiller){

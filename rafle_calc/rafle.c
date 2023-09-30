@@ -1,11 +1,12 @@
-#include <stdbool.h>
-#include <stdlib.h>
-#include <stdio.h>
+#include "rafle.h"
 
 // Operators for Rafle structure
+#ifndef COORD_STRUCT
+#define COORD_STRUCT
 typedef struct Coord{
     int i, j;
 } coord;
+#endif
 
 typedef struct Maillon
 {
