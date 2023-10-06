@@ -14,12 +14,9 @@
 #define LEFT_FORWARD 1
 #define RIGHT_BACK 2
 #define RIGHT_FORWARD 3
-#define VOID_INDEX -1 //index for empty cases
 
 // Game structure
 
-#ifndef PION_ET_PLATEAU
-#define PION_ET_PLATEAU
 typedef struct
 {
     bool pawn_color, color;
@@ -27,12 +24,24 @@ typedef struct
     SDL_Rect rect;
 } Case;
 
+typedef struct Rafle Rafle;
+struct Rafle
+{
+    int ind_eat;
+    Rafle *pt;
+};
+
+typedef struct Liste Liste;
+struct Liste
+{
+    Rafle *first;
+};
+
 typedef struct
 {
     int lig, col;
     bool alive, color, queen;
 } pawn;
-#endif /*PION_ET_PLATEAU*/
 
 /* NOTES :
 
@@ -48,8 +57,11 @@ Case.ind_pawn: -1 if no pawn
 bool freeCase(Case c);
 int NON(int b);
 bool becomeDame(pawn p);
-
-//void delete_liste(Liste *liste);
+Rafle *createRafle();
+bool isEmpty(Rafle *rafle);
+void addRafle(Rafle *rafle, int ind_eat);
+void destroyRafle(Rafle *rafle);
+void change_pawn_place(pawn pawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int ind, int lig, int col);
 bool canEat(pawn pawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int ind, int i, int j, int add0, int add1);
     //entree : un tableau de pions pawns, un damier, l'index du pion qui mange, les coordonnees i et j dudit pion
     //des entiers add0 et add1 qui indiquent la direction dans laquelle manger
@@ -59,4 +71,4 @@ void print_pawns(pawn pawns[]);
 void print_damier(Case damier[NB_CASE_LG][NB_CASE_LG]);
 int pawn_move(pawn pawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int ind, bool gauche);
 int eatPawn(pawn pawns[], pawn Npawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int ind);
-bool becomeDame(pawn p);
+int queenDepl(int col, int lig, bool is_white, pawn pawns[], pawn Npawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int ind);

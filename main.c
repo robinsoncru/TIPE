@@ -1,5 +1,9 @@
-#include "fundamental_functions/game_functions_draughts.h"
+// #include "fundamental_functions/game_functions_draughts.h"
 #include "fundamental_functions/interface_jeu_dames.h"
+
+/* For Victor G: 
+gcc main.c fundamental_functions/interface_jeu_dames.c fundamental_functions/game_functions_draughts.c $(sdl2-config --cflags --libs) -lSDL2_ttf -o dames.out
+*/
 
 // Run the game
 
@@ -12,6 +16,7 @@ int main(int argc, char *argv[])
     int ind_move = NEUTRAL_IND;
     bool is_white = true;
     pawn allPawns[2][NB_PAWNS];
+    Rafle *rafle = createRafle();
     int allMoves[4][2] = {{LEFT_FORWARD, LEFT_BACK}, {LEFT_BACK, LEFT_FORWARD}, {RIGHT_FORWARD, RIGHT_BACK}, {RIGHT_BACK, RIGHT_FORWARD}};
 
     init_damier(damier);
@@ -21,10 +26,18 @@ int main(int argc, char *argv[])
     // Index 1 is for white pawns
     // Index 0 is for black pawns
 
-    // print_pawns(whites);
-    // print_pawns(blacks);
-    // print_damier(damier);
-    // printf("Lg case %d\n", LG_CASE);
+    // Mes conneries
+    // for (int i = 2; i < NB_PAWNS; i++)
+    // {
+    //     pawn p = allPawns[1][i];
+    //     allPawns[1][i].alive = false;
+    //     damier[p.lig][p.col].ind_pawn = -1;
+    //     p = allPawns[0][i];
+    //     allPawns[0][i].alive = false;
+    //     damier[p.lig][p.col].ind_pawn = -1;
+    // }
+    // change_pawn_place(allPawns[1], damier, 0, 4, 0);
+    // change_pawn_place(allPawns[1], damier, 1, 4, 2);
 
     // Init text
     text *txtMessage = malloc(sizeof(text));
@@ -133,7 +146,8 @@ int main(int argc, char *argv[])
                     if (ind_move == NEUTRAL_IND)
                         ind_move = selectPawn(damier, event.button.x, event.button.y, is_white);
                     else if (ind_move > -1 && allPawns[is_white][ind_move].queen)
-                        ind_move = queen_move(event.button.x, event.button.y, is_white, allPawns[is_white], damier, ind_move);
+                        ind_move = queenDepl(event.button.x / LG_CASE, event.button.y / LG_CASE, is_white, allPawns[is_white], 
+                        allPawns[!is_white], damier, ind_move);
                     if (ind_move == NEUTRAL_IND)
                         printf("No pawn selected");
                     // printf("ind_move %d", ind_move);
@@ -153,8 +167,9 @@ int main(int argc, char *argv[])
                         ind_move = eatPawn(allPawns[is_white], allPawns[!is_white], damier, ind_move);
                     else if (event.key.keysym.sym == SDLK_ESCAPE)
                         is_playing = false;
-                    else if (event.key.keysym.sym == SDLK_r) {
-                        printBestRafle(allPawns[is_white], allPawns[!is_white], damier, ind_move);
+                    else if (event.key.keysym.sym == SDLK_r)
+                    {
+                        // printBestRafle(allPawns[is_white], allPawns[!is_white], damier, ind_move);
                         ind_move = NEUTRAL_IND;
                     }
                     else
@@ -170,8 +185,6 @@ int main(int argc, char *argv[])
                 ind_move = NEUTRAL_IND;
                 change_ticks++;
                 prepareText(draw, txtMessage, "pawn moved");
-                if (becomeDame(allPawns[is_white][ind_move]))
-                    allPawns[is_white][ind_move].queen = true;
             }
             else if (ind_move == IND_PB)
             {
@@ -190,6 +203,7 @@ int main(int argc, char *argv[])
 
 Quit:
     // Free the resources
+    destroyRafle(rafle);
     if (txtMessage->texture != NULL)
         SDL_DestroyTexture(txtMessage->texture);
     if (txtMessage->surface != NULL)

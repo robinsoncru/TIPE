@@ -1,7 +1,16 @@
-#include "interface_jeu_dames.h"
+#include <SDL2/SDL_ttf.h>
+#include "game_functions_draughts.h"
+// #include "rafle_calc/rafle_calc.h"
+// Window pmetre
+#define LG_WINDOW 640
+#define FRAME 16
+#define MAX_TICKS 20
+#define PREC LG_CASE
+#define LG_CASE (LG_WINDOW / NB_CASE_LG)
+// #define LEN 200
 
-#ifndef INTERFACE_STRUCT
-#define INTERFACE_STRUCT
+// Compile : gcc interface_jeu_dames.c game_functions_draughts.c rafle_calc/rafle_calc.c rafle_calc/rafle.c $(sdl2-config --cflags --libs) -lSDL2_ttf -o dames
+
 // Interface structure
 
 typedef struct
@@ -13,17 +22,15 @@ typedef struct
     // char string[LEN];
     SDL_Color color;
 } text;
-#endif //INTERFACE_STRUCT
+
 // Color constants
 
 SDL_Color orange = {255, 127, 40, 255};
 SDL_Color blue = {0, 0, 255, 255};
+SDL_Color red = {255, 0, 0, 255};
 SDL_Color green = {0, 255, 0, 255};
 SDL_Color white = {255, 255, 255, 255};
 SDL_Color black = {0, 0, 0, 255};
-SDL_Color red = {255, 0, 0, 255};
-
-
 
 // Aux functions
 
@@ -121,10 +128,10 @@ void drawLosange(SDL_Renderer *render, Case c, pawn p)
     if (p.queen)
     {
         SDL_Rect qr;
-        qr.x = c.rect.x + 10;
-        qr.y = c.rect.y + 10;
-        qr.w = c.rect.w - 20;
-        qr.h = c.rect.h - 20;
+        qr.x = c.rect.x + 20;
+        qr.y = c.rect.y + 20;
+        qr.w = c.rect.w - 40;
+        qr.h = c.rect.h - 40;
         drawRect(render, red, qr);
     }
 }
@@ -145,47 +152,6 @@ int selectPawn(Case damier[NB_CASE_LG][NB_CASE_LG], int x_mouse, int y_mouse, bo
         return NEUTRAL_IND;
 }
 
-// Modif for queen
-
-bool changeQueenAllowed(pawn p, int lig, int col, Case damier[NB_CASE_LG][NB_CASE_LG])
-{
-    // Check if the move for the queen is allowed with the selected case
-    int dcol = col - p.col;
-    int dlig = lig - p.lig;
-    if (abs(dlig) == abs(dcol) && dcol != 0)
-    {
-        int add_lig = dlig / abs(dlig);
-        int add_col = dcol / abs(dcol);
-        for (int i = 1; i < abs(dcol) + 1; i++)
-        {
-            // printf("lig %d col %d\n", p.lig + add_lig * i, p.col + add_col * i);
-            if (!freeCase(damier[p.lig + add_lig * i][p.col + add_col * i]))
-                return false;
-        }
-        return true;
-    }
-    return false;
-}
-
-int queen_move(int x_mouse, int y_mouse, bool is_white, pawn pawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int ind)
-{
-    if (is_white)
-        y_mouse = LG_WINDOW - y_mouse;
-    int lig = y_mouse / LG_CASE;
-    int col = x_mouse / LG_CASE;
-    if (changeQueenAllowed(pawns[ind], lig, col, damier))
-    {
-        pawns[ind].col = col;
-        pawns[ind].lig = lig;
-        printf("lig %d col %d\n", lig, col);
-        // Incomplet
-        fflush(stdout);
-
-        return IND_CHANGE_ALLOWED;
-    }
-    else
-        return IND_PB;
-}
 
 // Init functions
 
