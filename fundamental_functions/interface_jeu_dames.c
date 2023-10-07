@@ -152,7 +152,6 @@ int selectPawn(Case damier[NB_CASE_LG][NB_CASE_LG], int x_mouse, int y_mouse, bo
         return NEUTRAL_IND;
 }
 
-
 // Init functions
 
 void init_pawn(pawn pawns[], Case damier[NB_CASE_LG][NB_CASE_LG], bool is_white, int i, int init_place, int add)
@@ -171,6 +170,15 @@ void init_pawn(pawn pawns[], Case damier[NB_CASE_LG][NB_CASE_LG], bool is_white,
     }
     damier[pawns[i].lig][pawns[i].col].ind_pawn = i;
     pawns[i].color = is_white;
+}
+
+void pawn_default_value(pawn p, bool is_white)
+{
+    p.alive = false;
+    p.col = -1;
+    p.lig = -1;
+    p.queen = false;
+    p.color = is_white;
 }
 
 void init_pawns(pawn pawns[], Case damier[NB_CASE_LG][NB_CASE_LG], bool is_white)
@@ -203,6 +211,12 @@ void init_pawns(pawn pawns[], Case damier[NB_CASE_LG][NB_CASE_LG], bool is_white
         }
         pawns[i].alive = true;
         pawns[i].queen = false;
+    }
+
+    // Initialize the rest of pawns with default pmetre and the good color
+    for (int i = NB_PAWNS; i < 2 * NB_PAWNS; i++)
+    {
+        pawn_default_value(pawns[i], is_white);
     }
 }
 
@@ -252,7 +266,7 @@ void change_damier(Case damier[NB_CASE_LG][NB_CASE_LG], bool is_white)
     }
 }
 
-void display_damier(SDL_Renderer *render, Case damier[NB_CASE_LG][NB_CASE_LG], pawn allPawns[2][NB_PAWNS])
+void display_damier(SDL_Renderer *render, Case damier[NB_CASE_LG][NB_CASE_LG], pawn allPawns[2][2 * NB_PAWNS])
 {
     for (int i = 0; i < NB_CASE_LG; i++)
     {

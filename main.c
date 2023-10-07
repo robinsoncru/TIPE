@@ -1,7 +1,7 @@
 // #include "fundamental_functions/game_functions_draughts.h"
 #include "fundamental_functions/interface_jeu_dames.h"
 
-/* For Victor G: 
+/* For Victor G:
 gcc main.c fundamental_functions/interface_jeu_dames.c fundamental_functions/game_functions_draughts.c $(sdl2-config --cflags --libs) -lSDL2_ttf -o dames.out
 */
 
@@ -15,14 +15,17 @@ int main(int argc, char *argv[])
     Case damier[NB_CASE_LG][NB_CASE_LG];
     int ind_move = NEUTRAL_IND;
     bool is_white = true;
-    pawn allPawns[2][NB_PAWNS];
+    Game game;
+    // Crée une structure pour garder facilement en mémoire le nb de pions dans chaque camp (voir game_functions_draughts.h)
     Rafle *rafle = createRafle();
     int allMoves[4][2] = {{LEFT_FORWARD, LEFT_BACK}, {LEFT_BACK, LEFT_FORWARD}, {RIGHT_FORWARD, RIGHT_BACK}, {RIGHT_BACK, RIGHT_FORWARD}};
 
     init_damier(damier);
 
-    init_pawns(allPawns[1], damier, true);
-    init_pawns(allPawns[0], damier, false);
+    init_pawns(game.allPawns[1], damier, true);
+    init_pawns(game.allPawns[0], damier, false);
+    game.nb_pawns[is_white]=NB_PAWNS;
+    game.nb_pawns[!is_white]=NB_PAWNS;
     // Index 1 is for white pawns
     // Index 0 is for black pawns
 
@@ -53,6 +56,9 @@ int main(int argc, char *argv[])
     SDL_Window *window = NULL;
     SDL_Renderer *draw = NULL;
     SDL_Event event;
+
+    // Init aleat
+    srand(time(NULL));
 
     if (0 != SDL_Init(SDL_INIT_VIDEO))
     {
@@ -113,7 +119,7 @@ int main(int argc, char *argv[])
                 error_ticks = 0;
 
             // Draw the board in the screen
-            display_damier(draw, damier, allPawns);
+            display_damier(draw, damier, game.allPawns);
 
             // Create a transition effect
             if (change_ticks > 0)
@@ -145,9 +151,9 @@ int main(int argc, char *argv[])
                 case SDL_MOUSEBUTTONDOWN:
                     if (ind_move == NEUTRAL_IND)
                         ind_move = selectPawn(damier, event.button.x, event.button.y, is_white);
-                    else if (ind_move > -1 && allPawns[is_white][ind_move].queen)
-                        ind_move = queenDepl(event.button.x / LG_CASE, event.button.y / LG_CASE, is_white, allPawns[is_white], 
-                        allPawns[!is_white], damier, ind_move);
+                    else if (ind_move > -1 && game.allPawns[is_white][ind_move].queen)
+                        ind_move = queenDepl(event.button.x / LG_CASE, event.button.y / LG_CASE, is_white, game.allPawns[is_white],
+                                             game.allPawns[!is_white], damier, ind_move);
                     if (ind_move == NEUTRAL_IND)
                         printf("No pawn selected");
                     // printf("ind_move %d", ind_move);
@@ -155,16 +161,16 @@ int main(int argc, char *argv[])
 
                 case SDL_KEYUP:
                     if (event.key.keysym.sym == SDLK_LEFT)
-                        ind_move = pawn_move(allPawns[is_white], damier, ind_move, true);
+                        ind_move = pawn_move(game.allPawns[is_white], damier, ind_move, true);
                     else if (event.key.keysym.sym == SDLK_RIGHT)
-                        ind_move = pawn_move(allPawns[is_white], damier, ind_move, false);
+                        ind_move = pawn_move(game.allPawns[is_white], damier, ind_move, false);
                     else if (event.key.keysym.sym == SDLK_UP)
                         /*D'accord, je vois : si j'appuye sur haut, ça va manger le premier pion disponible selon l'ordre
                         horaire ou anti-horaire. Je suppose que c'est plus simple à coder mais j'admets etre dubitatif quand
                         au fait que les regles forcent un joueur a manger un pion en particulier. Ne serait-il pas plus judicieux de
                         laisser au joueur dont c'est le trait de choisir le pion qu'il mange ?
                         Quoique, il est vrai que la regle des rafles impose de choisir la meilleure, je suppose ce changement provisoire.*/
-                        ind_move = eatPawn(allPawns[is_white], allPawns[!is_white], damier, ind_move);
+                        ind_move = eatPawn(game.allPawns[is_white], game.allPawns[!is_white], damier, ind_move);
                     else if (event.key.keysym.sym == SDLK_ESCAPE)
                         is_playing = false;
                     else if (event.key.keysym.sym == SDLK_r)

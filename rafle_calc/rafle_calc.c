@@ -116,7 +116,7 @@ Rafle* bestRafle(pawn pawns[],pawn Npawns[], Case damier[NB_CASE_LG][NB_CASE_LG]
             bestRafleAux(pawns, Npawns, damier, indSerialKiller, deltaI, deltaJ, res, 1);
         }
     }
-    return res; //bah putain ! c'etait pas trivial ! mais je suis fier de moi !
+    return res; //bah putain ! c'etait pas trivial ! mais je suis fier de moi ! Tu peux (Victor G)
 }
 
 void printBestRafle(pawn pawns[],pawn Npawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int indSerialKiller){

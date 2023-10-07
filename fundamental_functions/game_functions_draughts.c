@@ -1,47 +1,4 @@
-#include <SDL2/SDL.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <stdbool.h>
-#include <assert.h>
-// Game pmetre
-#define NB_CASE_LG 8
-#define NB_CASE (NB_CASE_LG * NB_CASE_LG)
-#define NB_PAWNS (NB_CASE_LG)
-#define IND_PB -3
-#define IND_CHANGE_ALLOWED -2
-#define NEUTRAL_IND -1
-#define LEFT_BACK 0
-#define LEFT_FORWARD 1
-#define RIGHT_BACK 2
-#define RIGHT_FORWARD 3
-
-// Game structure
-
-typedef struct
-{
-    bool pawn_color, color;
-    int ind_pawn;
-    SDL_Rect rect;
-} Case;
-
-typedef struct Rafle Rafle;
-struct Rafle
-{
-    int ind_eat;
-    Rafle *pt;
-};
-
-typedef struct Liste Liste;
-struct Liste
-{
-    Rafle *first;
-};
-
-typedef struct
-{
-    int lig, col;
-    bool alive, color, queen;
-} pawn;
+#include "game_functions_draughts.h"
 
 // Logic functions
 
