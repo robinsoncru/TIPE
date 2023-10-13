@@ -1,8 +1,0 @@
-# Ignore the following files
-
-# Exe
-dames.out
-rafle_calc/test_struct_rafle
-quantum_rules
-.gitignore
-.git
