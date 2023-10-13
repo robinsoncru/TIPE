@@ -136,27 +136,27 @@ void drawLosange(SDL_Renderer *render, Case c, pawn p)
     }
 }
 
-int selectPawn(Case damier[NB_CASE_LG][NB_CASE_LG], int x_mouse, int y_mouse, bool is_white)
+int selectPawn(Game *g, int x_mouse, int y_mouse)
 {
     // printf("pt\n");
-    if (is_white)
+    if (g->is_white)
         y_mouse = LG_WINDOW - y_mouse;
     // printf("%d, %d\n", x_mouse, y_mouse);
     int lig = y_mouse / LG_CASE;
     int col = x_mouse / LG_CASE;
     printf("lig %d col %d\n", lig, col);
     fflush(stdout);
-    if (damier[lig][col].pawn_color == is_white)
-        return damier[lig][col].ind_pawn; // Return NEUTRAL_IND if no pawn in the case
+    if (g->damier[lig][col].pawn_color == g->is_white)
+        return g->damier[lig][col].ind_pawn; // Return NEUTRAL_IND if no pawn in the case
     else
         return NEUTRAL_IND;
 }
 
 // Init functions
 
-void init_pawn(pawn pawns[], Case damier[NB_CASE_LG][NB_CASE_LG], bool is_white, int i, int init_place, int add)
+void init_pawn(pawn pawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int i, int init_place, int add, bool init_is_white)
 {
-    if (is_white)
+    if (init_is_white)
     {
         pawns[i].lig = init_place;
         damier[init_place][add + 2 * i - init_place * NB_CASE_LG].pawn_color = true;
@@ -169,19 +169,19 @@ void init_pawn(pawn pawns[], Case damier[NB_CASE_LG][NB_CASE_LG], bool is_white,
         pawns[i].col = NON(add) + 2 * i - init_place * NB_CASE_LG;
     }
     damier[pawns[i].lig][pawns[i].col].ind_pawn = i;
-    pawns[i].color = is_white;
+    pawns[i].color = init_is_white;
 }
 
-void pawn_default_value(pawn p, bool is_white)
+void pawn_default_value(pawn p, bool init_is_white)
 {
     p.alive = false;
     p.col = -1;
     p.lig = -1;
     p.queen = false;
-    p.color = is_white;
+    p.color = init_is_white;
 }
 
-void init_pawns(pawn pawns[], Case damier[NB_CASE_LG][NB_CASE_LG], bool is_white)
+void init_pawns(Game *g, bool init_is_white)
 {
     int init_place = 0;
     for (int i = 0; i < NB_PAWNS; i++)
@@ -190,35 +190,36 @@ void init_pawns(pawn pawns[], Case damier[NB_CASE_LG][NB_CASE_LG], bool is_white
         if (init_place % 2 == 0)
         {
             if (2 * i - init_place * NB_CASE_LG < NB_CASE_LG)
-                init_pawn(pawns, damier, is_white, i, init_place, 0);
-            // init_pawn(pawns, damier, is_white, i, init_place+2, 0);
+                init_pawn(g->allPawns[init_is_white], g->damier, i, init_place, 0, init_is_white);
+            // init_pawn(pawns, g.damier, g.is_white, i, init_place+2, 0);
             else
             {
                 init_place++;
-                init_pawn(pawns, damier, is_white, i, init_place, 1);
-                // init_pawn(pawns, damier, is_white, i, init_place, 1);
+                init_pawn(g->allPawns[init_is_white], g->damier, i, init_place, 1, init_is_white);
+                // init_pawn(pawns, g.damier, g.is_white, i, init_place, 1);
             }
         }
         else
         {
             if (1 + 2 * i - init_place * NB_CASE_LG < NB_CASE_LG)
-                init_pawn(pawns, damier, is_white, i, init_place, 1);
+                init_pawn(g->allPawns[init_is_white], g->damier, i, init_place, 1, init_is_white);
             else
             {
                 init_place++;
-                init_pawn(pawns, damier, is_white, i, init_place, 0);
+                init_pawn(g->allPawns[init_is_white], g->damier, i, init_place, 0, init_is_white);
             }
         }
-        pawns[i].alive = true;
-        pawns[i].queen = false;
+        g->allPawns[init_is_white][i].alive = true;
+        g->allPawns[init_is_white][i].queen = false;
     }
 
     // Initialize the rest of pawns with default pmetre and the good color
     for (int i = NB_PAWNS; i < 2 * NB_PAWNS; i++)
     {
-        pawn_default_value(pawns[i], is_white);
+        pawn_default_value(g->allPawns[init_is_white][i], init_is_white);
     }
 }
+
 
 void init_damier(Case damier[NB_CASE_LG][NB_CASE_LG])
 {
@@ -240,17 +241,31 @@ void init_damier(Case damier[NB_CASE_LG][NB_CASE_LG])
     }
 }
 
+Game *create_game()
+{
+    Game *g = malloc(sizeof(Game));
+    g->ind_move = NEUTRAL_IND;
+    g->is_white = true;
+    init_damier(g->damier);
+
+    init_pawns(g, true);
+    init_pawns(g, false);
+    g->nb_pawns[true] = NB_PAWNS;
+    g->nb_pawns[false] = NB_PAWNS;
+    return g;
+}
+
 // Display functions
 
-void change_damier(Case damier[NB_CASE_LG][NB_CASE_LG], bool is_white)
+void change_damier(Game *g)
 {
-    if (is_white)
+    if (g->is_white)
     {
         for (int i = 0; i < NB_CASE_LG; i++)
         {
             for (int j = 0; j < NB_CASE_LG; j++)
             {
-                damier[i][j].rect.y = LG_CASE * (NB_CASE_LG - i - 1);
+                g->damier[i][j].rect.y = LG_CASE * (NB_CASE_LG - i - 1);
             }
         }
     }
@@ -260,26 +275,27 @@ void change_damier(Case damier[NB_CASE_LG][NB_CASE_LG], bool is_white)
         {
             for (int j = 0; j < NB_CASE_LG; j++)
             {
-                damier[i][j].rect.y = LG_CASE * i;
+                g->damier[i][j].rect.y = LG_CASE * i;
             }
         }
     }
 }
 
-void display_damier(SDL_Renderer *render, Case damier[NB_CASE_LG][NB_CASE_LG], pawn allPawns[2][2 * NB_PAWNS])
+
+
+void display_damier(SDL_Renderer *render, Game *g)
 {
     for (int i = 0; i < NB_CASE_LG; i++)
     {
         for (int j = 0; j < NB_CASE_LG; j++)
         {
-            if (damier[i][j].color)
-                drawRect(render, white, damier[i][j].rect);
+            if (g->damier[i][j].color)
+                drawRect(render, white, g->damier[i][j].rect);
             else
-                drawRect(render, black, damier[i][j].rect);
-            if (!freeCase(damier[i][j]))
-            {
-                drawLosange(render, damier[i][j], allPawns[damier[i][j].pawn_color][damier[i][j].ind_pawn]);
-            }
+                drawRect(render, black, g->damier[i][j].rect);
+
+            if (!freeCase(g->damier[i][j]))
+                drawLosange(render, g->damier[i][j], g->allPawns[g->damier[i][j].pawn_color][g->damier[i][j].ind_pawn]);
         }
     }
 }
@@ -296,3 +312,17 @@ void prepareText(SDL_Renderer *render, text *txt, char *string)
     txt->rect->w = texW;
     txt->rect->h = texH;
 }
+
+// Free the memory
+void free_game(Game *g)
+{ 
+    // Je le laisse pour plus tard si on a des tableaux dynamiques (Victor G)
+    free(g);
+}
+
+// Debug functions
+// void error()
+// {
+//     printf("check");
+//     fflush(stdout);
+// }

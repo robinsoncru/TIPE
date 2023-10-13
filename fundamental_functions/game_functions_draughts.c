@@ -40,47 +40,6 @@ bool inGame(int lig, int col)
     return (-1 < lig && lig < NB_CASE_LG && -1 < col && col < NB_CASE_LG);
 }
 
-// Operators for Rafle structure
-
-Rafle *createRafle()
-{
-    Rafle *rafle = malloc(sizeof(Rafle));
-    rafle->pt = NULL;
-    rafle->ind_eat = -1;
-    return rafle;
-}
-
-bool isEmpty(Rafle *rafle)
-{
-    return (rafle->pt == NULL);
-}
-
-void addRafle(Rafle *rafle, int ind_eat)
-{
-    rafle->ind_eat = ind_eat;
-    rafle->pt = createRafle();
-}
-
-void destroyRafle(Rafle *rafle)
-{
-    Rafle *rafle_a_sup;
-    while (!isEmpty(rafle))
-    {
-        rafle_a_sup = rafle;
-        rafle = rafle->pt;
-        free(rafle_a_sup);
-    }
-    rafle->ind_eat = -1;
-}
-
-// void printRafle(Rafle *rafle) {
-//     while (!isEmpty(rafle)) {
-//         rafle_a_sup = rafle;
-//         rafle = rafle->pt;
-//         free(rafle_a_sup);
-//     }
-// }
-
 // Aux functions
 
 void popPawn(pawn pawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int i, int j)
@@ -168,7 +127,7 @@ void print_damier(Case damier[NB_CASE_LG][NB_CASE_LG])
 
 // Play functions
 
-int pawn_move(pawn pawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int ind, bool gauche)
+int pawnMovePmetre(pawn pawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int ind, bool gauche)
 {
     if (ind > -1 && pawns[ind].alive && !pawns[ind].queen)
     {
@@ -227,7 +186,11 @@ int pawn_move(pawn pawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int ind, bool g
     return IND_PB;
 }
 
-int eatPawn(pawn pawns[], pawn Npawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int ind)
+void pawnMove(Game *g, bool gauche) {
+    g->ind_move = pawnMovePmetre(g->allPawns[g->is_white], g->damier, g->ind_move, gauche);
+}
+
+int eatPawnPmetre(pawn pawns[], pawn Npawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int ind)
 {
     // printf("call EatPawn \nind pawn which eats %d\n", ind);
     if (ind > -1 && pawns[ind].alive && !pawns[ind].queen)
@@ -255,6 +218,9 @@ int eatPawn(pawn pawns[], pawn Npawns[], Case damier[NB_CASE_LG][NB_CASE_LG], in
     return NEUTRAL_IND;
 }
 
+void eatPawn(Game *g) {
+    g->ind_move = eatPawnPmetre(g->allPawns[g->is_white], g->allPawns[!g->is_white], g->damier, g->ind_move);
+}
 // Queen functions
 
 bool MoveOrEatQueen(pawn pawns[], pawn Npawns[], int lig, int col, Case damier[NB_CASE_LG][NB_CASE_LG], int ind)
@@ -300,7 +266,7 @@ bool MoveOrEatQueen(pawn pawns[], pawn Npawns[], int lig, int col, Case damier[N
     return false; // No case was found
 }
 
-int queenDepl(int col, int lig, bool is_white, pawn pawns[], pawn Npawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int ind)
+int queenDeplPmetre(int col, int lig, bool is_white, pawn pawns[], pawn Npawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int ind)
 {
     if (is_white)
         lig = NB_CASE_LG - lig - 1;
@@ -308,4 +274,8 @@ int queenDepl(int col, int lig, bool is_white, pawn pawns[], pawn Npawns[], Case
         return IND_CHANGE_ALLOWED;
     else
         return IND_PB;
+}
+
+void queenDepl(int col, int lig, Game *g) {
+    g->ind_move = queenDeplPmetre(col, lig, g->is_white, g->allPawns[g->is_white], g->allPawns[!g->is_white], g->damier, g->ind_move);
 }

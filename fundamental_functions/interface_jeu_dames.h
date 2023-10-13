@@ -40,18 +40,23 @@ void drawRect(SDL_Renderer *render, SDL_Color color, const SDL_Rect rect);
 void drawRects(SDL_Renderer *render, SDL_Color color, const SDL_Rect rect[], int len);
 SDL_bool closeTo(int x0, int y0, int x1, int y1, int prec);
 void drawLosange(SDL_Renderer *render, Case c, pawn p);
-int selectPawn(Case damier[NB_CASE_LG][NB_CASE_LG], int x_mouse, int y_mouse, bool is_white);
+int selectPawn(Game *g, int x_mouse, int y_mouse);
 
 // Modif for queen
 bool changeQueenAllowed(pawn p, int lig, int col, Case damier[NB_CASE_LG][NB_CASE_LG]);
 int queen_move(int x_mouse, int y_mouse, bool is_white, pawn pawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int ind);
 
 // Init functions
-void init_pawn(pawn pawns[], Case damier[NB_CASE_LG][NB_CASE_LG], bool is_white, int i, int init_place, int add);
-void init_pawns(pawn pawns[], Case damier[NB_CASE_LG][NB_CASE_LG], bool is_white);
-void init_damier(Case damier[NB_CASE_LG][NB_CASE_LG]);
+void init_pawn(Game *g, int i, int init_place, int add);
+void init_pawns(Game *g);
+void init_damier(Game *g);
 
 // Display functions
-void change_damier(Case damier[NB_CASE_LG][NB_CASE_LG], bool is_white);
-void display_damier(SDL_Renderer *render, Case damier[NB_CASE_LG][NB_CASE_LG], pawn allPawns[2][2 * NB_PAWNS]);
+void init_damier(Game *g);
+void display_damier(SDL_Renderer *render, Game *g);
+void change_damier(Game *g);
 void prepareText(SDL_Renderer *render, text *txt, char *string);
+Game *create_game();
+
+void error();
+void free_game(Game *g);

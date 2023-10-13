@@ -2,45 +2,30 @@
 #include "fundamental_functions/interface_jeu_dames.h"
 
 /* For Victor G:
-gcc main.c fundamental_functions/interface_jeu_dames.c fundamental_functions/game_functions_draughts.c $(sdl2-config --cflags --libs) -lSDL2_ttf -o dames.out
-*/
-
-// Run the game
+gcc main.c fundamental_functions/interface_jeu_dames.c fundamental_functions/game_functions_draughts.c $(sdl2-config --cflags --libs) -lSDL2_ttf -o dames && ./dames */
+// Run the g
 
 int main(int argc, char *argv[])
 {
+    // is in Game
+    Game *g = create_game();
 
-    // Init game
-
-    Case damier[NB_CASE_LG][NB_CASE_LG];
-    int ind_move = NEUTRAL_IND;
-    bool is_white = true;
-    Game game;
-    // Crée une structure pour garder facilement en mémoire le nb de pions dans chaque camp (voir game_functions_draughts.h)
-    Rafle *rafle = createRafle();
     int allMoves[4][2] = {{LEFT_FORWARD, LEFT_BACK}, {LEFT_BACK, LEFT_FORWARD}, {RIGHT_FORWARD, RIGHT_BACK}, {RIGHT_BACK, RIGHT_FORWARD}};
-
-    init_damier(damier);
-
-    init_pawns(game.allPawns[1], damier, true);
-    init_pawns(game.allPawns[0], damier, false);
-    game.nb_pawns[is_white]=NB_PAWNS;
-    game.nb_pawns[!is_white]=NB_PAWNS;
     // Index 1 is for white pawns
     // Index 0 is for black pawns
 
     // Mes conneries
-    // for (int i = 2; i < NB_PAWNS; i++)
-    // {
-    //     pawn p = allPawns[1][i];
-    //     allPawns[1][i].alive = false;
-    //     damier[p.lig][p.col].ind_pawn = -1;
-    //     p = allPawns[0][i];
-    //     allPawns[0][i].alive = false;
-    //     damier[p.lig][p.col].ind_pawn = -1;
-    // }
-    // change_pawn_place(allPawns[1], damier, 0, 4, 0);
-    // change_pawn_place(allPawns[1], damier, 1, 4, 2);
+    for (int i = 2; i < NB_PAWNS; i++)
+    {
+        pawn p = g->allPawns[1][i];
+        g->allPawns[1][i].alive = false;
+        g->damier[p.lig][p.col].ind_pawn = -1;
+        p = g->allPawns[0][i];
+        g->allPawns[0][i].alive = false;
+        g->damier[p.lig][p.col].ind_pawn = -1;
+    }
+    change_pawn_place(g->allPawns[1], g->damier, 0, 4, 0);
+    change_pawn_place(g->allPawns[1], g->damier, 1, 4, 2);
 
     // Init text
     text *txtMessage = malloc(sizeof(text));
@@ -92,7 +77,7 @@ int main(int argc, char *argv[])
     Uint32 change_ticks = 0;
     Uint32 error_ticks = 0;
 
-    // Start the game
+    // Start the g
 
     while (is_playing)
     {
@@ -110,8 +95,8 @@ int main(int argc, char *argv[])
             // For each turn, need to change the screen's display
             if (change_ticks > MAX_TICKS)
             {
-                is_white = !is_white;
-                change_damier(damier, is_white);
+                g->is_white = !g->is_white;
+                change_damier(g);
                 change_ticks = 0;
             }
 
@@ -119,7 +104,7 @@ int main(int argc, char *argv[])
                 error_ticks = 0;
 
             // Draw the board in the screen
-            display_damier(draw, damier, game.allPawns);
+            display_damier(draw, g);
 
             // Create a transition effect
             if (change_ticks > 0)
@@ -149,54 +134,53 @@ int main(int argc, char *argv[])
                     break;
 
                 case SDL_MOUSEBUTTONDOWN:
-                    if (ind_move == NEUTRAL_IND)
-                        ind_move = selectPawn(damier, event.button.x, event.button.y, is_white);
-                    else if (ind_move > -1 && game.allPawns[is_white][ind_move].queen)
-                        ind_move = queenDepl(event.button.x / LG_CASE, event.button.y / LG_CASE, is_white, game.allPawns[is_white],
-                                             game.allPawns[!is_white], damier, ind_move);
-                    if (ind_move == NEUTRAL_IND)
+                    if (g->ind_move == NEUTRAL_IND)
+                        g->ind_move = selectPawn(g, event.button.x, event.button.y);
+                    else if (g->ind_move > -1 && g->allPawns[g->is_white][g->ind_move].queen)
+                        queenDepl(event.button.x / LG_CASE, event.button.y / LG_CASE, g);
+                    if (g->ind_move == NEUTRAL_IND)
                         printf("No pawn selected");
-                    // printf("ind_move %d", ind_move);
+                    // printf("g.ind_move %d", g.ind_move);
                     break;
 
                 case SDL_KEYUP:
                     if (event.key.keysym.sym == SDLK_LEFT)
-                        ind_move = pawn_move(game.allPawns[is_white], damier, ind_move, true);
+                        pawnMove(g, true);
                     else if (event.key.keysym.sym == SDLK_RIGHT)
-                        ind_move = pawn_move(game.allPawns[is_white], damier, ind_move, false);
+                        pawnMove(g, false);
                     else if (event.key.keysym.sym == SDLK_UP)
                         /*D'accord, je vois : si j'appuye sur haut, ça va manger le premier pion disponible selon l'ordre
                         horaire ou anti-horaire. Je suppose que c'est plus simple à coder mais j'admets etre dubitatif quand
                         au fait que les regles forcent un joueur a manger un pion en particulier. Ne serait-il pas plus judicieux de
                         laisser au joueur dont c'est le trait de choisir le pion qu'il mange ?
                         Quoique, il est vrai que la regle des rafles impose de choisir la meilleure, je suppose ce changement provisoire.*/
-                        ind_move = eatPawn(game.allPawns[is_white], game.allPawns[!is_white], damier, ind_move);
+                        eatPawn(g);
                     else if (event.key.keysym.sym == SDLK_ESCAPE)
                         is_playing = false;
                     else if (event.key.keysym.sym == SDLK_r)
                     {
-                        // printBestRafle(allPawns[is_white], allPawns[!is_white], damier, ind_move);
-                        ind_move = NEUTRAL_IND;
+                        // printBestRafle(allPawns[g.is_white], allPawns[!g.is_white], g.damier, g.ind_move);
+                        g->ind_move = NEUTRAL_IND;
                     }
                     else
-                        ind_move = NEUTRAL_IND;
+                        g->ind_move = NEUTRAL_IND;
                     break;
                 }
             }
 
             // Check if the move is allowed
 
-            if (ind_move == IND_CHANGE_ALLOWED)
+            if (g->ind_move == IND_CHANGE_ALLOWED)
             {
-                ind_move = NEUTRAL_IND;
+                g->ind_move = NEUTRAL_IND;
                 change_ticks++;
                 prepareText(draw, txtMessage, "pawn moved");
             }
-            else if (ind_move == IND_PB)
+            else if (g->ind_move == IND_PB)
             {
                 // printf("No pawn moved");
                 prepareText(draw, txtMessage, "NO pawn moved");
-                ind_move = NEUTRAL_IND;
+                g->ind_move = NEUTRAL_IND;
                 error_ticks++;
             }
         }
@@ -205,11 +189,10 @@ int main(int argc, char *argv[])
 
     statut = EXIT_SUCCESS;
     // printf("change \n");
-    // print_damier(damier);
+    // print_damier(g.damier);
 
 Quit:
     // Free the resources
-    destroyRafle(rafle);
     if (txtMessage->texture != NULL)
         SDL_DestroyTexture(txtMessage->texture);
     if (txtMessage->surface != NULL)
@@ -222,5 +205,6 @@ Quit:
         SDL_DestroyWindow(window);
     TTF_Quit();
     SDL_Quit();
+    free_game(g);
     return statut;
 }
