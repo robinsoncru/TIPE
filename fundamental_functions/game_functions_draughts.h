@@ -7,13 +7,21 @@
 #define NB_CASE_LG 8
 #define NB_CASE (NB_CASE_LG * NB_CASE_LG)
 #define NB_PAWNS (NB_CASE_LG)
-#define IND_PB -3
-#define IND_CHANGE_ALLOWED -2
+
 #define NEUTRAL_IND -1
+#define IND_CHANGE_ALLOWED -2
+#define IND_PB -3
+#define IND_NOTHING_HAPPENED -4
+#define IND_BAD_CHOICE -5
+#define IND_GLORY_QUEEN -6
+
 #define LEFT_BACK 0
 #define LEFT_FORWARD 1
 #define RIGHT_BACK 2
 #define RIGHT_FORWARD 3
+
+// #define MY_GUARD 1
+// // En evaluant dans les files incluant ce file, on évite la double inclusion
 
 // Game structure
 
@@ -39,7 +47,8 @@ struct Liste
 
 typedef struct
 {
-    int lig, col;
+    int lig, col, friend;
+    /* friend: Lien d'amitie avec un autre pion, -1 if no friend */
     bool alive, color, queen;
 } pawn;
 
@@ -55,6 +64,8 @@ typedef struct
     Indeed, we need a free indice to create a new ennemy pawn, not necessary the first free indice */
     int ind_move;
     bool is_white;
+
+    bool declare_amis, declare_ennemi, reverse_move;
 
 } Game;
 
