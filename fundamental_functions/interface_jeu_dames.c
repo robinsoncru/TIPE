@@ -74,6 +74,13 @@ void drawRects(SDL_Renderer *render, SDL_Color color, const SDL_Rect rect[], int
     SDL_RenderFillRects(render, rect, len);
 }
 
+SDL_bool closeTo(int x0, int y0, int x1, int y1, int prec)
+{
+    SDL_Point pt = {x0, y0};
+    SDL_Rect rect = {x1 - (prec / 2), y1 - (prec / 2), prec, prec};
+    return SDL_PointInRect(&pt, &rect);
+}
+
 void drawLosange(SDL_Renderer *render, Case c, pawn p)
 {
 
@@ -129,7 +136,7 @@ void drawLosange(SDL_Renderer *render, Case c, pawn p)
     }
 }
 
-void selectPawn(Game *g, int x_mouse, int y_mouse)
+int selectPawn(Game *g, int x_mouse, int y_mouse)
 {
     // printf("pt\n");
     if (g->is_white)
@@ -140,9 +147,9 @@ void selectPawn(Game *g, int x_mouse, int y_mouse)
     printf("lig %d col %d\n", lig, col);
     fflush(stdout);
     if (g->damier[lig][col].pawn_color == g->is_white)
-        g->ind_move = g->damier[lig][col].ind_pawn; // Return NEUTRAL_IND if no pawn in the case
+        return g->damier[lig][col].ind_pawn; // Return NEUTRAL_IND if no pawn in the case
     else
-        g->ind_move = NEUTRAL_IND;
+        return NEUTRAL_IND;
 }
 
 // Init functions
@@ -172,7 +179,6 @@ void pawn_default_value(pawn p, bool init_is_white)
     p.lig = -1;
     p.queen = false;
     p.color = init_is_white;
-    p.friend = -1;
 }
 
 void init_pawns(Game *g, bool init_is_white)
@@ -205,7 +211,6 @@ void init_pawns(Game *g, bool init_is_white)
         }
         g->allPawns[init_is_white][i].alive = true;
         g->allPawns[init_is_white][i].queen = false;
-        g->allPawns[init_is_white][i].friend = -1;
     }
 
     // Initialize the rest of pawns with default pmetre and the good color
@@ -247,10 +252,6 @@ Game *create_game()
     init_pawns(g, false);
     g->nb_pawns[true] = NB_PAWNS;
     g->nb_pawns[false] = NB_PAWNS;
-
-    g->declare_amis = false;
-    g->declare_ennemi = false;
-    g->reverse_move = false;
     return g;
 }
 
@@ -310,12 +311,6 @@ void prepareText(SDL_Renderer *render, text *txt, char *string)
     txt->rect->y = (LG_WINDOW - texH) / 2;
     txt->rect->w = texW;
     txt->rect->h = texH;
-}
-
-void printAndTurn(SDL_Renderer *render, text *txt, char *string, Game *g) {
-    // Display a message for the player and change the turn for the other player
-    prepareText(render, txt, string);
-    g->ind_move = NEUTRAL_IND;
 }
 
 // Free the memory

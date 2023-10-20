@@ -9,7 +9,6 @@
 files_array=("main.c"
              "fundamental_functions/interface_jeu_dames.c"
              "fundamental_functions/game_functions_draughts.c"
-             "quantum_rules/quantum_functions.c"
              "rafle_calc/rafle_calc.c"
              "rafle_calc/rafle.c")
 

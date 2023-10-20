@@ -1,12 +1,13 @@
+// #include "fundamental_functions/game_functions_draughts.h"
 #include "fundamental_functions/interface_jeu_dames.h"
 
 /* For Victor G:
-gcc main.c fundamental_functions/interface_jeu_dames.c fundamental_functions/game_functions_draughts.c quantum_rules/quantum_functions.c $(sdl2-config --cflags --libs) -lSDL2_ttf -o dames && ./dames
-Run the game */
+gcc main.c fundamental_functions/interface_jeu_dames.c fundamental_functions/game_functions_draughts.c $(sdl2-config --cflags --libs) -lSDL2_ttf -o dames && ./dames */
+// Run the g
 
 int main(int argc, char *argv[])
 {
-    // Init the Game
+    // is in Game
     Game *g = create_game();
 
     int allMoves[4][2] = {{LEFT_FORWARD, LEFT_BACK}, {LEFT_BACK, LEFT_FORWARD}, {RIGHT_FORWARD, RIGHT_BACK}, {RIGHT_BACK, RIGHT_FORWARD}};
@@ -14,17 +15,17 @@ int main(int argc, char *argv[])
     // Index 0 is for black pawns
 
     // Mes conneries
-    // for (int i = 2; i < NB_PAWNS; i++)
-    // {
-    //     pawn p = g->allPawns[1][i];
-    //     g->allPawns[1][i].alive = false;
-    //     g->damier[p.lig][p.col].ind_pawn = -1;
-    //     p = g->allPawns[0][i];
-    //     g->allPawns[0][i].alive = false;
-    //     g->damier[p.lig][p.col].ind_pawn = -1;
-    // }
-    // change_pawn_place(g->allPawns[1], g->damier, 0, 4, 0);
-    // change_pawn_place(g->allPawns[1], g->damier, 1, 4, 2);
+    for (int i = 2; i < NB_PAWNS; i++)
+    {
+        pawn p = g->allPawns[1][i];
+        g->allPawns[1][i].alive = false;
+        g->damier[p.lig][p.col].ind_pawn = -1;
+        p = g->allPawns[0][i];
+        g->allPawns[0][i].alive = false;
+        g->damier[p.lig][p.col].ind_pawn = -1;
+    }
+    change_pawn_place(g->allPawns[1], g->damier, 0, 4, 0);
+    change_pawn_place(g->allPawns[1], g->damier, 1, 4, 2);
 
     // Init text
     text *txtMessage = malloc(sizeof(text));
@@ -76,7 +77,7 @@ int main(int argc, char *argv[])
     Uint32 change_ticks = 0;
     Uint32 error_ticks = 0;
 
-    // Start the game
+    // Start the g
 
     while (is_playing)
     {
@@ -128,32 +129,24 @@ int main(int argc, char *argv[])
             {
                 switch (event.type)
                 {
-
-                /* Exit the game */
                 case SDL_QUIT:
                     is_playing = false;
                     break;
 
-                /* Select with the mouse */
                 case SDL_MOUSEBUTTONDOWN:
                     if (g->ind_move == NEUTRAL_IND)
-                        selectPawn(g, event.button.x, event.button.y);
+                        g->ind_move = selectPawn(g, event.button.x, event.button.y);
                     else if (g->ind_move > -1 && g->allPawns[g->is_white][g->ind_move].queen)
                         queenDepl(event.button.x / LG_CASE, event.button.y / LG_CASE, g);
-                    else if (g->ind_move > -1)
-                        lienAmitie(event.button.x / LG_CASE, event.button.y / LG_CASE, g);
                     if (g->ind_move == NEUTRAL_IND)
                         printf("No pawn selected");
                     // printf("g.ind_move %d", g.ind_move);
                     break;
 
-                /* Do actions with the buttons */
                 case SDL_KEYUP:
                     if (event.key.keysym.sym == SDLK_LEFT)
-                        /* Move pawn to left */
                         pawnMove(g, true);
                     else if (event.key.keysym.sym == SDLK_RIGHT)
-                        /* Move pawn to right */
                         pawnMove(g, false);
                     else if (event.key.keysym.sym == SDLK_UP)
                         /*D'accord, je vois : si j'appuye sur haut, ça va manger le premier pion disponible selon l'ordre
@@ -163,21 +156,12 @@ int main(int argc, char *argv[])
                         Quoique, il est vrai que la regle des rafles impose de choisir la meilleure, je suppose ce changement provisoire.*/
                         eatPawn(g);
                     else if (event.key.keysym.sym == SDLK_ESCAPE)
-                        /* Exit the game */
                         is_playing = false;
                     else if (event.key.keysym.sym == SDLK_r)
                     {
-                        /* For the ralfes */
                         // printBestRafle(allPawns[g.is_white], allPawns[!g.is_white], g.damier, g.ind_move);
                         g->ind_move = NEUTRAL_IND;
                     }
-                    else if (event.key.keysym.sym == SDLK_p)
-                    {
-                        /* Promote the selected pawn */
-                        promotion(g);
-                    }
-                    else if (event.key.keysym.sym == SDLK_f)
-                        g->declare_amis = true;
                     else
                         g->ind_move = NEUTRAL_IND;
                     break;
@@ -188,29 +172,16 @@ int main(int argc, char *argv[])
 
             if (g->ind_move == IND_CHANGE_ALLOWED)
             {
-                printAndTurn(draw, txtMessage, "pawn moved", g);
+                g->ind_move = NEUTRAL_IND;
                 change_ticks++;
+                prepareText(draw, txtMessage, "pawn moved");
             }
             else if (g->ind_move == IND_PB)
             {
                 // printf("No pawn moved");
-                printAndTurn(draw, txtMessage, "NO pawn moved", g);
+                prepareText(draw, txtMessage, "NO pawn moved");
+                g->ind_move = NEUTRAL_IND;
                 error_ticks++;
-            }
-            else if (g->ind_move == IND_NOTHING_HAPPENED)
-            {
-                printAndTurn(draw, txtMessage, "You have nothing", g);
-                change_ticks++;
-            }
-            else if (g->ind_move == IND_BAD_CHOICE)
-            {
-                printAndTurn(draw, txtMessage, "ARG fuck !", g);
-                change_ticks++;
-            }
-            else if (g->ind_move == IND_GLORY_QUEEN)
-            {
-                printAndTurn(draw, txtMessage, "Yes putain !!!", g);
-                change_ticks++;
             }
         }
         // is_playing=false;
@@ -235,6 +206,5 @@ Quit:
     TTF_Quit();
     SDL_Quit();
     free_game(g);
-    free(txtMessage);
     return statut;
 }
