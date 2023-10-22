@@ -12,7 +12,10 @@ int main(int argc, char *argv[])
     int ind_move = NEUTRAL_IND;
     bool is_white = true;
     pawn allPawns[2][NB_PAWNS];
-    int allMoves[4][2] = {{LEFT_FORWARD, LEFT_BACK}, {LEFT_BACK, LEFT_FORWARD}, {RIGHT_FORWARD, RIGHT_BACK}, {RIGHT_BACK, RIGHT_FORWARD}};
+    int allMoves[4][2] = {{LEFT_FORWARD, LEFT_BACK},
+                        {LEFT_BACK, LEFT_FORWARD},
+                        {RIGHT_FORWARD, RIGHT_BACK},
+                        {RIGHT_BACK, RIGHT_FORWARD}};
 
     init_damier(damier);
 
