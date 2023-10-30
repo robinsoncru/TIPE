@@ -1,5 +1,7 @@
 #include <SDL2/SDL_ttf.h>
 #include "game_functions_draughts.h"
+#include "../quantum_rules/quantum_functions.h"
+// #include "../rafle_calc/rafle_calc.h"
 // Window pmetre
 #define LG_WINDOW 640
 #define FRAME 16
@@ -22,15 +24,14 @@ typedef struct
     // char string[LEN];
     SDL_Color color;
 } text;
-#endif //INTERFACE_STRUCT
-//Color constants
+#endif // INTERFACE_STRUCT
+// Color constants
 extern SDL_Color orange;
 extern SDL_Color blue;
 extern SDL_Color green;
 extern SDL_Color white;
 extern SDL_Color black;
 extern SDL_Color red;
-
 
 // Geometric functions
 void drawPoint(SDL_Renderer *render, SDL_Color color, int x, int y);
@@ -52,5 +53,5 @@ void init_damier(Case damier[NB_CASE_LG][NB_CASE_LG]);
 
 // Display functions
 void change_damier(Case damier[NB_CASE_LG][NB_CASE_LG], bool is_white);
-void display_damier(SDL_Renderer *render, Case damier[NB_CASE_LG][NB_CASE_LG], pawn allPawns[2][NB_PAWNS]);
+void display_damier(SDL_Renderer *render, Case damier[NB_CASE_LG][NB_CASE_LG], pawn allPawns[2][2 * NB_PAWNS]);
 void prepareText(SDL_Renderer *render, text *txt, char *string);

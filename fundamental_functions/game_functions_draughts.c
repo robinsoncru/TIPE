@@ -1,28 +1,10 @@
 #include "game_functions_draughts.h"
 
-// Game structure
-
-#ifndef PION_ET_PLATEAU
-#define PION_ET_PLATEAU
-typedef struct
-{
-    bool pawn_color, color;
-    int ind_pawn;
-    SDL_Rect rect;
-} Case;
-
-typedef struct
-{
-    int lig, col;
-    bool alive, color, queen;
-} pawn;
-#endif /*PION_ET_PLATEAU*/
-
 // Logic functions
 
 bool freeCase(Case c)
 {
-    return c.ind_pawn == VOID_INDEX;
+    return c.ind_pawn == -1;
 }
 
 int NON(int b)
@@ -52,7 +34,87 @@ bool becomeDame(pawn p)
     return false;
 }
 
+bool inGame(int lig, int col)
+{
+    // Check if a case is in the game
+    return (-1 < lig && lig < NB_CASE_LG && -1 < col && col < NB_CASE_LG);
+}
+
+// Operators for Rafle structure
+
+Rafle *createRafle()
+{
+    Rafle *rafle = malloc(sizeof(Rafle));
+    rafle->pt = NULL;
+    rafle->ind_eat = -1;
+    return rafle;
+}
+
+bool isEmpty(Rafle *rafle)
+{
+    return (rafle->pt == NULL);
+}
+
+void addRafle(Rafle *rafle, int ind_eat)
+{
+    rafle->ind_eat = ind_eat;
+    rafle->pt = createRafle();
+}
+
+void destroyRafle(Rafle *rafle)
+{
+    Rafle *rafle_a_sup;
+    while (!isEmpty(rafle))
+    {
+        rafle_a_sup = rafle;
+        rafle = rafle->pt;
+        free(rafle_a_sup);
+    }
+    rafle->ind_eat = -1;
+}
+
+// void printRafle(Rafle *rafle) {
+//     while (!isEmpty(rafle)) {
+//         rafle_a_sup = rafle;
+//         rafle = rafle->pt;
+//         free(rafle_a_sup);
+//     }
+// }
+
 // Aux functions
+
+void popPawn(pawn pawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int i, int j)
+{
+    // We are sur about the pawn we delete (no check control so be careful)
+    if (!freeCase(damier[i][j]))
+    {
+        pawns[damier[i][j].ind_pawn].alive = false;
+        damier[i][j].ind_pawn = -1;
+    }
+}
+
+void change_pawn_place(pawn pawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int ind, int lig, int col)
+{
+    /* Put the pawn in a specific case (lig, col). Useful for queen_move and can be used by us to go faster for checks : place
+    pawns where we want */
+    damier[pawns[ind].lig][pawns[ind].col].ind_pawn = -1;
+    pawns[ind].lig = lig;
+    pawns[ind].col = col;
+    damier[lig][col].ind_pawn = ind;
+    damier[lig][col].pawn_color = pawns[ind].color;
+}
+
+/* May be useful later */
+// Case forbiddenCase()
+// {
+//     /* Return a case that is a case error. When a function return this case, that mean it doesn't return any case (it doesn't find
+//     an allowed case...) */
+//     Case c;
+//     c.color = false;
+//     c.ind_pawn = IND_PB; // That's the important thing
+//     c.pawn_color = false;
+//     return c;
+// }
 
 bool canEat(pawn pawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int ind, int i, int j, int add0, int add1)
 {
@@ -64,17 +126,22 @@ bool canEat(pawn pawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int ind, int i, i
 int changeForEat(pawn pawns[], pawn Npawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int ind, int i, int j, int add0, int add1)
 {
     // For eatPawn
-    assert(ind > -1);
-    damier[i][j].ind_pawn = -1;
-    damier[i + 2 * add0][j + 2 * add1].pawn_color = pawns[ind].color;
-    damier[i + 2 * add0][j + 2 * add1].ind_pawn = ind;
-    printf("pawn which is eaten %d\n", damier[i + add0][j + add1].ind_pawn);
+    assert(ind > -1 && pawns[ind].alive && !pawns[ind].queen);
+    // printf("pawn which is eaten %d\n", damier[i + add0][j + add1].ind_pawn);
 
-    Npawns[damier[i + add0][j + add1].ind_pawn].alive = false;
-    damier[i + add0][j + add1].ind_pawn = -1;
-    pawns[ind].lig = i + 2 * add0;
-    pawns[ind].col = j + 2 * add1;
-    printf("change allowed %d %d", i + 2 * add0, j + 2 * add1);
+    change_pawn_place(pawns, damier, ind, i + 2 * add0, j + 2 * add1);
+    popPawn(Npawns, damier, i + add0, j + add1);
+    // printf("change allowed %d %d", i + 2 * add0, j + 2 * add1);
+
+    // Check if the pawn moved become a queen
+
+    if (ind > -1 && becomeDame(pawns[ind]))
+    {
+        pawns[ind].queen = true;
+        // printf("Become dame %d", ind);
+        // fflush(stdout);
+    }
+
     return IND_CHANGE_ALLOWED;
 }
 
@@ -125,8 +192,7 @@ void print_damier(Case damier[NB_CASE_LG][NB_CASE_LG])
 
 int pawn_move(pawn pawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int ind, bool gauche)
 {
-    printf("call pawn_move\n");
-    if (ind > -1 && pawns[ind].alive)
+    if (ind > -1 && pawns[ind].alive && !pawns[ind].queen)
     {
         int i = pawns[ind].lig;
         int j = pawns[ind].col;
@@ -135,19 +201,15 @@ int pawn_move(pawn pawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int ind, bool g
         {
             if (gauche && j > 0 && freeCase(damier[i + 1][j - 1]))
             {
-                damier[i + 1][j - 1].pawn_color = true;
-                pawns[ind].lig = i + 1;
-                pawns[ind].col = j - 1;
+                change_pawn_place(pawns, damier, ind, i + 1, j - 1);
             }
             else if (!gauche && j < NB_CASE_LG - 1 && freeCase(damier[i + 1][j + 1]))
             {
-                damier[i + 1][j + 1].pawn_color = true;
-                pawns[ind].lig = i + 1;
-                pawns[ind].col = j + 1;
+                change_pawn_place(pawns, damier, ind, i + 1, j + 1);
             }
             else
             {
-                printf("white ind pb occ\n");
+                // printf("white ind pb occ\n");
                 return IND_PB;
             }
         }
@@ -155,51 +217,48 @@ int pawn_move(pawn pawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int ind, bool g
         {
             if (gauche && j > 0 && freeCase(damier[i - 1][j - 1]))
             {
-                damier[i - 1][j - 1].pawn_color = false;
-                pawns[ind].lig = i - 1;
-                pawns[ind].col = j - 1;
+                change_pawn_place(pawns, damier, ind, i - 1, j - 1);
             }
             else if (!gauche && j < NB_CASE_LG - 1 && freeCase(damier[i - 1][j + 1]))
             {
-                damier[i - 1][j + 1].pawn_color = false;
-                pawns[ind].lig = i - 1;
-                pawns[ind].col = j + 1;
+                change_pawn_place(pawns, damier, ind, i - 1, j + 1);
             }
-
-            // printf("ind %d\n", ind);
-            // printf("%d %d\n", i, j);
-            // printf("%d %d\n", pawns[ind].lig, pawns[ind].col);
 
             else
             {
-                printf("black idn pb occ\n");
+                // printf("black idn pb occ\n");
                 return IND_PB;
             }
         }
         else
         {
-            printf("color pb\n");
+            // printf("color pb\n");
             return IND_PB;
         }
-        damier[i][j].ind_pawn = -1;
-        damier[pawns[ind].lig][pawns[ind].col].ind_pawn = ind;
+
+        // Check if the pawn moved become a queen
+
+        if (ind > -1 && becomeDame(pawns[ind]))
+        {
+            pawns[ind].queen = true;
+        }
+
         return IND_CHANGE_ALLOWED;
     }
-    printf("pawn alive %d or ind = %d", pawns[ind].alive, ind);
+    // printf("pawn alive %d or ind = %d", pawns[ind].alive, ind);
     return IND_PB;
 }
 
 int eatPawn(pawn pawns[], pawn Npawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int ind)
 {
-    printf("call EatPawn \nind pawn which eats %d\n", ind);
-    if (ind > -1)
+    // printf("call EatPawn \nind pawn which eats %d\n", ind);
+    if (ind > -1 && pawns[ind].alive && !pawns[ind].queen)
     {
         int i = pawns[ind].lig;
         int j = pawns[ind].col;
-        // printf("%d %d move %d NcanEat %d", i, j, move_direction, canEat(pawns, damier, ind, i, j, 1, -1));
-        printf("%d %d", i, j);
+        // printf("%d %d", i, j);
 
-        /*wtf, il teste toutes les directions dans lequel le pion peut manger ?*/
+        /*wtf, il teste toutes les directions dans lequel le pion peut manger ? OUI */
         if (i > 1 && j > 1 && canEat(pawns, damier, ind, i, j, -1, -1))
             return changeForEat(pawns, Npawns, damier, ind, i, j, -1, -1);
         else if (i < NB_CASE_LG - 2 && j > 1 && canEat(pawns, damier, ind, i, j, 1, -1))
@@ -210,10 +269,65 @@ int eatPawn(pawn pawns[], pawn Npawns[], Case damier[NB_CASE_LG][NB_CASE_LG], in
             return changeForEat(pawns, Npawns, damier, ind, i, j, 1, 1);
         else
         {
-            printf("no condition satisfied");
+            // printf("no condition satisfied");
             return IND_PB;
         }
     }
-    printf("ind = -1\n");
+    // printf("ind = -1\n");
     return NEUTRAL_IND;
+}
+
+// Queen functions
+
+bool MoveOrEatQueen(pawn pawns[], pawn Npawns[], int lig, int col, Case damier[NB_CASE_LG][NB_CASE_LG], int ind)
+{
+    // Check if the move of the queen is possible and move the queen or eat the next pawn in her path
+    pawn p = pawns[ind];
+    int dcol = col - p.col;
+    int dlig = lig - p.lig;
+    Case c;
+    if (abs(dlig) == abs(dcol) && dcol != 0)
+    {
+        int add_lig = dlig / abs(dlig);
+        int add_col = dcol / abs(dcol);
+        for (int i = 1; i < abs(dcol) + 1; i++)
+        {
+            c = damier[p.lig + add_lig * i][p.col + add_col * i];
+            if (!freeCase(c))
+            {
+                // Here the queen can eat a pawn
+                int new_lig = add_lig + p.lig + add_lig * i;
+                int new_col = add_col + p.col + add_col * i;
+                // Check if the queen can go here
+                if (c.pawn_color == !p.color && inGame(new_lig, new_col) && freeCase(damier[new_lig][new_col]))
+                {
+                    change_pawn_place(pawns, damier, ind, new_lig, new_col);
+                    popPawn(Npawns, damier, new_lig - add_lig, new_col - add_col);
+                    return true;
+                }
+                else if (c.pawn_color == p.color)
+                {
+                    // printf("jump sheep");
+                    return false; // Pb: the queen jumps a pawn of her own color
+                }
+            }
+        }
+        // Only move the pawn: nothing in her path
+        if (inGame(lig, col) && freeCase(damier[lig][col]))
+        {
+            change_pawn_place(pawns, damier, ind, lig, col);
+            return true;
+        }
+    }
+    return false; // No case was found
+}
+
+int queenDepl(int col, int lig, bool is_white, pawn pawns[], pawn Npawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int ind)
+{
+    if (is_white)
+        lig = NB_CASE_LG - lig - 1;
+    if (MoveOrEatQueen(pawns, Npawns, lig, col, damier, ind))
+        return IND_CHANGE_ALLOWED;
+    else
+        return IND_PB;
 }
