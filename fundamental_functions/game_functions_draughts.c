@@ -40,47 +40,6 @@ bool inGame(int lig, int col)
     return (-1 < lig && lig < NB_CASE_LG && -1 < col && col < NB_CASE_LG);
 }
 
-// Operators for Rafle structure
-
-Rafle *createRafle()
-{
-    Rafle *rafle = malloc(sizeof(Rafle));
-    rafle->pt = NULL;
-    rafle->ind_eat = -1;
-    return rafle;
-}
-
-bool isEmpty(Rafle *rafle)
-{
-    return (rafle->pt == NULL);
-}
-
-void addRafle(Rafle *rafle, int ind_eat)
-{
-    rafle->ind_eat = ind_eat;
-    rafle->pt = createRafle();
-}
-
-void destroyRafle(Rafle *rafle)
-{
-    Rafle *rafle_a_sup;
-    while (!isEmpty(rafle))
-    {
-        rafle_a_sup = rafle;
-        rafle = rafle->pt;
-        free(rafle_a_sup);
-    }
-    rafle->ind_eat = -1;
-}
-
-// void printRafle(Rafle *rafle) {
-//     while (!isEmpty(rafle)) {
-//         rafle_a_sup = rafle;
-//         rafle = rafle->pt;
-//         free(rafle_a_sup);
-//     }
-// }
-
 // Aux functions
 
 void popPawn(pawn pawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int i, int j)

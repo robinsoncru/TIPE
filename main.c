@@ -1,4 +1,4 @@
-// #include "main.h"
+#include "main.h"
 
 /* For Victor G:
 gcc main.c fundamental_functions/interface_jeu_dames.c fundamental_functions/game_functions_draughts.c $(sdl2-config --cflags --libs) -lSDL2_ttf -o dames.out
@@ -181,7 +181,7 @@ int main(int argc, char *argv[])
                         ind_move = NEUTRAL_IND;
                     }
                     else if (event.key.keysym.sym == SDLK_t) {
-                        eatBestRafle(allPawns[is_white], allPawns[!is_white], damier, ind_move);
+                        eatBestRafle(game.allPawns[is_white], game.allPawns[!is_white], damier, ind_move);
                         ind_move = IND_CHANGE_ALLOWED;
                     }
                     else

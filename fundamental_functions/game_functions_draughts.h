@@ -14,28 +14,18 @@
 #define LEFT_FORWARD 1
 #define RIGHT_BACK 2
 #define RIGHT_FORWARD 3
+#define VOID_INDEX -1
 
 // Game structure
 
+#ifndef GAME_STRUCTURES
+#define GAME_STRUCTURES
 typedef struct
 {
     bool pawn_color, color;
     int ind_pawn;
     SDL_Rect rect;
 } Case;
-
-typedef struct Rafle Rafle;
-struct Rafle
-{
-    int ind_eat;
-    Rafle *pt;
-};
-
-typedef struct Liste Liste;
-struct Liste
-{
-    Rafle *first;
-};
 
 typedef struct
 {
@@ -53,6 +43,7 @@ typedef struct
     Keep in memory an overapproximation of the nb of pawns, but like for merge to union_find, don't decrease the value.
     Indeed, we need a free indice to create a new ennemy pawn, not necessary the first free indice */
 } Game;
+#endif
 
 /* NOTES :
 
@@ -71,12 +62,6 @@ bool becomeDame(pawn p);
 bool inGame(int lig, int col);
 void popPawn(pawn pawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int i, int j);
 void change_pawn_place(pawn pawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int ind, int lig, int col);
-
-Rafle *createRafle();
-bool isEmpty(Rafle *rafle);
-void addRafle(Rafle *rafle, int ind_eat);
-void destroyRafle(Rafle *rafle);
-// Ci dessus: Je crois que je vais les supprimer lors du prochain merge (Victor G)
 
 bool canEat(pawn pawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int ind, int i, int j, int add0, int add1);
 // entree : un tableau de pions pawns, un damier, l'index du pion qui mange, les coordonnees i et j dudit pion
