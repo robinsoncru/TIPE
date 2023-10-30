@@ -9,8 +9,9 @@
 files_array=("main.c"
              "fundamental_functions/interface_jeu_dames.c"
              "fundamental_functions/game_functions_draughts.c"
-             "rafle_calc/rafle_calc.c"
-             "rafle_calc/rafle.c")
+             "rafle/calc/rafle_calc.c"
+             "rafle/calc/rafle_struct.c"
+             "rafle/board_modifying/board_modifying.c")
 
 echo "Compilation en cours..."
 

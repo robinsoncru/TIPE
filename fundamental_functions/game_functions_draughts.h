@@ -55,6 +55,7 @@ bool canEat(pawn pawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int ind, int i, i
     //des entiers add0 et add1 qui indiquent la direction dans laquelle manger
     //sortie : booleen indiquant si le pion dans la direction indique peut etre mange
 int changeForEat(pawn pawns[], pawn Npawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int ind, int i, int j, int add0, int add1);
+int nonLoggingChangeForEat(pawn pawns[], pawn Npawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int ind, int i, int j, int add0, int add1);
 void print_pawns(pawn pawns[]);
 void print_damier(Case damier[NB_CASE_LG][NB_CASE_LG]);
 int pawn_move(pawn pawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int ind, bool gauche);

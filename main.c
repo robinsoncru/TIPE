@@ -1,5 +1,4 @@
-#include "fundamental_functions/game_functions_draughts.h"
-#include "fundamental_functions/interface_jeu_dames.h"
+#include "main.h"
 
 // Run the game
 
@@ -159,6 +158,10 @@ int main(int argc, char *argv[])
                     else if (event.key.keysym.sym == SDLK_r) {
                         printBestRafle(allPawns[is_white], allPawns[!is_white], damier, ind_move);
                         ind_move = NEUTRAL_IND;
+                    }
+                    else if (event.key.keysym.sym == SDLK_t) {
+                        eatBestRafle(allPawns[is_white], allPawns[!is_white], damier, ind_move);
+                        ind_move = IND_CHANGE_ALLOWED;
                     }
                     else
                         ind_move = NEUTRAL_IND;

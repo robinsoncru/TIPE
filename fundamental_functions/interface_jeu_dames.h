@@ -1,6 +1,5 @@
 #include <SDL2/SDL_ttf.h>
 #include "game_functions_draughts.h"
-#include "../rafle/rafle.h"
 // Window pmetre
 #define LG_WINDOW 640
 #define FRAME 16
