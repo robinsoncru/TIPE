@@ -157,11 +157,9 @@ int main(int argc, char *argv[])
                         is_playing = false;
                     else if (event.key.keysym.sym == SDLK_r) {
                         printBestRafle(allPawns[is_white], allPawns[!is_white], damier, ind_move);
-                        ind_move = NEUTRAL_IND;
                     }
                     else if (event.key.keysym.sym == SDLK_t) {
-                        eatBestRafle(allPawns[is_white], allPawns[!is_white], damier, ind_move);
-                        ind_move = IND_CHANGE_ALLOWED;
+                        ind_move = eatBestRafle(allPawns[is_white], allPawns[!is_white], damier, ind_move);
                     }
                     else
                         ind_move = NEUTRAL_IND;

@@ -1,4 +1,5 @@
 #include "rafle_struct.h"
+#include <stdio.h>
 
 // Operators for Rafle structure
 #ifndef COORD_STRUCT
@@ -70,7 +71,7 @@ void printCoord(coord point){
 void printRafle(Rafle* rafle){
     
     if (isEmpty(rafle)) {
-        printf("Rafle vide.");
+        printf("Rafle vide.\n");
     }else {
         maillon* p = rafle -> pile;
         printCoord(p -> point);
@@ -81,6 +82,8 @@ void printRafle(Rafle* rafle){
             printCoord(p -> point);
             p = p -> next;
         }
+
+        printf("\n");
     }
 }
 

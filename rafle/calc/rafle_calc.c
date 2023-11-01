@@ -45,8 +45,7 @@ void bestRafleAux(pawn pawns[],pawn Npawns[], Case damier[NB_CASE_LG][NB_CASE_LG
     if (!isEmpty(res) && length >= lengthRafle(res)) {
         emptyRafle(res);
     }
-
-    int deltaI, deltaJ; 
+    int deltaI, deltaJ;
     for (int k = 0; k < 4; k++) {
         //Petite astuce pour parcourir les voisins :)
         deltaI = direction(k%2);
@@ -90,8 +89,12 @@ Rafle* bestRafle(pawn pawns[],pawn Npawns[], Case damier[NB_CASE_LG][NB_CASE_LG]
         deltaJ = direction((k >> 1)%2);
 
         if (canEat(pawns, damier, indSerialKiller, i, j, deltaI, deltaJ)) {
-            bestRafleAux(pawns, Npawns, damier, indSerialKiller, deltaI, deltaJ, res, 1);
+            bestRafleAux(pawns, Npawns, damier, indSerialKiller, deltaI, deltaJ, res, 2);
         }
+    }
+
+    if (isEmpty(res)) {
+        addRafle(res, i, j);
     }
     return res; //bah putain ! c'etait pas trivial ! mais je suis fier de moi !
 }
@@ -101,4 +104,5 @@ void printBestRafle(pawn pawns[],pawn Npawns[], Case damier[NB_CASE_LG][NB_CASE_
     Rafle* r = bestRafle(pawns, Npawns, damier, indSerialKiller);
     printRafle(r);
     printf("\n");
+    destroyRafle(r);
 }
