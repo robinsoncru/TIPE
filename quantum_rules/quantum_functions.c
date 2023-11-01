@@ -16,7 +16,7 @@ void promotionPmetre(pawn pawns[], pawn Npawns[], bool is_white, Case damier[NB_
         int j = pawns[ind].col;
         // printf("Quantic %d %d", i, j);
         // Kill the former pawn
-        popPawn(pawns, damier, i, j);
+        popPawn(pawns, Npawns, damier, i, j);
         // Give birth to the ennemy pawn
         int new_ind = g->nb_pawns[!is_white];
 
@@ -52,7 +52,7 @@ void promotion(Game *g)
 bool lienAmitiePmetre(pawn pawns[], pawn Npawns[], int lig, int col, Case damier[NB_CASE_LG][NB_CASE_LG], int ind)
 {
     /* Lie d'amitie le pion en indice avec le pion se trouvant en coord (lig, col) sur le damier, en verifiant qu'il est bien de
-    couleur opposé et qu'il existe. Gère le pmetre Game.friend. Si on lie d'amitié un pion qui était déjà ami, le dernier lien
+    couleur opposé et qu'il existe. Gère le pmetre Pawn.friend. Si on lie d'amitié un pion qui était déjà ami, le dernier lien
     écrase le précédent */
     Case c = damier[lig][col];
     if (!freeCase(c) && c.pawn_color != pawns[ind].color)
@@ -66,18 +66,18 @@ bool lienAmitiePmetre(pawn pawns[], pawn Npawns[], int lig, int col, Case damier
 
 void lienAmitie(int col, int lig, Game *g)
 {
+    assert(g->ind_move != -1);
     if (g->is_white)
         lig = NB_CASE_LG - lig - 1;
-    if (g->declare_amis && lienAmitiePmetre(g->allPawns[g->is_white], g->allPawns[!g->is_white], lig, col, g->damier, g->ind_move))
+    if (lienAmitiePmetre(g->allPawns[g->is_white], g->allPawns[!g->is_white], lig, col, g->damier, g->ind_move))
     {
         g->ind_move = IND_CHANGE_ALLOWED;
-        g->declare_amis = false;
     }
     else
         g->ind_move = IND_PB;
 }
 
-int moveBackPmetre(pawn pawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int ind, bool gauche)
+int moveBackPmetre(pawn pawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int ind, bool gauche, Game *g)
 {
     /* Move back a pawn when it is linked with a friend and the friend has just moved */
     if (ind > -1 && pawns[ind].alive)
@@ -125,13 +125,41 @@ int moveBackPmetre(pawn pawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int ind, b
             }
             // Sinon aucun recule vers l'arrière n'est possible
         }
-
-        return IND_CHANGE_ALLOWED;
+        g->ind_move_back = -1;
+        return NEUTRAL_IND;
     }
     // printf("pawn alive %d or ind = %d", pawns[ind].alive, ind);
     return IND_PB;
 }
 
 void moveBack(Game *g, bool gauche) {
-    g->ind_move = moveBackPmetre(g->allPawns[g->is_white], g->damier, g->ind_move, gauche);
+    g->ind_move = moveBackPmetre(g->allPawns[g->is_white], g->damier, g->ind_move_back, gauche, g);
+}
+
+bool lienEnnemitiePmetre(pawn pawns[], pawn Npawns[], int lig, int col, Case damier[NB_CASE_LG][NB_CASE_LG], int ind)
+{
+    /* Declare ennemis pour la vie le pion en indice avec le pion se trouvant en coord (lig, col) sur le damier, en verifiant qu'il est bien de
+    couleur opposé et qu'il existe. Gère le pmetre Game.friend. Si on declare ennemi un pion qui était déjà ennemi, le dernier lien
+    écrase le précédent */
+    Case c = damier[lig][col];
+    if (!freeCase(c) && c.pawn_color != pawns[ind].color)
+    {
+        pawns[ind].ennemy = c.ind_pawn;
+        Npawns[c.ind_pawn].ennemy = ind;
+        return true;
+    }
+    return false;
+}
+
+void lienEnnemitie(int col, int lig, Game *g)
+{
+    assert(g->ind_move != -1);
+    if (g->is_white)
+        lig = NB_CASE_LG - lig - 1;
+    if (lienEnnemitiePmetre(g->allPawns[g->is_white], g->allPawns[!g->is_white], lig, col, g->damier, g->ind_move))
+    {
+        g->ind_move = IND_CHANGE_ALLOWED;
+    }
+    else
+        g->ind_move = IND_PB;
 }
