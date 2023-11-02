@@ -1,19 +1,13 @@
 #include <SDL2/SDL_ttf.h>
 
-#include "../quantum_rules/quantum_functions.h"
-// WARNING: this include 'game_functions_draughts.h'
+#include "game_functions_draughts.h"
 
-// #include "../rafle_calc/rafle_calc.h"
 // Window pmetre
 #define LG_WINDOW 640
 #define FRAME 16
 #define MAX_TICKS 20
-#define PREC LG_CASE
 #define LG_CASE (LG_WINDOW / NB_CASE_LG)
 
-#ifndef INTERFACE_STRUCT
-#define INTERFACE_STRUCT
-// #define LEN 200
 
 // Interface structure
 
@@ -26,7 +20,7 @@ typedef struct
     // char string[LEN];
     SDL_Color color;
 } text;
-#endif // INTERFACE_STRUCT
+
 
 // Color constants
 extern SDL_Color orange;
@@ -45,9 +39,9 @@ void drawLosange(SDL_Renderer *render, Case c, pawn p);
 void selectPawn(Game *g, int x_mouse, int y_mouse);
 
 // Init functions
-void init_pawn(Game *g, int i, int init_place, int add);
-void init_pawns(Game *g);
-void init_damier(Game *g);
+void init_pawn(pawn pawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int i, int init_place, int add, bool init_is_white);
+void init_pawns(Game *g, bool init_is_white);
+void init_damier(Case damier[NB_CASE_LG][NB_CASE_LG]);
 Game *create_game();
 
 // Display functions

@@ -1,8 +1,9 @@
 #include <SDL2/SDL.h>
+#include <stdbool.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include <stdbool.h>
 #include <assert.h>
+
 // Game pmetre
 #define NB_CASE_LG 8
 #define NB_CASE (NB_CASE_LG * NB_CASE_LG)
@@ -14,6 +15,8 @@
 #define IND_NOTHING_HAPPENED -4
 #define IND_BAD_CHOICE -5
 #define IND_GLORY_QUEEN -6
+
+#define VOID_INDEX -1
 
 #define LEFT_BACK 0
 #define LEFT_FORWARD 1
@@ -32,25 +35,15 @@ typedef struct
     SDL_Rect rect;
 } Case;
 
-typedef struct Rafle Rafle;
-struct Rafle
-{
-    int ind_eat;
-    Rafle *pt;
-};
-
-typedef struct Liste Liste;
-struct Liste
-{
-    Rafle *first;
-};
 
 typedef struct
 {
-    int lig, col, friend;
+    int lig, col, friend, ennemy;
     /* friend: Lien d'amitie avec un autre pion, -1 if no friend */
     bool alive, color, queen;
 } pawn;
+
+
 
 typedef struct
 {
@@ -62,10 +55,8 @@ typedef struct
     /* Access with is_white
     Keep in memory an overapproximation of the nb of pawns, but like for merge to union_find, don't decrease the value.
     Indeed, we need a free indice to create a new ennemy pawn, not necessary the first free indice */
-    int ind_move;
+    int ind_move, ind_move_back;
     bool is_white;
-
-    bool declare_amis, declare_ennemi, reverse_move;
 
 } Game;
 
@@ -77,14 +68,23 @@ Whites start at lig 0
 Blacks start at lig NB_CASE_LG - 1
 Case.pawn_color: true for white, false for black
 Case.ind_pawn: -1 if no pawn
+
+Pour deplacer un pion, selectionne le pion (clic gauche) puis fleche gauche pour avancer a gauche et fleche droite pour droite
+Pour qu'un pion mange une piece, selectionne le pion qui mange (clic gauche) puis fleche du haut
+
+Pour deplacer une dame, selectionne le dame (clic gauche) puis selectionne la case ou tu veux que la dame aille (clic gauche)
+Pour qu'une dame mange une piece, selectionne la dame puis selectionne (clic gauche) une case derriere la piece que tu manges
 */
 
 // Basic functions
 bool freeCase(Case c);
 int NON(int b);
-bool becomeDame(pawn p);
+bool becomeDame(pawn p, pawn pawns[], pawn Npawns[], Case damier[NB_CASE_LG][NB_CASE_LG]); /* Couronne un pion en dame et s'il avait 
+un ennemi, celui ci meurt */
 bool inGame(int lig, int col);
-void popPawn(pawn pawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int i, int j);
+void popPawn(pawn pawns[], pawn Npawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int i, int j); /* kill the pawn and put its values as 
+default values */
+void pawn_default_value(pawn pawns[], int ind, bool init_is_white); /* Initialize pawn with default values */
 void change_pawn_place(pawn pawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int ind, int lig, int col);
 
 bool canEat(pawn pawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int ind, int i, int j, int add0, int add1);
@@ -96,6 +96,8 @@ void pawnMove(Game *g, bool gauche);
 void eatPawn(Game *g);
 void queenDepl(int col, int lig, Game *g);
 
-// For tests
-void print_pawns(pawn pawns[]);
-void print_damier(Case damier[NB_CASE_LG][NB_CASE_LG]);
+// Debug functions
+void error();
+/* print check in the terminal and flush it */
+void print_pawns(Game *g); // Affiche les caracteristiques des pions
+void print_damier(Case damier[NB_CASE_LG][NB_CASE_LG]); // Affiche ligne, colonne et coordonnees des cases

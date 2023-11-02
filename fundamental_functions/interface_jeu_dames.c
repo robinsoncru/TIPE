@@ -199,7 +199,7 @@ void init_pawns(Game *g, bool init_is_white)
     // Initialize the rest of pawns with default pmetre and the good color
     for (int i = NB_PAWNS; i < 2 * NB_PAWNS; i++)
     {
-        pawn_default_value(g->allPawns[init_is_white][i], init_is_white);
+        pawn_default_value(g->allPawns[init_is_white], i, init_is_white);
     }
 }
 

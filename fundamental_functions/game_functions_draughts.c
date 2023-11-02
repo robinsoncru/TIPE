@@ -12,21 +12,29 @@ int NON(int b)
     return (b + 1) % 2;
 }
 
-bool becomeDame(pawn p)
+bool becomeDame(pawn p, pawn pawns[], pawn Npawns[], Case damier[NB_CASE_LG][NB_CASE_LG])
 {
     if (p.alive && !p.queen)
     {
         if (p.color)
         {
             if (p.lig == NB_CASE_LG - 1)
+            {
+                if (p.ennemy != -1)
+                    popPawn(Npawns, pawns, damier, Npawns[p.ennemy].lig, Npawns[p.ennemy].col);
                 return true;
+            }
             else
                 return false;
         }
         else
         {
             if (p.lig == 0)
+            {
+                if (p.ennemy != -1)
+                    popPawn(Npawns, pawns, damier, Npawns[p.ennemy].lig, Npawns[p.ennemy].col);
                 return true;
+            }
             else
                 return false;
         }
@@ -42,12 +50,32 @@ bool inGame(int lig, int col)
 
 // Aux functions
 
-void popPawn(pawn pawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int i, int j)
+void pawn_default_value(pawn pawns[], int ind, bool init_is_white)
+{
+    /* Initialize pawn with default values */
+    pawns[ind].alive = false;
+    pawns[ind].col = -1;
+    pawns[ind].lig = -1;
+    pawns[ind].queen = false;
+    pawns[ind].color = init_is_white;
+    pawns[ind].friend = -1;
+    pawns[ind].ennemy = -1;
+
+}
+
+void popPawn(pawn pawns[], pawn Npawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int i, int j)
 {
     // We are sur about the pawn we delete (no check control so be careful)
     if (!freeCase(damier[i][j]))
     {
-        pawns[damier[i][j].ind_pawn].alive = false;
+        if (pawns[damier[i][j].ind_pawn].ennemy != -1)
+        {
+            Npawns[pawns[damier[i][j].ind_pawn].ennemy].ennemy = -1;
+            Npawns[pawns[damier[i][j].ind_pawn].ennemy].queen = true;
+        }
+        if (pawns[damier[i][j].ind_pawn].friend != -1)
+            Npawns[pawns[damier[i][j].ind_pawn].friend].friend = -1;
+        pawn_default_value(pawns, damier[i][j].ind_pawn, pawns[damier[i][j].ind_pawn].color);
         damier[i][j].ind_pawn = -1;
     }
 }
@@ -89,12 +117,12 @@ int changeForEat(pawn pawns[], pawn Npawns[], Case damier[NB_CASE_LG][NB_CASE_LG
     // printf("pawn which is eaten %d\n", damier[i + add0][j + add1].ind_pawn);
 
     change_pawn_place(pawns, damier, ind, i + 2 * add0, j + 2 * add1);
-    popPawn(Npawns, damier, i + add0, j + add1);
+    popPawn(Npawns, pawns, damier, i + add0, j + add1);
     // printf("change allowed %d %d", i + 2 * add0, j + 2 * add1);
 
     // Check if the pawn moved become a queen
 
-    if (ind > -1 && becomeDame(pawns[ind]))
+    if (ind > -1 && becomeDame(pawns[ind], pawns, Npawns, damier))
     {
         pawns[ind].queen = true;
         // printf("Become dame %d", ind);
@@ -104,30 +132,9 @@ int changeForEat(pawn pawns[], pawn Npawns[], Case damier[NB_CASE_LG][NB_CASE_LG
     return IND_CHANGE_ALLOWED;
 }
 
-// Print functions for checks
-
-void print_pawns(pawn pawns[])
-{
-    for (int i = 0; i < NB_PAWNS; i++)
-    {
-        printf("Sel %d\n", pawns[i].alive);
-    }
-}
-
-void print_damier(Case damier[NB_CASE_LG][NB_CASE_LG])
-{
-    for (int i = 0; i < NB_CASE_LG; i++)
-    {
-        for (int j = 0; j < NB_CASE_LG; j++)
-        {
-            printf("Case ligne %d col %d pos: %d, %d\n", i, j, damier[i][j].rect.x, damier[i][j].rect.y);
-        }
-    }
-}
-
 // Play functions
 
-int pawnMovePmetre(pawn pawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int ind, bool gauche)
+int pawnMovePmetre(pawn pawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int ind, bool gauche, Game *g)
 {
     if (ind > -1 && pawns[ind].alive && !pawns[ind].queen)
     {
@@ -175,10 +182,12 @@ int pawnMovePmetre(pawn pawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int ind, b
 
         // Check if the pawn moved become a queen
 
-        if (ind > -1 && becomeDame(pawns[ind]))
+        if (ind > -1 && becomeDame(pawns[ind], pawns, g->allPawns[!g->is_white], damier))
         {
             pawns[ind].queen = true;
         }
+
+        g->ind_move_back = pawns[ind].friend;
 
         return IND_CHANGE_ALLOWED;
     }
@@ -186,8 +195,9 @@ int pawnMovePmetre(pawn pawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int ind, b
     return IND_PB;
 }
 
-void pawnMove(Game *g, bool gauche) {
-    g->ind_move = pawnMovePmetre(g->allPawns[g->is_white], g->damier, g->ind_move, gauche);
+void pawnMove(Game *g, bool gauche)
+{
+    g->ind_move = pawnMovePmetre(g->allPawns[g->is_white], g->damier, g->ind_move, gauche, g);
 }
 
 int eatPawnPmetre(pawn pawns[], pawn Npawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int ind)
@@ -218,7 +228,8 @@ int eatPawnPmetre(pawn pawns[], pawn Npawns[], Case damier[NB_CASE_LG][NB_CASE_L
     return NEUTRAL_IND;
 }
 
-void eatPawn(Game *g) {
+void eatPawn(Game *g)
+{
     g->ind_move = eatPawnPmetre(g->allPawns[g->is_white], g->allPawns[!g->is_white], g->damier, g->ind_move);
 }
 // Queen functions
@@ -246,7 +257,7 @@ bool MoveOrEatQueen(pawn pawns[], pawn Npawns[], int lig, int col, Case damier[N
                 if (c.pawn_color == !p.color && inGame(new_lig, new_col) && freeCase(damier[new_lig][new_col]))
                 {
                     change_pawn_place(pawns, damier, ind, new_lig, new_col);
-                    popPawn(Npawns, damier, new_lig - add_lig, new_col - add_col);
+                    popPawn(Npawns, pawns, damier, new_lig - add_lig, new_col - add_col);
                     return true;
                 }
                 else if (c.pawn_color == p.color)
@@ -276,6 +287,38 @@ int queenDeplPmetre(int col, int lig, bool is_white, pawn pawns[], pawn Npawns[]
         return IND_PB;
 }
 
-void queenDepl(int col, int lig, Game *g) {
+void queenDepl(int col, int lig, Game *g)
+{
     g->ind_move = queenDeplPmetre(col, lig, g->is_white, g->allPawns[g->is_white], g->allPawns[!g->is_white], g->damier, g->ind_move);
+}
+
+// Debug functions
+void error()
+{
+    printf("check");
+    fflush(stdout);
+}
+
+void print_pawn(pawn p, int ind) {
+    printf("Ind %d Ennemy %d, Friend %d Color %d Alive %d\n", ind, p.ennemy, p.friend, p.color, p.alive);
+    fflush(stdout);
+}
+
+void print_pawns(Game *g)
+{
+    for (int i = 0; i < 2*NB_PAWNS; i++)
+    {
+        print_pawn(g->allPawns[g->is_white][i], i);
+    }
+}
+
+void print_damier(Case damier[NB_CASE_LG][NB_CASE_LG])
+{
+    for (int i = 0; i < NB_CASE_LG; i++)
+    {
+        for (int j = 0; j < NB_CASE_LG; j++)
+        {
+            printf("Case ligne %d col %d pos: %d, %d\n", i, j, damier[i][j].rect.x, damier[i][j].rect.y);
+        }
+    }
 }
