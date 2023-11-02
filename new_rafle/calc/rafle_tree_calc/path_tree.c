@@ -1,18 +1,7 @@
 #include "path_tree.h"
+#include <stdio.h>
 #include <stdlib.h>
-
-int convert(int horizontalDir, int verticalDir){
-    //la direction est donnee sous la forme d'un couple
-    //(dx, dy) ou dx et dy peuvent valoir -1 ou 1
-    //on lui associe un nombre entre 0 et 3 inclus
-    //dont le bit de poids faible est la direction horizontale
-    //et le bit de poids fort la direction verticale
-    //0 sens negatif, 1 sens positif
-    int res = 1;
-    int weak = (horizontalDir == 1) ? 1 : 0;
-    int strong = (verticalDir == 1) ? 1 : 0;
-    return (strong << 1)|(weak);
-}
+#include <assert.h>
 
 typedef struct PathTree{
     int depth;
@@ -59,14 +48,15 @@ PathTree* pathTreeChild(PathTree* pathTree, int horizontalDir, int verticalDir){
     //Renvoie le noeud consistant a aller dans la direction indiquee par les deux
     //entiers en argument. Cette fonction n'a pas d'effet de bords.
     //Renvoie NULL si on ne peut pas aller dans ladite direction
-    int index = convert(horizontalDir, verticalDir);
+    int index = getCodeFromDirs(horizontalDir, verticalDir);
     return pathTree -> childs[index];
 }
 
 void pathTreeConnect(PathTree* parent, PathTree* child, int horizontalDir, int verticalDir){
+    
     //connecte le parent fournit a l'enfant donne selon la direction en argument
     //cette fonction a des effets de bords.
-    int index = convert(horizontalDir, verticalDir);
+    int index = getCodeFromDirs(horizontalDir, verticalDir);
     parent -> childs[index] = child;
 
     int depthParent = parent -> depth;
@@ -77,9 +67,19 @@ void pathTreeConnect(PathTree* parent, PathTree* child, int horizontalDir, int v
 }
 
 Coord pathTreeLabel(PathTree* node){
+    assert(node != emptyTree);
     return node -> point;
 }
 
+void pathTreeGetCoord(PathTree* t, int* i, int* j){
+    Coord c = pathTreeLabel(t);
+    *i = c.i;
+    *j = c.j;
+}
+
 int pathTreeDepth(PathTree* pathTree){
+    if (pathTree == emptyTree) {
+        return -1;
+    }
     return pathTree -> depth;
 }

@@ -1,2 +1,5 @@
+#ignore les executables ainsi que les fichiers de parametrage
 dames.out
-rafle_calc/test_struct_rafle
+rafle/test_struct_rafle
+.vscode/launch.json
+.vscode

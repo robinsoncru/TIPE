@@ -1,23 +1,5 @@
 #include "game_functions_draughts.h"
 
-// Game structure
-
-#ifndef PION_ET_PLATEAU
-#define PION_ET_PLATEAU
-typedef struct
-{
-    bool pawn_color, color;
-    int ind_pawn;
-    SDL_Rect rect;
-} Case;
-
-typedef struct
-{
-    int lig, col;
-    bool alive, color, queen;
-} pawn;
-#endif /*PION_ET_PLATEAU*/
-
 // Logic functions
 
 bool freeCase(Case c)
@@ -28,6 +10,49 @@ bool freeCase(Case c)
 int NON(int b)
 {
     return (b + 1) % 2;
+}
+
+int getCodeFromDirs(int dj, int di){
+    //la direction est donnee sous la forme d'un couple
+    //(dx, dy) ou dx et dy peuvent valoir -1 ou 1
+    //on lui associe un nombre entre 0 et 3 inclus
+    //dont le bit de poids faible est la direction horizontale
+    //et le bit de poids fort la direction verticale
+    //0 sens negatif, 1 sens positif
+    int weak = (dj == 1) ? 1 : 0;
+    int strong = (di == 1) ? 1 : 0;
+    return (strong << 1)|(weak);
+}
+
+void getDirsFromCode(int c, int* di, int* dj){
+    *dj = dir(c % 2);
+    *di = dir((c >> 1) % 2);
+}
+
+int dir(int a){
+    return (a == 0) ? -1 : 1;
+}
+
+bool outOfBounds(int i, int j){
+    //Checks if the (i, j) position is out of bounds
+    return i < 0 || i >= NB_CASE_LG || j < 0 || j >= NB_CASE_LG;
+}
+
+bool eatingIsOutOfBounds(int i, int j, int add0, int add1){
+    //Checks if eating from position (i, j) in the (add0, add1) direction leads to an out of bounds position
+    return outOfBounds(i + 2 * add0, j + 2 * add1);
+}
+
+int xMinusSing(int x){
+    int sg = (x >= 0) ? 1 : -1;
+    return x - sg;
+}
+
+void vectorToEatenPawn(int vi, int vj, int* ei, int* ej){
+    //Entree : vecteur entre deux positions apres avoir mange un pion
+    //Sortie : vecteur de la position initiale au pion mange
+    *ei = xMinusSing(vi);
+    *ej = xMinusSing(vj);
 }
 
 bool becomeDame(pawn p)

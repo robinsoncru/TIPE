@@ -9,9 +9,13 @@
 files_array=("main.c"
              "fundamental_functions/interface_jeu_dames.c"
              "fundamental_functions/game_functions_draughts.c"
-             "rafle/calc/rafle_calc.c"
-             "rafle/calc/rafle_struct.c"
-             "rafle/board_modifying/board_modifying.c")
+             #"rafle/calc/rafle_calc.c"
+             #"rafle/calc/rafle_struct.c"
+             #"rafle/board_modifying/board_modifying.c"
+             "new_rafle/coord/coord.c"
+             "new_rafle/calc/rafle_tree_calc/path_tree.c"
+             "new_rafle/calc/rafle_tree_calc/rafle_tree_calc.c"
+             "new_rafle/calc/rafle_tree_calc/test.c")
 
 echo "Compilation en cours..."
 

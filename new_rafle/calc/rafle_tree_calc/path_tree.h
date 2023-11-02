@@ -1,27 +1,15 @@
 #include <stdlib.h>
 #include <stdbool.h>
-#define ARITE 4
 
+#ifndef PATH_TREE
+#define PATH_TREE
+#define ARITE 4
+#include "../../coord/coord.h"
+#include "../../../fundamental_functions/game_functions_draughts.h"
 /*Arbre de chemins pour les rafles.
 C'est une structure reccursive qui consiste en un arbre de
 coordonnees symbolisant un ensemble de chemins sur le plateau.
 L'arbre est d'arite maximale 3 (4 en realite)*/
-
-typedef struct Coord{
-    int i;
-    int j;
-    /*
-    i est l'abscisse
-    j l'ordonnee
-    Dessin du repere :
-    |
-    |
-    |
-    A
-    |
-    o-->-------
-    l'origine (0, 0) est la case inferieure gauche du plateau.*/
-} Coord;
 
 typedef struct PathTree PathTree;
 
@@ -54,4 +42,9 @@ void pathTreeConnect(PathTree* parent, PathTree* child, int horizontalDir, int v
 
 Coord pathTreeLabel(PathTree* node);
 
+void pathTreeGetCoord(PathTree* t, int* i, int* j);
+
+int pathTreeGetInd(PathTree* t);
+
 int pathTreeDepth(PathTree* pathTree);
+#endif

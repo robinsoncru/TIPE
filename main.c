@@ -137,7 +137,7 @@ int main(int argc, char *argv[])
                     else if (ind_move > -1 && allPawns[is_white][ind_move].queen)
                         ind_move = queen_move(event.button.x, event.button.y, is_white, allPawns[is_white], damier, ind_move);
                     if (ind_move == NEUTRAL_IND)
-                        printf("No pawn selected");
+                        printf("\nNo pawn selected\n");
                     // printf("ind_move %d", ind_move);
                     break;
 
@@ -155,11 +155,15 @@ int main(int argc, char *argv[])
                         ind_move = eatPawn(allPawns[is_white], allPawns[!is_white], damier, ind_move);
                     else if (event.key.keysym.sym == SDLK_ESCAPE)
                         is_playing = false;
+                    /*
                     else if (event.key.keysym.sym == SDLK_r) {
                         printBestRafle(allPawns[is_white], allPawns[!is_white], damier, ind_move);
                     }
                     else if (event.key.keysym.sym == SDLK_t) {
                         ind_move = eatBestRafle(allPawns[is_white], allPawns[!is_white], damier, ind_move);
+                    }*/
+                    else if (event.key.keysym.sym == SDLK_a) {
+                        ind_move = testRafleTree(allPawns[is_white], allPawns[!is_white], damier, ind_move);
                     }
                     else
                         ind_move = NEUTRAL_IND;

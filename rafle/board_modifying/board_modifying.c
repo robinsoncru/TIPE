@@ -12,8 +12,8 @@ void eatRafle(Rafle* rafle, pawn pawns[],pawn Npawns[], Case damier[NB_CASE_LG][
         while (lengthRafle(rafle) >= 2) {
             prevPos = popRafle(rafle);
             nextPos = peekRafle(rafle);
-            deltaI = (nextPos.i - prevPos.i) >> 1;
-            deltaJ = (nextPos.j - prevPos.j) >> 1;
+            deltaI = (nextPos.i - prevPos.i) / 2;
+            deltaJ = (nextPos.j - prevPos.j) / 2;
 
             nonLoggingChangeForEat(pawns, Npawns, damier, ind, prevPos.i, prevPos.j, deltaI, deltaJ);
         }
