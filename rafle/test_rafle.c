@@ -1,7 +1,7 @@
 #include <SDL2/SDL_main.h>
 #include <stdio.h>
 #include <assert.h>
-#include "rafle_aux.h"
+#include "calc/rafle_aux.h"
 
 //Compile : gcc test_rafle.c rafle.c rafle_calc.c ../game_functions_draughts.c -o test_struct_rafle
 int main(int argc, char** argv){

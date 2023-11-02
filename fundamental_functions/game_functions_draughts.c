@@ -104,6 +104,28 @@ int changeForEat(pawn pawns[], pawn Npawns[], Case damier[NB_CASE_LG][NB_CASE_LG
     return IND_CHANGE_ALLOWED;
 }
 
+int nonLoggingChangeForEat(pawn pawns[], pawn Npawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int ind, int i, int j, int add0, int add1){
+    //Version de changeForEat qui n'imprime pas les changements effectues
+    //Entree : deux tableaux de pions, un damier, l'index du pion qui mange, les coordonnees i et j dudit pion
+    //et deux entiers add0 et add1 qui indiquent la direction dans laquelle manger
+    //Sortie : modifie le plateau de maniere a ce que le pion d'indice ind ait mange dans la direction indique
+    //et retourne l'index du pion mange
+
+    int indVictim = damier[i + add0][j + add1].ind_pawn;
+    //assert(ind > -1);
+    damier[i][j].ind_pawn = VOID_INDEX;
+    damier[i + 2 * add0][j + 2 * add1].pawn_color = pawns[ind].color;
+    damier[i + 2 * add0][j + 2 * add1].ind_pawn = ind;
+    //printf("pawn which is eaten %d\n", damier[i + add0][j + add1].ind_pawn);
+
+    Npawns[indVictim].alive = false;
+    damier[i + add0][j + add1].ind_pawn = VOID_INDEX;
+    pawns[ind].lig = i + 2 * add0;
+    pawns[ind].col = j + 2 * add1;
+    //printf("change allowed %d %d", i + 2 * add0, j + 2 * add1);
+    return indVictim;
+}
+
 // Print functions for checks
 
 void print_pawns(pawn pawns[])

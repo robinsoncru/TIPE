@@ -19,31 +19,21 @@
 #define LEFT_FORWARD 1
 #define RIGHT_BACK 2
 #define RIGHT_FORWARD 3
+#define VOID_INDEX -1
 
 // #define MY_GUARD 1
 // // En evaluant dans les files incluant ce file, on évite la double inclusion
 
 // Game structure
 
+#ifndef GAME_STRUCTURES
+#define GAME_STRUCTURES
 typedef struct
 {
     bool pawn_color, color;
     int ind_pawn;
     SDL_Rect rect;
 } Case;
-
-typedef struct Rafle Rafle;
-struct Rafle
-{
-    int ind_eat;
-    Rafle *pt;
-};
-
-typedef struct Liste Liste;
-struct Liste
-{
-    Rafle *first;
-};
 
 typedef struct
 {
@@ -68,6 +58,7 @@ typedef struct
     bool declare_amis, declare_ennemi, reverse_move;
 
 } Game;
+#endif
 
 /* NOTES :
 

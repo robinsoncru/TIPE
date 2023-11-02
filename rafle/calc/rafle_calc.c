@@ -1,27 +1,5 @@
 #include "rafle_calc.h"
 
-int nonLoggingChangeForEat(pawn pawns[], pawn Npawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int ind, int i, int j, int add0, int add1){
-    //Version de changeForEat qui n'imprime pas les changements effectues
-    //Entree : deux tableaux de pions, un damier, l'index du pion qui mange, les coordonnees i et j dudit pion
-    //et deux entiers add0 et add1 qui indiquent la direction dans laquelle manger
-    //Sortie : modifie le plateau de maniere a ce que le pion d'indice ind ait mange dans la direction indique
-    //et retourne l'index du pion mange
-
-    int indVictim = damier[i + add0][j + add1].ind_pawn;
-    //assert(ind > -1);
-    damier[i][j].ind_pawn = VOID_INDEX;
-    damier[i + 2 * add0][j + 2 * add1].pawn_color = pawns[ind].color;
-    damier[i + 2 * add0][j + 2 * add1].ind_pawn = ind;
-    //printf("pawn which is eaten %d\n", damier[i + add0][j + add1].ind_pawn);
-
-    Npawns[indVictim].alive = false;
-    damier[i + add0][j + add1].ind_pawn = VOID_INDEX;
-    pawns[ind].lig = i + 2 * add0;
-    pawns[ind].col = j + 2 * add1;
-    //printf("change allowed %d %d", i + 2 * add0, j + 2 * add1);
-    return indVictim;
-}
-
 void spitOut(pawn pawns[], pawn Npawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int indEater, int iEater, int jEater, int indVictim, int add0, int add1){
     //fonction reciproque de changeForEat
     //pour un pion d'index indEater aux coordonnees (iEater, jEater), annule son action de manger indVictim
@@ -64,7 +42,7 @@ void bestRafleAux(pawn pawns[],pawn Npawns[], Case damier[NB_CASE_LG][NB_CASE_LG
     int i = pawns[indEater].lig;
     int j = pawns[indEater].col;
 
-    if (!isEmpty(res) && length > lengthRafle(res)) {
+    if (!isEmpty(res) && length >= lengthRafle(res)) {
         emptyRafle(res);
     }
 
@@ -77,7 +55,6 @@ void bestRafleAux(pawn pawns[],pawn Npawns[], Case damier[NB_CASE_LG][NB_CASE_LG
         if (canEat(pawns, damier, indEater, i, j, deltaI, deltaJ) && !eatingIsOutOfBounds(i, j, deltaI, deltaJ)) {
             bestRafleAux(pawns, Npawns, damier, indEater, deltaI, deltaJ, res, length + 1);
         }
-        printf("position (%d, %d) is out of bounds : %s\n",i + add0, j + add1, eatingIsOutOfBounds(i, j, add0, add1) ? "true" : "false");
     }
     /*A partir de ce point, res respecte la contrainte suivante :
         -si on est a la fin d'un chemin plus long que la meilleure rafle calculee jusqu'alors, res est vide

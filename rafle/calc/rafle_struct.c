@@ -1,4 +1,4 @@
-#include "rafle.h"
+#include "rafle_struct.h"
 
 // Operators for Rafle structure
 #ifndef COORD_STRUCT
