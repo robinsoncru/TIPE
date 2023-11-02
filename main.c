@@ -1,7 +1,7 @@
-#include "fundamental_functions/interface_jeu_dames.h"
+#include "main.h"
 
 /* For Victor G:
-gcc main.c fundamental_functions/interface_jeu_dames.c fundamental_functions/game_functions_draughts.c quantum_rules/quantum_functions.c $(sdl2-config --cflags --libs) -lSDL2_ttf -o dames && ./dames
+gcc main.c fundamental_functions/interface_jeu_dames.c fundamental_functions/game_functions_draughts.c fundamental_functions/little_linked_list.c quantum_rules/quantum_functions.c $(sdl2-config --cflags --libs) -lSDL2_ttf -o dames && ./dames
 Run the game */
 
 int main(int argc, char *argv[])
@@ -10,6 +10,8 @@ int main(int argc, char *argv[])
     Game *g = create_game();
 
     int allMoves[4][2] = {{LEFT_FORWARD, LEFT_BACK}, {LEFT_BACK, LEFT_FORWARD}, {RIGHT_FORWARD, RIGHT_BACK}, {RIGHT_BACK, RIGHT_FORWARD}};
+    // Init game
+
     // Index 1 is for white pawns
     // Index 0 is for black pawns
 
@@ -136,25 +138,44 @@ int main(int argc, char *argv[])
 
                 /* Select with the mouse */
                 case SDL_MOUSEBUTTONDOWN:
-                    if (g->ind_move == NEUTRAL_IND)
-                        selectPawn(g, event.button.x, event.button.y);
-                    else if (g->ind_move > -1 && g->allPawns[g->is_white][g->ind_move].queen)
-                        queenDepl(event.button.x / LG_CASE, event.button.y / LG_CASE, g);
-                    else if (g->ind_move > -1)
-                        lienAmitie(event.button.x / LG_CASE, event.button.y / LG_CASE, g);
-                    if (g->ind_move == NEUTRAL_IND)
-                        printf("No pawn selected");
-                    // printf("g.ind_move %d", g.ind_move);
+                    if (event.button.button == SDL_BUTTON_LEFT)
+                    {
+                        /* Pour les clics gauche */
+                        if (g->ind_move == NEUTRAL_IND)
+                            selectPawn(g, event.button.x, event.button.y);
+                        else if (g->ind_move > -1 && g->allPawns[g->is_white][g->ind_move].queen)
+                            queenDepl(event.button.x / LG_CASE, event.button.y / LG_CASE, g);
+                        else if (g->ind_move > -1)
+                            lienAmitie(event.button.x / LG_CASE, event.button.y / LG_CASE, g);
+                        if (g->ind_move == NEUTRAL_IND)
+                            printf("No pawn selected");
+                        // printf("g.ind_move %d", g.ind_move);
+                    }
+                    else if (event.button.button == SDL_BUTTON_RIGHT)
+                    {
+                        /* Pour les clics droit (prefere une double verif qu'un simple else)*/
+                        lienEnnemitie(event.button.x / LG_CASE, event.button.y / LG_CASE, g);
+                    }
                     break;
 
                 /* Do actions with the buttons */
                 case SDL_KEYUP:
                     if (event.key.keysym.sym == SDLK_LEFT)
+                    {
                         /* Move pawn to left */
-                        pawnMove(g, true);
+                        if (g->ind_move_back != -1)
+                            moveBack(g, true);
+                        else
+                            pawnMove(g, true);
+                    }
                     else if (event.key.keysym.sym == SDLK_RIGHT)
+                    {
                         /* Move pawn to right */
-                        pawnMove(g, false);
+                        if (g->ind_move_back != -1)
+                            moveBack(g, false);
+                        else
+                            pawnMove(g, false);
+                    }
                     else if (event.key.keysym.sym == SDLK_UP)
                         /*D'accord, je vois : si j'appuye sur haut, ça va manger le premier pion disponible selon l'ordre
                         horaire ou anti-horaire. Je suppose que c'est plus simple à coder mais j'admets etre dubitatif quand
@@ -165,19 +186,13 @@ int main(int argc, char *argv[])
                     else if (event.key.keysym.sym == SDLK_ESCAPE)
                         /* Exit the game */
                         is_playing = false;
-                    else if (event.key.keysym.sym == SDLK_r)
-                    {
-                        /* For the ralfes */
-                        // printBestRafle(allPawns[g.is_white], allPawns[!g.is_white], g.damier, g.ind_move);
-                        g->ind_move = NEUTRAL_IND;
-                    }
                     else if (event.key.keysym.sym == SDLK_p)
                     {
                         /* Promote the selected pawn */
                         promotion(g);
                     }
-                    else if (event.key.keysym.sym == SDLK_f)
-                        g->declare_amis = true;
+                    else if (event.key.keysym.sym == SDLK_r)
+                        print_pawns(g);
                     else
                         g->ind_move = NEUTRAL_IND;
                     break;

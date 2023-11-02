@@ -1,27 +1,4 @@
-#include <SDL2/SDL_ttf.h>
-#include "game_functions_draughts.h"
-// #include "rafle_calc/rafle_calc.h"
-// Window pmetre
-#define LG_WINDOW 640
-#define FRAME 16
-#define MAX_TICKS 20
-#define PREC LG_CASE
-#define LG_CASE (LG_WINDOW / NB_CASE_LG)
-// #define LEN 200
-
-// Compile : gcc interface_jeu_dames.c game_functions_draughts.c rafle_calc/rafle_calc.c rafle_calc/rafle.c $(sdl2-config --cflags --libs) -lSDL2_ttf -o dames
-
-// Interface structure
-
-typedef struct
-{
-    TTF_Font *font;
-    SDL_Surface *surface;
-    SDL_Texture *texture;
-    SDL_Rect *rect;
-    // char string[LEN];
-    SDL_Color color;
-} text;
+#include "interface_jeu_dames.h"
 
 // Color constants
 
@@ -127,6 +104,26 @@ void drawLosange(SDL_Renderer *render, Case c, pawn p)
         qr.h = c.rect.h - 40;
         drawRect(render, red, qr);
     }
+
+    if (p.friend != -1)
+    {
+        SDL_Rect fr;
+        fr.x = c.rect.x + 30;
+        fr.y = c.rect.y + 30;
+        fr.w = c.rect.w - 60;
+        fr.h = c.rect.h - 60;
+        drawRect(render, orange, fr);
+    }
+
+    if (p.ennemy != -1)
+    {
+        SDL_Rect fr;
+        fr.x = c.rect.x + 30;
+        fr.y = c.rect.y + 30;
+        fr.w = c.rect.w - 60;
+        fr.h = c.rect.h - 60;
+        drawRect(render, red, fr);
+    }
 }
 
 void selectPawn(Game *g, int x_mouse, int y_mouse)
@@ -165,16 +162,6 @@ void init_pawn(pawn pawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int i, int ini
     pawns[i].color = init_is_white;
 }
 
-void pawn_default_value(pawn p, bool init_is_white)
-{
-    p.alive = false;
-    p.col = -1;
-    p.lig = -1;
-    p.queen = false;
-    p.color = init_is_white;
-    p.friend = -1;
-}
-
 void init_pawns(Game *g, bool init_is_white)
 {
     int init_place = 0;
@@ -206,15 +193,15 @@ void init_pawns(Game *g, bool init_is_white)
         g->allPawns[init_is_white][i].alive = true;
         g->allPawns[init_is_white][i].queen = false;
         g->allPawns[init_is_white][i].friend = -1;
+        g->allPawns[init_is_white][i].ennemy = -1;
     }
 
     // Initialize the rest of pawns with default pmetre and the good color
     for (int i = NB_PAWNS; i < 2 * NB_PAWNS; i++)
     {
-        pawn_default_value(g->allPawns[init_is_white][i], init_is_white);
+        pawn_default_value(g->allPawns[init_is_white], i, init_is_white);
     }
 }
-
 
 void init_damier(Case damier[NB_CASE_LG][NB_CASE_LG])
 {
@@ -248,9 +235,7 @@ Game *create_game()
     g->nb_pawns[true] = NB_PAWNS;
     g->nb_pawns[false] = NB_PAWNS;
 
-    g->declare_amis = false;
-    g->declare_ennemi = false;
-    g->reverse_move = false;
+    g->ind_move_back = -1;
     return g;
 }
 
@@ -279,8 +264,6 @@ void change_damier(Game *g)
         }
     }
 }
-
-
 
 void display_damier(SDL_Renderer *render, Game *g)
 {
@@ -312,7 +295,8 @@ void prepareText(SDL_Renderer *render, text *txt, char *string)
     txt->rect->h = texH;
 }
 
-void printAndTurn(SDL_Renderer *render, text *txt, char *string, Game *g) {
+void printAndTurn(SDL_Renderer *render, text *txt, char *string, Game *g)
+{
     // Display a message for the player and change the turn for the other player
     prepareText(render, txt, string);
     g->ind_move = NEUTRAL_IND;
@@ -320,14 +304,7 @@ void printAndTurn(SDL_Renderer *render, text *txt, char *string, Game *g) {
 
 // Free the memory
 void free_game(Game *g)
-{ 
+{
     // Je le laisse pour plus tard si on a des tableaux dynamiques (Victor G)
     free(g);
 }
-
-// Debug functions
-// void error()
-// {
-//     printf("check");
-//     fflush(stdout);
-// }
