@@ -17,4 +17,5 @@ typedef struct Coord{
 } Coord;
 
 Coord sub(Coord ptA, Coord ptB);
+Coord reduceNormOfOne(Coord v);
 #endif

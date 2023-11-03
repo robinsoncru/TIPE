@@ -1,17 +1,9 @@
 #include "rafle_struct.h"
 #include <stdio.h>
 
-// Operators for Rafle structure
-#ifndef COORD_STRUCT
-#define COORD_STRUCT
-typedef struct Coord{
-    int i, j;
-} coord;
-#endif
-
 typedef struct Maillon
 {
-    coord point;
+    Coord point;
     struct Maillon* next;
 } maillon;
 
@@ -50,12 +42,12 @@ int lengthRafle(Rafle* rafle){
     return rafle -> taille;
 }
 
-coord peekRafle(Rafle* rafle){
+Coord peekRafle(Rafle* rafle){
     return rafle -> pile -> point;
 }
 
-coord popRafle(Rafle* rafle){
-    coord res = rafle -> pile -> point;
+Coord popRafle(Rafle* rafle){
+    Coord res = rafle -> pile -> point;
     maillon* m = rafle -> pile;
     rafle -> pile = rafle -> pile -> next;
     free(m);
@@ -64,7 +56,7 @@ coord popRafle(Rafle* rafle){
     return res;
 }
 
-void printCoord(coord point){
+void printCoord(Coord point){
     printf("(%d, %d)", point.i, point.j);
 }
 
@@ -104,7 +96,7 @@ void changeLengthOfRafle(Rafle* rafle, int new_length){
 
 void addWithoutIncrRafle(Rafle* rafle, int i, int j){
     maillon* m = malloc(sizeof(maillon));
-    coord point;
+    Coord point;
     point.i = i;
     point.j = j;
     m -> point = point;

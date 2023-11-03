@@ -1,5 +1,15 @@
 #include "game_functions_draughts.h"
 
+//error Handling
+void assertAndLog(bool condition, char* message){
+    if (!condition) {
+        printf("\n");
+        printf("Erreur : %s", message);
+        printf("\n");
+        assert(false);
+    }
+}
+
 // Logic functions
 
 bool freeCase(Case c)
@@ -41,18 +51,6 @@ bool outOfBounds(int i, int j){
 bool eatingIsOutOfBounds(int i, int j, int add0, int add1){
     //Checks if eating from position (i, j) in the (add0, add1) direction leads to an out of bounds position
     return outOfBounds(i + 2 * add0, j + 2 * add1);
-}
-
-int xMinusSing(int x){
-    int sg = (x >= 0) ? 1 : -1;
-    return x - sg;
-}
-
-void vectorToEatenPawn(int vi, int vj, int* ei, int* ej){
-    //Entree : vecteur entre deux positions apres avoir mange un pion
-    //Sortie : vecteur de la position initiale au pion mange
-    *ei = xMinusSing(vi);
-    *ej = xMinusSing(vj);
 }
 
 bool becomeDame(pawn p)

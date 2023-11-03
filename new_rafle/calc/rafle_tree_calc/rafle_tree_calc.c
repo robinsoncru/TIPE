@@ -51,16 +51,15 @@ PathTree* divideAndGather(pawn pawns[],pawn NPawns[], Case damier[NB_CASE_LG][NB
     /*
     Pour un pion donne avec ses coordonnees, renvoie son arbre de rafles a partir de la case indiquee en effectuant les
     appels reccursifs de rafleTreeCalcAux*/
-    int deltaI, deltaJ;
+    int di, dj;
     PathTree* res = pathTreeCreateNode(i, j);
     PathTree* child;
     for (int k = 0; k < 4; k++) {
         //Petite astuce pour parcourir les voisins :)
-        deltaI = dir(k%2);
-        deltaJ = dir((k >> 1)%2);
-        if (!eatingIsOutOfBounds(i, j, deltaI, deltaJ) && canEat(pawns, damier, indEater, i, j, deltaI, deltaJ)) {
-            child = rafleTreeCalcAux(pawns, NPawns, damier, indEater, deltaI, deltaJ);
-            pathTreeConnect(res, child, deltaJ, deltaI);
+        getDirsFromCode(k, &di, &dj);
+        if (!eatingIsOutOfBounds(i, j, di, dj) && canEat(pawns, damier, indEater, i, j, di, dj)) {
+            child = rafleTreeCalcAux(pawns, NPawns, damier, indEater, di, dj);
+            pathTreeConnect(res, child, dj, di);
         }
     }
 
@@ -69,13 +68,12 @@ PathTree* divideAndGather(pawn pawns[],pawn NPawns[], Case damier[NB_CASE_LG][NB
     int maxDepth = pathTreeDepth(res) - 1;
     int depth;
     for (int k = 0; k < 4; k++) {
-        deltaI = dir(k%2);
-        deltaJ = dir((k >> 1)%2);
+        getDirsFromCode(k, &di, &dj);
 
-        PathTree* inspected = pathTreeChild(res, deltaJ, deltaI);
+        PathTree* inspected = pathTreeChild(res, dj, di);
         depth = pathTreeDepth(inspected);
         if (depth < maxDepth) {
-            pathTreeFree(inspected);
+            pathTreeEmptyChild(res, dj, di);
         }
     }
 

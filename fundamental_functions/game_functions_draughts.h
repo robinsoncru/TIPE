@@ -3,6 +3,8 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include <assert.h>
+
+#include "coord/coord.h"
 // Game pmetre
 #define NB_CASE_LG 8
 #define NB_CASE (NB_CASE_LG * NB_CASE_LG)
@@ -44,6 +46,11 @@ Case.pawn_color: true for white, false for black
 Case.ind_pawn: -1 if no pawn
 */
 
+//error handling
+void assertAndLog(bool condition, char* message);
+    //Fait planter le programme en affichant un message d'erreur
+    //si la condition n'est pas respectee
+
 //Logic functions
 bool freeCase(Case c);
 int NON(int b);
@@ -53,7 +60,6 @@ bool outOfBounds(int i, int j);
 bool eatingIsOutOfBounds(int i, int j, int add0, int add1);
 int getCodeFromDirs(int horizontalDir, int verticalDir);
 void getDirsFromCode(int c, int* di, int* dj);
-void vectorToEatenPawn(int vi, int vj, int* ei, int* ej);
 
 //Aux functions
 //void delete_liste(Liste *liste);

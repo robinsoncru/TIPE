@@ -11,6 +11,12 @@ typedef struct PathTree{
 
 PathTree* emptyTree = NULL;
 
+void validIndexTest(int hDir, int vDir){
+    bool hDirIsValid = hDir == -1 || hDir == 1;
+    bool vDirIsValid = vDir == -1 || vDir == 1;
+    assertAndLog(hDirIsValid && vDirIsValid, "Direction inexistante");
+}
+
 PathTree* pathTreeCreateNode(int i, int j){
     //Cree un noeud de chemin correspondant
     //a la case de coordonnees (i, j)
@@ -22,6 +28,7 @@ PathTree* pathTreeCreateNode(int i, int j){
     //__/ \__
     //  \ /
     //   o
+    assertAndLog(!outOfBounds(i, j), "Position inexistante");
     PathTree* res = malloc(sizeof(PathTree));
     res -> depth = 0;
     Coord point;
@@ -34,41 +41,46 @@ PathTree* pathTreeCreateNode(int i, int j){
     return res;
 }
 
-void pathTreeFree(PathTree* pathTree){
+void pathTreeFree(PathTree* t){
     //Libere l'integralite de l'abre de chemin
-    if (pathTree != emptyTree) {
+    if (t != emptyTree) {
         for (int i = 0; i < ARITE; i++) {
-        pathTreeFree(pathTree -> childs[i]);
+        pathTreeFree(t -> childs[i]);
         }
     }
-    free(pathTree);
+    free(t);
 }
 
-PathTree* pathTreeChild(PathTree* pathTree, int horizontalDir, int verticalDir){
+PathTree* pathTreeChild(PathTree* t, int hDir, int vDir){
     //Renvoie le noeud consistant a aller dans la direction indiquee par les deux
     //entiers en argument. Cette fonction n'a pas d'effet de bords.
     //Renvoie NULL si on ne peut pas aller dans ladite direction
-    int index = getCodeFromDirs(horizontalDir, verticalDir);
-    return pathTree -> childs[index];
+    assertAndLog(t != emptyTree, "Recherche d'enfant de l'arbre vide");
+    validIndexTest(hDir, vDir);
+
+    int index = getCodeFromDirs(hDir, vDir);
+    return t -> childs[index];
 }
 
-void pathTreeConnect(PathTree* parent, PathTree* child, int horizontalDir, int verticalDir){
-    
+int pathTreeDepth(PathTree *t);
+void pathTreeConnect(PathTree* parent, PathTree* child, int hDir, int vDir){
     //connecte le parent fournit a l'enfant donne selon la direction en argument
     //cette fonction a des effets de bords.
-    int index = getCodeFromDirs(horizontalDir, verticalDir);
+    validIndexTest(hDir, vDir);
+
+    int index = getCodeFromDirs(hDir, vDir);
     parent -> childs[index] = child;
 
     int depthParent = parent -> depth;
-    int depthChild = child -> depth;
+    int depthChild = pathTreeDepth(child);
     if (depthChild + 1 > depthParent) {
         parent -> depth = depthChild + 1;
     }
 }
 
-Coord pathTreeLabel(PathTree* node){
-    assert(node != emptyTree);
-    return node -> point;
+Coord pathTreeLabel(PathTree* t){
+    assertAndLog(t != emptyTree, "Recherche d'etiquette de l'arbre vide");
+    return t -> point;
 }
 
 void pathTreeGetCoord(PathTree* t, int* i, int* j){
@@ -77,9 +89,18 @@ void pathTreeGetCoord(PathTree* t, int* i, int* j){
     *j = c.j;
 }
 
-int pathTreeDepth(PathTree* pathTree){
-    if (pathTree == emptyTree) {
+int pathTreeDepth(PathTree* t){
+    if (t == emptyTree) {
         return -1;
     }
-    return pathTree -> depth;
+    return t -> depth;
+}
+
+void pathTreeEmptyChild(PathTree* t, int hDir, int vDir){
+    printf("\npathTreeEmptyChild called\n");
+    //remplace l'enfant indique par l'arbre vide en le liberant au passage
+    PathTree* m = pathTreeChild(t, hDir, vDir);
+    pathTreeConnect(t, emptyTree, hDir, vDir);
+    pathTreeFree(m);
+    printf("\npathTreeEmptyChild works\n");
 }

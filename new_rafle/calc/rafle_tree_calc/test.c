@@ -16,33 +16,39 @@ PathTree* firstChildEncountered(PathTree* t){
     return emptyTree;
 }
 
-void eatingTest(pawn pawns[], pawn NPawns[], Case damier[NB_CASE_LG][NB_CASE_LG], PathTree* pathTree){
-    if (pathTree != emptyTree) {
-        Coord initPos = pathTreeLabel(pathTree);
-        int indEater = damier[initPos.i][initPos.j].ind_pawn;
-        Coord vector, InitPos, FinalPos;
-        PathTree* parent = pathTree;
-        PathTree* child = firstChildEncountered(pathTree);
+void eatingTest(pawn pawns[], pawn NPawns[], Case damier[NB_CASE_LG][NB_CASE_LG], PathTree* t){
+    printf("\neatingTest called\n");
+    if (t != emptyTree) {
+        Coord startPos = pathTreeLabel(t);
+        int indEater = damier[startPos.i][startPos.j].ind_pawn;
+        Coord vector, initPos, finalPos;
+        PathTree* parent = t;
+        PathTree* child = firstChildEncountered(t);
         while (child != emptyTree) {
-            
+            initPos = pathTreeLabel(parent);
+            finalPos = pathTreeLabel(child);
+            vector = sub(finalPos, initPos);
+            vector = reduceNormOfOne(vector);
+            nonLoggingChangeForEat(pawns, NPawns, damier, indEater, initPos.i, initPos.j, vector.i, vector.j);
+            parent = child;
+            child = firstChildEncountered(child);
         }
     }
 }
 
 int testRafleTree(pawn pawns[], pawn NPawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int ind){
-    printf("\ntestRafleTree called\nind = %d\n", ind);
     if (ind == NEUTRAL_IND) {
         return NEUTRAL_IND;
     }
-    PathTree* pathTree = rafleTreeCalc(pawns, NPawns, damier, ind);
-    printf("\npathTree generated.\n");
-    if (pathTree == emptyTree) {
+    PathTree* t = rafleTreeCalc(pawns, NPawns, damier, ind);
+    if (t == emptyTree) {
         return IND_PB;
     }
-    printf("\npresence of possible paths : %s\n", (pathTreeDepth(pathTree) > 0) ? "true" : "false");
-    if (pathTreeDepth(pathTree) == 0) {
+    printf("\npresence of possible paths : %s\n", (pathTreeDepth(t) > 0) ? "true" : "false");
+    if (pathTreeDepth(t) == 0) {
         return ind;
     }
-    eatingTest(pawns, NPawns, damier, pathTree);
+    eatingTest(pawns, NPawns, damier, t);
+    pathTreeFree(t);
     return IND_CHANGE_ALLOWED;
 }

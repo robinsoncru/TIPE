@@ -165,6 +165,9 @@ int main(int argc, char *argv[])
                     else if (event.key.keysym.sym == SDLK_a) {
                         ind_move = testRafleTree(allPawns[is_white], allPawns[!is_white], damier, ind_move);
                     }
+                    else if (event.key.keysym.sym == SDLK_z) {
+                        ind_move = pathTreeDisplayTest(draw, allPawns[is_white], allPawns[!is_white], damier, ind_move);
+                    }
                     else
                         ind_move = NEUTRAL_IND;
                     break;
