@@ -1,6 +1,7 @@
 #include <SDL2/SDL.h>
 
 #include "little_linked_list.h"
+#include "coord/coord.h"
 
 // Game pmetre
 #define NB_CASE_LG 8
@@ -53,8 +54,9 @@ typedef struct
     /* Access with is_white
     Keep in memory an overapproximation of the nb of pawns, but like for merge to union_find, don't decrease the value.
     Indeed, we need a free indice to create a new ennemy pawn, not necessary the first free indice */
-    int ind_move, ind_move_back;
+    int ind_move, ind_move_back, ind_check;
     bool is_white;
+    Coord coordForMoveBack;
 
 } Game;
 
@@ -76,6 +78,7 @@ Pour qu'une dame mange une piece, selectionne la dame puis selectionne (clic gau
 
 // Basic functions
 bool freeCase(Case c);
+bool outOfBounds(int i, int j);
 int NON(int b);
 bool becomeDame(pawn p, pawn pawns[], pawn Npawns[], Case damier[NB_CASE_LG][NB_CASE_LG]); /* Couronne un pion en dame et s'il avait 
 un ennemi, celui ci meurt */

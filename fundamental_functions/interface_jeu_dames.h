@@ -6,7 +6,7 @@
 // Window pmetre
 #define LG_WINDOW 640
 #define FRAME 16
-#define MAX_TICKS 20
+#define MAX_TICKS 10
 #define LG_CASE (LG_WINDOW / NB_CASE_LG)
 
 

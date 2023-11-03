@@ -141,15 +141,14 @@ int main(int argc, char *argv[])
                     if (event.button.button == SDL_BUTTON_LEFT)
                     {
                         /* Pour les clics gauche */
-                        if (g->ind_move == NEUTRAL_IND)
+                        if (g->ind_check == NEUTRAL_IND && g->ind_move == -1)
                             selectPawn(g, event.button.x, event.button.y);
                         else if (g->ind_move > -1 && g->allPawns[g->is_white][g->ind_move].queen)
                             queenDepl(event.button.x / LG_CASE, event.button.y / LG_CASE, g);
                         else if (g->ind_move > -1)
                             lienAmitie(event.button.x / LG_CASE, event.button.y / LG_CASE, g);
-                        if (g->ind_move == NEUTRAL_IND)
+                        if (g->ind_move == -1)
                             printf("No pawn selected");
-                        // printf("g.ind_move %d", g.ind_move);
                     }
                     else if (event.button.button == SDL_BUTTON_RIGHT)
                     {
@@ -164,7 +163,10 @@ int main(int argc, char *argv[])
                     {
                         /* Move pawn to left */
                         if (g->ind_move_back != -1)
-                            moveBack(g, true);
+                            canMoveBack(true, g);
+
+                        if (!moveBackNotAvailable(g))
+                            moveBack(g);
                         else
                             pawnMove(g, true);
                     }
@@ -172,7 +174,10 @@ int main(int argc, char *argv[])
                     {
                         /* Move pawn to right */
                         if (g->ind_move_back != -1)
-                            moveBack(g, false);
+                            canMoveBack(false, g);
+
+                        if (!moveBackNotAvailable(g))
+                            moveBack(g);
                         else
                             pawnMove(g, false);
                     }
@@ -194,35 +199,38 @@ int main(int argc, char *argv[])
                     else if (event.key.keysym.sym == SDLK_r)
                         print_pawns(g);
                     else
-                        g->ind_move = NEUTRAL_IND;
+                    {
+                        g->ind_move = -1;
+                        g->ind_check = NEUTRAL_IND;
+                    }
                     break;
                 }
             }
 
             // Check if the move is allowed
 
-            if (g->ind_move == IND_CHANGE_ALLOWED)
+            if (g->ind_check == IND_CHANGE_ALLOWED)
             {
                 printAndTurn(draw, txtMessage, "pawn moved", g);
                 change_ticks++;
             }
-            else if (g->ind_move == IND_PB)
+            else if (g->ind_check == IND_PB)
             {
                 // printf("No pawn moved");
                 printAndTurn(draw, txtMessage, "NO pawn moved", g);
                 error_ticks++;
             }
-            else if (g->ind_move == IND_NOTHING_HAPPENED)
+            else if (g->ind_check == IND_NOTHING_HAPPENED)
             {
                 printAndTurn(draw, txtMessage, "You have nothing", g);
                 change_ticks++;
             }
-            else if (g->ind_move == IND_BAD_CHOICE)
+            else if (g->ind_check == IND_BAD_CHOICE)
             {
                 printAndTurn(draw, txtMessage, "ARG fuck !", g);
                 change_ticks++;
             }
-            else if (g->ind_move == IND_GLORY_QUEEN)
+            else if (g->ind_check == IND_GLORY_QUEEN)
             {
                 printAndTurn(draw, txtMessage, "Yes putain !!!", g);
                 change_ticks++;

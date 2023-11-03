@@ -7,6 +7,11 @@ bool freeCase(Case c)
     return c.ind_pawn == -1;
 }
 
+bool outOfBounds(int i, int j) {
+    //Checks if the (i, j) position is out of bounds
+    return i < 0 || i >= NB_CASE_LG || j < 0 || j >= NB_CASE_LG;
+}
+
 int NON(int b)
 {
     return (b + 1) % 2;
@@ -157,7 +162,7 @@ int pawnMovePmetre(pawn pawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int ind, b
                 return IND_PB;
             }
         }
-        else if (i > 0)
+        else if (!pawns[ind].color && i > 0)
         {
             if (gauche && j > 0 && freeCase(damier[i - 1][j - 1]))
             {
@@ -197,7 +202,8 @@ int pawnMovePmetre(pawn pawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int ind, b
 
 void pawnMove(Game *g, bool gauche)
 {
-    g->ind_move = pawnMovePmetre(g->allPawns[g->is_white], g->damier, g->ind_move, gauche, g);
+    g->ind_check = pawnMovePmetre(g->allPawns[g->is_white], g->damier, g->ind_move, gauche, g);
+    g->ind_move = -1;
 }
 
 int eatPawnPmetre(pawn pawns[], pawn Npawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int ind)
@@ -230,13 +236,15 @@ int eatPawnPmetre(pawn pawns[], pawn Npawns[], Case damier[NB_CASE_LG][NB_CASE_L
 
 void eatPawn(Game *g)
 {
-    g->ind_move = eatPawnPmetre(g->allPawns[g->is_white], g->allPawns[!g->is_white], g->damier, g->ind_move);
+    g->ind_check = eatPawnPmetre(g->allPawns[g->is_white], g->allPawns[!g->is_white], g->damier, g->ind_move);
+    g->ind_move = -1;
 }
 // Queen functions
 
 bool MoveOrEatQueen(pawn pawns[], pawn Npawns[], int lig, int col, Case damier[NB_CASE_LG][NB_CASE_LG], int ind)
 {
     // Check if the move of the queen is possible and move the queen or eat the next pawn in her path
+    assert(pawns[ind].alive && ind > -1);
     pawn p = pawns[ind];
     int dcol = col - p.col;
     int dlig = lig - p.lig;
@@ -289,7 +297,9 @@ int queenDeplPmetre(int col, int lig, bool is_white, pawn pawns[], pawn Npawns[]
 
 void queenDepl(int col, int lig, Game *g)
 {
-    g->ind_move = queenDeplPmetre(col, lig, g->is_white, g->allPawns[g->is_white], g->allPawns[!g->is_white], g->damier, g->ind_move);
+    g->ind_move_back = g->allPawns[g->is_white][g->ind_move].friend;
+    g->ind_check = queenDeplPmetre(col, lig, g->is_white, g->allPawns[g->is_white], g->allPawns[!g->is_white], g->damier, g->ind_move);
+    g->ind_move = -1;
 }
 
 // Debug functions

@@ -134,12 +134,12 @@ void selectPawn(Game *g, int x_mouse, int y_mouse)
     // printf("%d, %d\n", x_mouse, y_mouse);
     int lig = y_mouse / LG_CASE;
     int col = x_mouse / LG_CASE;
-    printf("lig %d col %d\n", lig, col);
-    fflush(stdout);
+    // printf("lig %d col %d\n", lig, col);
+    // fflush(stdout);
     if (g->damier[lig][col].pawn_color == g->is_white)
-        g->ind_move = g->damier[lig][col].ind_pawn; // Return NEUTRAL_IND if no pawn in the case
+        g->ind_move = g->damier[lig][col].ind_pawn; // Return -1 if no pawn in the case
     else
-        g->ind_move = NEUTRAL_IND;
+        g->ind_move = -1;
 }
 
 // Init functions
@@ -226,7 +226,6 @@ void init_damier(Case damier[NB_CASE_LG][NB_CASE_LG])
 Game *create_game()
 {
     Game *g = malloc(sizeof(Game));
-    g->ind_move = NEUTRAL_IND;
     g->is_white = true;
     init_damier(g->damier);
 
@@ -235,7 +234,12 @@ Game *create_game()
     g->nb_pawns[true] = NB_PAWNS;
     g->nb_pawns[false] = NB_PAWNS;
 
-    g->ind_move_back = -1;
+    g->ind_move = NEUTRAL_IND;
+    g->ind_move_back = NEUTRAL_IND;
+    g->ind_check = NEUTRAL_IND;
+
+    g->coordForMoveBack.i = -1;
+    g->coordForMoveBack.j = -1;
     return g;
 }
 
@@ -299,7 +303,7 @@ void printAndTurn(SDL_Renderer *render, text *txt, char *string, Game *g)
 {
     // Display a message for the player and change the turn for the other player
     prepareText(render, txt, string);
-    g->ind_move = NEUTRAL_IND;
+    g->ind_check = NEUTRAL_IND;
 }
 
 // Free the memory
