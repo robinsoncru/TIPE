@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <assert.h>
 
+#include "coord/coord.h"
 // Game pmetre
 #define NB_CASE_LG 8
 #define NB_CASE (NB_CASE_LG * NB_CASE_LG)
@@ -76,28 +77,45 @@ Pour deplacer une dame, selectionne le dame (clic gauche) puis selectionne la ca
 Pour qu'une dame mange une piece, selectionne la dame puis selectionne (clic gauche) une case derriere la piece que tu manges
 */
 
-// Basic functions
+//error handling
+void assertAndLog(bool condition, char* message);
+    //Fait planter le programme en affichant un message d'erreur
+    //si la condition n'est pas respectee
+
+//Logic functions
 bool freeCase(Case c);
 int NON(int b);
-bool becomeDame(pawn p, pawn pawns[], pawn Npawns[], Case damier[NB_CASE_LG][NB_CASE_LG]); /* Couronne un pion en dame et s'il avait 
-un ennemi, celui ci meurt */
+bool becomeDame(pawn p, pawn pawns[], pawn Npawns[], Case damier[NB_CASE_LG][NB_CASE_LG]);
+/* Couronne un pion en dame et s'il avait un ennemi, celui ci meurt */
 bool inGame(int lig, int col);
 void popPawn(pawn pawns[], pawn Npawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int i, int j); /* kill the pawn and put its values as 
 default values */
 void pawn_default_value(pawn pawns[], int ind, bool init_is_white); /* Initialize pawn with default values */
 void change_pawn_place(pawn pawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int ind, int lig, int col);
+int dir(int a);
+bool outOfBounds(int i, int j);
+bool eatingIsOutOfBounds(int i, int j, int add0, int add1);
+int getCodeFromDirs(int horizontalDir, int verticalDir);
+void getDirsFromCode(int c, int* di, int* dj);
 
+//Aux functions
+//void delete_liste(Liste *liste);
 bool canEat(pawn pawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int ind, int i, int j, int add0, int add1);
 // entree : un tableau de pions pawns, un damier, l'index du pion qui mange, les coordonnees i et j dudit pion
 // des entiers add0 et add1 qui indiquent la direction dans laquelle manger
 // sortie : booleen indiquant si le pion dans la direction indique peut etre mange
-int changeForEat(pawn pawns[], pawn Npawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int ind, int i, int j, int add0, int add1);
+int changeForEat(pawn pawns[], pawn NPawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int ind, int i, int j, int add0, int add1);
+int nonLoggingChangeForEat(pawn pawns[], pawn NPawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int ind, int i, int j, int add0, int add1);
+
+//print functions
 void pawnMove(Game *g, bool gauche);
 void eatPawn(Game *g);
+
+//board functions
 void queenDepl(int col, int lig, Game *g);
 
 // Debug functions
 void error();
 /* print check in the terminal and flush it */
-void print_pawns(Game *g); // Affiche les caracteristiques des pions
+void print_pawns(Game *g); // Affiche les caracteristiques des Pions
 void print_damier(Case damier[NB_CASE_LG][NB_CASE_LG]); // Affiche ligne, colonne et coordonnees des cases

@@ -9,7 +9,10 @@ int main(int argc, char *argv[])
     // Init the Game
     Game *g = create_game();
 
-    int allMoves[4][2] = {{LEFT_FORWARD, LEFT_BACK}, {LEFT_BACK, LEFT_FORWARD}, {RIGHT_FORWARD, RIGHT_BACK}, {RIGHT_BACK, RIGHT_FORWARD}};
+    int allMoves[4][2] = {{LEFT_FORWARD, LEFT_BACK},
+                          {LEFT_BACK, LEFT_FORWARD},
+                          {RIGHT_FORWARD, RIGHT_BACK},
+                          {RIGHT_BACK, RIGHT_FORWARD}};
     // Init game
 
     // Index 1 is for white pawns
@@ -146,7 +149,7 @@ int main(int argc, char *argv[])
                         else if (g->ind_move > -1 && g->allPawns[g->is_white][g->ind_move].queen)
                             queenDepl(event.button.x / LG_CASE, event.button.y / LG_CASE, g);
                         if (g->ind_move == NEUTRAL_IND)
-                            printf("No pawn selected");
+                            printf("\nNo pawn selected\n");
                         // printf("g.ind_move %d", g.ind_move);
                     }
                     break;
@@ -173,6 +176,12 @@ int main(int argc, char *argv[])
                     else if (event.key.keysym.sym == SDLK_ESCAPE)
                         /* Exit the game */
                         is_playing = false;
+                    else if (event.key.keysym.sym == SDLK_a) {
+                        ind_move = testRafleTree(allPawns[is_white], allPawns[!is_white], damier, ind_move);
+                    }
+                    else if (event.key.keysym.sym == SDLK_z) {
+                        ind_move = pathTreeDisplayTest(draw, allPawns[is_white], allPawns[!is_white], damier, ind_move);
+                    }
                     else if (event.key.keysym.sym == SDLK_r)
                         print_pawns(g);
                     else
