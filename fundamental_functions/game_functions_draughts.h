@@ -38,7 +38,7 @@ typedef struct
 
 typedef struct
 {
-    int lig, col, friend, ennemy;
+    int lig, col, ffriend, ennemy;
     /* friend: Lien d'amitie avec un autre pion, -1 if no friend */
     bool alive, color, queen;
 } pawn;
