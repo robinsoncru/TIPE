@@ -1,4 +1,4 @@
-#include "../calc/rafle_tree_calc/path_tree.h"
+#include "../calc/path_tree.h"
 #include "../../fundamental_functions/interface_jeu_dames.h"
 #include "../../fundamental_functions/game_functions_draughts.h"
 
