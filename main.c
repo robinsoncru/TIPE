@@ -1,30 +1,32 @@
-#include "fundamental_functions/game_functions_draughts.h"
-#include "fundamental_functions/interface_jeu_dames.h"
+#include "main.h"
 
-// Run the game
+/* For Victor G:
+gcc main.c fundamental_functions/interface_jeu_dames.c fundamental_functions/game_functions_draughts.c $(sdl2-config --cflags --libs) -lSDL2_ttf -o dames && ./dames
+Run the game */
 
 int main(int argc, char *argv[])
 {
+    // Init the Game
+    Game *g = create_game();
 
+    int allMoves[4][2] = {{LEFT_FORWARD, LEFT_BACK}, {LEFT_BACK, LEFT_FORWARD}, {RIGHT_FORWARD, RIGHT_BACK}, {RIGHT_BACK, RIGHT_FORWARD}};
     // Init game
 
-    Case damier[NB_CASE_LG][NB_CASE_LG];
-    int ind_move = NEUTRAL_IND;
-    bool is_white = true;
-    pawn allPawns[2][NB_PAWNS];
-    int allMoves[4][2] = {{LEFT_FORWARD, LEFT_BACK}, {LEFT_BACK, LEFT_FORWARD}, {RIGHT_FORWARD, RIGHT_BACK}, {RIGHT_BACK, RIGHT_FORWARD}};
-
-    init_damier(damier);
-
-    init_pawns(allPawns[1], damier, true);
-    init_pawns(allPawns[0], damier, false);
     // Index 1 is for white pawns
     // Index 0 is for black pawns
 
-    // print_pawns(whites);
-    // print_pawns(blacks);
-    // print_damier(damier);
-    // printf("Lg case %d\n", LG_CASE);
+    // Mes conneries
+    // for (int i = 2; i < NB_PAWNS; i++)
+    // {
+    //     pawn p = g->allPawns[1][i];
+    //     g->allPawns[1][i].alive = false;
+    //     g->damier[p.lig][p.col].ind_pawn = -1;
+    //     p = g->allPawns[0][i];
+    //     g->allPawns[0][i].alive = false;
+    //     g->damier[p.lig][p.col].ind_pawn = -1;
+    // }
+    // change_pawn_place(g->allPawns[1], g->damier, 0, 4, 0);
+    // change_pawn_place(g->allPawns[1], g->damier, 1, 4, 2);
 
     // Init text
     text *txtMessage = malloc(sizeof(text));
@@ -40,6 +42,9 @@ int main(int argc, char *argv[])
     SDL_Window *window = NULL;
     SDL_Renderer *draw = NULL;
     SDL_Event event;
+
+    // Init aleat
+    srand(time(NULL));
 
     if (0 != SDL_Init(SDL_INIT_VIDEO))
     {
@@ -91,8 +96,8 @@ int main(int argc, char *argv[])
             // For each turn, need to change the screen's display
             if (change_ticks > MAX_TICKS)
             {
-                is_white = !is_white;
-                change_damier(damier, is_white);
+                g->is_white = !g->is_white;
+                change_damier(g);
                 change_ticks = 0;
             }
 
@@ -100,7 +105,7 @@ int main(int argc, char *argv[])
                 error_ticks = 0;
 
             // Draw the board in the screen
-            display_damier(draw, damier, allPawns);
+            display_damier(draw, g);
 
             // Create a transition effect
             if (change_ticks > 0)
@@ -125,60 +130,84 @@ int main(int argc, char *argv[])
             {
                 switch (event.type)
                 {
+
+                /* Exit the game */
                 case SDL_QUIT:
                     is_playing = false;
                     break;
 
+                /* Select with the mouse */
                 case SDL_MOUSEBUTTONDOWN:
-                    if (ind_move == NEUTRAL_IND)
-                        ind_move = selectPawn(damier, event.button.x, event.button.y, is_white);
-                    else if (ind_move > -1 && allPawns[is_white][ind_move].queen)
-                        ind_move = queen_move(event.button.x, event.button.y, is_white, allPawns[is_white], damier, ind_move);
-                    if (ind_move == NEUTRAL_IND)
-                        printf("No pawn selected");
-                    // printf("ind_move %d", ind_move);
+                    if (event.button.button == SDL_BUTTON_LEFT)
+                    {
+                        /* Pour les clics gauche */
+                        if (g->ind_move == NEUTRAL_IND)
+                            selectPawn(g, event.button.x, event.button.y);
+                        else if (g->ind_move > -1 && g->allPawns[g->is_white][g->ind_move].queen)
+                            queenDepl(event.button.x / LG_CASE, event.button.y / LG_CASE, g);
+                        if (g->ind_move == NEUTRAL_IND)
+                            printf("No pawn selected");
+                        // printf("g.ind_move %d", g.ind_move);
+                    }
                     break;
 
+                /* Do actions with the buttons */
                 case SDL_KEYUP:
                     if (event.key.keysym.sym == SDLK_LEFT)
-                        ind_move = pawn_move(allPawns[is_white], damier, ind_move, true);
+                    {
+                        /* Move pawn to left */
+                        pawnMove(g, true);
+                    }
                     else if (event.key.keysym.sym == SDLK_RIGHT)
-                        ind_move = pawn_move(allPawns[is_white], damier, ind_move, false);
+                    {
+                        /* Move pawn to right */
+                        pawnMove(g, false);
+                    }
                     else if (event.key.keysym.sym == SDLK_UP)
                         /*D'accord, je vois : si j'appuye sur haut, ça va manger le premier pion disponible selon l'ordre
                         horaire ou anti-horaire. Je suppose que c'est plus simple à coder mais j'admets etre dubitatif quand
                         au fait que les regles forcent un joueur a manger un pion en particulier. Ne serait-il pas plus judicieux de
                         laisser au joueur dont c'est le trait de choisir le pion qu'il mange ?
                         Quoique, il est vrai que la regle des rafles impose de choisir la meilleure, je suppose ce changement provisoire.*/
-                        ind_move = eatPawn(allPawns[is_white], allPawns[!is_white], damier, ind_move);
+                        eatPawn(g);
                     else if (event.key.keysym.sym == SDLK_ESCAPE)
+                        /* Exit the game */
                         is_playing = false;
-                    else if (event.key.keysym.sym == SDLK_r) {
-                        printBestRafle(allPawns[is_white], allPawns[!is_white], damier, ind_move);
-                        ind_move = NEUTRAL_IND;
-                    }
+                    else if (event.key.keysym.sym == SDLK_r)
+                        print_pawns(g);
                     else
-                        ind_move = NEUTRAL_IND;
+                        g->ind_move = NEUTRAL_IND;
                     break;
                 }
             }
 
             // Check if the move is allowed
 
-            if (ind_move == IND_CHANGE_ALLOWED)
+            if (g->ind_move == IND_CHANGE_ALLOWED)
             {
-                ind_move = NEUTRAL_IND;
+                printAndTurn(draw, txtMessage, "pawn moved", g);
                 change_ticks++;
-                prepareText(draw, txtMessage, "pawn moved");
-                if (becomeDame(allPawns[is_white][ind_move]))
-                    allPawns[is_white][ind_move].queen = true;
             }
-            else if (ind_move == IND_PB)
+            else if (g->ind_move == IND_PB)
             {
                 // printf("No pawn moved");
-                prepareText(draw, txtMessage, "NO pawn moved");
-                ind_move = NEUTRAL_IND;
+                printAndTurn(draw, txtMessage, "NO pawn moved", g);
                 error_ticks++;
+            }
+            else if (g->ind_move == IND_NOTHING_HAPPENED)
+            {
+                printAndTurn(draw, txtMessage, "You have nothing", g);
+                change_ticks++;
+            }
+            else if (g->ind_move == IND_BAD_CHOICE)
+            {
+                printAndTurn(draw, txtMessage, "ARG fuck !", g);
+                change_ticks++;
+            }
+            else if (g->ind_move == IND_GLORY_QUEEN)
+            {
+                printAndTurn(draw, txtMessage, "Yes putain !!!", g);
+                change_ticks++;
             }
         }
         // is_playing=false;
@@ -186,7 +215,7 @@ int main(int argc, char *argv[])
 
     statut = EXIT_SUCCESS;
     // printf("change \n");
-    // print_damier(damier);
+    // print_damier(g.damier);
 
 Quit:
     // Free the resources
@@ -202,5 +231,7 @@ Quit:
         SDL_DestroyWindow(window);
     TTF_Quit();
     SDL_Quit();
+    free_game(g);
+    free(txtMessage);
     return statut;
 }
