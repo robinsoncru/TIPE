@@ -1,4 +1,7 @@
 #include "main.h"
+#include <SDL2/SDL_events.h>
+#include <SDL2/SDL_keycode.h>
+#include <stdio.h>
 
 /* For Victor G:
 gcc main.c fundamental_functions/interface_jeu_dames.c fundamental_functions/game_functions_draughts.c $(sdl2-config --cflags --libs) -lSDL2_ttf -o dames && ./dames
@@ -76,10 +79,12 @@ int main(int argc, char *argv[])
     }
 
     bool is_playing = true;
+    bool display_tree = false;
     Uint32 last_time = SDL_GetTicks();
     Uint32 time_now;
     Uint32 change_ticks = 0;
     Uint32 error_ticks = 0;
+    PathTree* cacheTree = emptyTree;
 
     // Start the game
 
@@ -95,6 +100,7 @@ int main(int argc, char *argv[])
             SDL_RenderClear(draw); // Clear the window
 
             // Drawing part
+            //affichage en fonction des infos du cache
 
             // For each turn, need to change the screen's display
             if (change_ticks > MAX_TICKS)
@@ -124,6 +130,8 @@ int main(int argc, char *argv[])
                 error_ticks++;
             }
 
+            displayCurrentRafle(g, draw, cacheTree, display_tree);
+
             /* Rafraichit l'écran */
             SDL_RenderPresent(draw);
 
@@ -141,6 +149,7 @@ int main(int argc, char *argv[])
 
                 /* Select with the mouse */
                 case SDL_MOUSEBUTTONDOWN:
+                    display_tree = false;
                     if (event.button.button == SDL_BUTTON_LEFT)
                     {
                         /* Pour les clics gauche */
@@ -177,10 +186,10 @@ int main(int argc, char *argv[])
                         /* Exit the game */
                         is_playing = false;
                     else if (event.key.keysym.sym == SDLK_a) {
-                        ind_move = testRafleTree(allPawns[is_white], allPawns[!is_white], damier, ind_move);
+                        testRafleTree(g);
                     }
                     else if (event.key.keysym.sym == SDLK_z) {
-                        ind_move = pathTreeDisplayTest(draw, allPawns[is_white], allPawns[!is_white], damier, ind_move);
+                        manageCurrentRafleOnZUp(g, &cacheTree, &display_tree);
                     }
                     else if (event.key.keysym.sym == SDLK_r)
                         print_pawns(g);
@@ -188,8 +197,13 @@ int main(int argc, char *argv[])
                         g->ind_move = NEUTRAL_IND;
                     break;
                 }
+                if (event.type == SDL_MOUSEBUTTONDOWN || (event.type == SDL_KEYUP && event.key.keysym.sym != SDLK_z)) {
+                    display_tree = false;
+                    if (cacheTree != emptyTree) {
+                        freeCurrentRafle(&cacheTree);
+                    }
+                }
             }
-
             // Check if the move is allowed
 
             if (g->ind_move == IND_CHANGE_ALLOWED)
@@ -238,6 +252,9 @@ Quit:
         SDL_DestroyRenderer(draw);
     if (NULL != window)
         SDL_DestroyWindow(window);
+    if (emptyTree != cacheTree) {
+        freeCurrentRafle(&cacheTree);
+    }
     TTF_Quit();
     SDL_Quit();
     free_game(g);

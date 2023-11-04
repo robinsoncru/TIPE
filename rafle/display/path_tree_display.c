@@ -14,7 +14,6 @@ void drawLineBetweenCases(SDL_Renderer* render, Case c0, Case c1){
 }
 
 void drawLinesBetweenParentAndChilds(SDL_Renderer* render, Case damier[NB_CASE_LG][NB_CASE_LG], PathTree* t){
-    printf("\ndrawLinesBetweenParentAndChilds called\n");
     if (t != emptyTree) {
         PathTree* child;
         int di, dj;
@@ -35,7 +34,6 @@ void drawLinesBetweenParentAndChilds(SDL_Renderer* render, Case damier[NB_CASE_L
 }
 
 void pathTreeDisplay(SDL_Renderer* render, Case damier[NB_CASE_LG][NB_CASE_LG], PathTree* t){
-    printf("\npathTreeDisplay called\n");
     if (t != emptyTree) {
         drawLinesBetweenParentAndChilds(render, damier, t);
         int di, dj;

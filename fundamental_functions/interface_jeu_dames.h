@@ -1,7 +1,8 @@
 #include <SDL2/SDL_ttf.h>
 
+#ifndef INTERFACE_JEU_DAMES
+#define INTERFACE_JEU_DAMES
 #include "game_functions_draughts.h"
-
 // Window pmetre
 #define LG_WINDOW 640
 #define FRAME 16
@@ -55,3 +56,4 @@ void error();
 
 // Memory functions
 void free_game(Game *g);
+#endif

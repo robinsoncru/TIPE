@@ -4,6 +4,8 @@
 #include <stdio.h>
 #include <assert.h>
 
+#ifndef GAME_FUNCTIONS_DRAUGHTS
+#define GAME_FUNCTIONS_DRAUGHTS
 #include "coord/coord.h"
 // Game pmetre
 #define NB_CASE_LG 8
@@ -28,7 +30,6 @@
 // // En evaluant dans les files incluant ce file, on évite la double inclusion
 
 // Game structure
-
 typedef struct
 {
     bool pawn_color, color;
@@ -77,19 +78,14 @@ Pour deplacer une dame, selectionne le dame (clic gauche) puis selectionne la ca
 Pour qu'une dame mange une piece, selectionne la dame puis selectionne (clic gauche) une case derriere la piece que tu manges
 */
 
-//error handling
-void assertAndLog(bool condition, char* message);
-    //Fait planter le programme en affichant un message d'erreur
-    //si la condition n'est pas respectee
-
 //Logic functions
 bool freeCase(Case c);
 int NON(int b);
 bool becomeDame(pawn p, pawn pawns[], pawn Npawns[], Case damier[NB_CASE_LG][NB_CASE_LG]);
 /* Couronne un pion en dame et s'il avait un ennemi, celui ci meurt */
 bool inGame(int lig, int col);
-void popPawn(pawn pawns[], pawn Npawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int i, int j); /* kill the pawn and put its values as 
-default values */
+void popPawn(pawn pawns[], pawn Npawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int i, int j);
+/* kill the pawn and put its values as default values */
 void pawn_default_value(pawn pawns[], int ind, bool init_is_white); /* Initialize pawn with default values */
 void change_pawn_place(pawn pawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int ind, int lig, int col);
 int dir(int a);
@@ -119,3 +115,7 @@ void error();
 /* print check in the terminal and flush it */
 void print_pawns(Game *g); // Affiche les caracteristiques des Pions
 void print_damier(Case damier[NB_CASE_LG][NB_CASE_LG]); // Affiche ligne, colonne et coordonnees des cases
+void assertAndLog(bool condition, char* message);
+    //Fait planter le programme en affichant un message d'erreur
+    //si la condition n'est pas respectee
+#endif

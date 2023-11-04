@@ -1,15 +1,5 @@
 #include "game_functions_draughts.h"
 
-//error Handling
-void assertAndLog(bool condition, char* message){
-    if (!condition) {
-        printf("\n");
-        printf("Erreur : %s", message);
-        printf("\n");
-        assert(false);
-    }
-}
-
 // Logic functions
 
 bool freeCase(Case c)
@@ -52,7 +42,7 @@ bool eatingIsOutOfBounds(int i, int j, int add0, int add1){
     return outOfBounds(i + 2 * add0, j + 2 * add1);
 }
 
-bool becomeDame(pawn p)
+bool becomeDame(pawn p, pawn pawns[], pawn Npawns[], Case damier[NB_CASE_LG][NB_CASE_LG])
 {
     if (p.alive && !p.queen)
     {
@@ -98,7 +88,7 @@ void pawn_default_value(pawn pawns[], int ind, bool init_is_white)
     pawns[ind].lig = -1;
     pawns[ind].queen = false;
     pawns[ind].color = init_is_white;
-    pawns[ind].friend = -1;
+    pawns[ind].ffriend = -1;
     pawns[ind].ennemy = -1;
 
 }
@@ -113,8 +103,8 @@ void popPawn(pawn pawns[], pawn Npawns[], Case damier[NB_CASE_LG][NB_CASE_LG], i
             Npawns[pawns[damier[i][j].ind_pawn].ennemy].ennemy = -1;
             Npawns[pawns[damier[i][j].ind_pawn].ennemy].queen = true;
         }
-        if (pawns[damier[i][j].ind_pawn].friend != -1)
-            Npawns[pawns[damier[i][j].ind_pawn].friend].friend = -1;
+        if (pawns[damier[i][j].ind_pawn].ffriend != -1)
+            Npawns[pawns[damier[i][j].ind_pawn].ffriend].ffriend = -1;
         pawn_default_value(pawns, damier[i][j].ind_pawn, pawns[damier[i][j].ind_pawn].color);
         damier[i][j].ind_pawn = -1;
     }
@@ -150,21 +140,18 @@ bool canEat(pawn pawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int ind, int i, i
             !freeCase(damier[i + add0][j + add1]));
 }
 
-int changeForEat(pawn pawns[], pawn Npawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int ind, int i, int j, int add0, int add1)
+int changeForEat(pawn pawns[], pawn NPawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int indEater, int i, int j, int add0, int add1)
 {
     // For eatPawn
-    assert(ind > -1 && pawns[ind].alive && !pawns[ind].queen);
+    assert(indEater > -1 && pawns[indEater].alive && !pawns[indEater].queen);
     // printf("pawn which is eaten %d\n", damier[i + add0][j + add1].ind_pawn);
 
-    Npawns[damier[i + add0][j + add1].ind_pawn].alive = false;
-    damier[i + add0][j + add1].ind_pawn = -1;
-    pawns[ind].lig = i + 2 * add0;
-    pawns[ind].col = j + 2 * add1;
-    printf("change allowed %d %d", i + 2 * add0, j + 2 * add1);
+    nonLoggingChangeForEat(pawns, NPawns, damier, indEater, i, j, add0, add1);
+    printf("change allowed %d %d\n", i + 2 * add0, j + 2 * add1);
     return IND_CHANGE_ALLOWED;
 }
 
-int nonLoggingChangeForEat(pawn pawns[], pawn Npawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int ind, int i, int j, int add0, int add1){
+int nonLoggingChangeForEat(pawn pawns[], pawn NPawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int indEater, int i, int j, int add0, int add1){
     //Version de changeForEat qui n'imprime pas les changements effectues
     //Entree : deux tableaux de pions, un damier, l'index du pion qui mange, les coordonnees i et j dudit pion
     //et deux entiers add0 et add1 qui indiquent la direction dans laquelle manger
@@ -174,28 +161,16 @@ int nonLoggingChangeForEat(pawn pawns[], pawn Npawns[], Case damier[NB_CASE_LG][
     int indVictim = damier[i + add0][j + add1].ind_pawn;
     //assert(ind > -1);
     damier[i][j].ind_pawn = VOID_INDEX;
-    damier[i + 2 * add0][j + 2 * add1].pawn_color = pawns[ind].color;
-    damier[i + 2 * add0][j + 2 * add1].ind_pawn = ind;
+    damier[i + 2 * add0][j + 2 * add1].pawn_color = pawns[indEater].color;
+    damier[i + 2 * add0][j + 2 * add1].ind_pawn = indEater;
     //printf("pawn which is eaten %d\n", damier[i + add0][j + add1].ind_pawn);
 
-    Npawns[indVictim].alive = false;
+    NPawns[indVictim].alive = false;
     damier[i + add0][j + add1].ind_pawn = VOID_INDEX;
-    pawns[ind].lig = i + 2 * add0;
-    pawns[ind].col = j + 2 * add1;
+    pawns[indEater].lig = i + 2 * add0;
+    pawns[indEater].col = j + 2 * add1;
     //printf("change allowed %d %d", i + 2 * add0, j + 2 * add1);
     return indVictim;
-}
-
-    // Check if the pawn moved become a queen
-
-    if (ind > -1 && becomeDame(pawns[ind], pawns, Npawns, damier))
-    {
-        pawns[ind].queen = true;
-        // printf("Become dame %d", ind);
-        // fflush(stdout);
-    }
-
-    return IND_CHANGE_ALLOWED;
 }
 
 // Play functions
@@ -253,7 +228,7 @@ int pawnMovePmetre(pawn pawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int ind, b
             pawns[ind].queen = true;
         }
 
-        g->ind_move_back = pawns[ind].friend;
+        g->ind_move_back = pawns[ind].ffriend;
 
         return IND_CHANGE_ALLOWED;
     }
@@ -366,7 +341,7 @@ void error()
 }
 
 void print_pawn(pawn p, int ind) {
-    printf("Ind %d Ennemy %d, Friend %d Color %d Alive %d\n", ind, p.ennemy, p.friend, p.color, p.alive);
+    printf("Ind %d Ennemy %d, Friend %d Color %d Alive %d\n", ind, p.ennemy, p.ffriend, p.color, p.alive);
     fflush(stdout);
 }
 
@@ -386,5 +361,15 @@ void print_damier(Case damier[NB_CASE_LG][NB_CASE_LG])
         {
             printf("Case ligne %d col %d pos: %d, %d\n", i, j, damier[i][j].rect.x, damier[i][j].rect.y);
         }
+    }
+}
+
+//error Handling
+void assertAndLog(bool condition, char* message){
+    if (!condition) {
+        printf("\n");
+        printf("Erreur : %s", message);
+        printf("\n");
+        assert(false);
     }
 }

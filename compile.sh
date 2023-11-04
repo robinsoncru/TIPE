@@ -10,11 +10,11 @@ files_array=("main.c"
              "fundamental_functions/interface_jeu_dames.c"
              "fundamental_functions/game_functions_draughts.c"
              "fundamental_functions/coord/coord.c"
-             "new_rafle/calc/path_tree.c"
-             "new_rafle/calc/rafle_tree_calc.c"
-             "new_rafle/calc/test.c"
-             "new_rafle/display/path_tree_display.c"
-             "new_rafle/display/test_tree_display.c")
+             "rafle/calc/path_tree.c"
+             "rafle/calc/rafle_tree_calc.c"
+             "rafle/calc/test.c"
+             "rafle/display/path_tree_display.c"
+             "rafle/display/test_tree_display.c")
 
 echo "Compilation en cours..."
 

@@ -1,5 +1,4 @@
 #include "path_tree.h"
-#include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
 
@@ -47,8 +46,8 @@ void pathTreeFree(PathTree* t){
         for (int i = 0; i < ARITE; i++) {
         pathTreeFree(t -> childs[i]);
         }
+        free(t);
     }
-    free(t);
 }
 
 PathTree* pathTreeChild(PathTree* t, int hDir, int vDir){
@@ -66,6 +65,7 @@ int pathTreeDepth(PathTree *t);
 void pathTreeConnect(PathTree* parent, PathTree* child, int hDir, int vDir){
     //connecte le parent fournit a l'enfant donne selon la direction en argument
     //cette fonction a des effets de bords.
+    assertAndLog(parent != emptyTree, "l'arbre vide n'est pas connectable en tant que parent.");
     validIndexTest(hDir, vDir);
 
     int index = getCodeFromDirs(hDir, vDir);
@@ -97,10 +97,8 @@ int pathTreeDepth(PathTree* t){
 }
 
 void pathTreeEmptyChild(PathTree* t, int hDir, int vDir){
-    printf("\npathTreeEmptyChild called\n");
     //remplace l'enfant indique par l'arbre vide en le liberant au passage
     PathTree* m = pathTreeChild(t, hDir, vDir);
     pathTreeConnect(t, emptyTree, hDir, vDir);
     pathTreeFree(m);
-    printf("\npathTreeEmptyChild works\n");
 }

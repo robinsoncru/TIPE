@@ -1,5 +1,4 @@
 #include "test.h"
-#include <stdbool.h>
 #include <stdio.h>
 
 PathTree* firstChildEncountered(PathTree* t){
@@ -36,7 +35,7 @@ void eatingTest(pawn pawns[], pawn NPawns[], Case damier[NB_CASE_LG][NB_CASE_LG]
     }
 }
 
-int testRafleTree(pawn pawns[], pawn NPawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int ind){
+int testRafleTreePmetre(pawn pawns[], pawn NPawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int ind){
     if (ind == NEUTRAL_IND) {
         return NEUTRAL_IND;
     }
@@ -51,4 +50,9 @@ int testRafleTree(pawn pawns[], pawn NPawns[], Case damier[NB_CASE_LG][NB_CASE_L
     eatingTest(pawns, NPawns, damier, t);
     pathTreeFree(t);
     return IND_CHANGE_ALLOWED;
+}
+
+void testRafleTree(Game* g){
+    bool is_white = g -> is_white;
+    g -> ind_move = testRafleTreePmetre(g -> allPawns[is_white], g -> allPawns[!is_white], g -> damier, g -> ind_move);
 }

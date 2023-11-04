@@ -105,7 +105,7 @@ void drawLosange(SDL_Renderer *render, Case c, pawn p)
         drawRect(render, red, qr);
     }
 
-    if (p.friend != -1)
+    if (p.ffriend != -1)
     {
         SDL_Rect fr;
         fr.x = c.rect.x + 30;
@@ -192,7 +192,7 @@ void init_pawns(Game *g, bool init_is_white)
         }
         g->allPawns[init_is_white][i].alive = true;
         g->allPawns[init_is_white][i].queen = false;
-        g->allPawns[init_is_white][i].friend = -1;
+        g->allPawns[init_is_white][i].ffriend = -1;
         g->allPawns[init_is_white][i].ennemy = -1;
     }
 
