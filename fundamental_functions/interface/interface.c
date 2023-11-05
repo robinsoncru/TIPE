@@ -1,4 +1,4 @@
-#include "interface_jeu_dames.h"
+#include "interface.h"
 
 // Color constants
 
@@ -227,6 +227,7 @@ Game *create_game()
 {
     Game *g = malloc(sizeof(Game));
     g->ind_move = NEUTRAL_IND;
+    g->indCheck = IND_NORMAL;
     g->is_white = true;
     init_damier(g->damier);
 
@@ -282,8 +283,9 @@ void display_damier(SDL_Renderer *render, Game *g)
     }
 }
 
+// Prepare the text at displaying
 void prepareText(SDL_Renderer *render, text *txt, char *string)
-{ // Prepare the text at displaying
+{
     txt->surface = TTF_RenderText_Solid(txt->font, string, txt->color);
     txt->texture = SDL_CreateTextureFromSurface(render, txt->surface);
     int texW = 0;
@@ -295,9 +297,9 @@ void prepareText(SDL_Renderer *render, text *txt, char *string)
     txt->rect->h = texH;
 }
 
+// Display a message for the player and change the turn for the other player
 void printAndTurn(SDL_Renderer *render, text *txt, char *string, Game *g)
 {
-    // Display a message for the player and change the turn for the other player
     prepareText(render, txt, string);
     g->ind_move = NEUTRAL_IND;
 }

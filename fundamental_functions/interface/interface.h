@@ -1,8 +1,12 @@
 #include <SDL2/SDL_ttf.h>
+#include <SDL2/SDL_video.h>
 
 #ifndef INTERFACE_JEU_DAMES
 #define INTERFACE_JEU_DAMES
-#include "game_functions_draughts.h"
+
+#include "../game_functions/game_functions.h"
+#include "../../rafle/calc/path_tree.h"
+
 // Window pmetre
 #define LG_WINDOW 640
 #define FRAME 16
@@ -11,9 +15,11 @@
 
 
 // Interface structure
-
 typedef struct
 {
+    bool loaded; //text must be loaded only when it's necessary
+    bool display;
+    char* content;
     TTF_Font *font;
     SDL_Surface *surface;
     SDL_Texture *texture;
@@ -56,4 +62,4 @@ void error();
 
 // Memory functions
 void free_game(Game *g);
-#endif
+#endif //INTERFACE_JEU_DAMES

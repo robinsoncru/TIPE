@@ -7,14 +7,13 @@
 #ce sera beaucoup plus simple pour compiler et tester le code :)
 
 files_array=("main.c"
-             "fundamental_functions/interface_jeu_dames.c"
-             "fundamental_functions/game_functions_draughts.c"
-             "fundamental_functions/coord/coord.c"
-             "rafle/calc/path_tree.c"
-             "rafle/calc/rafle_tree_calc.c"
-             "rafle/calc/test.c"
-             "rafle/display/path_tree_display.c"
-             "rafle/display/rafle_management.c")
+             "../fundamental_functions/coord/coord.c"
+             "../fundamental_functions/game_functions/game_functions.c"
+             "../fundamental_functions/interface/interface.c"
+             "../graphic_interface/actions/input_command.c"
+             "../graphic_interface/actions/on_input.c"
+             "../graphic_interface/memory_update/graphic_cache.c"
+             "../graphic_interface/memory_update/update.c")
 
 echo "Compilation en cours..."
 

@@ -50,7 +50,7 @@ int main(int argc, char *argv[])
     SDL_Event event;
 
     // Init aleat
-    srand(time(NULL));
+    srand(RNG_INIT_NBR);
 
     if (0 != SDL_Init(SDL_INIT_VIDEO))
     {
@@ -99,22 +99,15 @@ int main(int argc, char *argv[])
 
             SDL_RenderClear(draw); // Clear the window
 
-            // Drawing part
-            //affichage en fonction des infos du cache
 
-            // For each turn, need to change the screen's display
-            if (change_ticks > MAX_TICKS)
-            {
-                g->is_white = !g->is_white;
-                change_damier(g);
-                change_ticks = 0;
-            }
-
-            if (error_ticks > MAX_TICKS)
-                error_ticks = 0;
 
             // Draw the board in the screen
             display_damier(draw, g);
+
+            // Drawing part
+            //affichage en fonction des infos du cache
+
+            displayCurrentRafle(g, draw, cacheTree, display_tree);
 
             // Create a transition effect
             if (change_ticks > 0)
@@ -123,14 +116,21 @@ int main(int argc, char *argv[])
                 // display the text
                 SDL_RenderCopy(draw, txtMessage->texture, NULL, txtMessage->rect);
             }
+            // For each turn, need to change the screen's display
+            if (change_ticks > MAX_TICKS)
+            {
+                g->is_white = !g->is_white;
+                change_damier(g);
+                change_ticks = 0;
+            }
 
             if (error_ticks > 0)
             {
                 SDL_RenderCopy(draw, txtMessage->texture, NULL, txtMessage->rect);
                 error_ticks++;
             }
-
-            displayCurrentRafle(g, draw, cacheTree, display_tree);
+            if (error_ticks > MAX_TICKS)
+                error_ticks = 0;
 
             /* Rafraichit l'écran */
             SDL_RenderPresent(draw);
@@ -148,11 +148,10 @@ int main(int argc, char *argv[])
                     break;
 
                 /* Select with the mouse */
-                case SDL_MOUSEBUTTONDOWN:
-                    display_tree = false;
+                /*case SDL_MOUSEBUTTONDOWN:
                     if (event.button.button == SDL_BUTTON_LEFT)
                     {
-                        /* Pour les clics gauche */
+                        //Pour les clics gauche 
                         if (g->ind_move == NEUTRAL_IND)
                             selectPawn(g, event.button.x, event.button.y);
                         else if (g->ind_move > -1 && g->allPawns[g->is_white][g->ind_move].queen)
@@ -161,29 +160,29 @@ int main(int argc, char *argv[])
                             printf("\nNo pawn selected\n");
                         // printf("g.ind_move %d", g.ind_move);
                     }
-                    break;
+                    break;*/
 
                 /* Do actions with the buttons */
-                case SDL_KEYUP:
+                /*case SDL_KEYUP:
                     if (event.key.keysym.sym == SDLK_LEFT)
                     {
-                        /* Move pawn to left */
+                        //Move pawn to left 
                         pawnMove(g, true);
                     }
                     else if (event.key.keysym.sym == SDLK_RIGHT)
                     {
-                        /* Move pawn to right */
+                        //Move pawn to right
                         pawnMove(g, false);
-                    }
-                    else if (event.key.keysym.sym == SDLK_UP)
+                    }*/
+                    //else if (event.key.keysym.sym == SDLK_UP)
                         /*D'accord, je vois : si j'appuye sur haut, ça va manger le premier pion disponible selon l'ordre
                         horaire ou anti-horaire. Je suppose que c'est plus simple à coder mais j'admets etre dubitatif quand
                         au fait que les regles forcent un joueur a manger un pion en particulier. Ne serait-il pas plus judicieux de
                         laisser au joueur dont c'est le trait de choisir le pion qu'il mange ?
                         Quoique, il est vrai que la regle des rafles impose de choisir la meilleure, je suppose ce changement provisoire.*/
-                        eatPawn(g);
-                    else if (event.key.keysym.sym == SDLK_ESCAPE)
-                        /* Exit the game */
+                        //eatPawn(g);
+                    /*else if (event.key.keysym.sym == SDLK_ESCAPE)
+                        //Exit the game
                         is_playing = false;
                     else if (event.key.keysym.sym == SDLK_a) {
                         testRafleTree(g);
@@ -201,33 +200,33 @@ int main(int argc, char *argv[])
                     display_tree = false;
                     if (cacheTree != emptyTree) {
                         freeCurrentRafle(&cacheTree);
-                    }
+                    }*/
                 }
             }
             // Check if the move is allowed
 
-            if (g->ind_move == IND_CHANGE_ALLOWED)
+            if (g->indCheck == IND_CHANGE_ALLOWED)
             {
                 printAndTurn(draw, txtMessage, "pawn moved", g);
                 change_ticks++;
             }
-            else if (g->ind_move == IND_PB)
+            else if (g->indCheck == IND_PB)
             {
                 // printf("No pawn moved");
                 printAndTurn(draw, txtMessage, "NO pawn moved", g);
                 error_ticks++;
             }
-            else if (g->ind_move == IND_NOTHING_HAPPENED)
+            else if (g->indCheck == IND_NOTHING_HAPPENED)
             {
                 printAndTurn(draw, txtMessage, "You have nothing", g);
                 change_ticks++;
             }
-            else if (g->ind_move == IND_BAD_CHOICE)
+            else if (g->indCheck == IND_BAD_CHOICE)
             {
                 printAndTurn(draw, txtMessage, "ARG fuck !", g);
                 change_ticks++;
             }
-            else if (g->ind_move == IND_GLORY_QUEEN)
+            else if (g->indCheck == IND_GLORY_QUEEN)
             {
                 printAndTurn(draw, txtMessage, "Yes putain !!!", g);
                 change_ticks++;
