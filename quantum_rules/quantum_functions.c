@@ -9,13 +9,14 @@
 //     return IND_BACK_ALLOWED;
 // }
 
-bool moveBackNotAvailable(Game *g) {
+bool moveBackNotAvailable(Game *g)
+{
     return (g->coordForMoveBack.i == -1 && g->coordForMoveBack.j == -1);
 }
 
 // Promotion functions
 
-void promotionPmetre(pawn pawns[], pawn Npawns[], bool is_white, Case damier[NB_CASE_LG][NB_CASE_LG], int ind, Game *g)
+int promotionPmetre(pawn pawns[], pawn Npawns[], bool is_white, Case damier[NB_CASE_LG][NB_CASE_LG], int ind, Game *g)
 {
     assert(ind > -1 && pawns[ind].alive);
     /* Promote the pawn at the ind in pmetre : do nothing, become a queen or become an ennemy pawn */
@@ -23,7 +24,7 @@ void promotionPmetre(pawn pawns[], pawn Npawns[], bool is_white, Case damier[NB_
     if (choice == 1)
     {
         pawns[ind].queen = true;
-        g->ind_check = IND_GLORY_QUEEN;
+        return IND_GLORY_QUEEN;
     }
     else if (choice == 2)
     {
@@ -31,7 +32,7 @@ void promotionPmetre(pawn pawns[], pawn Npawns[], bool is_white, Case damier[NB_
         int j = pawns[ind].col;
         // printf("Quantic %d %d", i, j);
         // Kill the former pawn
-        popPawn(pawns, Npawns, damier, i, j);
+        killPawn(pawns, Npawns, damier, i, j);
         // Give birth to the ennemy pawn
         int new_ind = g->nb_pawns[!is_white];
 
@@ -47,12 +48,9 @@ void promotionPmetre(pawn pawns[], pawn Npawns[], bool is_white, Case damier[NB_
 
         // Just need to increment, we have enough place (only NB_PAWNS pawns to promote)
         g->nb_pawns[!is_white]++;
-        g->ind_check = IND_BAD_CHOICE;
+        return IND_BAD_CHOICE;
     }
-    else
-    {
-        g->ind_check = IND_NOTHING_HAPPENED;
-    }
+    return IND_NOTHING_HAPPENED;
 }
 
 /* Gestion des suppressions d'indice pour combler les trous, l'ordre des pions n'a pas d'importance */
@@ -60,117 +58,92 @@ void promotionPmetre(pawn pawns[], pawn Npawns[], bool is_white, Case damier[NB_
 void promotion(Game *g)
 {
     if (g->ind_move > -1)
-        promotionPmetre(g->allPawns[g->is_white], g->allPawns[!g->is_white], g->is_white, g->damier, g->ind_move, g);
+        g->indCheck = promotionPmetre(g->allPawns[g->is_white], g->allPawns[!g->is_white], g->is_white, g->damier, g->ind_move, g);
     else
-        g->ind_check = IND_PB;
+        g->indCheck = IND_PB;
     g->ind_move = -1;
 }
 
 // LienAmitie functions
 
-bool lienAmitiePmetre(pawn pawns[], pawn Npawns[], int lig, int col, Case damier[NB_CASE_LG][NB_CASE_LG], int ind)
+bool canBeFriend(pawn p, Case c)
+{
+    // Check if a pawn and the pawn on the case c can be friend
+    return !freeCase(c) && c.pawn_color != p.color;
+}
+
+int lienAmitiePmetre(pawn pawns[], pawn Npawns[], int lig, int col, Case damier[NB_CASE_LG][NB_CASE_LG], int ind, bool is_white)
 {
     /* Lie d'amitie le pion en indice avec le pion se trouvant en coord (lig, col) sur le damier, en verifiant qu'il est bien de
-    couleur opposé et qu'il existe. Gère le pmetre Pawn.friend. Si on lie d'amitié un pion qui était déjà ami, le dernier lien
+    couleur opposé et qu'il existe. Gère le pmetre Pawn.friendly. Si on lie d'amitié un pion qui était déjà ami, le dernier lien
     écrase le précédent */
-    assert(ind > -1 && pawns[ind].alive);
+    assert(ind > VOID_INDEX && pawns[ind].alive);
+    if (is_white)
+        lig = NB_CASE_LG - lig - 1;
+
     Case c = damier[lig][col];
-    if (!freeCase(c) && c.pawn_color != pawns[ind].color)
+    if (canBeFriend(pawns[ind], c))
     {
-        pawns[ind].friend = c.ind_pawn;
-        Npawns[c.ind_pawn].friend = ind;
-        return true;
+        pawns[ind].friendly = c.ind_pawn;
+        Npawns[c.ind_pawn].friendly = ind;
+        return IND_CHANGE_ALLOWED;
     }
-    return false;
+    return IND_PB;
 }
 
 void lienAmitie(int col, int lig, Game *g)
 {
     assert(g->ind_move > -1);
-    if (g->is_white)
-        lig = NB_CASE_LG - lig - 1;
-    if (lienAmitiePmetre(g->allPawns[g->is_white], g->allPawns[!g->is_white], lig, col, g->damier, g->ind_move))
-    {
-        g->ind_check = IND_CHANGE_ALLOWED;
-    }
-    else
-        g->ind_check = IND_PB;
+    bool iw;
+    g->indCheck = lienAmitiePmetre(g->allPawns[iw], g->allPawns[!iw], lig, col, g->damier, g->ind_move, iw);
     g->ind_move = -1;
 }
 
-Coord CanMoveBackPmetre(pawn pawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int ind, bool gauche)
+// Functions to move back a pawn because the friend has just moved
+
+bool canMoveBack(Game *g, bool is_white, int ind, bool left)
+{
+    int di = is_white ? 1 : -1;
+    int dj = left ? -1 : 1;
+    Coord finalPos = {g->allPawns[is_white][ind].lig - di,
+                      g->allPawns[is_white][ind].col + dj};
+    bool posInGame = inGame(finalPos.i, finalPos.j);
+    bool wayIsFree = freeCase(g->damier[finalPos.i][finalPos.j]);
+    return posInGame && wayIsFree;
+}
+
+void putPawnMoveBack(Game *g, bool left)
 {
     /* Give the coord of the case where moves back a pawn when it is linked with a friend and the friend has just moved. Return (-1, -1)
     if no case available */
-    Coord coordForMoveBack = {-1, -1};
-    if (ind > -1 && pawns[ind].alive)
+    int ind = g->ind_move;
+    bool is_white = g->is_white;
+    pawn *p = &(g->allPawns[is_white][ind]);
+    int i = p->lig;
+    int j = p->col;
+
+    int di = is_white ? 1 : -1;
+    int dj = left ? -1 : 1;
+    
+    if (canMoveBack(g, is_white, ind, left))
     {
-        int i = pawns[ind].lig;
-        int j = pawns[ind].col;
-        if (pawns[ind].color && i > 0)
-        {
-            if (gauche && j > 0 && freeCase(damier[i - 1][j - 1]))
-            {
-                coordForMoveBack.i = i - 1;
-                coordForMoveBack.j = j - 1;
-            }
-            else if (!gauche && j < NB_CASE_LG - 1 && freeCase(damier[i - 1][j + 1]))
-            {
-                coordForMoveBack.i = i - 1;
-                coordForMoveBack.j = j + 1;
-            }
-            else if (j > 0 && freeCase(damier[i - 1][j - 1]))
-            {
-                coordForMoveBack.i = i - 1;
-                coordForMoveBack.j = j - 1;
-            }
-            else if (j < NB_CASE_LG - 1 && freeCase(damier[i - 1][j + 1]))
-            {
-                coordForMoveBack.i = i - 1;
-                coordForMoveBack.j = j + 1;
-            }
-            // Sinon aucun recule vers l'arrière n'est possible
-        }
-        else if (!pawns[ind].color && i < NB_CASE_LG - 1)
-        {
-            if (gauche && j > 0 && freeCase(damier[i + 1][j - 1]))
-            {
-                coordForMoveBack.i = i + 1;
-                coordForMoveBack.j = j - 1;
-            }
-            else if (!gauche && j < NB_CASE_LG - 1 && freeCase(damier[i + 1][j + 1]))
-            {
-                coordForMoveBack.i = i + 1;
-                coordForMoveBack.j = j + 1;
-            }
-            else if (j > 0 && freeCase(damier[i + 1][j - 1]))
-            {
-                coordForMoveBack.i = i + 1;
-                coordForMoveBack.j = j - 1;
-            }
-            else if (j < NB_CASE_LG - 1 && freeCase(damier[i + 1][j + 1]))
-            {
-                coordForMoveBack.i = i + 1;
-                coordForMoveBack.j = j + 1;
-            }
-            // Sinon aucun recule vers l'arrière n'est possible
-        }
+        g->coordForMoveBack.i = i - di;
+        g->coordForMoveBack.j = j + dj;
     }
-    // printf("pawn alive %d or ind = %d", pawns[ind].alive, ind);
-    return coordForMoveBack;
+    else if (canMoveBack(g, is_white, ind, !left))
+    {
+        g->coordForMoveBack.i = i - di;
+        g->coordForMoveBack.j = j - dj;
+    }
 }
 
-void canMoveBack(bool gauche, Game *g) {
-    Coord coordReturn = CanMoveBackPmetre(g->allPawns[g->is_white], g->damier, g->ind_move_back, gauche);
-    g->coordForMoveBack.i = coordReturn.i;
-    g->coordForMoveBack.j = coordReturn.j;
-}
-
-void moveBack(Game *g) {
+void moveBack(Game *g)
+{
     int ind = g->ind_move_back;
-    pawn p = g->allPawns[g->is_white][ind];
-    assert(!moveBackNotAvailable(g) && !outOfBounds(g->coordForMoveBack.i, g->coordForMoveBack.j) &&  ind > -1 && p.alive);
-    change_pawn_place(g->allPawns[g->is_white], g->damier, ind, g->coordForMoveBack.i, g->coordForMoveBack.j);
+    bool iw;
+    pawn p = g->allPawns[iw][ind];
+    assert(!moveBackNotAvailable(g) && !outOfBounds(g->coordForMoveBack.i, g->coordForMoveBack.j) && ind > -1 && p.alive);
+    change_pawn_place(g->allPawns[iw], g->damier, ind, g->coordForMoveBack.i, g->coordForMoveBack.j);
     g->coordForMoveBack.i = -1;
     g->coordForMoveBack.j = -1;
     g->ind_move_back = -1;
@@ -178,32 +151,33 @@ void moveBack(Game *g) {
 
 // LienEnnemitie functions
 
-bool lienEnnemitiePmetre(pawn pawns[], pawn Npawns[], int lig, int col, Case damier[NB_CASE_LG][NB_CASE_LG], int ind)
+bool canBeEnnemy(pawn p, Case c)
+{
+    return !freeCase(c) && c.pawn_color != p.color;
+}
+
+int lienEnnemitiePmetre(bool is_white, pawn pawns[], pawn Npawns[], int lig, int col, Case damier[NB_CASE_LG][NB_CASE_LG], int ind)
 {
     /* Declare ennemis pour la vie le pion en indice avec le pion se trouvant en coord (lig, col) sur le damier, en verifiant qu'il est bien de
-    couleur opposé et qu'il existe. Gère le pmetre Game.friend. Si on declare ennemi un pion qui était déjà ennemi, le dernier lien
+    couleur opposé et qu'il existe. Gère le pmetre Game.friendly. Si on declare ennemi un pion qui était déjà ennemi, le dernier lien
     écrase le précédent */
     assert(ind > -1 && pawns[ind].alive);
+    if (is_white)
+        lig = NB_CASE_LG - lig - 1;
     Case c = damier[lig][col];
-    if (!freeCase(c) && c.pawn_color != pawns[ind].color)
+    if (canBeEnnemy(pawns[ind], c))
     {
         pawns[ind].ennemy = c.ind_pawn;
         Npawns[c.ind_pawn].ennemy = ind;
-        return true;
+        return IND_CHANGE_ALLOWED;
     }
-    return false;
+    return IND_PB;
 }
 
 void lienEnnemitie(int col, int lig, Game *g)
 {
     assert(g->ind_move > -1);
-    if (g->is_white)
-        lig = NB_CASE_LG - lig - 1;
-    if (lienEnnemitiePmetre(g->allPawns[g->is_white], g->allPawns[!g->is_white], lig, col, g->damier, g->ind_move))
-    {
-        g->ind_check = IND_CHANGE_ALLOWED;
-    }
-    else
-        g->ind_check = IND_PB;
+    bool iw;
+    g->indCheck = lienEnnemitiePmetre(iw, g->allPawns[iw], g->allPawns[!iw], lig, col, g->damier, g->ind_move);
     g->ind_move = -1;
 }

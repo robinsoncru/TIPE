@@ -1,4 +1,4 @@
-#include "interface_jeu_dames.h"
+#include "interface.h"
 
 // Color constants
 
@@ -105,7 +105,7 @@ void drawLosange(SDL_Renderer *render, Case c, pawn p)
         drawRect(render, red, qr);
     }
 
-    if (p.friend != -1)
+    if (p.friendly != -1)
     {
         SDL_Rect fr;
         fr.x = c.rect.x + 30;
@@ -192,7 +192,7 @@ void init_pawns(Game *g, bool init_is_white)
         }
         g->allPawns[init_is_white][i].alive = true;
         g->allPawns[init_is_white][i].queen = false;
-        g->allPawns[init_is_white][i].friend = -1;
+        g->allPawns[init_is_white][i].friendly = -1;
         g->allPawns[init_is_white][i].ennemy = -1;
     }
 
@@ -226,6 +226,7 @@ void init_damier(Case damier[NB_CASE_LG][NB_CASE_LG])
 Game *create_game()
 {
     Game *g = malloc(sizeof(Game));
+    g->indCheck = IND_NORMAL;
     g->is_white = true;
     init_damier(g->damier);
 
@@ -236,7 +237,6 @@ Game *create_game()
 
     g->ind_move = NEUTRAL_IND;
     g->ind_move_back = NEUTRAL_IND;
-    g->ind_check = NEUTRAL_IND;
 
     g->coordForMoveBack.i = -1;
     g->coordForMoveBack.j = -1;
@@ -286,8 +286,9 @@ void display_damier(SDL_Renderer *render, Game *g)
     }
 }
 
+// Prepare the text at displaying
 void prepareText(SDL_Renderer *render, text *txt, char *string)
-{ // Prepare the text at displaying
+{
     txt->surface = TTF_RenderText_Solid(txt->font, string, txt->color);
     txt->texture = SDL_CreateTextureFromSurface(render, txt->surface);
     int texW = 0;
@@ -297,13 +298,6 @@ void prepareText(SDL_Renderer *render, text *txt, char *string)
     txt->rect->y = (LG_WINDOW - texH) / 2;
     txt->rect->w = texW;
     txt->rect->h = texH;
-}
-
-void printAndTurn(SDL_Renderer *render, text *txt, char *string, Game *g)
-{
-    // Display a message for the player and change the turn for the other player
-    prepareText(render, txt, string);
-    g->ind_check = NEUTRAL_IND;
 }
 
 // Free the memory

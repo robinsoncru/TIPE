@@ -1,7 +1,10 @@
+#ifndef INTERFACE_JEU_DAMES
+#define INTERFACE_JEU_DAMES
+
 #include <SDL2/SDL_ttf.h>
 
-#include "../quantum_rules/quantum_functions.h"
-// WARNING: this include 'game_functions_draughts.h'
+
+#include "../game_functions/game_functions.h"
 
 // Window pmetre
 #define LG_WINDOW 640
@@ -11,9 +14,11 @@
 
 
 // Interface structure
-
 typedef struct
 {
+    bool loaded; //text must be loaded only when it's necessary
+    bool display;
+    char* content;
     TTF_Font *font;
     SDL_Surface *surface;
     SDL_Texture *texture;
@@ -49,10 +54,10 @@ Game *create_game();
 void display_damier(SDL_Renderer *render, Game *g);
 void change_damier(Game *g);
 void prepareText(SDL_Renderer *render, text *txt, char *string);
-void printAndTurn(SDL_Renderer *render, text *txt, char *string, Game *g);
 
 // Debug functions
 void error();
 
 // Memory functions
 void free_game(Game *g);
+#endif //INTERFACE_JEU_DAMES
