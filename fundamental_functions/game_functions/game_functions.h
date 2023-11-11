@@ -17,7 +17,7 @@
 //represente une absence de pion
 #define NEUTRAL_IND -1
 #define VOID_INDEX (NEUTRAL_IND)
-// Maybe we should remove this one
+// Maybe we should remove one of these
 
 //check indexes
 #define IND_NORMAL -1

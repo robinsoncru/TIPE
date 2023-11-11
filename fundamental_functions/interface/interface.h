@@ -23,7 +23,6 @@ typedef struct
     SDL_Surface *surface;
     SDL_Texture *texture;
     SDL_Rect *rect;
-    // char string[LEN];
     SDL_Color color;
 } text;
 
