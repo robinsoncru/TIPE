@@ -1,22 +1,90 @@
 #include "quantum_functions.h"
 
-// Aux functions
 
-// int changeForMoveBack(Game *g, pawn pawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int ind, int lig, int col)
-// {
-//     change_pawn_place(pawns, damier, ind, lig, col);
-//     g->ind_move_back = -1;
-//     return IND_BACK_ALLOWED;
-// }
 
-bool moveBackNotAvailable(Game *g)
+/*
+
+
+
+
+
+
+
+    LOGIC FUNCTIONS
+
+
+
+
+
+
+*/
+
+bool moveBackAvailable(Game *g)
 {
-    return (g->coordForMoveBack.i == -1 && g->coordForMoveBack.j == -1);
+    return g->ind_move_back > -1 && g->coordForMoveBack.i > VOID_INDEX && g->coordForMoveBack.j > VOID_INDEX;
 }
 
-// Promotion functions
+bool needPutMoveBack(Game *g)
+{
+    return g->ind_move_back > -1 && g->coordForMoveBack.i == IND_LISTENING_MOVE_BACK && g->coordForMoveBack.j == IND_LISTENING_MOVE_BACK;
+}
 
-int promotionPmetre(pawn pawns[], pawn Npawns[], bool is_white, Case damier[NB_CASE_LG][NB_CASE_LG], int ind, Game *g)
+bool canBeFriend(pawn p, Case c, pawn Npawns[])
+{
+    // Check if a pawn and the pawn on the case c can be friend
+    return !freeCase(c) && c.pawn_color != p.color && Npawns[c.ind_pawn].friendly == -1 && p.friendly == -1 && p.ennemy == -1 && Npawns[c.ind_pawn].ennemy == -1;
+}
+
+bool canBeEnnemy(pawn p, Case c, pawn Npawns[])
+{
+    return canBeFriend(p, c, Npawns);
+}
+
+
+/*
+
+
+
+
+
+
+
+   MANAGEMENT FUNCTIONS
+
+
+
+
+
+
+*/
+
+
+void moveBackGameManagement(Game *g)
+{
+    // Remet par defaut les differents indices apres un mouvement arriere du pion
+    g->ind_move_back = VOID_INDEX;
+}
+
+
+/*
+
+
+
+
+
+
+
+   Promotion functions
+
+
+
+
+
+
+*/
+
+
+void promotionPmetre(pawn pawns[], pawn Npawns[], bool is_white, Case damier[NB_CASE_LG][NB_CASE_LG], int ind, Game *g)
 {
     assert(ind > -1 && pawns[ind].alive);
     /* Promote the pawn at the ind in pmetre : do nothing, become a queen or become an ennemy pawn */
@@ -24,7 +92,8 @@ int promotionPmetre(pawn pawns[], pawn Npawns[], bool is_white, Case damier[NB_C
     if (choice == 1)
     {
         pawns[ind].queen = true;
-        return IND_GLORY_QUEEN;
+        endTurnGameManagement(g, is_white, ind, IND_GLORY_QUEEN, false);
+        return;
     }
     else if (choice == 2)
     {
@@ -48,55 +117,54 @@ int promotionPmetre(pawn pawns[], pawn Npawns[], bool is_white, Case damier[NB_C
 
         // Just need to increment, we have enough place (only NB_PAWNS pawns to promote)
         g->nb_pawns[!is_white]++;
-        return IND_BAD_CHOICE;
+        endTurnGameManagement(g, is_white, ind, IND_BAD_CHOICE, false);
+        return;
     }
-    return IND_NOTHING_HAPPENED;
+    endTurnGameManagement(g, is_white, ind, IND_NOTHING_HAPPENED, false);
 }
-
-/* Gestion des suppressions d'indice pour combler les trous, l'ordre des pions n'a pas d'importance */
 
 void promotion(Game *g)
 {
-    if (g->ind_move > -1)
-        g->indCheck = promotionPmetre(g->allPawns[g->is_white], g->allPawns[!g->is_white], g->is_white, g->damier, g->ind_move, g);
-    else
-        g->indCheck = IND_PB;
-    g->ind_move = -1;
+    promotionPmetre(g->allPawns[g->is_white], g->allPawns[!g->is_white], g->is_white, g->damier, g->ind_move, g);
 }
 
-// LienAmitie functions
+/* A implementer : Gestion des suppressions d'indice pour combler les trous, l'ordre des pions n'a pas d'importance */
 
-bool canBeFriend(pawn p, Case c)
-{
-    // Check if a pawn and the pawn on the case c can be friend
-    return !freeCase(c) && c.pawn_color != p.color;
-}
 
-int lienAmitiePmetre(pawn pawns[], pawn Npawns[], int lig, int col, Case damier[NB_CASE_LG][NB_CASE_LG], int ind, bool is_white)
+/*
+
+
+
+
+
+
+
+   LienAmitie functions
+
+
+
+
+
+
+*/
+
+void lienAmitiePmetre(pawn pawns[], pawn Npawns[], int lig, int col, Case damier[NB_CASE_LG][NB_CASE_LG], int ind, bool is_white, Game *g)
 {
     /* Lie d'amitie le pion en indice avec le pion se trouvant en coord (lig, col) sur le damier, en verifiant qu'il est bien de
-    couleur opposé et qu'il existe. Gère le pmetre Pawn.friendly. Si on lie d'amitié un pion qui était déjà ami, le dernier lien
-    écrase le précédent */
-    assert(ind > VOID_INDEX && pawns[ind].alive);
-    if (is_white)
-        lig = NB_CASE_LG - lig - 1;
-
+    couleur opposé et qu'il existe. Gère le pmetre Pawn.friendly. Si on lie d'amitié un pion qui était déjà ami, l'action n'a pas lieu et
+    le joueur doit rejouer.
+    Suppose le pion ainsi que le pion ami selectionne valides */
     Case c = damier[lig][col];
-    if (canBeFriend(pawns[ind], c))
-    {
-        pawns[ind].friendly = c.ind_pawn;
-        Npawns[c.ind_pawn].friendly = ind;
-        return IND_CHANGE_ALLOWED;
-    }
-    return IND_PB;
+    put_pawn_value(g, is_white, ind, 3, false, -1, c.ind_pawn, false, -1, -1);
+    put_pawn_value(g, c.pawn_color, c.ind_pawn, 3, false, -1, ind, false, -1, -1);
+    endTurnGameManagement(g, is_white, ind, IND_CHANGE_ALLOWED, false);
 }
 
-void lienAmitie(int col, int lig, Game *g)
+void lienAmitie(int lig, int col, Game *g)
 {
-    assert(g->ind_move > -1);
-    bool iw;
-    g->indCheck = lienAmitiePmetre(g->allPawns[iw], g->allPawns[!iw], lig, col, g->damier, g->ind_move, iw);
-    g->ind_move = -1;
+    // On suppose le coup legal
+    bool iw = g->is_white;
+    lienAmitiePmetre(g->allPawns[iw], g->allPawns[!iw], lig, col, g->damier, g->ind_move, iw, g);
 }
 
 // Functions to move back a pawn because the friend has just moved
@@ -116,7 +184,7 @@ void putPawnMoveBack(Game *g, bool left)
 {
     /* Give the coord of the case where moves back a pawn when it is linked with a friend and the friend has just moved. Return (-1, -1)
     if no case available */
-    int ind = g->ind_move;
+    int ind = g->ind_move_back;
     bool is_white = g->is_white;
     pawn *p = &(g->allPawns[is_white][ind]);
     int i = p->lig;
@@ -124,7 +192,10 @@ void putPawnMoveBack(Game *g, bool left)
 
     int di = is_white ? 1 : -1;
     int dj = left ? -1 : 1;
-    
+
+    g->coordForMoveBack.i = VOID_INDEX;
+    g->coordForMoveBack.j = VOID_INDEX;
+
     if (canMoveBack(g, is_white, ind, left))
     {
         g->coordForMoveBack.i = i - di;
@@ -139,46 +210,50 @@ void putPawnMoveBack(Game *g, bool left)
 
 void moveBack(Game *g)
 {
-    /* Move back the pawn referred by ind_move_back to the case localised by the coord coordForMoveBack */
+    /* Suppose move on the just pawn. Move back the pawn referred by ind_move_back to the case localised by the coord coordForMoveBack */
     int ind = g->ind_move_back;
-    bool iw;
-    pawn p = g->allPawns[iw][ind];
-    assert(!moveBackNotAvailable(g) && !outOfBounds(g->coordForMoveBack.i, g->coordForMoveBack.j) && ind > -1 && p.alive);
+    bool iw = g->is_white;
     change_pawn_place(g->allPawns[iw], g->damier, ind, g->coordForMoveBack.i, g->coordForMoveBack.j);
-    g->coordForMoveBack.i = -1;
-    g->coordForMoveBack.j = -1;
-    g->ind_move_back = -1;
+    moveBackGameManagement(g);
 }
 
-// LienEnnemitie functions
+/*
 
-bool canBeEnnemy(pawn p, Case c)
-{
-    return !freeCase(c) && c.pawn_color != p.color;
-}
 
-int lienEnnemitiePmetre(bool is_white, pawn pawns[], pawn Npawns[], int lig, int col, Case damier[NB_CASE_LG][NB_CASE_LG], int ind)
+
+
+
+
+
+   LienEnnemitie functions
+
+
+
+
+
+
+*/
+
+
+void lienEnnemitiePmetre(bool is_white, pawn pawns[], pawn Npawns[], int lig, int col, Case damier[NB_CASE_LG][NB_CASE_LG], int ind, Game *g)
 {
     /* Declare ennemis pour la vie le pion en indice avec le pion se trouvant en coord (lig, col) sur le damier, en verifiant qu'il est bien de
-    couleur opposé et qu'il existe. Gère le pmetre Game.friendly. Si on declare ennemi un pion qui était déjà ennemi, le dernier lien
-    écrase le précédent */
-    assert(ind > -1 && pawns[ind].alive);
-    if (is_white)
-        lig = NB_CASE_LG - lig - 1;
+    couleur opposé et qu'il existe. Gère le pmetre Game.friendly. Si on declare ennemi un pion qui était déjà ennemi, le coup n'est pas joué
+    Suppose legal move */
     Case c = damier[lig][col];
-    if (canBeEnnemy(pawns[ind], c))
-    {
-        pawns[ind].ennemy = c.ind_pawn;
-        Npawns[c.ind_pawn].ennemy = ind;
-        return IND_CHANGE_ALLOWED;
-    }
-    return IND_PB;
+    put_pawn_value(g, is_white, ind, 2, false, c.ind_pawn, -1, false, -1, -1);
+    put_pawn_value(g, c.pawn_color, c.ind_pawn, 2, false, ind, -1, false, -1, -1);
+    // printf("Enn %d %d\n", lig, col);
+    // print_pawn(g->allPawns[c.pawn_color][c.ind_pawn], c.ind_pawn);
+    // printf("Actu pawn");
+    // print_pawn(g->allPawns[is_white][ind], ind);
+    // flush();
+    endTurnGameManagement(g, is_white, ind, IND_CHANGE_ALLOWED, false);
 }
 
-void lienEnnemitie(int col, int lig, Game *g)
+void lienEnnemitie(int lig, int col, Game *g)
 {
-    assert(g->ind_move > -1);
-    bool iw;
-    g->indCheck = lienEnnemitiePmetre(iw, g->allPawns[iw], g->allPawns[!iw], lig, col, g->damier, g->ind_move);
-    g->ind_move = -1;
+    // Suppose legal move
+    bool iw = g->is_white;
+    lienEnnemitiePmetre(iw, g->allPawns[iw], g->allPawns[!iw], lig, col, g->damier, g->ind_move, g);
 }

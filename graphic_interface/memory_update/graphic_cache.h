@@ -2,6 +2,9 @@
 #define CACHE_INTERFACE
 
 #include "../../fundamental_functions/interface/interface.h"
+#include <stdlib.h>
+#include <SDL2/SDL_ttf.h>
+#include <time.h>
 
 //time management
 #define TICKS_ARRAY_LENGTH 2 //number of chronometers

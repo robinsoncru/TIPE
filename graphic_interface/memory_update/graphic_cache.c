@@ -1,7 +1,4 @@
 #include "graphic_cache.h"
-#include <stdlib.h>
-
-#include <SDL2/SDL_ttf.h>
 // graphic cache functions
 
 typedef struct
@@ -20,7 +17,9 @@ GraphicCache *initCache()
     // j'ai choisi d'utiliser une cle predefinie pour initialiser
     // l'aleatoire, ca permet d'avoir des resultats reproductibles
     // utiles pour les tests des regles quantiques
-    srand(RNG_INIT_NBR);
+    // srand(RNG_INIT_NBR);
+    // J'ai besoin d'aleatoire car j'ai 15 fois le meme nombre consecutivement, met en comment si tu t'en sers pas stp
+    srand(time(NULL));
 
     // init cache
     GraphicCache *cache = malloc(sizeof(GraphicCache));

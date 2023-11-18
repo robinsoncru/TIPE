@@ -46,6 +46,23 @@ void onInput(Game *g, GraphicCache *cache, SDL_Event event)
             // quits the game
             onEscapeUp(g, cache);
             break;
+
+        case SDLK_p:
+
+            /* Promote the selected pawn */
+            onPUP(g, cache);
+            break;
+
+        case SDLK_j:
+            // Debuggeur: affiche l'etat des pions
+            onJUP(g, cache);
+            break;
+            // les autres fonctions restent a implementer
+
+        case SDLK_h:
+            // Debuggeur: affiche l'etat des pions
+            onHUP(g, cache);
+            break;
             // les autres fonctions restent a implementer
         }
     }

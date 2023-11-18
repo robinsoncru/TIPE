@@ -26,6 +26,7 @@
 #define IND_NOTHING_HAPPENED 2
 #define IND_BAD_CHOICE 3
 #define IND_GLORY_QUEEN 4
+#define IND_LISTENING_MOVE_BACK -2
 
 //directions
 #define LEFT_BACK 0
@@ -35,8 +36,14 @@
 
 #define RNG_INIT_NBR 14071789
 
+
 // #define MY_GUARD 1
 // En evaluant dans les files incluant ce file, on évite la double inclusion
+
+
+
+
+
 
 // Game structure
 typedef struct
@@ -47,6 +54,10 @@ typedef struct
 } Case;
 
 
+
+
+
+
 typedef struct
 {
     int lig, col, friendly, ennemy;
@@ -54,6 +65,9 @@ typedef struct
     /* friend: Lien d'amitie avec un autre pion, -1 if no friend */
     bool alive, color, queen;
 } pawn;
+
+
+
 
 
 
@@ -71,6 +85,12 @@ typedef struct
     bool is_white;
     Coord coordForMoveBack;
 } Game;
+
+
+
+
+
+
 
 /* NOTES :
 
@@ -91,6 +111,7 @@ Pour qu'une dame mange une piece, selectionne la dame puis selectionne (clic gau
 //Logic functions
 bool freeCase(Case c);
 int NON(int b);
+bool basicChecks(Game *g);
 /* Couronne un pion en dame et s'il avait un ennemi, celui ci meurt */
 bool becomeDame(pawn p, pawn pawns[], pawn Npawns[], Case damier[NB_CASE_LG][NB_CASE_LG]);
 bool inGame(int lig, int col);
@@ -114,9 +135,10 @@ bool canBePromoted(Game* g, bool is_white, int ind);
 bool canEat(pawn pawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int ind, int i, int j, int add0, int add1);
 int changeForEat(pawn pawns[], pawn NPawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int ind, int i, int j, int add0, int add1);
 int nonLoggingChangeForEat(pawn pawns[], pawn NPawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int ind, int i, int j, int add0, int add1);
+void put_pawn_value(Game *g, bool color, int ind, int wich_pmetre_modify, bool alive, int ennemy, int friendly, bool queen, int lig, int col);
 
 //play functions
-void endTurnGameManagement(Game* g, bool is_white, int indMovedPawn);
+void endTurnGameManagement(Game *g, bool is_white, int indMovedPawn, int indCheck, bool doMoveBack);
 void pawnMove(Game* g, bool is_white, int ind, bool left);
 void eatPawn(Game *g);
 void queenDepl(int col, int lig, Game *g);
@@ -128,8 +150,10 @@ void error();
 // Affiche les caracteristiques des Pions
 void print_pawns(Game *g);
 // Affiche ligne, colonne et coordonnees des cases
-void print_damier(Case damier[NB_CASE_LG][NB_CASE_LG]);
+void print_damier(Case damier[NB_CASE_LG][NB_CASE_LG], Game *g);
 //Fait planter le programme en affichant un message d'erreur
 //si la condition n'est pas respectee
 void assertAndLog(bool condition, char* message);
+void flush();
+void print_pawn(pawn p, int ind);
 #endif //GAME_FUNCTIONS_DRAUGHTS
