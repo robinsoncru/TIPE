@@ -18,4 +18,6 @@ typedef struct Coord{
 
 Coord sub(Coord ptA, Coord ptB);
 Coord reduceNormOfOne(Coord v);
+Coord add(Coord u, Coord v);
+Coord mult(int k, Coord u);
 #endif

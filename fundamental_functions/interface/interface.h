@@ -1,7 +1,10 @@
+#ifndef INTERFACE_JEU_DAMES
+#define INTERFACE_JEU_DAMES
+
 #include <SDL2/SDL_ttf.h>
 
-#include "../quantum_rules/quantum_functions.h"
-// WARNING: this include 'game_functions_draughts.h'
+
+#include "../game_functions/game_functions.h"
 
 // Window pmetre
 #define LG_WINDOW 640
@@ -11,14 +14,15 @@
 
 
 // Interface structure
-
 typedef struct
 {
+    bool loaded; //text must be loaded only when it's necessary
+    bool display;
+    char* content;
     TTF_Font *font;
     SDL_Surface *surface;
     SDL_Texture *texture;
     SDL_Rect *rect;
-    // char string[LEN];
     SDL_Color color;
 } text;
 
@@ -36,7 +40,7 @@ void drawPoint(SDL_Renderer *render, SDL_Color color, int x, int y);
 void drawLine(SDL_Renderer *render, SDL_Color color, int x0, int y0, int x1, int y1);
 void drawRect(SDL_Renderer *render, SDL_Color color, const SDL_Rect rect);
 void drawRects(SDL_Renderer *render, SDL_Color color, const SDL_Rect rect[], int len);
-void drawLosange(SDL_Renderer *render, Case c, pawn p);
+void drawLosange(SDL_Renderer *render, Case c, pawn p, Game *g);
 void selectPawn(Game *g, int x_mouse, int y_mouse);
 
 // Init functions
@@ -49,10 +53,10 @@ Game *create_game();
 void display_damier(SDL_Renderer *render, Game *g);
 void change_damier(Game *g);
 void prepareText(SDL_Renderer *render, text *txt, char *string);
-void printAndTurn(SDL_Renderer *render, text *txt, char *string, Game *g);
 
 // Debug functions
 void error();
 
 // Memory functions
 void free_game(Game *g);
+#endif //INTERFACE_JEU_DAMES
