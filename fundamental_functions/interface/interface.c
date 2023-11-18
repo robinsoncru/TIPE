@@ -1,6 +1,21 @@
-#include "interface_jeu_dames.h"
+#include "interface.h"
 
-// Color constants
+/*
+
+
+
+
+
+
+
+    Color constants
+
+
+
+
+
+
+*/
 
 SDL_Color orange = {255, 127, 40, 255};
 SDL_Color blue = {0, 0, 255, 255};
@@ -8,8 +23,25 @@ SDL_Color red = {255, 0, 0, 255};
 SDL_Color green = {0, 255, 0, 255};
 SDL_Color white = {255, 255, 255, 255};
 SDL_Color black = {0, 0, 0, 255};
+SDL_Color gold = {255, 215, 0, 255};
+SDL_Color silver = {192,192,192, 255};
 
-// Aux functions
+/*
+
+
+
+
+
+
+
+    AUX FUNCTIONS
+
+
+
+
+
+
+*/
 
 // SDL_Point *arrayToPoint(int tab_pts[][2], int len)
 // {
@@ -22,9 +54,24 @@ SDL_Color black = {0, 0, 0, 255};
 //     return Points;
 // }
 
-// Geometric functions
+/*
 
-void drawPoint(SDL_Renderer *render, SDL_Color color, int x, int y)
+
+
+
+
+
+
+   Geometric functions
+
+
+
+
+
+
+*/
+
+void drawPoint(SDL_Renderer * render, SDL_Color color, int x, int y)
 {
     // De meme: on fixe la couleur
     SDL_SetRenderDrawColor(render, color.r, color.g, color.b, color.a);
@@ -51,7 +98,17 @@ void drawRects(SDL_Renderer *render, SDL_Color color, const SDL_Rect rect[], int
     SDL_RenderFillRects(render, rect, len);
 }
 
-void drawLosange(SDL_Renderer *render, Case c, pawn p)
+void draw_little_square(SDL_Renderer *render, int dim, Case c, SDL_Color color)
+{
+    SDL_Rect fr;
+    fr.x = c.rect.x + dim;
+    fr.y = c.rect.y + dim;
+    fr.w = c.rect.w - 2 * dim;
+    fr.h = c.rect.h - 2 * dim;
+    drawRect(render, color, fr);
+}
+
+void drawLosange(SDL_Renderer *render, Case c, pawn p, Game *g)
 {
 
     SDL_Vertex vertices[6];
@@ -97,32 +154,25 @@ void drawLosange(SDL_Renderer *render, Case c, pawn p)
 
     if (p.queen)
     {
-        SDL_Rect qr;
-        qr.x = c.rect.x + 20;
-        qr.y = c.rect.y + 20;
-        qr.w = c.rect.w - 40;
-        qr.h = c.rect.h - 40;
-        drawRect(render, red, qr);
+        draw_little_square(render, 20, c, blue);
     }
 
-    if (p.ffriend != -1)
+    if (p.friendly != -1)
     {
-        SDL_Rect fr;
-        fr.x = c.rect.x + 30;
-        fr.y = c.rect.y + 30;
-        fr.w = c.rect.w - 60;
-        fr.h = c.rect.h - 60;
-        drawRect(render, orange, fr);
+        draw_little_square(render, 30, c, orange);
     }
 
     if (p.ennemy != -1)
     {
-        SDL_Rect fr;
-        fr.x = c.rect.x + 30;
-        fr.y = c.rect.y + 30;
-        fr.w = c.rect.w - 60;
-        fr.h = c.rect.h - 60;
-        drawRect(render, red, fr);
+        draw_little_square(render, 30, c, red);
+    }
+    
+    if (c.ind_pawn == g->ind_move && c.pawn_color == g->is_white) {
+        draw_little_square(render, 30, c, gold);
+    }
+
+    if (c.ind_pawn == g->ind_move_back && c.pawn_color == g->is_white) {
+        draw_little_square(render, 30, c, silver);
     }
 }
 
@@ -135,14 +185,33 @@ void selectPawn(Game *g, int x_mouse, int y_mouse)
     int lig = y_mouse / LG_CASE;
     int col = x_mouse / LG_CASE;
     printf("lig %d col %d\n", lig, col);
-    fflush(stdout);
+    // fflush(stdout);
     if (g->damier[lig][col].pawn_color == g->is_white)
-        g->ind_move = g->damier[lig][col].ind_pawn; // Return NEUTRAL_IND if no pawn in the case
+    {
+        g->ind_move = g->damier[lig][col].ind_pawn; // Return -1 if no pawn in the case
+        // printf("Coord pion selec %d %d", g->allPawns[g->is_white][g->ind_move].lig, g->allPawns[g->is_white][g->ind_move].col);
+        // flush();
+    }
     else
-        g->ind_move = NEUTRAL_IND;
+        g->ind_move = -1;
 }
 
-// Init functions
+/*
+
+
+
+
+
+
+
+     Init functions
+
+
+
+
+
+
+*/
 
 void init_pawn(pawn pawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int i, int init_place, int add, bool init_is_white)
 {
@@ -155,6 +224,7 @@ void init_pawn(pawn pawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int i, int ini
     else
     {
         pawns[i].lig = NB_CASE_LG - init_place - 1;
+        // pawns[i].lig = init_place;
         damier[NB_CASE_LG - init_place - 1][NON(add) + 2 * i - init_place * NB_CASE_LG].pawn_color = false;
         pawns[i].col = NON(add) + 2 * i - init_place * NB_CASE_LG;
     }
@@ -192,7 +262,7 @@ void init_pawns(Game *g, bool init_is_white)
         }
         g->allPawns[init_is_white][i].alive = true;
         g->allPawns[init_is_white][i].queen = false;
-        g->allPawns[init_is_white][i].ffriend = -1;
+        g->allPawns[init_is_white][i].friendly = -1;
         g->allPawns[init_is_white][i].ennemy = -1;
     }
 
@@ -226,7 +296,7 @@ void init_damier(Case damier[NB_CASE_LG][NB_CASE_LG])
 Game *create_game()
 {
     Game *g = malloc(sizeof(Game));
-    g->ind_move = NEUTRAL_IND;
+    g->indCheck = IND_NORMAL;
     g->is_white = true;
     init_damier(g->damier);
 
@@ -235,11 +305,30 @@ Game *create_game()
     g->nb_pawns[true] = NB_PAWNS;
     g->nb_pawns[false] = NB_PAWNS;
 
-    g->ind_move_back = -1;
+    g->ind_move = NEUTRAL_IND;
+    g->ind_move_back = NEUTRAL_IND;
+
+    g->coordForMoveBack.i = IND_LISTENING_MOVE_BACK;
+    g->coordForMoveBack.j = IND_LISTENING_MOVE_BACK;
     return g;
 }
 
-// Display functions
+/*
+
+
+
+
+
+
+
+    Display functions
+
+
+
+
+
+
+*/
 
 void change_damier(Game *g)
 {
@@ -277,13 +366,14 @@ void display_damier(SDL_Renderer *render, Game *g)
                 drawRect(render, black, g->damier[i][j].rect);
 
             if (!freeCase(g->damier[i][j]))
-                drawLosange(render, g->damier[i][j], g->allPawns[g->damier[i][j].pawn_color][g->damier[i][j].ind_pawn]);
+                drawLosange(render, g->damier[i][j], g->allPawns[g->damier[i][j].pawn_color][g->damier[i][j].ind_pawn], g);
         }
     }
 }
 
+// Prepare the text at displaying
 void prepareText(SDL_Renderer *render, text *txt, char *string)
-{ // Prepare the text at displaying
+{
     txt->surface = TTF_RenderText_Solid(txt->font, string, txt->color);
     txt->texture = SDL_CreateTextureFromSurface(render, txt->surface);
     int texW = 0;
@@ -295,14 +385,8 @@ void prepareText(SDL_Renderer *render, text *txt, char *string)
     txt->rect->h = texH;
 }
 
-void printAndTurn(SDL_Renderer *render, text *txt, char *string, Game *g)
-{
-    // Display a message for the player and change the turn for the other player
-    prepareText(render, txt, string);
-    g->ind_move = NEUTRAL_IND;
-}
-
 // Free the memory
+
 void free_game(Game *g)
 {
     // Je le laisse pour plus tard si on a des tableaux dynamiques (Victor G)

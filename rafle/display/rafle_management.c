@@ -1,6 +1,5 @@
-#include "test_tree_display.h"
+#include "rafle_management.h"
 #include <SDL2/SDL_render.h>
-#include <stdio.h>
 
 void displayCurrentRafle(Game* g, SDL_Renderer* render, PathTree* cacheTree, bool display_tree){
     //displays the current rafle if allowed to

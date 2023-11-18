@@ -17,5 +17,17 @@ Coord reduceNormOfOne(Coord v){
     Coord res;
     res.i = xMinusSing(v.i);
     res.j = xMinusSing(v.j);
+}
+
+Coord add(Coord u, Coord v){
+    Coord res = {
+        u.i + v.i,
+        u.j + v.j
+    };
+    return res;
+}
+
+Coord mult(int k, Coord u){
+    Coord res = {k*u.i, k*u.j};
     return res;
 }

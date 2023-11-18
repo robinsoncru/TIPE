@@ -15,6 +15,16 @@ Sources :
 - http://sylvain.archenault.free.fr/projets/Jeu_De_Dames/c/Jeu_de_Dames-C-Rapport.pdf (benofb)
 ___
 
+Regles du jeu:
+
+On ne peut lier d'amitie que deux amis au max, sinon le coup n'est pas joué
+De même pour ennemie
+
+Conseils de code:
+- Executer toujours le compile.sh dans le dossier ou est le main sinon les inclusions des autres fichiers font planter les fonctions du module SDL_ttf (TTF_OpenFont)
+- Virer VOID_INDEX ou NEUTRAL_INDICE c'est redondant
+La selection avec la souris ne permet pas de revenir en arriere, donc si on selectionne un pion coincé, le jeu est bloqué
+
 Todo list :
 - Finir l'implémentation des rafles
 - Ajouters des nouvelles règles :

@@ -4,7 +4,7 @@
 #ifndef PATH_TREE
 #define PATH_TREE
 #define ARITE 4
-#include "../../fundamental_functions/game_functions_draughts.h"
+#include "../../fundamental_functions/game_functions/game_functions.h"
 /*Arbre de chemins pour les rafles.
 C'est une structure reccursive qui consiste en un arbre de
 coordonnees symbolisant un ensemble de chemins sur le plateau.
