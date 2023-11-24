@@ -53,6 +53,22 @@ void getDirsFromCode(int c, int *di, int *dj)
     *di = dir((c >> 1) % 2);
 }
 
+bool int_to_bool(int integer)
+{
+    if (integer == 1)
+        return true;
+    else
+        return false;
+}
+
+int bool_to_int(bool b)
+{
+    if (b)
+        return 1;
+    else
+        return 0;
+}
+
 /*
 
 
@@ -97,40 +113,6 @@ bool inGame(int lig, int col)
 bool eatingIsOutOfBounds(int i, int j, int add0, int add1)
 {
     return outOfBounds(i + 2 * add0, j + 2 * add1);
-}
-
-bool becomeDame(pawn p, pawn pawns[], pawn Npawns[], Case damier[NB_CASE_LG][NB_CASE_LG])
-{
-    if (p.alive && !p.queen)
-    {
-        if (p.color)
-        {
-            if (p.lig == NB_CASE_LG - 1)
-            {
-                if (p.ennemy != -1)
-                {
-                    killPawn(Npawns, pawns, damier, Npawns[p.ennemy].lig, Npawns[p.ennemy].col);
-                }
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-        else
-        {
-            if (p.lig == 0)
-            {
-                if (p.ennemy != -1)
-                    killPawn(Npawns, pawns, damier, Npawns[p.ennemy].lig, Npawns[p.ennemy].col);
-                return true;
-            }
-            else
-                return false;
-        }
-    }
-    return false;
 }
 
 // checks if a pawn is allowed to move forward
@@ -210,29 +192,35 @@ bool canEat(pawn pawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int ind, int i, i
 
 */
 
-
-void put_pawn_value(Game *g, bool color, int ind, int wich_pmetre_modify, bool alive, int ennemy, int friendly, bool queen, int lig, int col)
+void put_pawn_value(Game *g, bool color, int ind, int wich_pmetre_modify, int value)
 {
-    // Permet de modifier les pmetres d'un pion de la liste de g reperer avec sa couleur, wich_pmetre_modify modifie le i-ième pmetre
+    /* 1:alive | 2:ennemy | 3:friendly | 4:queen | 5:lig | 6:col | 7:pba | 8:color
+    Permet de modifier les pmetres d'un pion de la liste de g reperer avec sa couleur, wich_pmetre_modify modifie le i-ième pmetre */
     switch (wich_pmetre_modify)
     {
     case 1:
-        g->allPawns[color][ind].alive = alive;
+        g->allPawns[color][ind].alive = int_to_bool(value);
         break;
     case 2:
-        g->allPawns[color][ind].ennemy = ennemy;
+        g->allPawns[color][ind].ennemy = value;
         break;
     case 3:
-        g->allPawns[color][ind].friendly = friendly;
+        g->allPawns[color][ind].friendly = value;
         break;
     case 4:
-        g->allPawns[color][ind].queen = queen;
+        g->allPawns[color][ind].queen = int_to_bool(value);
         break;
     case 5:
-        g->allPawns[color][ind].lig = lig;
+        g->allPawns[color][ind].lig = value;
         break;
     case 6:
-        g->allPawns[color][ind].col = col;
+        g->allPawns[color][ind].col = value;
+        break;
+    case 7:
+        g->allPawns[color][ind].pba = value;
+        break;
+    case 8:
+        g->allPawns[color][ind].color = int_to_bool(value);
         break;
     default:
         // Do nothing
@@ -240,23 +228,83 @@ void put_pawn_value(Game *g, bool color, int ind, int wich_pmetre_modify, bool a
     }
 }
 
-void pawn_default_value(pawn pawns[], int ind, bool init_is_white)
+int get_pawn_value(Game *g, bool color, int ind, int wich_pmetre_get)
 {
-    /* Initialize pawn with default values */
-    pawns[ind].alive = false;
-    pawns[ind].col = -1;
-    pawns[ind].lig = -1;
-    pawns[ind].queen = false;
-    pawns[ind].color = init_is_white;
-    pawns[ind].friendly = -1;
-    pawns[ind].ennemy = -1;
+    /* 1 : alive |2 : ennemy |3 : friendly |4 : queen |5 : lig |6 : col |7 : pba */
+    switch (wich_pmetre_get)
+    {
+    case 1:
+        return bool_to_int(g->allPawns[color][ind].alive);
+    case 2:
+        return g->allPawns[color][ind].ennemy;
+    case 3:
+        return g->allPawns[color][ind].friendly;
+    case 4:
+        return bool_to_int(g->allPawns[color][ind].queen);
+    case 5:
+        return g->allPawns[color][ind].lig;
+    case 6:
+        return g->allPawns[color][ind].col;
+    case 7:
+        return g->allPawns[color][ind].pba;
+    default:
+        // Do nothing
+        return VOID_INDEX;
+    }
+}
+
+// void pawn_default_value(pawn pawns[], int ind, bool color)
+// {
+//     /* Initialize pawn with default values, identify by its index and color
+//     Celle ci sera prochainement supprimee */
+//     pawns[ind].alive = false;
+//     pawns[ind].col = -1;
+//     pawns[ind].lig = -1;
+//     pawns[ind].queen = false;
+//     pawns[ind].color = color;
+//     pawns[ind].friendly = -1;
+//     pawns[ind].ennemy = -1;
+//     pawns[ind].pba = 1;
+// }
+
+void pawn_default_value_new(Game *g, int ind, bool color)
+{
+    /* Initialize pawn with default values, identify by its index and color */
+    g->allPawns[color][ind].alive = false;
+    g->allPawns[color][ind].col = -1;
+    g->allPawns[color][ind].lig = -1;
+    g->allPawns[color][ind].queen = false;
+    g->allPawns[color][ind].color = color;
+    g->allPawns[color][ind].friendly = -1;
+    g->allPawns[color][ind].ennemy = -1;
+    g->allPawns[color][ind].pba = 1;
 }
 
 // We are sure about the pawn we delete (no check control so be careful)
 // Kills the indicated pawn and applies all the necessary rules
-void killPawn(pawn pawns[], pawn Npawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int i, int j)
+void killPawn(Game *g, Case damier[NB_CASE_LG][NB_CASE_LG], int i, int j)
 {
     if (!freeCase(damier[i][j]))
+    {
+        int indPawn = damier[i][j].ind_pawn;
+        bool color = damier[i][j].pawn_color;
+        int indEnnemy = get_pawn_value(g, color, indPawn, ENNEMY);
+        int indAmi = get_pawn_value(g, color, indPawn, FRIENDLY);
+        if (indEnnemy != -1)
+        {
+            put_pawn_value(g, !color, indEnnemy, ENNEMY, -1);
+            put_pawn_value(g, !color, indEnnemy, QUEEN, 1);
+        }
+        if (indAmi != -1)
+        {
+            put_pawn_value(g, !color, indAmi, FRIENDLY, -1);
+        }
+        pawn_default_value_new(g, indPawn, color);
+        damier[i][j].ind_pawn = -1;
+    }
+}
+
+/*if (!freeCase(damier[i][j]))
     {
         int indPawn = damier[i][j].ind_pawn;
         if (pawns[indPawn].ennemy != -1)
@@ -268,10 +316,9 @@ void killPawn(pawn pawns[], pawn Npawns[], Case damier[NB_CASE_LG][NB_CASE_LG], 
         {
             Npawns[pawns[indPawn].friendly].friendly = -1;
         }
-        pawn_default_value(pawns, indPawn, pawns[indPawn].color);
+        pawn_default_value_new(pawns, indPawn, pawns[indPawn].color);
         damier[i][j].ind_pawn = -1;
-    }
-}
+    }*/
 
 /* Put the pawn in a specific case (lig, col).
 Useful for queen_move and can be used by us
@@ -283,6 +330,15 @@ void change_pawn_place(pawn pawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int in
     pawns[ind].col = col;
     damier[lig][col].ind_pawn = ind;
     damier[lig][col].pawn_color = pawns[ind].color;
+}
+
+void change_pawn_place_new(Game *g, Case damier[NB_CASE_LG][NB_CASE_LG], int ind, bool color, int lig, int col)
+{
+    damier[get_pawn_value(g, color, ind, LIG)][get_pawn_value(g, color, ind, COL)].ind_pawn = -1;
+    put_pawn_value(g, color, ind, LIG, lig);
+    put_pawn_value(g, color, ind, COL, col);
+    damier[lig][col].ind_pawn = ind;
+    damier[lig][col].pawn_color = color;
 }
 
 /* May be useful later */
@@ -297,17 +353,6 @@ void change_pawn_place(pawn pawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int in
 //     return c;
 // }
 
-/*
-int changeForEat(pawn pawns[], pawn NPawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int indEater, int i, int j, int add0, int add1)
-{
-    // For eatPawn
-    assert(indEater > -1 && pawns[indEater].alive && !pawns[indEater].queen);
-    // printf("pawn which is eaten %d\n", damier[i + add0][j + add1].ind_pawn);
-
-    nonLoggingChangeForEat(pawns, NPawns, damier, indEater, i, j, add0, add1);
-    printf("change allowed %d %d\n", i + 2 * add0, j + 2 * add1);
-    return IND_CHANGE_ALLOWED;
-}*/
 
 // Version de changeForEat qui n'imprime pas les changements effectues
 // Entree : deux tableaux de pions, un damier, l'index du pion qui mange, les coordonnees i et j dudit pion
@@ -336,8 +381,27 @@ void promote(Game *g, bool is_white, int ind)
     if (p->ennemy != NEUTRAL_IND)
     {
         pawn *ennemyPawn = &(g->allPawns[!is_white][p->ennemy]);
-        killPawn(g->allPawns[!is_white], g->allPawns[is_white], g->damier, ennemyPawn->lig, ennemyPawn->col);
+        killPawn(g, g->damier, ennemyPawn->lig, ennemyPawn->col);
     }
+}
+
+void createPawn(Game *g, bool color, int i, int j)
+{
+    // Rajoute un pion dans la liste des pions de la meme couleur. Attention taille du tableau
+    int new_ind = g->nb_pawns[color];
+
+    pawn_default_value_new(g, new_ind, color);
+    // // Par securite, remet par defaut les valeurs pour creer le nouveau pion
+
+    put_pawn_value(g, color, new_ind, ALIVE, 1);
+    put_pawn_value(g, color, new_ind, LIG, i);
+    put_pawn_value(g, color, new_ind, COL, j);
+
+    g->damier[i][j].ind_pawn = new_ind;
+    g->damier[i][j].pawn_color = color;
+
+    // Just need to increment, we have enough place (only NB_PAWNS pawns to promote)
+    g->nb_pawns[color]++;
 }
 
 /*
@@ -357,7 +421,6 @@ void promote(Game *g, bool is_white, int ind)
 
 */
 
-
 // Elles ont toutes des effets de bord
 // et on suppose que les coups joues sont legaux
 
@@ -373,7 +436,7 @@ void pawnMove(Game *g, bool is_white, int ind, bool left)
     int di = is_white ? 1 : -1;
     int dj = left ? -1 : 1;
 
-    change_pawn_place(g->allPawns[is_white], g->damier, ind, i + di, j + dj);
+    change_pawn_place_new(g, g->damier, ind, is_white, i + di, j + dj);
     if (p->friendly != NEUTRAL_IND)
     {
         g->ind_move_back = p->friendly;
@@ -384,7 +447,6 @@ void pawnMove(Game *g, bool is_white, int ind, bool left)
 }
 
 // Queen functions
-
 
 /*
 
@@ -402,7 +464,6 @@ void pawnMove(Game *g, bool is_white, int ind, bool left)
 
 
 */
-
 
 void endTurnGameManagement(Game *g, bool is_white, int indMovedPawn, int indCheck, bool doMoveBack)
 {
@@ -443,7 +504,6 @@ void endTurnGameManagement(Game *g, bool is_white, int indMovedPawn, int indChec
 
 
 */
-
 
 void error()
 {
