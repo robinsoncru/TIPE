@@ -18,8 +18,8 @@ void promotion(Game *g);
 /* Transforme au hasard un pion en pion ennemi ou en dame ou ne fait rien */
 
 /* LIEN AMITIE */
-bool canBeFriend(pawn p, Case c, pawn Npawns[]);
-bool canBeEnnemy(pawn p, Case c, pawn Npawns[]);
+bool canBeFriend(Game *g, int ind, bool color, Case c);
+bool canBeEnnemy(Game *g, int ind, bool color, Case c);
 void lienAmitie(int lig, int col, Game *g);
 bool needPutMoveBack(Game *g);
 /* Lie d'amitie le pion en indice avec le pion se trouvant en coord (lig, col) sur le damier, en verifiant qu'il est bien de

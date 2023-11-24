@@ -44,7 +44,7 @@ void drawLosange(SDL_Renderer *render, Case c, pawn p, Game *g);
 void selectPawn(Game *g, int x_mouse, int y_mouse);
 
 // Init functions
-void init_pawn(pawn pawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int i, int init_place, int add, bool init_is_white);
+void init_pawn(Game *g, Case damier[NB_CASE_LG][NB_CASE_LG], int i, int init_place, int add, bool init_is_white);
 void init_pawns(Game *g, bool init_is_white);
 void init_damier(Case damier[NB_CASE_LG][NB_CASE_LG]);
 Game *create_game();

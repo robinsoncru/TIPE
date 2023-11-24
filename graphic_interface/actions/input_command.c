@@ -70,7 +70,7 @@ void checkLienAmitie(int i, int j, Game *g, GraphicCache *cache)
     int iw = g->is_white;
     int ind = g->ind_move;
     i = iw ? NB_CASE_LG - i - 1 : i;
-    if (basicChecks(g) && canBeFriend(g->allPawns[iw][ind], g->damier[i][j], g->allPawns[!iw]))
+    if (basicChecks(g) && canBeFriend(g, ind, iw, g->damier[i][j]))
     {
         lienAmitie(i, j, g);
         endTurnGraphics(g, cache);
@@ -100,7 +100,7 @@ void checkLienEnnemitie(int i, int j, Game *g, GraphicCache *cache)
     // j = !iw ? j : NB_CASE_LG - j - 1;
     // printf("%d %d %d", i, lig, freeCase(g->damier[i][j]));
     // fflush(stdout);
-    if (basicChecks(g) && canBeEnnemy(g->allPawns[iw][ind], g->damier[i][j], g->allPawns[!iw]))
+    if (basicChecks(g) && canBeEnnemy(g, ind, iw, g->damier[i][j]))
     {
         lienEnnemitie(i, j, g);
         endTurnGraphics(g, cache);
