@@ -37,6 +37,8 @@ Les fonctions suivantes permettent de modifier le pion dans le game juste en le 
 -get_pawn_value
 Victor D jettes y un oeil
 
+Pour move back: on suppose que le joueur joue bien, donc quand on doit move arriere, il joue bien les fleches gauche/droite
+
 Todo list :
 - Finir l'implémentation des rafles
 - Ajouters des nouvelles règles :

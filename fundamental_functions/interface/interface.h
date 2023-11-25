@@ -12,6 +12,9 @@
 #define MAX_TICKS 10
 #define LG_CASE (LG_WINDOW / NB_CASE_LG)
 
+// Color pmetre
+#define NUANCE_EFFECT 20
+
 
 // Interface structure
 typedef struct

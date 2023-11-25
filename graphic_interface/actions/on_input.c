@@ -63,7 +63,15 @@ void onInput(Game *g, GraphicCache *cache, SDL_Event event)
             // Debuggeur: affiche l'etat des pions
             onHUP(g, cache);
             break;
-            // les autres fonctions restent a implementer
+
+        case SDLK_b:
+            // Bidepl le pion
+            onBUP(g, cache);
+            break;
+
+        case SDLK_l:
+            onLUP(g);
+            break;
         }
     }
 }
