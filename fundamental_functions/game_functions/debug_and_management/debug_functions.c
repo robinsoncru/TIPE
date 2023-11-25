@@ -25,7 +25,7 @@ void error()
 
 void print_pawn(pawn p, int ind)
 {
-    printf("Ind %d Coord %d %d Ennemy %d, Friend %d Color %d Alive %d\n", ind, p.lig, p.col, p.ennemy, p.friendly, p.color, p.alive);
+    printf("Ind %d Coord %d %d Ennemy %d, Friend %d Color %d Alive %d Pba %d\n", ind, p.lig, p.col, p.ennemy, p.friendly, p.color, p.alive, p.pba);
     fflush(stdout);
 }
 
@@ -67,4 +67,14 @@ void assertAndLog(bool condition, char *message)
 void flush()
 {
     fflush(stdout);
+}
+
+void print_little_linked_list(maillon *l)
+{
+    maillon *actu = l;
+    while (!is_empty(actu))
+    {
+        actu = actu->next;
+        printf("indice %d\n", actu->ind);
+    }
 }

@@ -1,7 +1,4 @@
 #include "game_functions.h"
-#include <stdlib.h>
-
-
 
 /*
 
@@ -28,10 +25,9 @@
 // On suppose que ce coup est legal.
 // Met fin au tour pour la structure de jeu
 
-
 void pawnMove(Game *g, bool is_white, int ind, bool left)
 {
-    startTurnGameManagement(g, true);
+    startTurnGameManagement(g);
     pawn *p = &(g->allPawns[is_white][ind]);
     int i = p->lig;
     int j = p->col;
@@ -65,12 +61,7 @@ void pawnMove(Game *g, bool is_white, int ind, bool left)
 
 */
 
-
-
-
-
 // Queen functions
-
 
 /*
 
@@ -91,8 +82,7 @@ void pawnMove(Game *g, bool is_white, int ind, bool left)
 
 void promotionPmetre(pawn pawns[], bool is_white, Case damier[NB_CASE_LG][NB_CASE_LG], int ind, Game *g)
 {
-    startTurnGameManagement(g, false);
-    assert(ind > -1 && pawns[ind].alive);
+    startTurnGameManagement(g);
     /* Promote the pawn at the ind in pmetre : do nothing, become a queen or become an ennemy pawn */
     int choice = rand() % 3;
     if (choice == 1)
@@ -150,7 +140,7 @@ void lienAmitiePmetre(int lig, int col, Case damier[NB_CASE_LG][NB_CASE_LG], int
     couleur opposé et qu'il existe. Gère le pmetre Pawn.friendly. Si on lie d'amitié un pion qui était déjà ami, l'action n'a pas lieu et
     le joueur doit rejouer.
     Suppose le pion ainsi que le pion ami selectionne valides */
-    startTurnGameManagement(g, false);
+    startTurnGameManagement(g);
     Case c = damier[lig][col];
     put_pawn_value(g, is_white, ind, 3, c.ind_pawn);
     put_pawn_value(g, c.pawn_color, c.ind_pawn, 3, ind);
@@ -165,8 +155,6 @@ void lienAmitie(int lig, int col, Game *g)
 }
 
 // Functions to move back a pawn because the friend has just moved
-
-
 
 void moveBack(Game *g)
 {
@@ -199,7 +187,7 @@ void lienEnnemitiePmetre(bool is_white, int lig, int col, Case damier[NB_CASE_LG
     /* Declare ennemis pour la vie le pion en indice avec le pion se trouvant en coord (lig, col) sur le damier, en verifiant qu'il est bien de
     couleur opposé et qu'il existe. Gère le pmetre Game.friendly. Si on declare ennemi un pion qui était déjà ennemi, le coup n'est pas joué
     Suppose legal move */
-    startTurnGameManagement(g, false);
+    startTurnGameManagement(g);
     Case c = damier[lig][col];
     put_pawn_value(g, is_white, ind, 2, c.ind_pawn);
     put_pawn_value(g, c.pawn_color, c.ind_pawn, 2, ind);
@@ -235,13 +223,11 @@ void lienEnnemitie(int lig, int col, Game *g)
 
 */
 
-
-
 void biDepl(Game *g, int ind, bool color)
 {
     // On suppose le coup legal
 
-    startTurnGameManagement(g, false);
+    startTurnGameManagement(g);
     int di = color ? 1 : -1;
     // Creer un pion a droite
     int newLig = get_pawn_value(g, color, ind, LIG) + di;
@@ -250,8 +236,20 @@ void biDepl(Game *g, int ind, bool color)
     int newInd = g->damier[newLig][newCol].ind_pawn;
     put_pawn_value(g, color, newInd, PBA, get_pawn_value(g, color, ind, PBA) * 2);
 
+    // Rajoute dans le cloud
+    if (!isInCloud(g, color, ind))
+        push(g->cloud[color], ind);
+    push(g->cloud[color], newInd);
+
+    g->lengthCloud[color]++;
+
     // Deplace le pion a gauche
     put_pawn_value(g, color, ind, PBA, get_pawn_value(g, color, ind, PBA) * 2);
     simplyPawnMove(g, color, ind, true);
+
+    // Maybe the clone pawn is near a pawn of the opposite color
+    if (canStormBreaks(g, newInd, color)) AleatStormBreaks(g, color);
+    else if (canStormBreaksForTheOthers(g, newInd, color)) AleatStormBreaks(g, !color); 
+
     endTurnGameManagement(g, color, ind, IND_CHANGE_ALLOWED, false);
 }

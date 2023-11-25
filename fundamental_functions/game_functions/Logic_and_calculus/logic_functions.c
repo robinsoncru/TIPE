@@ -59,13 +59,14 @@ bool canMove(Game *g, bool is_white, int ind, bool left)
     return posInGame && wayIsFree;
 }
 
+// un ghost pawn ne peut pas devenir une dame
 bool canBePromoted(Game *g, bool is_white, int ind)
 {
     pawn *p = &(g->allPawns[is_white][ind]);
     int border = is_white ? (NB_CASE_LG - 1) : 0;
     bool isOnBorder = p->lig == border;
     bool ennmyIsDead = p->ennemy != NEUTRAL_IND && !g->allPawns[!is_white][p->ennemy].alive;
-    return !p->queen && (isOnBorder || ennmyIsDead);
+    return !p->queen && (isOnBorder || ennmyIsDead) && p->pba == 1;
 }
 
 // On suppose que les coordonnees sont bien sur la meme diagonale
@@ -111,7 +112,6 @@ bool moveBackAvailable(Game *g)
     return g->ind_move_back > -1 && g->coordForMoveBack.i > VOID_INDEX && g->coordForMoveBack.j > VOID_INDEX;
 }
 
-
 bool canBeFriend(Game *g, int ind, bool color, Case c)
 {
     // Check if a pawn and the pawn on the case c can be friend
@@ -153,4 +153,52 @@ bool canBiDepl(Game *g, int ind, bool color)
 bool needPutMoveBack(Game *g)
 {
     return g->ind_move_back > -1 && g->coordForMoveBack.i == IND_LISTENING_MOVE_BACK && g->coordForMoveBack.j == IND_LISTENING_MOVE_BACK;
+}
+
+bool canPromotion(Game *g)
+{
+    return basicChecks(g) && !isInCloud(g, g->is_white, g->ind_move);
+}
+
+// Seul un pion plein peut faire eclater le nuage
+bool canStormBreaks(Game *g, int ind, int color)
+{
+    if (!isInCloud(g, color, ind)) return false;
+    int di, dj;
+    int i = get_pawn_value(g, color, ind, LIG);
+    int j = get_pawn_value(g, color, ind, COL);
+    Case c;
+    for (int k = 0; k < 4; k++)
+    {
+
+        getDirsFromCode(k, &di, &dj);
+        c = g->damier[i + di][j + dj];
+        if (!freeCase(c) && c.pawn_color != color && !isInCloud(g, !color, c.ind_pawn))
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+// Seul un pion plein peut faire eclater le nuage
+bool canStormBreaksForTheOthers(Game *g, int ind, int color)
+{
+    if (isInCloud(g, color, ind))
+        return false;
+    int di, dj;
+    int i = get_pawn_value(g, color, ind, LIG);
+    int j = get_pawn_value(g, color, ind, COL);
+    Case c;
+    for (int k = 0; k < 4; k++)
+    {
+
+        getDirsFromCode(k, &di, &dj);
+        c = g->damier[i + di][j + dj];
+        if (!freeCase(c) && c.pawn_color != color && isInCloud(g, !color, c.ind_pawn))
+        {
+            return true;
+        }
+    }
+    return false;
 }

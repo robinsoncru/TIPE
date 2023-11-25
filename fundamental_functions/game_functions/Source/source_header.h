@@ -1,11 +1,12 @@
+#ifndef GAME_FUNCTIONS_DRAUGHTS
+#define GAME_FUNCTIONS_DRAUGHTS
+
 #include <SDL2/SDL.h>
 #include <stdbool.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <assert.h>
-
-#ifndef GAME_FUNCTIONS_DRAUGHTS
-#define GAME_FUNCTIONS_DRAUGHTS
+#include <time.h>
 
 #include "../../coord/coord.h"
 
@@ -81,6 +82,8 @@ typedef struct
     int ind_move, ind_move_back, indCheck;
     bool is_white;
     Coord coordForMoveBack;
+    maillon* cloud[2];
+    int lengthCloud[2];
 } Game;
 
 /* NOTES :

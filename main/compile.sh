@@ -8,6 +8,7 @@
 
 files_array=("main.c"
              "../fundamental_functions/coord/coord.c"
+             "../fundamental_functions/coord/little_linked_list.c"
              "../fundamental_functions/game_functions/game_functions.c"
              "../fundamental_functions/game_functions/aux_game_functions/aux_functions.c"
              "../fundamental_functions/game_functions/debug_and_management/debug_functions.c"

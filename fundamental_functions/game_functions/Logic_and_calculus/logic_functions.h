@@ -19,11 +19,14 @@ bool moveBackAvailable(Game *g);
 bool canMoveBack(Game *g, bool is_white, int ind, bool left);
 bool needPutMoveBack(Game *g);
 
+bool canPromotion(Game *g);
 
 bool canBeFriend(Game *g, int ind, bool color, Case c);
 bool canBeEnnemy(Game *g, int ind, bool color, Case c);
 
 bool canBiDepl(Game *g, int ind, bool color);
 bool isInCloud(Game *g, bool color, int ind);
+bool canStormBreaks(Game *g, int ind, int color);
+bool canStormBreaksForTheOthers(Game *g, int ind, int color);
 
 #endif // LOGIC_FUNCTIONS

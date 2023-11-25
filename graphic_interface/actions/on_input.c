@@ -69,6 +69,9 @@ void onInput(Game *g, GraphicCache *cache, SDL_Event event)
             onBUP(g, cache);
             break;
 
+        case SDLK_l:
+            onLUP(g);
+            break;
         }
     }
 }

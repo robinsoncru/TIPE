@@ -331,6 +331,11 @@ Game *create_game()
 
     g->coordForMoveBack.i = IND_LISTENING_MOVE_BACK;
     g->coordForMoveBack.j = IND_LISTENING_MOVE_BACK;
+
+    g->cloud[true] = create_list();
+    g->cloud[false] = create_list();
+    g->lengthCloud[true] = 0;
+    g->lengthCloud[false] = 0;
     return g;
 }
 

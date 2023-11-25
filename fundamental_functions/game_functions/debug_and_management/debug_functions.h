@@ -15,6 +15,7 @@ void print_pawns(Game *g);
 void print_pawn(pawn p, int ind);
 /* print check in the terminal and flush it */
 void error();
+void print_little_linked_list(maillon *l);
 
 
 #endif //  DEBUG_FUNCTIONS

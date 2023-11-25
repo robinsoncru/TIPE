@@ -25,5 +25,8 @@ void simplyPawnMove(Game *g, bool is_white, int ind, bool left);
     if no case available. The coord are given at g->coordForMoveBack */
 void putPawnMoveBack(Game *g, bool left);
 
+void stormBreaks(Game *g, bool color, int indSurvivor);
+void AleatStormBreaks(Game *g, bool color);
+
 
 #endif // AUX_FUNCTIONS

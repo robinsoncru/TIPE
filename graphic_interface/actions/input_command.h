@@ -14,6 +14,7 @@ void onPUP(Game *g, GraphicCache *cache);
 void onJUP(Game *g, GraphicCache *cache);
 void onHUP(Game *g, GraphicCache *cache);
 void onBUP(Game *g, GraphicCache *cache);
+void onLUP(Game *g);
 
 //void onAUp(Game* g, GraphicCache* cache);
 //void onZUp(Game* g, GraphicCache* cache);

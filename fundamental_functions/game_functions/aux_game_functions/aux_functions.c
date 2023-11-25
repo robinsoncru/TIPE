@@ -17,14 +17,19 @@
 
 */
 
-
 void copy_remove_pawn_from_index_to_index(Game *g, int indStart, int indArrive, bool color)
 {
+    g->damier[get_pawn_value(g, color, indStart, LIG)][get_pawn_value(g, color, indStart, COL)].ind_pawn = VOID_INDEX;
+
     for (int k = 1; k < 9; k++)
     {
         put_pawn_value(g, color, indArrive, k, get_pawn_value(g, color, indStart, k));
     }
     pawn_default_value_new(g, indStart, color);
+
+    // Sur le damier
+    g->damier[get_pawn_value(g, color, indArrive, LIG)][get_pawn_value(g, color, indArrive, COL)].ind_pawn = indArrive;
+    g->damier[get_pawn_value(g, color, indArrive, LIG)][get_pawn_value(g, color, indArrive, COL)].pawn_color = color;
 }
 
 // void pawn_default_value(pawn pawns[], int ind, bool color)
@@ -56,6 +61,8 @@ void pawn_default_value_new(Game *g, int ind, bool color)
 
 // We are sure about the pawn we delete (no check control so be careful)
 // Kills the indicated pawn and applies all the necessary rules
+// Les ghosts pawn ne peuvent pas se manger entre eux: attention dans les fonctions eatPawn. Et un pion plein detruit le nuage avant de
+// manger un ghost pawn
 void killPawn(Game *g, Case damier[NB_CASE_LG][NB_CASE_LG], int i, int j)
 {
     assert(i != -1 && j != -1);
@@ -77,7 +84,7 @@ void killPawn(Game *g, Case damier[NB_CASE_LG][NB_CASE_LG], int i, int j)
         pawn_default_value_new(g, indPawn, color);
         damier[i][j].ind_pawn = -1;
         /* Supprimer l'indice et optimiser la memoire */
-        copy_remove_pawn_from_index_to_index(g, g->nb_pawns[color]-1, indPawn, color);
+        copy_remove_pawn_from_index_to_index(g, g->nb_pawns[color] - 1, indPawn, color);
         g->nb_pawns[color]--;
     }
 }
@@ -150,7 +157,7 @@ int nonLoggingChangeForEat(pawn pawns[], pawn NPawns[], Case damier[NB_CASE_LG][
     return indVictim;
 }
 
-// promotes the indicated pawn
+// promotes the indicated pawn, un ghost pawn ne peut pas devenir une dame
 void promote(Game *g, bool is_white, int ind)
 {
     pawn *p = &(g->allPawns[is_white][ind]);
@@ -219,4 +226,63 @@ void putPawnMoveBack(Game *g, bool left)
         g->coordForMoveBack.i = i - di;
         g->coordForMoveBack.j = j - dj;
     }
+}
+
+void stormBreaks(Game *g, bool color, int indSurvivor)
+{
+    maillon *l = g->cloud[color];
+    int iSurvivor = get_pawn_value(g, color, indSurvivor, LIG);
+    int jSurvivor = get_pawn_value(g, color, indSurvivor, COL);
+
+    put_pawn_value(g, color, indSurvivor, PBA, 1);
+    while (!is_empty(l))
+    {
+        int ind = pop(l);
+        if (ind != g->damier[iSurvivor][jSurvivor].ind_pawn)
+            ;
+        {
+            killPawn(g, g->damier, get_pawn_value(g, color, ind, LIG), get_pawn_value(g, color, ind, COL));
+        }
+    }
+    g->lengthCloud[color] = 0;
+
+    // C'est une fonction mutuellement recursive car le pion foudroyer peut etre pres du nuage de la couleur opposee. On verifie donc
+    // dans l'autre nuage
+
+    if (canStormBreaksForTheOthers(g, g->damier[iSurvivor][jSurvivor].ind_pawn, color))
+        AleatStormBreaks(g, !color);
+}
+
+void AleatStormBreaks(Game *g, bool color)
+{
+    int nbSurvivor = rand() % g->lengthCloud[color];
+    maillon *l = g->cloud[color];
+    int incr = 0;
+    int iSurvivor;
+    int jSurvivor;
+
+    while (!is_empty(l))
+    {
+        int ind = pop(l);
+        if (incr == nbSurvivor)
+        {
+            put_pawn_value(g, color, ind, PBA, 1);
+            iSurvivor = get_pawn_value(g, color, ind, LIG);
+            jSurvivor = get_pawn_value(g, color, ind, COL);
+        }
+        else
+        {
+            killPawn(g, g->damier, get_pawn_value(g, color, ind, LIG), get_pawn_value(g, color, ind, COL));
+        }
+        incr++;
+    }
+    g->lengthCloud[color] = 0;
+
+    // C'est une fonction recursive car le pion foudroyer peut etre pres du nuage de la couleur opposee. On verifie donc
+    // dans l'autre nuage
+
+    printf("%d %d %d", iSurvivor, jSurvivor, g->damier[iSurvivor][jSurvivor].ind_pawn);
+    fflush(stdout);
+    if (canStormBreaksForTheOthers(g, g->damier[iSurvivor][jSurvivor].ind_pawn, color))
+        AleatStormBreaks(g, !color);
 }

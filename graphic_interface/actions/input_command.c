@@ -112,7 +112,7 @@ void checkLienEnnemitie(int i, int j, Game *g, GraphicCache *cache)
 
 void checkPromotion(Game *g, GraphicCache *cache)
 {
-    if (basicChecks(g))
+    if (canPromotion(g))
     {
         promotion(g);
         endTurnGraphics(g, cache);
@@ -241,6 +241,10 @@ void onHUP(Game *g, GraphicCache *cache)
 void onBUP(Game *g, GraphicCache *cache)
 {
     checkBiDepl(g, cache);
+}
+
+void onLUP(Game *g) {
+    print_little_linked_list(g->cloud[g->is_white]);
 }
 
 void onAUp(Game *g, GraphicCache *cache);
