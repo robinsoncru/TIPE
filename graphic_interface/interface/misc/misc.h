@@ -1,11 +1,11 @@
-
-
-#ifndef MISC
-#define MISC
-
-#include "../../../fundamental_functions/fundamental_functions.h"
-#include "../../../rafle/calc/path_tree.h"
 #include <SDL2/SDL_ttf.h>
+#include <SDL2/SDL_video.h>
+
+#ifndef INTERFACE_JEU_DAMES
+#define INTERFACE_JEU_DAMES
+
+#include "../game_functions/game_functions.h"
+#include "../../rafle/calc/path_tree.h"
 
 // Window pmetre
 #define LG_WINDOW 640
@@ -43,6 +43,7 @@ void drawLine(SDL_Renderer *render, SDL_Color color, int x0, int y0, int x1, int
 void drawRect(SDL_Renderer *render, SDL_Color color, const SDL_Rect rect);
 void drawRects(SDL_Renderer *render, SDL_Color color, const SDL_Rect rect[], int len);
 void drawLosange(SDL_Renderer *render, Case c, pawn p);
+void selectPawn(Game *g, int x_mouse, int y_mouse);
 
 // Init functions
 void init_pawn(pawn pawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int i, int init_place, int add, bool init_is_white);

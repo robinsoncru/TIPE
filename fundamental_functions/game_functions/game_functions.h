@@ -18,6 +18,7 @@
 //represente une absence de pion
 #define NEUTRAL_IND -1
 #define VOID_INDEX (NEUTRAL_IND)
+// Maybe we should remove one of these
 
 //check indexes
 #define IND_NORMAL -1
@@ -26,6 +27,7 @@
 #define IND_NOTHING_HAPPENED 2
 #define IND_BAD_CHOICE 3
 #define IND_GLORY_QUEEN 4
+#define IND_LISTENING_MOVE_BACK -2
 
 //directions
 #define LEFT_BACK 0
@@ -35,8 +37,14 @@
 
 #define RNG_INIT_NBR 14071789
 
+
 // #define MY_GUARD 1
 // En evaluant dans les files incluant ce file, on évite la double inclusion
+
+
+
+
+
 
 // Game structure
 typedef struct
@@ -47,12 +55,20 @@ typedef struct
 } Case;
 
 
+
+
+
+
 typedef struct
 {
-    int lig, col, ffriend, ennemy;
+    int lig, col, friendly, ennemy;
+    // rename friendly to friendly
     /* friend: Lien d'amitie avec un autre pion, -1 if no friend */
     bool alive, color, queen;
 } pawn;
+
+
+
 
 
 
@@ -68,8 +84,14 @@ typedef struct
     Indeed, we need a free indice to create a new ennemy pawn, not necessary the first free indice */
     int ind_move, ind_move_back, indCheck;
     bool is_white;
-
+    Coord coordForMoveBack;
 } Game;
+
+
+
+
+
+
 
 /* NOTES :
 
@@ -90,6 +112,7 @@ Pour qu'une dame mange une piece, selectionne la dame puis selectionne (clic gau
 //Logic functions
 bool freeCase(Case c);
 int NON(int b);
+bool basicChecks(Game *g);
 /* Couronne un pion en dame et s'il avait un ennemi, celui ci meurt */
 bool becomeDame(pawn p, pawn pawns[], pawn Npawns[], Case damier[NB_CASE_LG][NB_CASE_LG]);
 bool inGame(int lig, int col);
@@ -114,9 +137,10 @@ Uint8 queenCanMoveOrEat(Game* g, bool is_white, int ind, Coord finalPos, Coord* 
 bool canEat(pawn pawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int ind, int i, int j, int add0, int add1);
 int changeForEat(pawn pawns[], pawn NPawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int ind, int i, int j, int add0, int add1);
 int nonLoggingChangeForEat(pawn pawns[], pawn NPawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int ind, int i, int j, int add0, int add1);
+void put_pawn_value(Game *g, bool color, int ind, int wich_pmetre_modify, bool alive, int ennemy, int friendly, bool queen, int lig, int col);
 
 //play functions
-void endTurnGameManagement(Game* g, bool is_white, int indMovedPawn);
+void endTurnGameManagement(Game *g, bool is_white, int indMovedPawn, int indCheck, bool doMoveBack);
 void pawnMove(Game* g, bool is_white, int ind, bool left);
 void eatPawn(Game *g);
 
@@ -130,8 +154,10 @@ void error();
 // Affiche les caracteristiques des Pions
 void print_pawns(Game *g);
 // Affiche ligne, colonne et coordonnees des cases
-void print_damier(Case damier[NB_CASE_LG][NB_CASE_LG]);
+void print_damier(Case damier[NB_CASE_LG][NB_CASE_LG], Game *g);
 //Fait planter le programme en affichant un message d'erreur
 //si la condition n'est pas respectee
 void assertAndLog(bool condition, char* message);
+void flush();
+void print_pawn(pawn p, int ind);
 #endif //GAME_FUNCTIONS_DRAUGHTS

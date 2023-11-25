@@ -280,10 +280,3 @@ void prepareText(SDL_Renderer *render, text *txt, char *string)
     txt->rect->w = texW;
     txt->rect->h = texH;
 }
-
-// Free the memory
-void free_game(Game *g)
-{
-    // Je le laisse pour plus tard si on a des tableaux dynamiques (Victor G)
-    free(g);
-}
