@@ -2,6 +2,7 @@
 #define INPUT_COMMAND
 
 #include "../memory_update/graphic_cache.h"
+#include "../interface/interface.h"
 
 void onLMBDown(Game* g, GraphicCache* cache);
 void onLeftUp(Game* g, GraphicCache* cache);

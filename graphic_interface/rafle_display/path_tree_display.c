@@ -1,5 +1,4 @@
 #include "path_tree_display.h"
-#include <stdio.h>
 
 void getMiddlePoint(Case c, int* x, int* y){
     *x = c.rect.x + LG_CASE / 2;

@@ -1,5 +1,7 @@
 #ifndef COORD
 #define COORD
+
+#include <stdio.h>
 typedef struct Coord{
     int i;
     int j;
@@ -19,4 +21,5 @@ typedef struct Coord{
 Coord sub(Coord ptA, Coord ptB);
 Coord add(Coord u, Coord v);
 Coord mult(int k, Coord u);
+void coordPrint(Coord x);
 #endif

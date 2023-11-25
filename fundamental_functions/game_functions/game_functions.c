@@ -1,16 +1,16 @@
 #include "game_functions.h"
+#include <SDL2/SDL_stdinc.h>
 #include <stdlib.h>
 
 // Logic functions
 
+int NON(int b){
+    return (b + 1) % 2;
+}
+
 bool freeCase(Case c)
 {
     return c.ind_pawn == -1;
-}
-
-int NON(int b)
-{
-    return (b + 1) % 2;
 }
 
 //la direction est donnee sous la forme d'un couple
@@ -19,17 +19,17 @@ int NON(int b)
 //dont le bit de poids faible est la direction horizontale
 //et le bit de poids fort la direction verticale.
 //0 sens negatif, 1 sens positif
-int getCodeFromDirs(int dj, int di){
+Uint8 getCodeFromDirs(int dj, int di){
 
-    int weak = (dj == 1) ? 1 : 0;
-    int strong = (di == 1) ? 1 : 0;
+    Uint8 weak = (dj == 1) ? 1 : 0;
+    Uint8 strong = (di == 1) ? 1 : 0;
     return (strong << 1)|(weak);
 }
 int dir(int a){
     return (a == 0) ? -1 : 1;
 }
 
-void getDirsFromCode(int c, int* di, int* dj){
+void getDirsFromCode(Uint8 c, int* di, int* dj){
     *dj = dir(c % 2);
     *di = dir((c >> 1) % 2);
 }
@@ -48,38 +48,6 @@ bool inGame(int lig, int col)
 //Checks if eating from position (i, j) in the (add0, add1) direction leads to an out of bounds position
 bool eatingIsOutOfBounds(int i, int j, int add0, int add1){
     return outOfBounds(i + 2 * add0, j + 2 * add1);
-}
-
-bool becomeDame(pawn p, pawn pawns[], pawn Npawns[], Case damier[NB_CASE_LG][NB_CASE_LG])
-{
-    if (p.alive && !p.queen)
-    {
-        if (p.color)
-        {
-            if (p.lig == NB_CASE_LG - 1)
-            {
-                if (p.ennemy != -1){
-                    killPawn(Npawns, pawns, damier, Npawns[p.ennemy].lig, Npawns[p.ennemy].col);
-                }
-                return true;
-            }
-            else {
-                return false;
-            }
-        }
-        else
-        {
-            if (p.lig == 0)
-            {
-                if (p.ennemy != -1)
-                    killPawn(Npawns, pawns, damier, Npawns[p.ennemy].lig, Npawns[p.ennemy].col);
-                return true;
-            }
-            else
-                return false;
-        }
-    }
-    return false;
 }
 
 //checks if a pawn is allowed to move forward
@@ -106,32 +74,62 @@ int abs(int a){
     return (a >= 0) ? a : -a;
 }
 
-//On suppose que les coordonnees sont bien sur la meme diagonale
-bool diagIsFree(Game* g, Coord initPos, Coord finalPos){
+//On suppose que les coordonnees sont bien sur la meme diagonale.
+//retourne :
+//-- 0 si la diagonale est vide
+//-- 1 s'il y a exactement un pion adverse et aucun pion allie
+//-- 2 s'il y a au moins deux pions peu importe leurs camps, ou au moins un pion allie.
+//Si au moins un pion a ete croise, la valeur stockee a l'adresse pointee par pos
+//se verra attribuer les coordonnes du premier en partant de la position initiale
+Uint8 diagCount(Game* g, bool is_white, Coord initPos, Coord finalPos, Coord* pos){
     int di = (finalPos.i > initPos.i) ? 1 : -1;
     int dj = (finalPos.j > initPos.j) ? 1 : -1;
     Coord dir = {di, dj};
     int dist = abs(finalPos.i - initPos.i);
 
     Coord testedPos;
+    int pawnCount = 0;
+    int ind;
+    Case* c;
     for (int k = 1; k < dist; k++) {
         testedPos = add(initPos, mult(k, dir));
-        if (!freeCase(g->damier[testedPos.i][testedPos.j])) {
-            return false;
+        *c = g->damier[testedPos.i][testedPos.j];
+        if(!freeCase(*c)){
+            if (pawnCount == 1 || c->pawn_color == is_white) {
+                return 2;
+            }
+            else {
+                pawnCount = 1;
+                *pos = testedPos;
+            }
         }
     }
-    return true;
+    return pawnCount;
 }
 
-//on suppose que le pion indique est une dame
-bool queenCanMove(Game* g, bool is_white, int ind, Coord finalPos){
+//returns wether the indicated move is a diagonal
+//finishing in the board
+bool queenAuxCheck(Coord initPos, Coord finalPos){
+    return inGame(finalPos.i, finalPos.j) && abs(finalPos.i - initPos.i) == abs(finalPos.j - initPos.j);
+}
+
+//on suppose que le pion indique est une dame.
+//indique si la dame peut faire le deplacement en entree.
+//retourne :
+//-- 0 si elle peut se deplacer sans manger de pion
+//-- 1 si elle peut se deplacer en mangeant un pion
+//-- 2 si elle ne peut pas se deplacer
+Uint8 queenCanMoveOrEat(Game* g, bool is_white, int ind, Coord finalPos, Coord* pos){
     Coord initPos = {
         g->allPawns[is_white][ind].lig,
         g->allPawns[is_white][ind].col
     };
-    bool isInGame = inGame(finalPos.i,finalPos.j);
-    bool isOnDiag = abs(finalPos.i - initPos.i) == abs(finalPos.j - initPos.j);
-    return isInGame && isOnDiag && diagIsFree(g, initPos, finalPos);
+    //il est preferable de ne faire qu'un seul appel a diagCount,
+    //quitte a rendre le code un peu moins compact
+    if (queenAuxCheck(initPos, finalPos) && freeCase(g->damier[finalPos.i][finalPos.j])) {
+        return diagCount(g, is_white, initPos, finalPos, pos);
+    }
+    return 2;
 }
 
 // Aux functions
@@ -193,18 +191,6 @@ void change_pawn_place(pawn pawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int in
 //     return c;
 // }
 
-/*
-int changeForEat(pawn pawns[], pawn NPawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int indEater, int i, int j, int add0, int add1)
-{
-    // For eatPawn
-    assert(indEater > -1 && pawns[indEater].alive && !pawns[indEater].queen);
-    // printf("pawn which is eaten %d\n", damier[i + add0][j + add1].ind_pawn);
-
-    nonLoggingChangeForEat(pawns, NPawns, damier, indEater, i, j, add0, add1);
-    printf("change allowed %d %d\n", i + 2 * add0, j + 2 * add1);
-    return IND_CHANGE_ALLOWED;
-}*/
-
 // For eatPawn and rafle calculation
 bool canEat(pawn pawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int ind, int i, int j, int add0, int add1)
 {
@@ -238,16 +224,6 @@ int nonLoggingChangeForEat(pawn pawns[], pawn NPawns[], Case damier[NB_CASE_LG][
 //Elles ont toutes des effets de bord
 //et on suppose que les coups joues sont legaux
 
-//promotes the indicated pawn
-void promote(Game* g, bool is_white, int ind){
-    pawn* p = &(g->allPawns[is_white][ind]);
-    p->queen = true;
-    if (p->ennemy != NEUTRAL_IND) {
-        pawn* ennemyPawn = &(g->allPawns[!is_white][p->ennemy]);
-        killPawn(g->allPawns[is_white], g->allPawns[!is_white], g->damier, p->lig, p->col);
-    }
-}
-
 //moves the indicated pawn frontward depending on the
 //indicated direction.
 //On suppose que ce coup est legal.
@@ -268,6 +244,33 @@ void pawnMove(Game* g, bool is_white, int ind, bool left){
     endTurnGameManagement(g, is_white, ind);
 }
 
+// Queen functions
+//on suppose que les coups joues sont legaux
+
+//promotes the indicated pawn
+void promote(Game* g, bool is_white, int ind){
+    pawn* p = &(g->allPawns[is_white][ind]);
+    p->queen = true;
+    if (p->ennemy != NEUTRAL_IND) {
+        pawn* ennemyPawn = &(g->allPawns[!is_white][p->ennemy]);
+        killPawn(g->allPawns[is_white], g->allPawns[!is_white], g->damier, p->lig, p->col);
+    }
+}
+
+void queenMoveOrEat(Game* g, bool is_white, int ind, Coord finalPos){
+    pawn* queen = &(g->allPawns[is_white][ind]);
+    Coord eatenPos;
+    int possibleAction = queenCanMoveOrEat(g, is_white, ind, finalPos, &eatenPos);
+
+    change_pawn_place(g->allPawns[is_white], g->damier, ind, finalPos.i, finalPos.j);
+    if (possibleAction == 1) {
+        killPawn(g->allPawns[is_white], g->allPawns[!is_white], g->damier, eatenPos.i, eatenPos.j);
+    }
+
+    endTurnGameManagement(g, is_white, ind);
+}
+
+
 void endTurnGameManagement(Game* g, bool is_white, int indMovedPawn){
     //A penser : pour l'implementation des rafles, il faudrait changer la manniere de manger
     //au lieu de manger chaque pion au fur et a mesure qu'on deplace le mangeur
@@ -281,127 +284,6 @@ void endTurnGameManagement(Game* g, bool is_white, int indMovedPawn){
     g->is_white = !g->is_white;
     g->ind_move = NEUTRAL_IND;
     g->indCheck = IND_CHANGE_ALLOWED;
-}
-
-int pawnMovePmetre(pawn pawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int ind, bool gauche, Game *g)
-{
-    if (ind > -1 && pawns[ind].alive && !pawns[ind].queen)
-    {
-        int i = pawns[ind].lig;
-        int j = pawns[ind].col;
-        // printf("%d %d", i, j);
-        if (pawns[ind].color && i < NB_CASE_LG - 1)
-        {
-            if (gauche && j > 0 && freeCase(damier[i + 1][j - 1]))
-            {
-                change_pawn_place(pawns, damier, ind, i + 1, j - 1);
-            }
-            else if (!gauche && j < NB_CASE_LG - 1 && freeCase(damier[i + 1][j + 1]))
-            {
-                change_pawn_place(pawns, damier, ind, i + 1, j + 1);
-            }
-            else
-            {
-                // printf("white ind pb occ\n");
-                return IND_PB;
-            }
-        }
-        else if (i > 0)
-        {
-            if (gauche && j > 0 && freeCase(damier[i - 1][j - 1]))
-            {
-                change_pawn_place(pawns, damier, ind, i - 1, j - 1);
-            }
-            else if (!gauche && j < NB_CASE_LG - 1 && freeCase(damier[i - 1][j + 1]))
-            {
-                change_pawn_place(pawns, damier, ind, i - 1, j + 1);
-            }
-
-            else
-            {
-                // printf("black idn pb occ\n");
-                return IND_PB;
-            }
-        }
-        else
-        {
-            // printf("color pb\n");
-            return IND_PB;
-        }
-
-        // Check if the pawn moved become a queen
-
-        if (ind > -1 && becomeDame(pawns[ind], pawns, g->allPawns[!g->is_white], damier))
-        {
-            pawns[ind].queen = true;
-        }
-
-        g->ind_move_back = pawns[ind].ffriend;
-
-        return IND_CHANGE_ALLOWED;
-    }
-    // printf("pawn alive %d or ind = %d", pawns[ind].alive, ind);
-    return IND_PB;
-}
-// Queen functions
-
-// Checks if the move of the queen is possible and move the queen or eat the next pawn in her path
-bool MoveOrEatQueen(pawn pawns[], pawn Npawns[], int lig, int col, Case damier[NB_CASE_LG][NB_CASE_LG], int ind)
-{
-    pawn p = pawns[ind];
-    int dcol = col - p.col;
-    int dlig = lig - p.lig;
-    Case c;
-    if (abs(dlig) == abs(dcol) && dcol != 0)
-    {
-        int add_lig = dlig / abs(dlig);
-        int add_col = dcol / abs(dcol);
-        for (int i = 1; i < abs(dcol) + 1; i++)
-        {
-            c = damier[p.lig + add_lig * i][p.col + add_col * i];
-            if (!freeCase(c))
-            {
-                // Here the queen can eat a pawn
-                int new_lig = add_lig + p.lig + add_lig * i;
-                int new_col = add_col + p.col + add_col * i;
-                // Check if the queen can go here
-                if (c.pawn_color == !p.color && inGame(new_lig, new_col) && freeCase(damier[new_lig][new_col]))
-                {
-                    change_pawn_place(pawns, damier, ind, new_lig, new_col);
-                    killPawn(Npawns, pawns, damier, new_lig - add_lig, new_col - add_col);
-                    return true;
-                }
-                else if (c.pawn_color == p.color)
-                {
-                    // printf("jump sheep");
-                    return false; // Pb: the queen jumps a pawn of her own color
-                }
-            }
-        }
-        // Only move the pawn: nothing in her path
-        if (inGame(lig, col) && freeCase(damier[lig][col]))
-        {
-            change_pawn_place(pawns, damier, ind, lig, col);
-            return true;
-        }
-    }
-    return false; // No case was found
-}
-
-int queenDeplPmetre(int col, int lig, bool is_white, pawn pawns[], pawn Npawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int ind)
-{
-    if (is_white)
-        lig = NB_CASE_LG - lig - 1;
-    if (MoveOrEatQueen(pawns, Npawns, lig, col, damier, ind))
-        return IND_CHANGE_ALLOWED;
-    else
-        return IND_PB;
-}
-
-void queenDepl(int col, int lig, Game *g)
-{
-    g->indCheck = queenDeplPmetre(col, lig, g->is_white, g->allPawns[g->is_white], g->allPawns[!g->is_white], g->damier, g->ind_move);
-    g->ind_move = NEUTRAL_IND;
 }
 
 // Debug functions

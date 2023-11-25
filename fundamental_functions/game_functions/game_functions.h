@@ -1,4 +1,5 @@
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_stdinc.h>
 #include <stdbool.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -99,10 +100,11 @@ void change_pawn_place(pawn pawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int in
 int dir(int a);
 bool outOfBounds(int i, int j);
 bool eatingIsOutOfBounds(int i, int j, int add0, int add1);
-int getCodeFromDirs(int horizontalDir, int verticalDir);
-void getDirsFromCode(int c, int* di, int* dj);
+Uint8 getCodeFromDirs(int horizontalDir, int verticalDir);
+void getDirsFromCode(Uint8 c, int* di, int* dj);
 bool canMove(Game* g, bool is_white, int ind, bool left);
 bool canBePromoted(Game* g, bool is_white, int ind);
+Uint8 queenCanMoveOrEat(Game* g, bool is_white, int ind, Coord finalPos, Coord* pos);
 
 //Aux functions
 //void delete_liste(Liste *liste);
@@ -117,7 +119,9 @@ int nonLoggingChangeForEat(pawn pawns[], pawn NPawns[], Case damier[NB_CASE_LG][
 void endTurnGameManagement(Game* g, bool is_white, int indMovedPawn);
 void pawnMove(Game* g, bool is_white, int ind, bool left);
 void eatPawn(Game *g);
-void queenDepl(int col, int lig, Game *g);
+
+//Queen functions
+void queenMoveOrEat(Game* g, bool is_white, int ind, Coord finalPos);
 
 // Debug functions
 //print functions

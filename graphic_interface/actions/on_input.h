@@ -2,7 +2,7 @@
 #define ON_INPUT
 
 #include "../../fundamental_functions/game_functions/game_functions.h"
-#include "../../fundamental_functions/interface/interface.h"
+#include "../interface/interface.h"
 #include "../memory_update/graphic_cache.h"
 #include "input_command.h"
 

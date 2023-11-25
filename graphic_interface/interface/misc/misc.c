@@ -1,4 +1,4 @@
-#include "interface.h"
+#include "misc.h"
 
 // Color constants
 
@@ -59,7 +59,7 @@ void drawLosange(SDL_Renderer *render, Case c, pawn p)
     vertices[0].position.x = c.rect.x;
     vertices[0].position.y = c.rect.y + LG_CASE / 2;
     vertices[1].position.x = c.rect.x + LG_CASE / 2;
-    ;
+
     vertices[1].position.y = c.rect.y;
     vertices[2].position.x = c.rect.x + LG_CASE;
     vertices[2].position.y = c.rect.y + LG_CASE / 2;
@@ -124,22 +124,6 @@ void drawLosange(SDL_Renderer *render, Case c, pawn p)
         fr.h = c.rect.h - 60;
         drawRect(render, red, fr);
     }
-}
-
-void selectPawn(Game *g, int x_mouse, int y_mouse)
-{
-    // printf("pt\n");
-    if (g->is_white)
-        y_mouse = LG_WINDOW - y_mouse;
-    // printf("%d, %d\n", x_mouse, y_mouse);
-    int lig = y_mouse / LG_CASE;
-    int col = x_mouse / LG_CASE;
-    printf("lig %d col %d\n", lig, col);
-    fflush(stdout);
-    if (g->damier[lig][col].pawn_color == g->is_white)
-        g->ind_move = g->damier[lig][col].ind_pawn; // Return NEUTRAL_IND if no pawn in the case
-    else
-        g->ind_move = NEUTRAL_IND;
 }
 
 // Init functions
@@ -295,13 +279,6 @@ void prepareText(SDL_Renderer *render, text *txt, char *string)
     txt->rect->y = (LG_WINDOW - texH) / 2;
     txt->rect->w = texW;
     txt->rect->h = texH;
-}
-
-// Display a message for the player and change the turn for the other player
-void printAndTurn(SDL_Renderer *render, text *txt, char *string, Game *g)
-{
-    prepareText(render, txt, string);
-    g->ind_move = NEUTRAL_IND;
 }
 
 // Free the memory

@@ -9,9 +9,9 @@
 files_array=("main.c"
              "../fundamental_functions/coord/coord.c"
              "../fundamental_functions/game_functions/game_functions.c"
-             "../fundamental_functions/interface/interface.c"
              "../graphic_interface/actions/input_command.c"
              "../graphic_interface/actions/on_input.c"
+             "../graphic_interface/interface/misc/misc.c"
              "../graphic_interface/memory_update/graphic_cache.c"
              "../graphic_interface/memory_update/update.c")
 

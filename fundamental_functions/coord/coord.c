@@ -20,3 +20,7 @@ Coord mult(int k, Coord u){
     Coord res = {k*u.i, k*u.j};
     return res;
 }
+
+void coordPrint(Coord x){
+    printf("(%d, %d)", x.i, x.j);
+}
