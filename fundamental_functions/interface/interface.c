@@ -127,22 +127,22 @@ void drawLosange(SDL_Renderer *render, Case c, pawn p, Game *g)
     vertices[5].position.x = c.rect.x + LG_CASE / 2;
     vertices[5].position.y = c.rect.y + LG_CASE;
 
-    if (p.color)
+    int colory = p.color ? 255 - NUANCE_EFFECT*(p.pba-1) : NUANCE_EFFECT*(p.pba-1);
+    // En fonction de la probabilite, le pion est plus ou moins clair ou fonce (selon qu'il soit noir ou blanc)
+
+    for (int i = 0; i < 6; i++)
     {
-
-        for (int i = 0; i < 6; i++)
-        {
-            vertices[i].tex_coord.x = 1;
-            vertices[i].tex_coord.y = 1;
-            vertices[i].color.a = 255;
-            vertices[i].color.r = 255;
-            vertices[i].color.g = 255;
-            vertices[i].color.b = 255;
-        }
-
-        SDL_RenderGeometry(render, NULL, vertices, 6, NULL, 0);
+        vertices[i].tex_coord.x = 1;
+        vertices[i].tex_coord.y = 1;
+        vertices[i].color.a = colory;
+        vertices[i].color.r = colory;
+        vertices[i].color.g = colory;
+        vertices[i].color.b = colory;
     }
-    else
+
+    SDL_RenderGeometry(render, NULL, vertices, 6, NULL, 0);
+
+    if (!p.color)
     {
 
         SDL_SetRenderDrawColor(render, white.r, white.g, white.b, white.a);
