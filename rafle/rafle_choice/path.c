@@ -2,13 +2,9 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#define RNG_INIT 3102023
+#define RNG_INIT 14071789
 #define TESTS_ITERS 100
 #define MAX_CAP 500
-
-int rngNegOrPosOne(){
-    return (rand() % 2 == 0) ? -1 : 1;
-}
 
 int main(int argc, char* argv[]){
     srand(RNG_INIT);
@@ -18,19 +14,16 @@ int main(int argc, char* argv[]){
         lengthTab[i] = (rand() % MAX_CAP) + 1;
     }
 
-    Coord x;
+    int code;
     Path* path;
     for (int i = 0; i < TESTS_ITERS; i++) {
         printf("----------------------\n iteration number %d\n", i + 1);
         path = pathCreate(lengthTab[i]);
         printf("path created\n");
         for (int j = 0; j < lengthTab[i]; j++) {
-            x.i = rngNegOrPosOne();
-            x.j = rngNegOrPosOne();
-            printf("adding :");
-            coordPrint(x);
+            code = rand()%4;
+            printf("adding : %d", code);
             printf("\n");
-            pathAdd(x, path);
             pathPrint(path);
             //pathTabPrint(path);
         }
@@ -39,17 +32,16 @@ int main(int argc, char* argv[]){
             switch (j % 2) {
                 case 0:
                     printf("poping first in :");
-                    coordPrint(pathPopFirstIn(path));
+                    printf("%d", pathPopFirstIn(path));
                 break;
 
                 case 1:
                     printf("poping last in :");
-                    coordPrint(pathPopLastIn(path));
+                    printf("%d", pathPopLastIn(path));
                 break;
             }
             printf("\n");
             pathPrint(path);
-            //pathTabPrint(path);
         }
         printf("path emptied\n");
         Path* m = path;

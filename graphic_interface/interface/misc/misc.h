@@ -4,8 +4,8 @@
 #ifndef INTERFACE_JEU_DAMES
 #define INTERFACE_JEU_DAMES
 
-#include "../game_functions/game_functions.h"
-#include "../../rafle/calc/path_tree.h"
+#include "../../../fundamental_functions/fundamental_functions.h"
+#include "../../../rafle/rafle.h"
 
 // Window pmetre
 #define LG_WINDOW 640
@@ -62,4 +62,4 @@ void error();
 
 // Memory functions
 void free_game(Game *g);
-#endif //MISC
+#endif //INTERFACE_JEU_DAMES

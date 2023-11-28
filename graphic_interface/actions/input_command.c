@@ -147,10 +147,18 @@ void onLMBDown(Game *g, GraphicCache *cache)
 {
     SDL_Event event = cache->event;
 
-    if (g->indCheck == NEUTRAL_IND && g->ind_move == -1)
+    if (g->indCheck == NEUTRAL_IND && g->ind_move == -1){
         // Je garde les conditions pour eviter un comportement indefini, je veux que selectPawn ne soit
         // appeler que sous des conditions bien precise
         selectPawn(g, event.button.x, event.button.y);
+    }
+
+    //ARRRETE D'ENLEVER LES ACCOLADES, C'EST INSUPPORTABLE
+    //Elles posent aucun probleme pour la lisibilite du code et en plus, si tu les retires
+    //ca risque de provoquer des problemes lorsqu'on regle les conflits
+    //en perturbant le matching des caracteres
+    //et en plus, ca rend l'imbrication des blocs d'instructions
+    //moins claires pour moi
 
     // else if (g->ind_move > -1 && g->allPawns[g->is_white][g->ind_move].queen)
 

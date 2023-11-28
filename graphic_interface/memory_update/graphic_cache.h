@@ -1,7 +1,7 @@
 #ifndef CACHE_INTERFACE
 #define CACHE_INTERFACE
 
-#include "../../fundamental_functions/interface/interface.h"
+#include "../interface/interface.h"
 #include <stdlib.h>
 #include <SDL2/SDL_ttf.h>
 #include <time.h>

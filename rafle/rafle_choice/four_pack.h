@@ -1,7 +1,8 @@
 #ifndef FOUR_PACK
 #define FOUR_PACK
 
-#include "../../fundamental_functions/fundamental_functions.h"
+#include "../../fundamental_functions/coord/coord.h"
+#include <SDL2/SDL_stdinc.h>
 #include <stdlib.h>
 
 //pack of four directions

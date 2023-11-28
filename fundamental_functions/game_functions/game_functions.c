@@ -32,28 +32,6 @@ int abs(int a)
     return (a >= 0) ? a : -a;
 }
 
-// la direction est donnee sous la forme d'un couple
-//(dx, dy) ou dx et dy peuvent valoir -1 ou 1.
-//On lui associe un nombre entre 0 et 3 inclus
-//dont le bit de poids faible est la direction horizontale
-//et le bit de poids fort la direction verticale.
-//0 sens negatif, 1 sens positif
-Uint8 getCodeFromDirs(int dj, int di){
-
-    Uint8 weak = (dj == 1) ? 1 : 0;
-    Uint8 strong = (di == 1) ? 1 : 0;
-    return (strong << 1)|(weak);
-}
-int dir(int a)
-{
-    return (a == 0) ? -1 : 1;
-}
-
-void getDirsFromCode(Uint8 c, int* di, int* dj){
-    *dj = dir(c % 2);
-    *di = dir((c >> 1) % 2);
-}
-
 /*
 
 
@@ -457,20 +435,4 @@ void print_damier(Case damier[NB_CASE_LG][NB_CASE_LG], Game *g)
                 printf("Case ligne %d col %d Coord pion %d %d\n", i, j, g->allPawns[c][ind].lig, g->allPawns[c][ind].col);
         }
     }
-}
-
-void assertAndLog(bool condition, char *message)
-{
-    if (!condition)
-    {
-        printf("\n");
-        printf("Erreur : %s", message);
-        printf("\n");
-        assert(false);
-    }
-}
-
-void flush()
-{
-    fflush(stdout);
 }

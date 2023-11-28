@@ -1,6 +1,7 @@
 #ifndef INPUT_COMMAND
 #define INPUT_COMMAND
 
+#include "../interface/interface.h"
 #include "../memory_update/graphic_cache.h"
 #include "../../quantum_rules/quantum_functions.h"
 #include <SDL2/SDL_events.h>

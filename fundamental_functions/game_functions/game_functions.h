@@ -9,6 +9,8 @@
 #define GAME_FUNCTIONS_DRAUGHTS
 
 #include "../coord/coord.h"
+#include "../../rafle/calc/path_tree.h"
+#include "../../rafle/rafle_choice/path_struct.h"
 
 // Game pmetre
 #define NB_CASE_LG 8
@@ -85,6 +87,12 @@ typedef struct
     int ind_move, ind_move_back, indCheck;
     bool is_white;
     Coord coordForMoveBack;
+
+    //structures for eating rafles
+    //first, the rafle tree available for the current player
+    PathTree* currentTree;
+    //then, the choosed rafle
+    Path* currentRafle;
 } Game;
 
 
@@ -120,11 +128,8 @@ bool inGame(int lig, int col);
 void killPawn(pawn pawns[], pawn Npawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int i, int j);
 void pawn_default_value(pawn pawns[], int ind, bool init_is_white); /* Initialize pawn with default values */
 void change_pawn_place(pawn pawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int ind, int lig, int col);
-int dir(int a);
 bool outOfBounds(int i, int j);
 bool eatingIsOutOfBounds(int i, int j, int add0, int add1);
-Uint8 getCodeFromDirs(int horizontalDir, int verticalDir);
-void getDirsFromCode(Uint8 c, int* di, int* dj);
 bool canMove(Game* g, bool is_white, int ind, bool left);
 bool canBePromoted(Game* g, bool is_white, int ind);
 Uint8 queenCanMoveOrEat(Game* g, bool is_white, int ind, Coord finalPos, Coord* pos);
@@ -142,22 +147,14 @@ void put_pawn_value(Game *g, bool color, int ind, int wich_pmetre_modify, bool a
 //play functions
 void endTurnGameManagement(Game *g, bool is_white, int indMovedPawn, int indCheck, bool doMoveBack);
 void pawnMove(Game* g, bool is_white, int ind, bool left);
-void eatPawn(Game *g);
 
 //Queen functions
 void queenMoveOrEat(Game* g, bool is_white, int ind, Coord finalPos);
 
-// Debug functions
-//print functions
-/* print check in the terminal and flush it */
-void error();
+//logging fucntions for the board
 // Affiche les caracteristiques des Pions
 void print_pawns(Game *g);
 // Affiche ligne, colonne et coordonnees des cases
 void print_damier(Case damier[NB_CASE_LG][NB_CASE_LG], Game *g);
-//Fait planter le programme en affichant un message d'erreur
-//si la condition n'est pas respectee
-void assertAndLog(bool condition, char* message);
-void flush();
 void print_pawn(pawn p, int ind);
 #endif //GAME_FUNCTIONS_DRAUGHTS

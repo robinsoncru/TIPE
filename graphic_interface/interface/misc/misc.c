@@ -105,7 +105,7 @@ void drawLosange(SDL_Renderer *render, Case c, pawn p)
         drawRect(render, red, qr);
     }
 
-    if (p.ffriend != -1)
+    if (p.friendly != -1)
     {
         SDL_Rect fr;
         fr.x = c.rect.x + 30;
@@ -124,6 +124,26 @@ void drawLosange(SDL_Renderer *render, Case c, pawn p)
         fr.h = c.rect.h - 60;
         drawRect(render, red, fr);
     }
+}
+
+void selectPawn(Game *g, int x_mouse, int y_mouse)
+{
+    // printf("pt\n");
+    if (g->is_white)
+        y_mouse = LG_WINDOW - y_mouse;
+    // printf("%d, %d\n", x_mouse, y_mouse);
+    int lig = y_mouse / LG_CASE;
+    int col = x_mouse / LG_CASE;
+    printf("lig %d col %d\n", lig, col);
+    // fflush(stdout);
+    if (g->damier[lig][col].pawn_color == g->is_white)
+    {
+        g->ind_move = g->damier[lig][col].ind_pawn; // Return -1 if no pawn in the case
+        // printf("Coord pion selec %d %d", g->allPawns[g->is_white][g->ind_move].lig, g->allPawns[g->is_white][g->ind_move].col);
+        // flush();
+    }
+    else
+        g->ind_move = -1;
 }
 
 // Init functions
@@ -176,7 +196,7 @@ void init_pawns(Game *g, bool init_is_white)
         }
         g->allPawns[init_is_white][i].alive = true;
         g->allPawns[init_is_white][i].queen = false;
-        g->allPawns[init_is_white][i].ffriend = -1;
+        g->allPawns[init_is_white][i].friendly = -1;
         g->allPawns[init_is_white][i].ennemy = -1;
     }
 
@@ -221,7 +241,20 @@ Game *create_game()
     g->nb_pawns[false] = NB_PAWNS;
 
     g->ind_move_back = -1;
+
+    g->currentTree = emptyTree;
+    g->currentRafle = NULL;
     return g;
+}
+
+void free_game(Game *g){
+    if (g->currentTree != emptyTree) {
+        pathTreeFree(g->currentTree);
+    }
+    if (g->currentRafle != NULL) {
+        pathFree(g->currentRafle);
+    }
+    free(g);
 }
 
 // Display functions

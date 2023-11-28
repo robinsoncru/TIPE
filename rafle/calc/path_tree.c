@@ -27,7 +27,8 @@ PathTree* pathTreeCreateNode(int i, int j){
     //__/ \__
     //  \ /
     //   o
-    assertAndLog(!outOfBounds(i, j), "Position inexistante");
+    
+    //assertAndLog(!outOfBounds(i, j), "Position inexistante");
     PathTree* res = malloc(sizeof(PathTree));
     res -> depth = 0;
     Coord point;

@@ -20,6 +20,7 @@ int main(int argc, char* argv[]){
 
 
     // Intitulé 'Mes conneries' très pratique pour promouvoir une dame en qq coups
+    /*
     for (int i = 2; i < NB_PAWNS; i++)
     {
         pawn p = g->allPawns[1][i];
@@ -30,7 +31,7 @@ int main(int argc, char* argv[]){
         g->damier[p.lig][p.col].ind_pawn = -1;
     }
     change_pawn_place(g->allPawns[1], g->damier, 0, 4, 0);
-    change_pawn_place(g->allPawns[1], g->damier, 1, 4, 2);
+    change_pawn_place(g->allPawns[1], g->damier, 1, 4, 2);*/
     
     //init the graphic cache
     GraphicCache* cache = initCache();

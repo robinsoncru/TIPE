@@ -16,10 +16,7 @@ files_array=("main.c"
              "../graphic_interface/memory_update/update.c"
              "../quantum_rules/quantum_functions.c"
              "../rafle/calc/path_tree.c"
-             "../rafle/calc/rafle_tree_calc.c"
-             "../rafle/calc/test.c"
-             "../rafle/display/path_tree_display.c"
-             "../rafle/display/rafle_management.c")
+             "../rafle/calc/rafle_tree_calc.c")
 
 echo "Compilation en cours..."
 

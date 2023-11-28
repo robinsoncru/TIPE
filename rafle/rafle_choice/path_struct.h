@@ -17,12 +17,11 @@ typedef struct Path {
 
 Path* pathCreate(unsigned int c);
 void pathFree(Path* path);
-void pathAdd(Coord x, Path* path);
-Coord pathPeekFirstIn(Path* path);
-Coord pathPeekLastIn(Path* path);
-Coord pathPopFirstIn(Path* path);
-Coord pathPopLastIn(Path* path);
+void pathAdd(Uint8 x, Path* path);
+Uint8 pathPeekFirstIn(Path* path);
+Uint8 pathPeekLastIn(Path* path);
+Uint8 pathPopFirstIn(Path* path);
+Uint8 pathPopLastIn(Path* path);
 
 void pathPrint(Path* path);
-void pathTabPrint(Path* path);
 #endif //PATH_STRUCT
