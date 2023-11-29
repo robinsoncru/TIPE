@@ -1,7 +1,7 @@
 #ifndef GAME_FUNCTIONS
 #define GAME_FUNCTIONS
 
-#include "debug_and_management/game_management.h"
+#include "management/game_management.h"
 
 
 

@@ -1,7 +1,7 @@
 #ifndef DEBUG_FUNCTIONS
 #define  DEBUG_FUNCTIONS
 
-#include "../aux_game_functions/aux_functions.h"
+#include "../Source/source_header.h"
 
 void flush();
 // Fait planter le programme en affichant un message d'erreur
