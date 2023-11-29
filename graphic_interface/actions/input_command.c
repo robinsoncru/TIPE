@@ -17,7 +17,6 @@
 
 */
 
-
 // protocol applied at the end of every turn
 void endTurnGraphics(Game *g, GraphicCache *cache)
 {
@@ -25,7 +24,6 @@ void endTurnGraphics(Game *g, GraphicCache *cache)
     // change timer from a graphic point of view
     alert(cache, g->indCheck, CHANGE_TICKS);
 }
-
 
 /*
 
@@ -70,7 +68,7 @@ void checkLienAmitie(int i, int j, Game *g, GraphicCache *cache)
     int iw = g->is_white;
     int ind = g->ind_move;
     i = iw ? NB_CASE_LG - i - 1 : i;
-    if (basicChecks(g) && canBeFriend(g->allPawns[iw][ind], g->damier[i][j], g->allPawns[!iw]))
+    if (basicChecks(g) && canBeFriend(g, ind, iw, g->damier[i][j]))
     {
         lienAmitie(i, j, g);
         endTurnGraphics(g, cache);
@@ -83,8 +81,9 @@ void checkLienAmitie(int i, int j, Game *g, GraphicCache *cache)
 
 void checkPawnMoveBack(Game *g, GraphicCache *cache)
 {
-    pawn p = g->allPawns[g->is_white][g->ind_move_back];
-    if ((g->ind_move_back > -1 && p.alive))
+    int iw = g->is_white;
+    int indBack = g->ind_move_back;
+    if (indBack > -1 && g->allPawns[iw][indBack].alive)
     {
         moveBack(g);
     }
@@ -100,7 +99,7 @@ void checkLienEnnemitie(int i, int j, Game *g, GraphicCache *cache)
     // j = !iw ? j : NB_CASE_LG - j - 1;
     // printf("%d %d %d", i, lig, freeCase(g->damier[i][j]));
     // fflush(stdout);
-    if (basicChecks(g) && canBeEnnemy(g->allPawns[iw][ind], g->damier[i][j], g->allPawns[!iw]))
+    if (basicChecks(g) && canBeEnnemy(g, ind, iw, g->damier[i][j]))
     {
         lienEnnemitie(i, j, g);
         endTurnGraphics(g, cache);
@@ -111,17 +110,26 @@ void checkLienEnnemitie(int i, int j, Game *g, GraphicCache *cache)
     }
 }
 
-
 void checkPromotion(Game *g, GraphicCache *cache)
 {
-    if (g->ind_move < 0)
-        alert(cache, IND_PB, ERROR_TICKS);
-
-    else
+    if (canPromotion(g))
     {
         promotion(g);
         endTurnGraphics(g, cache);
     }
+    else
+        alert(cache, IND_PB, ERROR_TICKS);
+}
+
+void checkBiDepl(Game *g, GraphicCache *cache)
+{
+    if (canBiDepl(g, g->ind_move, g->is_white))
+    {
+        biDepl(g, g->ind_move, g->is_white);
+        endTurnGraphics(g, cache);
+    }
+    else
+        alert(cache, IND_PB, ERROR_TICKS);
 }
 
 /*
@@ -140,7 +148,6 @@ void checkPromotion(Game *g, GraphicCache *cache)
 
 
 */
-
 
 // Click on a pawn to select it
 void onLMBDown(Game *g, GraphicCache *cache)
@@ -168,7 +175,6 @@ void onLMBDown(Game *g, GraphicCache *cache)
 
         printf("No pawn selected");
 }
-
 
 void onRMBDown(Game *g, GraphicCache *cache)
 {
@@ -230,6 +236,15 @@ void onJUP(Game *g, GraphicCache *cache)
 void onHUP(Game *g, GraphicCache *cache)
 {
     print_damier(g->damier, g);
+}
+
+void onBUP(Game *g, GraphicCache *cache)
+{
+    checkBiDepl(g, cache);
+}
+
+void onLUP(Game *g) {
+    print_little_linked_list(g->cloud[g->is_white]);
 }
 
 void onAUp(Game *g, GraphicCache *cache);

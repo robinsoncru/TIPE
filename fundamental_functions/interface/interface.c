@@ -24,7 +24,7 @@ SDL_Color green = {0, 255, 0, 255};
 SDL_Color white = {255, 255, 255, 255};
 SDL_Color black = {0, 0, 0, 255};
 SDL_Color gold = {255, 215, 0, 255};
-SDL_Color silver = {192,192,192, 255};
+SDL_Color silver = {192, 192, 192, 255};
 
 /*
 
@@ -71,7 +71,7 @@ SDL_Color silver = {192,192,192, 255};
 
 */
 
-void drawPoint(SDL_Renderer * render, SDL_Color color, int x, int y)
+void drawPoint(SDL_Renderer *render, SDL_Color color, int x, int y)
 {
     // De meme: on fixe la couleur
     SDL_SetRenderDrawColor(render, color.r, color.g, color.b, color.a);
@@ -127,22 +127,22 @@ void drawLosange(SDL_Renderer *render, Case c, pawn p, Game *g)
     vertices[5].position.x = c.rect.x + LG_CASE / 2;
     vertices[5].position.y = c.rect.y + LG_CASE;
 
-    if (p.color)
+    int colory = p.color ? 255 - NUANCE_EFFECT*(p.pba-1) : NUANCE_EFFECT*(p.pba-1);
+    // En fonction de la probabilite, le pion est plus ou moins clair ou fonce (selon qu'il soit noir ou blanc)
+
+    for (int i = 0; i < 6; i++)
     {
-
-        for (int i = 0; i < 6; i++)
-        {
-            vertices[i].tex_coord.x = 1;
-            vertices[i].tex_coord.y = 1;
-            vertices[i].color.a = 255;
-            vertices[i].color.r = 255;
-            vertices[i].color.g = 255;
-            vertices[i].color.b = 255;
-        }
-
-        SDL_RenderGeometry(render, NULL, vertices, 6, NULL, 0);
+        vertices[i].tex_coord.x = 1;
+        vertices[i].tex_coord.y = 1;
+        vertices[i].color.a = colory;
+        vertices[i].color.r = colory;
+        vertices[i].color.g = colory;
+        vertices[i].color.b = colory;
     }
-    else
+
+    SDL_RenderGeometry(render, NULL, vertices, 6, NULL, 0);
+
+    if (!p.color)
     {
 
         SDL_SetRenderDrawColor(render, white.r, white.g, white.b, white.a);
@@ -166,12 +166,14 @@ void drawLosange(SDL_Renderer *render, Case c, pawn p, Game *g)
     {
         draw_little_square(render, 30, c, red);
     }
-    
-    if (c.ind_pawn == g->ind_move && c.pawn_color == g->is_white) {
+
+    if (c.ind_pawn == g->ind_move && c.pawn_color == g->is_white)
+    {
         draw_little_square(render, 30, c, gold);
     }
 
-    if (c.ind_pawn == g->ind_move_back && c.pawn_color == g->is_white) {
+    if (c.ind_pawn == g->ind_move_back && c.pawn_color == g->is_white)
+    {
         draw_little_square(render, 30, c, silver);
     }
 }
@@ -213,8 +215,26 @@ void selectPawn(Game *g, int x_mouse, int y_mouse)
 
 */
 
-void init_pawn(pawn pawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int i, int init_place, int add, bool init_is_white)
+void init_pawn(Game *g, Case damier[NB_CASE_LG][NB_CASE_LG], int i, int init_place, int add, bool init_is_white)
 {
+    if (init_is_white)
+    {
+        put_pawn_value(g, init_is_white, i, LIG, init_place);
+        damier[init_place][add + 2 * i - init_place * NB_CASE_LG].pawn_color = true;
+        put_pawn_value(g, init_is_white, i, COL, add + 2 * i - init_place * NB_CASE_LG);
+    }
+    else
+    {
+        put_pawn_value(g, init_is_white, i, LIG, NB_CASE_LG - init_place - 1);
+        // pawns[i].lig = init_place;
+        damier[NB_CASE_LG - init_place - 1][NON(add) + 2 * i - init_place * NB_CASE_LG].pawn_color = false;
+        put_pawn_value(g, init_is_white, i, COL, NON(add) + 2 * i - init_place * NB_CASE_LG);
+    }
+    damier[get_pawn_value(g, init_is_white, i, LIG)][get_pawn_value(g, init_is_white, i, COL)].ind_pawn = i;
+    put_pawn_value(g, init_is_white, i, COLOR, init_is_white);
+}
+
+/*{
     if (init_is_white)
     {
         pawns[i].lig = init_place;
@@ -230,7 +250,7 @@ void init_pawn(pawn pawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int i, int ini
     }
     damier[pawns[i].lig][pawns[i].col].ind_pawn = i;
     pawns[i].color = init_is_white;
-}
+}*/
 
 void init_pawns(Game *g, bool init_is_white)
 {
@@ -241,35 +261,36 @@ void init_pawns(Game *g, bool init_is_white)
         if (init_place % 2 == 0)
         {
             if (2 * i - init_place * NB_CASE_LG < NB_CASE_LG)
-                init_pawn(g->allPawns[init_is_white], g->damier, i, init_place, 0, init_is_white);
+                init_pawn(g, g->damier, i, init_place, 0, init_is_white);
             // init_pawn(pawns, g.damier, g.is_white, i, init_place+2, 0);
             else
             {
                 init_place++;
-                init_pawn(g->allPawns[init_is_white], g->damier, i, init_place, 1, init_is_white);
+                init_pawn(g, g->damier, i, init_place, 1, init_is_white);
                 // init_pawn(pawns, g.damier, g.is_white, i, init_place, 1);
             }
         }
         else
         {
             if (1 + 2 * i - init_place * NB_CASE_LG < NB_CASE_LG)
-                init_pawn(g->allPawns[init_is_white], g->damier, i, init_place, 1, init_is_white);
+                init_pawn(g, g->damier, i, init_place, 1, init_is_white);
             else
             {
                 init_place++;
-                init_pawn(g->allPawns[init_is_white], g->damier, i, init_place, 0, init_is_white);
+                init_pawn(g, g->damier, i, init_place, 0, init_is_white);
             }
         }
         g->allPawns[init_is_white][i].alive = true;
         g->allPawns[init_is_white][i].queen = false;
         g->allPawns[init_is_white][i].friendly = -1;
         g->allPawns[init_is_white][i].ennemy = -1;
+        g->allPawns[init_is_white][i].pba = 1;
     }
 
     // Initialize the rest of pawns with default pmetre and the good color
     for (int i = NB_PAWNS; i < 2 * NB_PAWNS; i++)
     {
-        pawn_default_value(g->allPawns[init_is_white], i, init_is_white);
+        pawn_default_value_new(g, i, init_is_white);
     }
 }
 
@@ -310,6 +331,11 @@ Game *create_game()
 
     g->coordForMoveBack.i = IND_LISTENING_MOVE_BACK;
     g->coordForMoveBack.j = IND_LISTENING_MOVE_BACK;
+
+    g->cloud[true] = create_list();
+    g->cloud[false] = create_list();
+    g->lengthCloud[true] = 0;
+    g->lengthCloud[false] = 0;
     return g;
 }
 

@@ -1,5 +1,8 @@
 #ifndef COORD
 #define COORD
+
+#include "little_linked_list.h"
+
 typedef struct Coord{
     int i;
     int j;
