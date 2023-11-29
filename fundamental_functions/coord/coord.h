@@ -1,6 +1,9 @@
 #ifndef COORD
 #define COORD
 
+#include "little_linked_list.h"
+
+
 #include <stdio.h>
 #include <SDL2/SDL_stdinc.h>
 

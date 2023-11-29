@@ -25,6 +25,20 @@ Conseils de code:
 - Virer VOID_INDEX ou NEUTRAL_INDICE c'est redondant
 La selection avec la souris ne permet pas de revenir en arriere, donc si on selectionne un pion coincé, le jeu est bloqué
 
+INFOS IMPORTANTES pour Victor D:
+Victor D fais gaffe aux fonctions suivantes:
+-pawn_default_value et pawn_default_value_new la derniere est plus facile a utiliser (parametres plus simples, plus generaux) alors si on peut se passer de la premiere c'est mieux sinon on la garde.
+-Killpawn a aussi ses parametres modifiés (plus simples)donc il faudra que tu l'update dans tes structures si tu l'utilise, si c'est trop dur on réimplemente aussi l'ancienne et on met l'autre en new'
+-Change_pawn_place et change_pawn_place_new j'ai gardé l'ancienne car tu l'utilise dans nonLoggingChangeForEat mais l'autre a des paramètres plus simples a utiliser dans 
+le code sera plus libre
+
+Les fonctions suivantes permettent de modifier le pion dans le game juste en le reconnaissant avec son indice et sa couleur:
+-put_pawn_value
+-get_pawn_value
+Victor D jettes y un oeil
+
+Pour move back: on suppose que le joueur joue bien, donc quand on doit move arriere, il joue bien les fleches gauche/droite
+
 Todo list :
 - Finir l'implémentation des rafles
 - Ajouters des nouvelles règles :
