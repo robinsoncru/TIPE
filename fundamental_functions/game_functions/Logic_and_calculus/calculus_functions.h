@@ -1,7 +1,7 @@
 #ifndef CALCULUS_FUNCTIONS
 #define CALCULUS_FUNCTIONS
 
-#include "../Source/source_header.h"
+#include "../debug/debug_functions.h"
 
 
 // Calculus fonctions
