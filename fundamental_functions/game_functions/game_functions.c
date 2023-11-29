@@ -400,13 +400,6 @@ void endTurnGameManagement(Game *g, bool is_white, int indMovedPawn, int indChec
 
 */
 
-
-void error()
-{
-    printf("check");
-    fflush(stdout);
-}
-
 void print_pawn(pawn p, int ind)
 {
     printf("Ind %d Coord %d %d Ennemy %d, Friend %d Color %d Alive %d\n", ind, p.lig, p.col, p.ennemy, p.friendly, p.color, p.alive);
