@@ -1,10 +1,12 @@
 #include "path_tree.h"
+#include <stdint.h>
 #include <stdlib.h>
 #include <assert.h>
 
 typedef struct PathTree{
     int depth;
     Coord point;
+    int nbChilds;
     struct PathTree* childs[ARITE];
 } PathTree;
 
@@ -35,6 +37,7 @@ PathTree* pathTreeCreateNode(int i, int j){
     point.i = i;
     point.j = j;
     res -> point = point;
+    res->nbChilds = 0;
     for (int i = 0; i < ARITE; i++) {
         res -> childs[i] = emptyTree;
     }
@@ -45,7 +48,7 @@ void pathTreeFree(PathTree* t){
     //Libere l'integralite de l'abre de chemin
     if (t != emptyTree) {
         for (int i = 0; i < ARITE; i++) {
-        pathTreeFree(t -> childs[i]);
+            pathTreeFree(t -> childs[i]);
         }
         free(t);
     }
@@ -58,7 +61,7 @@ PathTree* pathTreeChild(PathTree* t, int hDir, int vDir){
     assertAndLog(t != emptyTree, "Recherche d'enfant de l'arbre vide");
     validIndexTest(hDir, vDir);
 
-    int index = getCodeFromDirs(hDir, vDir);
+    uint8_t index = getCodeFromDirs(hDir, vDir);
     return t -> childs[index];
 }
 
@@ -71,6 +74,7 @@ void pathTreeConnect(PathTree* parent, PathTree* child, int hDir, int vDir){
 
     int index = getCodeFromDirs(hDir, vDir);
     parent -> childs[index] = child;
+    parent -> nbChilds = parent->nbChilds + 1;
 
     int depthParent = parent -> depth;
     int depthChild = pathTreeDepth(child);
@@ -97,9 +101,32 @@ int pathTreeDepth(PathTree* t){
     return t -> depth;
 }
 
+int pathTreeNBChilds(PathTree* t){
+    return t->nbChilds;
+}
+
+uint8_t pathTreeFirstChild(PathTree* t){
+    for (uint8_t k = 0; k < ARITE; k++) {
+        if (t->childs[k] != emptyTree) {
+            return k;
+        }
+    }
+    return NO_CHILD_ERROR;
+}
+
 void pathTreeEmptyChild(PathTree* t, int hDir, int vDir){
     //remplace l'enfant indique par l'arbre vide en le liberant au passage
     PathTree* m = pathTreeChild(t, hDir, vDir);
-    pathTreeConnect(t, emptyTree, hDir, vDir);
+    int index = getCodeFromDirs(hDir, vDir);
+    t->childs[index] = emptyTree;
+    t->nbChilds = t->nbChilds - 1;
+
+    int maxDepthAmongLeftChilds = -1;
+    for (int k = 0; k < ARITE; k++) {
+        if (pathTreeDepth(t->childs[k]) > maxDepthAmongLeftChilds) {
+            maxDepthAmongLeftChilds = pathTreeDepth(t->childs[k]);
+        }
+    }
+    t->depth = maxDepthAmongLeftChilds + 1;
     pathTreeFree(m);
 }

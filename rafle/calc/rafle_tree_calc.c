@@ -73,7 +73,7 @@ PathTree* divideAndGather(pawn pawns[],pawn NPawns[], Case damier[NB_CASE_LG][NB
 
         PathTree* inspected = pathTreeChild(res, dj, di);
         depth = pathTreeDepth(inspected);
-        if (depth < maxDepth) {
+        if (inspected != emptyTree && depth < maxDepth) {
             pathTreeEmptyChild(res, dj, di);
         }
     }

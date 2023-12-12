@@ -1,39 +1,49 @@
 #include "rafle_eating.h"
+#include <stdint.h>
+#include <stdio.h>
 
-//l'index du dernier enfant non vide croise est mis dans dirCode
-int childCount(PathTree* t, Uint8* dirCode){
-    int di, dj, res = 0;
-    for (int k = 0; k < 4; k++) {
-        getDirsFromCode(k, &di, &dj);
-        if (pathTreeChild(t, dj, di) != emptyTree) {
-            res++;
-            *dirCode = k;
-        }
-    }
-    return res;
-}
-
-void pawnEat(Game* g, int indEater, bool is_white, Uint8 dirCode){
-    int di, dj;
-    getDirsFromCode(dirCode, &di, &dj);
-    killPawn(g->allPawns[is_white], g->allPawns[!is_white],
-        g->damier, g->allPawns[is_white][indEater].lig + di, g->allPawns[is_white][indEater].col + dj);
+void pawnEat(Game* g, int indEater, bool is_white, int di, int dj){
+    pawn* p = &(g->allPawns[is_white][indEater]);
+    killPawn(g, g->damier, p->lig + di, p->col + dj);
     change_pawn_place(g->allPawns[is_white], g->damier, indEater,
-        g->allPawns[is_white][indEater].lig + 2*di, g->allPawns[is_white][indEater].col + 2*dj);
+        p->lig + 2*di, p->col + 2*dj);
 }
 
 void eatRafle(Game* g, int indEater, bool is_white, PathTree* t, Path* r){    
     PathTree* workTree = t;
-    Uint8 dirCode;
-    int nbChilds = childCount(workTree, &dirCode);
+    PathTree* child;
+    uint8_t dirCode;
     int di, dj;
-    while (nbChilds >= 1) {
-        if (nbChilds >= 2) { //s'il y a plusieurs enfants
-            dirCode = pathPopFirstIn(r);
+    Coord label;
+
+    while (pathTreeDepth(workTree) > 0) {
+        switch (pathTreeNBChilds(workTree)) {
+            case 1:
+                dirCode = pathTreeFirstChild(workTree);
+                break;
+            default:
+                dirCode = pathPopFirstIn(r);
+                break;
         }
-        pawnEat(g, indEater, is_white, dirCode);
         getDirsFromCode(dirCode, &di, &dj);
-        workTree = pathTreeChild(t, dj, di);
-        nbChilds = childCount(workTree, &dirCode);
+        pawnEat(g, indEater, is_white, di, dj);
+        workTree = pathTreeChild(workTree, dj, di);
     }
+    endTurnGameManagement(g, g->is_white, g->ind_move, IND_CHANGE_ALLOWED, false);
+}
+
+Path* lazyRafle(PathTree* t){
+    Path* res = pathCreate(pathTreeDepth(t));
+    PathTree* workTree = t;
+    uint8_t dirCode;
+    int di, dj;
+    while (pathTreeNBChilds(workTree) > 0) {
+        dirCode = pathTreeFirstChild(workTree);
+        if (pathTreeNBChilds(workTree) > 1) {
+            pathAdd(dirCode, res);
+        }
+        getDirsFromCode(dirCode, &di, &dj);
+        workTree = pathTreeChild(workTree, dj, di);
+    }
+    return res;
 }

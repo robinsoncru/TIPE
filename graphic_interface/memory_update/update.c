@@ -1,4 +1,5 @@
 #include "update.h"
+#include <stdio.h>
 
 //called every frame.
 //updates the memory, useful to manage stuff that must be done

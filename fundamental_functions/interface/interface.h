@@ -1,21 +1,15 @@
-<<<<<<<< HEAD:graphic_interface/interface/misc/misc.h
 #include <SDL2/SDL_ttf.h>
 #include <SDL2/SDL_video.h>
 
 #ifndef INTERFACE_JEU_DAMES
 #define INTERFACE_JEU_DAMES
 
-#include "../../../fundamental_functions/fundamental_functions.h"
-#include "../../../rafle/rafle.h"
-========
-#ifndef INTERFACE_JEU_DAMES
-#define INTERFACE_JEU_DAMES
-
 #include <SDL2/SDL_ttf.h>
 
-
+#include "../game_functions/Source/source_header.h"
 #include "../game_functions/game_functions.h"
->>>>>>>> main:fundamental_functions/interface/interface.h
+#include "../../rafle/calc/path_tree.h"
+#include "../../rafle/rafle_choice/path_struct.h"
 
 // Window pmetre
 #define LG_WINDOW 640

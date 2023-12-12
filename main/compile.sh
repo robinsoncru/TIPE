@@ -20,19 +20,16 @@ files_array=("main.c"
              "../graphic_interface/actions/on_input.c"
              "../graphic_interface/memory_update/graphic_cache.c"
              "../graphic_interface/memory_update/update.c"
+             "../graphic_interface/rafle_display/path_tree_display.c"
              "../rafle/calc/path_tree.c"
              "../rafle/calc/rafle_tree_calc.c"
-             "../rafle/calc/test.c"
-             "../rafle/display/path_tree_display.c"
-             "../rafle/display/rafle_management.c")
+             "../rafle/rafle_choice/four_pack.c"
+             "../rafle/rafle_choice/path_struct.c"
+             "../rafle/rafle_eating/rafle_eating.c")
 
 echo "Compilation en cours..."
 
 gcc ${files_array[*]} $(sdl2-config --cflags --libs) -lSDL2_ttf -o dames.out
-
-echo "Code compilé"
-echo "Pour exécuter, tappez la commande"
-echo "./dames.out"
 
 echo "Code compilé"
 echo "Pour exécuter, tappez la commande"

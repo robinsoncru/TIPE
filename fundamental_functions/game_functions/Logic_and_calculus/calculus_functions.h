@@ -7,9 +7,9 @@
 // Calculus fonctions
 int NON(int b);
 int abs(int a);
-int getCodeFromDirs(int dj, int di);
+Uint8 getCodeFromDirs(int dj, int di);
 int dir(int a);
-void getDirsFromCode(int c, int *di, int *dj);
+void getDirsFromCode(Uint8 c, int *di, int *dj);
 bool int_to_bool(int integer);
 int bool_to_int(bool b);
 

@@ -4,6 +4,7 @@
 #ifndef PATH_TREE
 #define PATH_TREE
 #define ARITE 4
+#define NO_CHILD_ERROR 5
 
 #include "../../fundamental_functions/coord/coord.h"
 #include "../../fundamental_functions/debug/debug.h"
@@ -46,6 +47,8 @@ Coord pathTreeLabel(PathTree* t);
 void pathTreeGetCoord(PathTree* t, int* i, int* j);
 
 int pathTreeDepth(PathTree* t);
+int pathTreeNBChilds(PathTree* t);
+uint8_t pathTreeFirstChild(PathTree* t);
 
 void pathTreeEmptyChild(PathTree* t, int hDir, int vDir);
 #endif

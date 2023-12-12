@@ -1,4 +1,5 @@
 #include "aux_functions.h"
+#include <stdio.h>
 
 /*
 
@@ -65,6 +66,7 @@ void pawn_default_value_new(Game *g, int ind, bool color)
 // manger un ghost pawn
 void killPawn(Game *g, Case damier[NB_CASE_LG][NB_CASE_LG], int i, int j)
 {
+    printf("i, j = %d, %d\n", i, j);
     assert(i != -1 && j != -1);
     if (!freeCase(damier[i][j]))
     {

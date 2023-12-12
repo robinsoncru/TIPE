@@ -1,4 +1,5 @@
 #include "calculus_functions.h"
+#include <stdio.h>
 
 /*
 
@@ -25,31 +26,6 @@ int NON(int b)
 int abs(int a)
 {
     return (a >= 0) ? a : -a;
-}
-
-// la direction est donnee sous la forme d'un couple
-//(dx, dy) ou dx et dy peuvent valoir -1 ou 1.
-// On lui associe un nombre entre 0 et 3 inclus
-// dont le bit de poids faible est la direction horizontale
-// et le bit de poids fort la direction verticale.
-// 0 sens negatif, 1 sens positif
-
-int getCodeFromDirs(int dj, int di)
-{
-
-    int weak = (dj == 1) ? 1 : 0;
-    int strong = (di == 1) ? 1 : 0;
-    return (strong << 1) | (weak);
-}
-int dir(int a)
-{
-    return (a == 0) ? -1 : 1;
-}
-
-void getDirsFromCode(int c, int *di, int *dj)
-{
-    *dj = dir(c % 2);
-    *di = dir((c >> 1) % 2);
 }
 
 bool int_to_bool(int integer)
@@ -108,23 +84,24 @@ void put_pawn_value(Game *g, bool color, int ind, int wich_pmetre_modify, int va
 
 int get_pawn_value(Game *g, bool color, int ind, int wich_pmetre_get)
 {
+    pawn* p = &(g->allPawns[color][ind]);
     /* 1 : alive |2 : ennemy |3 : friendly |4 : queen |5 : lig |6 : col |7 : pba */
     switch (wich_pmetre_get)
     {
     case 1:
-        return bool_to_int(g->allPawns[color][ind].alive);
+        return bool_to_int(p->alive);
     case 2:
-        return g->allPawns[color][ind].ennemy;
+        return p->ennemy;
     case 3:
-        return g->allPawns[color][ind].friendly;
+        return p->friendly;
     case 4:
-        return bool_to_int(g->allPawns[color][ind].queen);
+        return bool_to_int(p->queen);
     case 5:
-        return g->allPawns[color][ind].lig;
+        return p->lig;
     case 6:
-        return g->allPawns[color][ind].col;
+        return p->col;
     case 7:
-        return g->allPawns[color][ind].pba;
+        return p->pba;
     default:
         // Do nothing
         return VOID_INDEX;

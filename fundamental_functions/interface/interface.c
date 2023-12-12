@@ -1,8 +1,5 @@
-<<<<<<<< HEAD:graphic_interface/interface/misc/misc.c
-#include "misc.h"
-========
 #include "interface.h"
->>>>>>>> main:fundamental_functions/interface/interface.c
+#include <stdio.h>
 
 /*
 
@@ -321,10 +318,7 @@ void init_damier(Case damier[NB_CASE_LG][NB_CASE_LG])
 Game *create_game()
 {
     Game *g = malloc(sizeof(Game));
-<<<<<<<< HEAD:graphic_interface/interface/misc/misc.c
     g->ind_move = NEUTRAL_IND;
-========
->>>>>>>> main:fundamental_functions/interface/interface.c
     g->indCheck = IND_NORMAL;
     g->is_white = true;
     init_damier(g->damier);
@@ -334,27 +328,9 @@ Game *create_game()
     g->nb_pawns[true] = NB_PAWNS;
     g->nb_pawns[false] = NB_PAWNS;
 
-<<<<<<<< HEAD:graphic_interface/interface/misc/misc.c
-    g->ind_move_back = -1;
-
     g->currentTree = emptyTree;
     g->currentRafle = NULL;
-    return g;
-}
 
-void free_game(Game *g){
-    if (g->currentTree != emptyTree) {
-        pathTreeFree(g->currentTree);
-    }
-    if (g->currentRafle != NULL) {
-        pathFree(g->currentRafle);
-    }
-    free(g);
-}
-
-// Display functions
-========
-    g->ind_move = NEUTRAL_IND;
     g->ind_move_back = NEUTRAL_IND;
 
     g->coordForMoveBack.i = IND_LISTENING_MOVE_BACK;
@@ -366,7 +342,6 @@ void free_game(Game *g){
     g->lengthCloud[false] = 0;
     return g;
 }
-
 /*
 
 
@@ -383,7 +358,6 @@ void free_game(Game *g){
 
 
 */
->>>>>>>> main:fundamental_functions/interface/interface.c
 
 void change_damier(Game *g)
 {
@@ -439,14 +413,14 @@ void prepareText(SDL_Renderer *render, text *txt, char *string)
     txt->rect->w = texW;
     txt->rect->h = texH;
 }
-<<<<<<<< HEAD:graphic_interface/interface/misc/misc.c
-========
 
-// Free the memory
-
-void free_game(Game *g)
-{
-    // Je le laisse pour plus tard si on a des tableaux dynamiques (Victor G)
+//Memory Function
+void free_game(Game *g){
+    if (g->currentTree != emptyTree) {
+        pathTreeFree(g->currentTree);
+    }
+    if (g->currentRafle != NULL) {
+        pathFree(g->currentRafle);
+    }
     free(g);
 }
->>>>>>>> main:fundamental_functions/interface/interface.c
