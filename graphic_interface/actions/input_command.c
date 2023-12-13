@@ -247,6 +247,9 @@ void onLUP(Game *g) {
     print_little_linked_list(g->cloud[g->is_white]);
 }
 
-void onAUp(Game *g, GraphicCache *cache);
+void onAUP(GraphicCache *cache) {
+    cache->autoplay = !cache->autoplay;
+}
+
 void onZUp(Game *g, GraphicCache *cache);
 void onRUp(Game *g, GraphicCache *cache);

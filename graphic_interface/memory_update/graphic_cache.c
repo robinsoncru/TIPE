@@ -62,6 +62,9 @@ GraphicCache *initCache()
     cache->display_tree = false;
     // cache -> cacheTree = emptyTree;
 
+    // Init the autoplay to false
+    cache->autoplay = false;
+
     // init time measurement
     for (int i = 0; i < TICKS_ARRAY_LENGTH; i++)
     {

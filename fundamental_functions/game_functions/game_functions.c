@@ -226,12 +226,15 @@ void lienEnnemitie(int lig, int col, Game *g)
 void biDepl(Game *g, int ind, bool color)
 {
     // On suppose le coup legal
+    bool depl = int_to_bool(rand() % 2);
+    // Depl le pion a droite ou a gauche et creera l'autre ghost pawn de l'autre cote
+    int dj = depl ? 1 : -1;
 
     startTurnGameManagement(g);
     int di = color ? 1 : -1;
-    // Creer un pion a droite
+    // Creer un pion a droite ou a gauche aleatoirement
     int newLig = get_pawn_value(g, color, ind, LIG) + di;
-    int newCol = get_pawn_value(g, color, ind, COL) + 1;
+    int newCol = get_pawn_value(g, color, ind, COL) + dj;
     createPawn(g, color, newLig, newCol);
     int newInd = g->damier[newLig][newCol].ind_pawn;
     put_pawn_value(g, color, newInd, PBA, get_pawn_value(g, color, ind, PBA) * 2);
@@ -243,9 +246,9 @@ void biDepl(Game *g, int ind, bool color)
 
     g->lengthCloud[color]++;
 
-    // Deplace le pion a gauche
+    // Deplace le pion de l'autre cote
     put_pawn_value(g, color, ind, PBA, get_pawn_value(g, color, ind, PBA) * 2);
-    simplyPawnMove(g, color, ind, true);
+    simplyPawnMove(g, color, ind, depl);
 
     // Maybe the clone pawn is near a pawn of the opposite color
     if (canStormBreaks(g, newInd, color)) AleatStormBreaks(g, color);

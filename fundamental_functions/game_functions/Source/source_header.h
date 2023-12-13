@@ -11,7 +11,7 @@
 #include "../../coord/coord.h"
 
 // Game pmetre
-#define NB_CASE_LG 8
+#define NB_CASE_LG 20
 #define NB_CASE (NB_CASE_LG * NB_CASE_LG)
 #define NB_PAWNS (NB_CASE_LG)
 #define MAX_NB_PAWNS (2 * NB_PAWNS)
@@ -48,6 +48,14 @@
 #define COL 6
 #define PBA 7
 #define COLOR 8
+
+// Define index to play a move
+#define PAWNMOVELEFT 0
+#define PROMOTION 1
+#define LIENAMITIE 2
+#define LIENDENNEMITIE 3
+#define BIDEPL 4
+#define PAWNMOVERIGHT 5
 
 // #define MY_GUARD 1
 // En evaluant dans les files incluant ce file, on évite la double inclusion

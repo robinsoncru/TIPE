@@ -125,8 +125,11 @@ int get_pawn_value(Game *g, bool color, int ind, int wich_pmetre_get)
         return g->allPawns[color][ind].col;
     case 7:
         return g->allPawns[color][ind].pba;
+    case 8:
+        return color;
     default:
         // Do nothing
+        assertAndLog(true, "No pawn pmetre");
         return VOID_INDEX;
     }
 }

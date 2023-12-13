@@ -42,6 +42,9 @@ typedef struct
     //j'ai choisit cette implementation pour aisement
     //pouvoir rajouter des ticks de mesure si besoin
     Uint32 ticksArray[TICKS_ARRAY_LENGTH];
+
+    bool autoplay;
+    // Lorsque autoplay est vrai, joue automatiquement le coup predefini dans play_a_move dans autoplay_function
 } GraphicCache;
 
 //graphic cache functions

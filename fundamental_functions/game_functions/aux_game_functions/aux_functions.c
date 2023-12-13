@@ -24,6 +24,7 @@ void copy_remove_pawn_from_index_to_index(Game *g, int indStart, int indArrive, 
     for (int k = 1; k < 9; k++)
     {
         put_pawn_value(g, color, indArrive, k, get_pawn_value(g, color, indStart, k));
+        flush();
     }
     pawn_default_value_new(g, indStart, color);
 
@@ -228,61 +229,58 @@ void putPawnMoveBack(Game *g, bool left)
     }
 }
 
-void stormBreaks(Game *g, bool color, int indSurvivor)
-{
-    maillon *l = g->cloud[color];
-    int iSurvivor = get_pawn_value(g, color, indSurvivor, LIG);
-    int jSurvivor = get_pawn_value(g, color, indSurvivor, COL);
+// Ca bug
 
-    put_pawn_value(g, color, indSurvivor, PBA, 1);
-    while (!is_empty(l))
-    {
-        int ind = pop(l);
-        if (ind != g->damier[iSurvivor][jSurvivor].ind_pawn)
-            ;
-        {
-            killPawn(g, g->damier, get_pawn_value(g, color, ind, LIG), get_pawn_value(g, color, ind, COL));
-        }
-    }
-    g->lengthCloud[color] = 0;
+// void stormBreaks(Game *g, bool color, int indSurvivor)
+// {
+//     maillon *l = g->cloud[color];
+//     int iSurvivor = get_pawn_value(g, color, indSurvivor, LIG);
+//     int jSurvivor = get_pawn_value(g, color, indSurvivor, COL);
 
-    // C'est une fonction mutuellement recursive car le pion foudroyer peut etre pres du nuage de la couleur opposee. On verifie donc
-    // dans l'autre nuage
+//     put_pawn_value(g, color, indSurvivor, PBA, 1);
+//     while (!is_empty(l))
+//     {
+//         int ind = pop(l);
+//         if (ind != g->damier[iSurvivor][jSurvivor].ind_pawn)
+//             ;
+//         {
+//             killPawn(g, g->damier, get_pawn_value(g, color, ind, LIG), get_pawn_value(g, color, ind, COL));
+//         }
+//     }
+//     g->lengthCloud[color] = 0;
 
-    if (canStormBreaksForTheOthers(g, g->damier[iSurvivor][jSurvivor].ind_pawn, color))
-        AleatStormBreaks(g, !color);
-}
+//     // C'est une fonction mutuellement recursive car le pion foudroyer peut etre pres du nuage de la couleur opposee. On verifie donc
+//     // dans l'autre nuage
+
+//     if (canStormBreaksForTheOthers(g, g->damier[iSurvivor][jSurvivor].ind_pawn, color))
+//         AleatStormBreaks(g, !color);
+// }
 
 void AleatStormBreaks(Game *g, bool color)
 {
-    int nbSurvivor = rand() % g->lengthCloud[color];
     maillon *l = g->cloud[color];
-    int incr = 0;
-    int iSurvivor;
-    int jSurvivor;
+    int ind = VOID_INDEX;
 
     while (!is_empty(l))
     {
-        int ind = pop(l);
-        if (incr == nbSurvivor)
+        ind = pop(l);
+        if (is_empty(l))
         {
             put_pawn_value(g, color, ind, PBA, 1);
-            iSurvivor = get_pawn_value(g, color, ind, LIG);
-            jSurvivor = get_pawn_value(g, color, ind, COL);
+            break;
         }
         else
         {
             killPawn(g, g->damier, get_pawn_value(g, color, ind, LIG), get_pawn_value(g, color, ind, COL));
         }
-        incr++;
     }
     g->lengthCloud[color] = 0;
 
     // C'est une fonction recursive car le pion foudroyer peut etre pres du nuage de la couleur opposee. On verifie donc
     // dans l'autre nuage
 
-    printf("%d %d %d", iSurvivor, jSurvivor, g->damier[iSurvivor][jSurvivor].ind_pawn);
-    fflush(stdout);
-    if (canStormBreaksForTheOthers(g, g->damier[iSurvivor][jSurvivor].ind_pawn, color))
+    printf("%d %d %d %d", get_pawn_value(g, color, ind, LIG), get_pawn_value(g, color, ind, COL), ind, color);
+    flush();
+    if (ind != VOID_INDEX && canStormBreaksForTheOthers(g, ind, color))
         AleatStormBreaks(g, !color);
 }
