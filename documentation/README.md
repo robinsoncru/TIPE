@@ -44,3 +44,20 @@ Todo list :
 - Ajouters des nouvelles règles :
     - [à compléter]
 - [à compléter]
+
+- Etape 1 : (du 18/01/2024 9h au 01/02/2024 14h)
+    - Titre
+    - motivations
+    - ancrage/lien au theme de l'annee
+    - MCOT (Mise en Coherence des Objectifs du TIPE)
+        - thematique/mots-cles (dames, quantique, jeu, strategie)
+            - en francais + anglais
+        - bibliogrphie commentee (intro du sujet du TIPE)
+        - Problematique
+        - Objectifs du TIPE
+        - references bibliographiques
+    - Declarer les participants du TIPE (Victor G + D)
+- Presentation : (27/02/2024 9h au 11/06/2024 14h)
+    - Upload du support de presentation
+    - Saisie en lignr du DOT (Deroule Operationel du TIPE)
+    - Eventuellement ajuster les positionnements/thematiques/mots-cles/biblios

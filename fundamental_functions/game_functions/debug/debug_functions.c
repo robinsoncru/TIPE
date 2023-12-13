@@ -29,6 +29,7 @@ void print_pawn(pawn p, int ind)
     fflush(stdout);
 }
 
+// prints all the pawns of the same color
 void print_pawns(Game *g)
 {
     for (int i = 0; i < 2 * NB_PAWNS; i++)
@@ -48,7 +49,11 @@ void print_damier(Case damier[NB_CASE_LG][NB_CASE_LG], Game *g)
             ind = damier[i][j].ind_pawn;
             c = damier[i][j].pawn_color;
             if (ind != -1)
+            {
                 printf("Case ligne %d col %d Coord pion %d %d\n", i, j, g->allPawns[c][ind].lig, g->allPawns[c][ind].col);
+                // print_pawn(g->allPawns[c][ind], ind);
+                // printf("---\n");
+            }
         }
     }
 }

@@ -1,4 +1,8 @@
 #include "graphic_cache.h"
+<<<<<<< HEAD
+=======
+#include <stdio.h>
+>>>>>>> interface-struct
 // graphic cache functions
 
 typedef struct
@@ -62,9 +66,12 @@ GraphicCache *initCache()
     cache->display_tree = false;
     // cache -> cacheTree = emptyTree;
 
+<<<<<<< HEAD
     // Init the autoplay to false
     cache->autoplay = false;
 
+=======
+>>>>>>> interface-struct
     // init time measurement
     for (int i = 0; i < TICKS_ARRAY_LENGTH; i++)
     {
@@ -151,9 +158,15 @@ void freeCache(GraphicCache *cache)
 void display(Game *g, GraphicCache *cache)
 {
     display_damier(cache->draw, g);
+<<<<<<< HEAD
     // if (cache->display_tree) {
     //     pathTreeDisplay(cache->draw, g->damier, cache->cacheTree);
     // }
+=======
+    if (cache->display_tree) {
+        pathTreeDisplay(cache->draw, g->damier, g->currentTree);
+    }
+>>>>>>> interface-struct
     if (cache->txtMessage->display)
     {
         SDL_RenderCopy(cache->draw, cache->txtMessage->texture, NULL, cache->txtMessage->rect);

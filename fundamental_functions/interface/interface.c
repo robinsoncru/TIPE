@@ -1,4 +1,8 @@
 #include "interface.h"
+<<<<<<< HEAD
+=======
+#include <stdio.h>
+>>>>>>> interface-struct
 
 /*
 
@@ -116,7 +120,7 @@ void drawLosange(SDL_Renderer *render, Case c, pawn p, Game *g)
     vertices[0].position.x = c.rect.x;
     vertices[0].position.y = c.rect.y + LG_CASE / 2;
     vertices[1].position.x = c.rect.x + LG_CASE / 2;
-    ;
+
     vertices[1].position.y = c.rect.y;
     vertices[2].position.x = c.rect.x + LG_CASE;
     vertices[2].position.y = c.rect.y + LG_CASE / 2;
@@ -317,6 +321,10 @@ void init_damier(Case damier[NB_CASE_LG][NB_CASE_LG])
 Game *create_game()
 {
     Game *g = malloc(sizeof(Game));
+<<<<<<< HEAD
+=======
+    g->ind_move = NEUTRAL_IND;
+>>>>>>> interface-struct
     g->indCheck = IND_NORMAL;
     g->is_white = true;
     init_damier(g->damier);
@@ -326,9 +334,17 @@ Game *create_game()
     g->nb_pawns[true] = NB_PAWNS;
     g->nb_pawns[false] = NB_PAWNS;
 
+<<<<<<< HEAD
     g->ind_move = NEUTRAL_IND;
     g->ind_move_back = NEUTRAL_IND;
 
+=======
+    g->currentTree = emptyTree;
+    g->currentRafle = NULL;
+
+    g->ind_move_back = NEUTRAL_IND;
+
+>>>>>>> interface-struct
     g->coordForMoveBack.i = IND_LISTENING_MOVE_BACK;
     g->coordForMoveBack.j = IND_LISTENING_MOVE_BACK;
 
@@ -338,9 +354,13 @@ Game *create_game()
     g->lengthCloud[false] = 0;
     return g;
 }
-
 /*
 
+<<<<<<< HEAD
+/*
+
+=======
+>>>>>>> interface-struct
 
 
 
@@ -411,10 +431,21 @@ void prepareText(SDL_Renderer *render, text *txt, char *string)
     txt->rect->h = texH;
 }
 
+<<<<<<< HEAD
 // Free the memory
 
 void free_game(Game *g)
 {
     // Je le laisse pour plus tard si on a des tableaux dynamiques (Victor G)
+=======
+//Memory Function
+void free_game(Game *g){
+    if (g->currentTree != emptyTree) {
+        pathTreeFree(g->currentTree);
+    }
+    if (g->currentRafle != NULL) {
+        pathFree(g->currentRafle);
+    }
+>>>>>>> interface-struct
     free(g);
 }

@@ -108,28 +108,26 @@ void put_pawn_value(Game *g, bool color, int ind, int wich_pmetre_modify, int va
 
 int get_pawn_value(Game *g, bool color, int ind, int wich_pmetre_get)
 {
+    pawn* p = &(g->allPawns[color][ind]);
     /* 1 : alive |2 : ennemy |3 : friendly |4 : queen |5 : lig |6 : col |7 : pba */
     switch (wich_pmetre_get)
     {
     case 1:
-        return bool_to_int(g->allPawns[color][ind].alive);
+        return bool_to_int(p->alive);
     case 2:
-        return g->allPawns[color][ind].ennemy;
+        return p->ennemy;
     case 3:
-        return g->allPawns[color][ind].friendly;
+        return p->friendly;
     case 4:
-        return bool_to_int(g->allPawns[color][ind].queen);
+        return bool_to_int(p->queen);
     case 5:
-        return g->allPawns[color][ind].lig;
+        return p->lig;
     case 6:
-        return g->allPawns[color][ind].col;
+        return p->col;
     case 7:
-        return g->allPawns[color][ind].pba;
-    case 8:
-        return color;
+        return p->pba;
     default:
         // Do nothing
-        assertAndLog(true, "No pawn pmetre");
         return VOID_INDEX;
     }
 }

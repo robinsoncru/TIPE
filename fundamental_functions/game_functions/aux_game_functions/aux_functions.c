@@ -24,7 +24,6 @@ void copy_remove_pawn_from_index_to_index(Game *g, int indStart, int indArrive, 
     for (int k = 1; k < 9; k++)
     {
         put_pawn_value(g, color, indArrive, k, get_pawn_value(g, color, indStart, k));
-        flush();
     }
     pawn_default_value_new(g, indStart, color);
 
@@ -66,6 +65,7 @@ void pawn_default_value_new(Game *g, int ind, bool color)
 // manger un ghost pawn
 void killPawn(Game *g, Case damier[NB_CASE_LG][NB_CASE_LG], int i, int j)
 {
+    // printf("i, j = %d, %d\n", i, j);
     assert(i != -1 && j != -1);
     if (!freeCase(damier[i][j]))
     {
