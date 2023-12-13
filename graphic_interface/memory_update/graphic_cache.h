@@ -2,6 +2,7 @@
 #define CACHE_INTERFACE
 
 #include "../../fundamental_functions/interface/interface.h"
+#include "../rafle_display/path_tree_display.h"
 #include <stdlib.h>
 #include <SDL2/SDL_ttf.h>
 #include <time.h>
@@ -12,7 +13,7 @@
 #define CHANGE_TICKS 0
 #define ERROR_TICKS 1
 
-typedef struct
+typedef struct GraphicCache
 {
     //RNG will be handled by another system
     //but will be initialized with the cache

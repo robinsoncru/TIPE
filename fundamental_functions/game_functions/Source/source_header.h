@@ -9,6 +9,8 @@
 #include <time.h>
 
 #include "../../coord/coord.h"
+#include "../../../rafle/calc/path_tree.h"
+#include "../../../rafle/rafle_choice/path_struct.h"
 
 // Game pmetre
 #define NB_CASE_LG 8
@@ -49,6 +51,9 @@
 #define PBA 7
 #define COLOR 8
 
+//Indexes of the players
+#define HUMAN 0
+#define RANDOM 1
 // #define MY_GUARD 1
 // En evaluant dans les files incluant ce file, on évite la double inclusion
 
@@ -80,10 +85,14 @@ typedef struct
     Keep in memory an overapproximation of the nb of pawns, but like for merge to union_find, don't decrease the value.
     Indeed, we need a free indice to create a new ennemy pawn, not necessary the first free indice */
     int ind_move, ind_move_back, indCheck;
+    int players[2]; //the first is white, the second black, useful to be able to identify AIs
     bool is_white;
     Coord coordForMoveBack;
     maillon* cloud[2];
     int lengthCloud[2];
+
+    PathTree* currentTree;
+    Path* currentRafle;
 } Game;
 
 /* NOTES :

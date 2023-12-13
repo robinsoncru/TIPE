@@ -33,15 +33,17 @@ void pawnMove(Game *g, bool is_white, int ind, bool left)
     int j = p->col;
     int di = is_white ? 1 : -1;
     int dj = left ? -1 : 1;
+    bool doMoveBack = false;
 
     change_pawn_place_new(g, g->damier, ind, is_white, i + di, j + dj);
     if (p->friendly != NEUTRAL_IND)
     {
         g->ind_move_back = p->friendly;
+        doMoveBack = true;
         // implementer une fonction qui se charge de faire reculer
         // le pion indique a partir de son indice
     }
-    endTurnGameManagement(g, is_white, ind, IND_CHANGE_ALLOWED, true);
+    endTurnGameManagement(g, is_white, ind, IND_CHANGE_ALLOWED, doMoveBack);
 }
 
 /*
