@@ -3,8 +3,10 @@
 
 #include <SDL2/SDL_ttf.h>
 
-
+#include "../game_functions/Source/source_header.h"
 #include "../game_functions/game_functions.h"
+#include "../../rafle/calc/path_tree.h"
+#include "../../rafle/rafle_choice/path_struct.h"
 
 // Window pmetre
 #define LG_WINDOW 640

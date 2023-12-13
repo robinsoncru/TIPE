@@ -116,7 +116,7 @@ void drawLosange(SDL_Renderer *render, Case c, pawn p, Game *g)
     vertices[0].position.x = c.rect.x;
     vertices[0].position.y = c.rect.y + LG_CASE / 2;
     vertices[1].position.x = c.rect.x + LG_CASE / 2;
-    ;
+
     vertices[1].position.y = c.rect.y;
     vertices[2].position.x = c.rect.x + LG_CASE;
     vertices[2].position.y = c.rect.y + LG_CASE / 2;
@@ -329,6 +329,9 @@ Game *create_game()
     g->ind_move = NEUTRAL_IND;
     g->ind_move_back = NEUTRAL_IND;
 
+    g->currentTree = emptyTree;
+    g->currentRafle = NULL;
+
     g->coordForMoveBack.i = IND_LISTENING_MOVE_BACK;
     g->coordForMoveBack.j = IND_LISTENING_MOVE_BACK;
 
@@ -411,10 +414,13 @@ void prepareText(SDL_Renderer *render, text *txt, char *string)
     txt->rect->h = texH;
 }
 
-// Free the memory
-
-void free_game(Game *g)
-{
-    // Je le laisse pour plus tard si on a des tableaux dynamiques (Victor G)
+//Memory Function
+void free_game(Game *g){
+    if (g->currentTree != emptyTree) {
+        pathTreeFree(g->currentTree);
+    }
+    if (g->currentRafle != NULL) {
+        pathFree(g->currentRafle);
+    }
     free(g);
 }

@@ -23,6 +23,7 @@ void endTurnGraphics(Game *g, GraphicCache *cache)
     // the turn changing will be donne at the end of the
     // change timer from a graphic point of view
     alert(cache, g->indCheck, CHANGE_TICKS);
+    // printf("%s turn\n", g->is_white ? "white" : "black");
 }
 
 /*
@@ -172,7 +173,6 @@ void onLMBDown(Game *g, GraphicCache *cache)
     }
 
     else if (g->ind_move == VOID_INDEX)
-
         printf("No pawn selected");
 }
 
@@ -222,6 +222,31 @@ void onEscapeUp(Game *g, GraphicCache *cache)
     cache->is_playing = false;
 }
 
+void onUpUp(Game *g, GraphicCache *cache){
+    if (g->ind_move == NEUTRAL_IND || pathTreeDepth(g->currentTree) == 0) {
+        alert(cache, IND_PB, ERROR_TICKS);
+    }
+    else if(g->currentTree == emptyTree){
+        bool isWhite = g->is_white;
+        pawn* pawns = g->allPawns[isWhite];
+        pawn* NPawns = g->allPawns[!isWhite];
+        g->currentTree = rafleTreeCalc(pawns, NPawns, g->damier, g->ind_move);
+        cache->display_tree = true;
+    }
+    else if (!cache->display_tree) {
+        cache->display_tree = true;
+    }
+    else {
+        printf("lazyRafle called\n");
+        Path* r = lazyRafle(g->currentTree);
+        printf("eatRafle called\n");
+        eatRafle(g, g->ind_move, g->is_white, g->currentTree, r);
+        printf("pathFree called\n");
+        pathFree(r);
+        endTurnGraphics(g, cache);
+    }
+}
+
 void onPUP(Game *g, GraphicCache *cache)
 {
     /* Promote the selected pawn */
@@ -247,6 +272,28 @@ void onLUP(Game *g) {
     print_little_linked_list(g->cloud[g->is_white]);
 }
 
-void onAUp(Game *g, GraphicCache *cache);
-void onZUp(Game *g, GraphicCache *cache);
+void onAUP(GraphicCache *cache) {
+    cache->autoplay = !cache->autoplay;
+}
+
+void onZUp(Game *g, GraphicCache *cache){
+    int indEater = g->ind_move;
+    if (indEater == NEUTRAL_IND) {
+        alert(cache, IND_PB, ERROR_TICKS);
+    }
+    else if(pathTreeDepth(g->currentTree) > 0){
+        cache->display_tree = !cache->display_tree;
+    }
+    else { //no tree loaded ans the pawn is already selected
+        bool isWhite = g->is_white;
+        pawn* pawns = g->allPawns[isWhite];
+        pawn* NPawns = g->allPawns[!isWhite];
+        g->currentTree = rafleTreeCalc(pawns, NPawns, g->damier, indEater);
+        cache->display_tree = true;
+    }
+}
+
+void onKUp(Game *g, GraphicCache *cache){
+    print_damier(g->damier, g);
+}
 void onRUp(Game *g, GraphicCache *cache);

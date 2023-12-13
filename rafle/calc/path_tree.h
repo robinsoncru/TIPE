@@ -4,7 +4,10 @@
 #ifndef PATH_TREE
 #define PATH_TREE
 #define ARITE 4
-#include "../../fundamental_functions/game_functions/game_functions.h"
+#define NO_CHILD_ERROR 5
+
+#include "../../fundamental_functions/coord/coord.h"
+#include "../../fundamental_functions/debug/debug.h"
 /*Arbre de chemins pour les rafles.
 C'est une structure reccursive qui consiste en un arbre de
 coordonnees symbolisant un ensemble de chemins sur le plateau.
@@ -43,9 +46,9 @@ Coord pathTreeLabel(PathTree* t);
 
 void pathTreeGetCoord(PathTree* t, int* i, int* j);
 
-int pathTreeGetInd(PathTree* t);
-
 int pathTreeDepth(PathTree* t);
+int pathTreeNBChilds(PathTree* t);
+uint8_t pathTreeFirstChild(PathTree* t);
 
 void pathTreeEmptyChild(PathTree* t, int hDir, int vDir);
 #endif

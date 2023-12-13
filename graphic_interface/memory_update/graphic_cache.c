@@ -62,6 +62,9 @@ GraphicCache *initCache()
     cache->display_tree = false;
     // cache -> cacheTree = emptyTree;
 
+    // Init the autoplay to false
+    cache->autoplay = false;
+
     // init time measurement
     for (int i = 0; i < TICKS_ARRAY_LENGTH; i++)
     {
@@ -148,9 +151,9 @@ void freeCache(GraphicCache *cache)
 void display(Game *g, GraphicCache *cache)
 {
     display_damier(cache->draw, g);
-    // if (cache->display_tree) {
-    //     pathTreeDisplay(cache->draw, g->damier, cache->cacheTree);
-    // }
+    if (cache->display_tree) {
+        pathTreeDisplay(cache->draw, g->damier, g->currentTree);
+    }
     if (cache->txtMessage->display)
     {
         SDL_RenderCopy(cache->draw, cache->txtMessage->texture, NULL, cache->txtMessage->rect);
