@@ -58,6 +58,7 @@
 #define LIENDENNEMITIE 3
 #define BIDEPL 4
 #define PAWNMOVERIGHT 5
+#define EATRAFLE 6
 
 //Indexes of the players
 #define HUMAN 0

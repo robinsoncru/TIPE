@@ -16,14 +16,6 @@ Coord add(Coord u, Coord v){
     return res;
 }
 
-Coord add(Coord u, Coord v){
-    Coord res = {
-        u.i + v.i,
-        u.j + v.j
-    };
-    return res;
-}
-
 Coord mult(int k, Coord u){
     Coord res = {k*u.i, k*u.j};
     return res;

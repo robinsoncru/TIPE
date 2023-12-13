@@ -11,7 +11,7 @@ void auto_put_index(Game *g, int indPawnPlayed) {
 
 int random_play() {
     // Return a random play decision: 6 play choices
-    return rand() % 6;
+    return rand() % 7;
 }
 
 void play_a_move(int move, int ind_pawn, Game *g, GraphicCache *cache) {
@@ -43,6 +43,10 @@ void play_a_move(int move, int ind_pawn, Game *g, GraphicCache *cache) {
         break;
 
     case LIENDENNEMITIE:
+        break;
+
+    case EATRAFLE:
+        onUpUp(g, cache);
         break;
 
     default:

@@ -34,24 +34,6 @@ int abs(int a)
 // et le bit de poids fort la direction verticale.
 // 0 sens negatif, 1 sens positif
 
-int getCodeFromDirs(int dj, int di)
-{
-
-    int weak = (dj == 1) ? 1 : 0;
-    int strong = (di == 1) ? 1 : 0;
-    return (strong << 1) | (weak);
-}
-int dir(int a)
-{
-    return (a == 0) ? -1 : 1;
-}
-
-void getDirsFromCode(int c, int *di, int *dj)
-{
-    *dj = dir(c % 2);
-    *di = dir((c >> 1) % 2);
-}
-
 bool int_to_bool(int integer)
 {
     if (integer == 1)
@@ -108,7 +90,7 @@ void put_pawn_value(Game *g, bool color, int ind, int wich_pmetre_modify, int va
 
 int get_pawn_value(Game *g, bool color, int ind, int wich_pmetre_get)
 {
-    pawn* p = &(g->allPawns[color][ind]);
+    pawn *p = &(g->allPawns[color][ind]);
     /* 1 : alive |2 : ennemy |3 : friendly |4 : queen |5 : lig |6 : col |7 : pba */
     switch (wich_pmetre_get)
     {
@@ -126,6 +108,8 @@ int get_pawn_value(Game *g, bool color, int ind, int wich_pmetre_get)
         return p->col;
     case 7:
         return p->pba;
+    case 8:
+        return p->color;
     default:
         // Do nothing
         return VOID_INDEX;
