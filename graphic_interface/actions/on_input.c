@@ -42,14 +42,11 @@ void onInput(Game *g, GraphicCache *cache, SDL_Event event)
             onRightUp(g, cache);
             break;
 
-<<<<<<< HEAD
-=======
         case SDLK_UP:
             //test des rafles
             onUpUp(g, cache);
             break;
 
->>>>>>> interface-struct
         case SDLK_ESCAPE:
             // quits the game
             onEscapeUp(g, cache);
@@ -80,13 +77,11 @@ void onInput(Game *g, GraphicCache *cache, SDL_Event event)
         case SDLK_l:
             onLUP(g);
             break;
-<<<<<<< HEAD
 
         case SDLK_a:
             onAUP(cache);
             break;
 
-=======
         
         case SDLK_z:
             onZUp(g, cache);
@@ -95,7 +90,6 @@ void onInput(Game *g, GraphicCache *cache, SDL_Event event)
         case SDLK_k:
             onKUp(g, cache);
             break;
->>>>>>> interface-struct
         }
     }
 }

@@ -2,10 +2,7 @@
 #define CACHE_INTERFACE
 
 #include "../../fundamental_functions/interface/interface.h"
-<<<<<<< HEAD
-=======
 #include "../rafle_display/path_tree_display.h"
->>>>>>> interface-struct
 #include <stdlib.h>
 #include <SDL2/SDL_ttf.h>
 #include <time.h>
@@ -16,11 +13,7 @@
 #define CHANGE_TICKS 0
 #define ERROR_TICKS 1
 
-<<<<<<< HEAD
 typedef struct
-=======
-typedef struct GraphicCache
->>>>>>> interface-struct
 {
     //RNG will be handled by another system
     //but will be initialized with the cache
@@ -50,12 +43,9 @@ typedef struct GraphicCache
     //j'ai choisit cette implementation pour aisement
     //pouvoir rajouter des ticks de mesure si besoin
     Uint32 ticksArray[TICKS_ARRAY_LENGTH];
-<<<<<<< HEAD
 
     bool autoplay;
     // Lorsque autoplay est vrai, joue automatiquement le coup predefini dans play_a_move dans autoplay_function
-=======
->>>>>>> interface-struct
 } GraphicCache;
 
 //graphic cache functions

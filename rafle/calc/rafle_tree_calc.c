@@ -1,8 +1,5 @@
 #include "rafle_tree_calc.h"
-<<<<<<< HEAD
-=======
 #include <SDL2/SDL_stdinc.h>
->>>>>>> interface-struct
 #include <stdio.h>
 
 void spitOut(pawn pawns[], pawn NPawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int indEater, int iEater, int jEater, int indVictim, int add0, int add1){
@@ -58,11 +55,7 @@ PathTree* divideAndGather(pawn pawns[],pawn NPawns[], Case damier[NB_CASE_LG][NB
     int di, dj;
     PathTree* res = pathTreeCreateNode(i, j);
     PathTree* child;
-<<<<<<< HEAD
-    for (int k = 0; k < 4; k++) {
-=======
     for (Uint8 k = 0; k < 4; k++) {
->>>>>>> interface-struct
         //Petite astuce pour parcourir les voisins :)
         getDirsFromCode(k, &di, &dj);
         if (!eatingIsOutOfBounds(i, j, di, dj) && canEat(pawns, damier, indEater, i, j, di, dj)) {
@@ -75,20 +68,12 @@ PathTree* divideAndGather(pawn pawns[],pawn NPawns[], Case damier[NB_CASE_LG][NB
     //C'est de l'eugenisme, donc ca reste dans le theme des rafles.
     int maxDepth = pathTreeDepth(res) - 1;
     int depth;
-<<<<<<< HEAD
-    for (int k = 0; k < 4; k++) {
-=======
     for (Uint8 k = 0; k < 4; k++) {
->>>>>>> interface-struct
         getDirsFromCode(k, &di, &dj);
 
         PathTree* inspected = pathTreeChild(res, dj, di);
         depth = pathTreeDepth(inspected);
-<<<<<<< HEAD
-        if (depth < maxDepth) {
-=======
         if (inspected != emptyTree && depth < maxDepth) {
->>>>>>> interface-struct
             pathTreeEmptyChild(res, dj, di);
         }
     }

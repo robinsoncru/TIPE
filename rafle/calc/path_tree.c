@@ -1,18 +1,12 @@
 #include "path_tree.h"
-<<<<<<< HEAD
-=======
 #include <stdint.h>
->>>>>>> interface-struct
 #include <stdlib.h>
 #include <assert.h>
 
 typedef struct PathTree{
     int depth;
     Coord point;
-<<<<<<< HEAD
-=======
     int nbChilds;
->>>>>>> interface-struct
     struct PathTree* childs[ARITE];
 } PathTree;
 
@@ -35,22 +29,15 @@ PathTree* pathTreeCreateNode(int i, int j){
     //__/ \__
     //  \ /
     //   o
-<<<<<<< HEAD
-    assertAndLog(!outOfBounds(i, j), "Position inexistante");
-=======
     
     //assertAndLog(!outOfBounds(i, j), "Position inexistante");
->>>>>>> interface-struct
     PathTree* res = malloc(sizeof(PathTree));
     res -> depth = 0;
     Coord point;
     point.i = i;
     point.j = j;
     res -> point = point;
-<<<<<<< HEAD
-=======
     res->nbChilds = 0;
->>>>>>> interface-struct
     for (int i = 0; i < ARITE; i++) {
         res -> childs[i] = emptyTree;
     }
@@ -61,11 +48,7 @@ void pathTreeFree(PathTree* t){
     //Libere l'integralite de l'abre de chemin
     if (t != emptyTree) {
         for (int i = 0; i < ARITE; i++) {
-<<<<<<< HEAD
-        pathTreeFree(t -> childs[i]);
-=======
             pathTreeFree(t -> childs[i]);
->>>>>>> interface-struct
         }
         free(t);
     }
@@ -78,11 +61,7 @@ PathTree* pathTreeChild(PathTree* t, int hDir, int vDir){
     assertAndLog(t != emptyTree, "Recherche d'enfant de l'arbre vide");
     validIndexTest(hDir, vDir);
 
-<<<<<<< HEAD
-    int index = getCodeFromDirs(hDir, vDir);
-=======
     uint8_t index = getCodeFromDirs(hDir, vDir);
->>>>>>> interface-struct
     return t -> childs[index];
 }
 
@@ -95,10 +74,7 @@ void pathTreeConnect(PathTree* parent, PathTree* child, int hDir, int vDir){
 
     int index = getCodeFromDirs(hDir, vDir);
     parent -> childs[index] = child;
-<<<<<<< HEAD
-=======
     parent -> nbChilds = parent->nbChilds + 1;
->>>>>>> interface-struct
 
     int depthParent = parent -> depth;
     int depthChild = pathTreeDepth(child);
@@ -125,12 +101,6 @@ int pathTreeDepth(PathTree* t){
     return t -> depth;
 }
 
-<<<<<<< HEAD
-void pathTreeEmptyChild(PathTree* t, int hDir, int vDir){
-    //remplace l'enfant indique par l'arbre vide en le liberant au passage
-    PathTree* m = pathTreeChild(t, hDir, vDir);
-    pathTreeConnect(t, emptyTree, hDir, vDir);
-=======
 int pathTreeNBChilds(PathTree* t){
     return t->nbChilds;
 }
@@ -158,6 +128,5 @@ void pathTreeEmptyChild(PathTree* t, int hDir, int vDir){
         }
     }
     t->depth = maxDepthAmongLeftChilds + 1;
->>>>>>> interface-struct
     pathTreeFree(m);
 }

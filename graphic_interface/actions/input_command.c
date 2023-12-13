@@ -1,8 +1,4 @@
 #include "input_command.h"
-<<<<<<< HEAD
-=======
-#include <stdio.h>
->>>>>>> interface-struct
 
 /*
 
@@ -27,10 +23,7 @@ void endTurnGraphics(Game *g, GraphicCache *cache)
     // the turn changing will be donne at the end of the
     // change timer from a graphic point of view
     alert(cache, g->indCheck, CHANGE_TICKS);
-<<<<<<< HEAD
-=======
-    printf("%s turn\n", g->is_white ? "white" : "black");
->>>>>>> interface-struct
+    // printf("%s turn\n", g->is_white ? "white" : "black");
 }
 
 /*
@@ -180,10 +173,6 @@ void onLMBDown(Game *g, GraphicCache *cache)
     }
 
     else if (g->ind_move == VOID_INDEX)
-<<<<<<< HEAD
-
-=======
->>>>>>> interface-struct
         printf("No pawn selected");
 }
 
@@ -233,8 +222,6 @@ void onEscapeUp(Game *g, GraphicCache *cache)
     cache->is_playing = false;
 }
 
-<<<<<<< HEAD
-=======
 void onUpUp(Game *g, GraphicCache *cache){
     if (g->ind_move == NEUTRAL_IND || pathTreeDepth(g->currentTree) == 0) {
         alert(cache, IND_PB, ERROR_TICKS);
@@ -260,7 +247,6 @@ void onUpUp(Game *g, GraphicCache *cache){
     }
 }
 
->>>>>>> interface-struct
 void onPUP(Game *g, GraphicCache *cache)
 {
     /* Promote the selected pawn */
@@ -286,14 +272,10 @@ void onLUP(Game *g) {
     print_little_linked_list(g->cloud[g->is_white]);
 }
 
-<<<<<<< HEAD
 void onAUP(GraphicCache *cache) {
     cache->autoplay = !cache->autoplay;
 }
 
-void onZUp(Game *g, GraphicCache *cache);
-=======
-void onAUp(Game *g, GraphicCache *cache);
 void onZUp(Game *g, GraphicCache *cache){
     int indEater = g->ind_move;
     if (indEater == NEUTRAL_IND) {
@@ -314,5 +296,4 @@ void onZUp(Game *g, GraphicCache *cache){
 void onKUp(Game *g, GraphicCache *cache){
     print_damier(g->damier, g);
 }
->>>>>>> interface-struct
 void onRUp(Game *g, GraphicCache *cache);
