@@ -115,3 +115,8 @@ int get_pawn_value(Game *g, bool color, int ind, int wich_pmetre_get)
         return VOID_INDEX;
     }
 }
+
+int ind_from_coord(Game *g, int lig, int col) {
+    // Give the ind from the coord in the damier
+    return g->damier[lig][col].ind_pawn;
+}

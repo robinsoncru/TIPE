@@ -83,3 +83,9 @@ void print_little_linked_list(maillon *l)
         printf("indice %d\n", actu->ind);
     }
 }
+
+void printv(char *s) {
+    // Affiche direct dans le terminal
+    printf("%s\n", s);
+    flush();
+}

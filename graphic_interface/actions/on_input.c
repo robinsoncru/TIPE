@@ -65,7 +65,7 @@ void onInput(Game *g, GraphicCache *cache, SDL_Event event)
             // les autres fonctions restent a implementer
 
         case SDLK_h:
-            // Debuggeur: affiche l'etat des pions
+            // Debuggeur: affiche l'etat du damier
             onHUP(g, cache);
             break;
 

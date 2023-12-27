@@ -22,7 +22,6 @@ De même pour ennemie
 
 Conseils de code:
 - Executer toujours le compile.sh dans le dossier ou est le main sinon les inclusions des autres fichiers font planter les fonctions du module SDL_ttf (TTF_OpenFont)
-- Virer VOID_INDEX ou NEUTRAL_INDICE c'est redondant
 La selection avec la souris ne permet pas de revenir en arriere, donc si on selectionne un pion coincé, le jeu est bloqué
 
 INFOS IMPORTANTES pour Victor D:
@@ -39,11 +38,30 @@ Victor D jettes y un oeil
 
 Pour move back: on suppose que le joueur joue bien, donc quand on doit move arriere, il joue bien les fleches gauche/droite
 
+GUIDE D'UTILISATION:
+- clic gauche: sélectionne le pion
+- clic droit (après un clic gauche): lie d'amitié les deux pions cliqués
+- clic gauche (après un clic gauche): les deux pions cliqués sont ennemis si le pion sélectionné n'est pas une dame, sinon c'est un déplacement de la dame
+- flèche gauche: le pion avance à gauche (une case avant, une case gauche)
+- flèche droite: le pion avance à droite
+- flèche avant: affiche l'arbre des rafles pour le pion sélectionné
+- flèche avant (après flèche avant): le pion mange avec rafle
+- escape: quitte le jeu
+- p: promeut un pion, au hasard -> soit dame, soit reste le même pion soit devient un pion de la couleur opposé
+- j: affiche l'état des pions instantanément dans le terminal
+- h: affiche l'état du damier instantanément dans le terminal
+- b: bidepl -> le pion se deplace sur les deux cases à la fois en avant à gauche et à droite, en divisant sa probabilité de présence par deux
+- l: affiche l'état de la liste chainée qui contient les pions dans la probabilité de présence n'est pas certaine (!!= 1)
+- a: lance le jeu automatique
+- z: affiche l'arbre des rafles pour le pion sélectionné
+- k: affiche l'état du damier instantanément dans le terminal (redondant avec h)
+
+
 Todo list :
-- Finir l'implémentation des rafles
-- Ajouters des nouvelles règles :
-    - [à compléter]
-- [à compléter]
+- Implementer l'IA:
+-- Victor G: je fais fais les fonctions de mouvement retour (comme NonLoggingChangeForEat mais pour les autres)
+-- Victor D: aspect theorique de la gestion aléatoire
+
 
 - Etape 1 : (du 18/01/2024 9h au 01/02/2024 14h)
     - Titre

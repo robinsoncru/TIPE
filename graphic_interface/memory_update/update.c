@@ -57,6 +57,6 @@ void update(Game *g, GraphicCache *cache)
         // Autoplay take over
         if (cache->autoplay)
             // play_a_move(PAWNMOVERIGHT, random_index(g), g, cache);
-            play_a_move(EATRAFLE, random_index(g), g, cache);
+            play_a_move(PAWNMOVELEFT, random_index(g), g, cache);
     }
 }

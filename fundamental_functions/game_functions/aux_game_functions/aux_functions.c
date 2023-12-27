@@ -284,3 +284,50 @@ void AleatStormBreaks(Game *g, bool color)
     if (ind != VOID_INDEX && canStormBreaksForTheOthers(g, ind, color))
         AleatStormBreaks(g, !color);
 }
+
+queen_move_t CanMoveOrEatQueen(Game *g, bool color, int lig, int col, Case damier[NB_CASE_LG][NB_CASE_LG], int ind)
+{
+    // Check if the move of the queen is possible and move the queen or eat the next pawn in her path
+    lig = color ? NB_CASE_LG - lig - 1 : lig;
+    int pcol = get_pawn_value(g, color, ind, COL);
+    int plig = get_pawn_value(g, color, ind, LIG);
+    int dcol = col - pcol;
+    int dlig = lig - plig;
+    Case c;
+    if (abs(dlig) == abs(dcol) && dcol != 0)
+    {
+        int add_lig = dlig / abs(dlig);
+        int add_col = dcol / abs(dcol);
+        for (int i = 1; i < abs(dcol) + 1; i++)
+        {
+            c = damier[plig + add_lig * i][pcol + add_col * i];
+            if (!freeCase(c))
+            {
+                // Here the queen can eat a pawn
+                int new_lig = add_lig + plig + add_lig * i;
+                int new_col = add_col + pcol + add_col * i;
+                // Check if the queen can go here
+                if (c.pawn_color == !color && inGame(new_lig, new_col) && freeCase(damier[new_lig][new_col]) &&
+                    !isInCloud(g, !color, ind_from_coord(g, new_lig - add_lig, new_col - add_col)))
+                {
+                    queen_move_t res = {.pos_dame = {.i = new_lig, .j = new_col}, .pos_eaten_pawn = {.i = new_lig - add_lig, .j = new_col - add_col}};
+                    return res;
+                }
+                else if (c.pawn_color == color)
+                {
+                    // printf("jump sheep");
+                    queen_move_t res = {.pos_dame = {.i = VOID_INDEX, .j = VOID_INDEX}, .pos_eaten_pawn = {.i = VOID_INDEX, .j = VOID_INDEX}};
+                    return res; // Pb: the queen jumps a pawn of her own color or a ghost pawn
+                }
+            }
+        }
+        // Only move the pawn: nothing in her path
+        if (inGame(lig, col) && freeCase(damier[lig][col]))
+        {
+            queen_move_t res = {.pos_dame = {.i = lig, .j = col}, .pos_eaten_pawn = {.i = VOID_INDEX, .j = VOID_INDEX}};
+            return res;
+        }
+    }
+    queen_move_t res = {.pos_dame = {.i = VOID_INDEX, .j = VOID_INDEX}, .pos_eaten_pawn = {.i = VOID_INDEX, .j = VOID_INDEX}};
+    return res; // No case was found
+}

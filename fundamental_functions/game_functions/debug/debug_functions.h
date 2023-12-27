@@ -16,6 +16,7 @@ void print_pawn(pawn p, int ind);
 /* print check in the terminal and flush it */
 void error();
 void print_little_linked_list(maillon *l);
+void printv(char *s);
 
 
 #endif //  DEBUG_FUNCTIONS

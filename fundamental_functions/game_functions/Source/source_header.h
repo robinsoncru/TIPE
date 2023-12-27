@@ -104,6 +104,11 @@ typedef struct
     Path* currentRafle;
 } Game;
 
+typedef struct {
+    Coord pos_dame;
+    Coord pos_eaten_pawn;
+} queen_move_t;
+
 /* NOTES :
 
 pawn.alive:

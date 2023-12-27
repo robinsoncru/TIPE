@@ -133,6 +133,20 @@ void checkBiDepl(Game *g, GraphicCache *cache)
         alert(cache, IND_PB, ERROR_TICKS);
 }
 
+void checkQueenDepl(Game *g, GraphicCache *cache, bool iw, int lig, int col)
+{
+    queen_move_t tuple_coord = CanMoveOrEatQueen(g, iw, lig, col, g->damier, g->ind_move);
+    int dame_lig = tuple_coord.pos_dame.i;
+    int dame_col = tuple_coord.pos_dame.j;
+    if (basicChecks(g) && dame_lig != VOID_INDEX && dame_col != VOID_INDEX)
+    {
+        queenDepl(g, g->ind_move, iw, tuple_coord);
+        endTurnGraphics(g, cache);
+    }
+    else
+        alert(cache, IND_PB, ERROR_TICKS);
+}
+
 /*
 
 
@@ -155,21 +169,29 @@ void onLMBDown(Game *g, GraphicCache *cache)
 {
     SDL_Event event = cache->event;
 
-    if (g->indCheck == NEUTRAL_IND && g->ind_move == -1)
+    int lig = event.button.y / LG_CASE;
+    int col = event.button.x / LG_CASE;
+    bool iw = g->is_white;
+
+    if (g->indCheck == IND_NORMAL && g->ind_move == -1)
         // Je garde les conditions pour eviter un comportement indefini, je veux que selectPawn ne soit
         // appeler que sous des conditions bien precise
         selectPawn(g, event.button.x, event.button.y);
 
-    // else if (g->ind_move > -1 && g->allPawns[g->is_white][g->ind_move].queen)
-
-    //     // queenDepl(event.button.x / LG_CASE, event.button.y / LG_CASE, g);
-    //     // Attend le update de queenDepl
-    //     ;
-
-    else if (g->ind_move > -1)
+    else if (g->indCheck == IND_NORMAL && g->ind_move > VOID_INDEX)
     {
-
-        checkLienEnnemitie(event.button.y / LG_CASE, event.button.x / LG_CASE, g, cache);
+        printv("ind norm but ind move no");
+        if (get_pawn_value(g, iw, g->ind_move, QUEEN))
+        {
+            printv("now check if queen");
+            // If the pawn is a queen, then it is a queen depl, we verify if the movement is available
+            checkQueenDepl(g, cache, iw, lig, col);
+        }
+        else
+        {
+            // Else it is an ennemy link
+            checkLienEnnemitie(lig, col, g, cache);
+        }
     }
 
     else if (g->ind_move == VOID_INDEX)
@@ -179,7 +201,10 @@ void onLMBDown(Game *g, GraphicCache *cache)
 void onRMBDown(Game *g, GraphicCache *cache)
 {
     SDL_Event event = cache->event;
-    checkLienAmitie(event.button.y / LG_CASE, event.button.x / LG_CASE, g, cache);
+    if (g->indCheck == IND_NORMAL)
+        checkLienAmitie(event.button.y / LG_CASE, event.button.x / LG_CASE, g, cache);
+    else
+        printf("No pawn selected by right click");
 }
 
 // Moves the pawns to the left.
@@ -222,23 +247,28 @@ void onEscapeUp(Game *g, GraphicCache *cache)
     cache->is_playing = false;
 }
 
-void onUpUp(Game *g, GraphicCache *cache){
-    if (g->ind_move == NEUTRAL_IND || pathTreeDepth(g->currentTree) == 0) {
+void onUpUp(Game *g, GraphicCache *cache)
+{
+    if (g->ind_move == NEUTRAL_IND || pathTreeDepth(g->currentTree) == 0)
+    {
         alert(cache, IND_PB, ERROR_TICKS);
     }
-    else if(g->currentTree == emptyTree){
+    else if (g->currentTree == emptyTree)
+    {
         bool isWhite = g->is_white;
-        pawn* pawns = g->allPawns[isWhite];
-        pawn* NPawns = g->allPawns[!isWhite];
+        pawn *pawns = g->allPawns[isWhite];
+        pawn *NPawns = g->allPawns[!isWhite];
         g->currentTree = rafleTreeCalc(pawns, NPawns, g->damier, g->ind_move);
         cache->display_tree = true;
     }
-    else if (!cache->display_tree) {
+    else if (!cache->display_tree)
+    {
         cache->display_tree = true;
     }
-    else {
+    else
+    {
         printf("lazyRafle called\n");
-        Path* r = lazyRafle(g->currentTree);
+        Path *r = lazyRafle(g->currentTree);
         printf("eatRafle called\n");
         eatRafle(g, g->ind_move, g->is_white, g->currentTree, r);
         printf("pathFree called\n");
@@ -268,32 +298,39 @@ void onBUP(Game *g, GraphicCache *cache)
     checkBiDepl(g, cache);
 }
 
-void onLUP(Game *g) {
+void onLUP(Game *g)
+{
     print_little_linked_list(g->cloud[g->is_white]);
 }
 
-void onAUP(GraphicCache *cache) {
+void onAUP(GraphicCache *cache)
+{
     cache->autoplay = !cache->autoplay;
 }
 
-void onZUp(Game *g, GraphicCache *cache){
+void onZUp(Game *g, GraphicCache *cache)
+{
     int indEater = g->ind_move;
-    if (indEater == NEUTRAL_IND) {
+    if (indEater == NEUTRAL_IND)
+    {
         alert(cache, IND_PB, ERROR_TICKS);
     }
-    else if(pathTreeDepth(g->currentTree) > 0){
+    else if (pathTreeDepth(g->currentTree) > 0)
+    {
         cache->display_tree = !cache->display_tree;
     }
-    else { //no tree loaded ans the pawn is already selected
+    else
+    { // no tree loaded ans the pawn is already selected
         bool isWhite = g->is_white;
-        pawn* pawns = g->allPawns[isWhite];
-        pawn* NPawns = g->allPawns[!isWhite];
+        pawn *pawns = g->allPawns[isWhite];
+        pawn *NPawns = g->allPawns[!isWhite];
         g->currentTree = rafleTreeCalc(pawns, NPawns, g->damier, indEater);
         cache->display_tree = true;
     }
 }
 
-void onKUp(Game *g, GraphicCache *cache){
+void onKUp(Game *g, GraphicCache *cache)
+{
     print_damier(g->damier, g);
 }
 void onRUp(Game *g, GraphicCache *cache);

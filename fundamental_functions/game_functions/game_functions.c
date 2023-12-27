@@ -38,7 +38,6 @@ void pawnMove(Game *g, bool is_white, int ind, bool left)
     if (p->friendly != NEUTRAL_IND)
     {
         g->ind_move_back = p->friendly;
-        // implementer une fonction qui se charge de faire reculer
         // le pion indique a partir de son indice
     }
     endTurnGameManagement(g, is_white, ind, IND_CHANGE_ALLOWED, true);
@@ -52,7 +51,7 @@ void pawnMove(Game *g, bool is_white, int ind, bool left)
 
 
 
-   MOVE BACK FUNCTION
+   QUEEN FUNCTION
 
 
 
@@ -61,7 +60,25 @@ void pawnMove(Game *g, bool is_white, int ind, bool left)
 
 */
 
-// Queen functions
+void queenDepl(Game *g, int ind, bool color, queen_move_t tuple_coord)
+{
+    // Suppose que l'entree est valide
+    int lig = tuple_coord.pos_dame.i;
+    int col = tuple_coord.pos_dame.j;
+    int enn_lig = tuple_coord.pos_eaten_pawn.i;
+    int enn_col = tuple_coord.pos_eaten_pawn.j;
+    startTurnGameManagement(g);
+    change_pawn_place_new(g, g->damier, ind, color, lig, col);
+    if (enn_lig != -1 && enn_col != -1)
+        killPawn(g, g->damier, enn_lig, enn_col);
+
+    if (get_pawn_value(g, color, ind, FRIENDLY) != NEUTRAL_IND)
+    {
+        g->ind_move_back = get_pawn_value(g, color, ind, FRIENDLY);
+        // le pion indique a partir de son indice
+    }
+    endTurnGameManagement(g, color, ind, IND_CHANGE_ALLOWED, true);
+}
 
 /*
 
@@ -153,6 +170,23 @@ void lienAmitie(int lig, int col, Game *g)
     bool iw = g->is_white;
     lienAmitiePmetre(lig, col, g->damier, g->ind_move, iw, g);
 }
+
+/*
+
+
+
+
+
+
+
+   MOVE BACK FUNCTION
+
+
+
+
+
+
+*/
 
 // Functions to move back a pawn because the friend has just moved
 
@@ -251,8 +285,10 @@ void biDepl(Game *g, int ind, bool color)
     simplyPawnMove(g, color, ind, depl);
 
     // Maybe the clone pawn is near a pawn of the opposite color
-    if (canStormBreaks(g, newInd, color)) AleatStormBreaks(g, color);
-    else if (canStormBreaksForTheOthers(g, newInd, color)) AleatStormBreaks(g, !color); 
+    if (canStormBreaks(g, newInd, color))
+        AleatStormBreaks(g, color);
+    else if (canStormBreaksForTheOthers(g, newInd, color))
+        AleatStormBreaks(g, !color);
 
     endTurnGameManagement(g, color, ind, IND_CHANGE_ALLOWED, false);
 }
