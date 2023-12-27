@@ -9,6 +9,19 @@ int quit(Game *g, GraphicCache *cache)
     return cache->statut;
 }
 
+void test_start_game(Game *g)
+{
+    // très pratique pour promouvoir une dame en qq coups
+    for (int i = NB_PAWNS - 1; i > 1; i--)
+    {
+
+        killPawn(g, g->damier, g->allPawns[1][i].lig, g->allPawns[1][i].col);
+        killPawn(g, g->damier, g->allPawns[0][i].lig, g->allPawns[0][i].col);
+    }
+    change_pawn_place(g->allPawns[1], g->damier, 0, 4, 0);
+    change_pawn_place(g->allPawns[1], g->damier, 1, 4, 2);
+}
+
 int main(int argc, char *argv[])
 {
     // init the game
@@ -19,17 +32,7 @@ int main(int argc, char *argv[])
                           {RIGHT_FORWARD, RIGHT_BACK},
                           {RIGHT_BACK, RIGHT_FORWARD}};
 
-    
-    // Intitulé 'Mes conneries' très pratique pour promouvoir une dame en qq coups
-    // for (int i = NB_PAWNS - 1; i > 1; i--)
-    // {
-
-    //     killPawn(g, g->damier, g->allPawns[1][i].lig, g->allPawns[1][i].col);
-    //     killPawn(g, g->damier, g->allPawns[0][i].lig, g->allPawns[0][i].col);
-    // }
-    // change_pawn_place(g->allPawns[1], g->damier, 0, 4, 0);
-    // change_pawn_place(g->allPawns[1], g->damier, 1, 4, 2);
-
+    // test_start_game(g);
 
     // init the graphic cache
     GraphicCache *cache = initCache();
