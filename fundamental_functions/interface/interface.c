@@ -413,14 +413,3 @@ void prepareText(SDL_Renderer *render, text *txt, char *string)
     txt->rect->w = texW;
     txt->rect->h = texH;
 }
-
-//Memory Function
-void free_game(Game *g){
-    if (g->currentTree != emptyTree) {
-        pathTreeFree(g->currentTree);
-    }
-    if (g->currentRafle != NULL) {
-        pathFree(g->currentRafle);
-    }
-    free(g);
-}

@@ -90,6 +90,10 @@ void onInput(Game *g, GraphicCache *cache, SDL_Event event)
         case SDLK_k:
             onKUp(g, cache);
             break;
+
+        case SDLK_r:
+            onRUp(g, cache);
+            break;
         }
     }
 }

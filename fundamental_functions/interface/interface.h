@@ -59,9 +59,4 @@ void display_damier(SDL_Renderer *render, Game *g);
 void change_damier(Game *g);
 void prepareText(SDL_Renderer *render, text *txt, char *string);
 
-// Debug functions
-void error();
-
-// Memory functions
-void free_game(Game *g);
 #endif //INTERFACE_JEU_DAMES

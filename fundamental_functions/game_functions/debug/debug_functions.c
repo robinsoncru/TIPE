@@ -50,7 +50,8 @@ void print_damier(Case damier[NB_CASE_LG][NB_CASE_LG], Game *g)
             c = damier[i][j].pawn_color;
             if (ind != -1)
             {
-                printf("Case ligne %d col %d Coord pion %d %d\n", i, j, g->allPawns[c][ind].lig, g->allPawns[c][ind].col);
+                printf("Case ligne %d col %d Coord pion %d %d Ind Pion %d\n", i, j,
+                       g->allPawns[c][ind].lig, g->allPawns[c][ind].col, ind);
                 // print_pawn(g->allPawns[c][ind], ind);
                 // printf("---\n");
             }
@@ -84,7 +85,8 @@ void print_little_linked_list(maillon *l)
     }
 }
 
-void printv(char *s) {
+void printv(char *s)
+{
     // Affiche direct dans le terminal
     printf("%s\n", s);
     flush();

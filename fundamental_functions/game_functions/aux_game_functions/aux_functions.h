@@ -31,4 +31,7 @@ void AleatStormBreaks(Game *g, bool color);
 queen_move_t CanMoveOrEatQueen(Game *g, bool color, int lig, int col, Case damier[NB_CASE_LG][NB_CASE_LG], int ind);
 
 
+// Memory functions
+void free_game(Game *g);
+
 #endif // AUX_FUNCTIONS

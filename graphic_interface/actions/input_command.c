@@ -333,4 +333,23 @@ void onKUp(Game *g, GraphicCache *cache)
 {
     print_damier(g->damier, g);
 }
-void onRUp(Game *g, GraphicCache *cache);
+void onRUp(Game *g, GraphicCache *cache)
+{
+    onKUp(g, cache);
+    printf("\n");
+    Game *g_prev = record_game(g);
+    pawnMove(g, g->is_white, 4, false);
+    onKUp(g, cache);
+    annuler_coup(&g, g_prev);
+    if (g == g_prev) error();
+    else {printf("eror"); flush();}
+    printf("\n");
+    onKUp(g, cache);
+    printf("\n");
+    endTurnGameManagement(g, g->is_white, 4, IND_CHANGE_ALLOWED, false);
+    endTurnGraphics(g, cache);
+    printf("\n");
+    onKUp(g, cache);
+    cache->autoplay = false;
+    // Peut etre que l'assignation de g ne se fait que dans la fonction
+}

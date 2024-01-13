@@ -32,20 +32,6 @@ void copy_remove_pawn_from_index_to_index(Game *g, int indStart, int indArrive, 
     g->damier[get_pawn_value(g, color, indArrive, LIG)][get_pawn_value(g, color, indArrive, COL)].pawn_color = color;
 }
 
-// void pawn_default_value(pawn pawns[], int ind, bool color)
-// {
-//     /* Initialize pawn with default values, identify by its index and color
-//     Celle ci sera prochainement supprimee */
-//     pawns[ind].alive = false;
-//     pawns[ind].col = -1;
-//     pawns[ind].lig = -1;
-//     pawns[ind].queen = false;
-//     pawns[ind].color = color;
-//     pawns[ind].friendly = -1;
-//     pawns[ind].ennemy = -1;
-//     pawns[ind].pba = 1;
-// }
-
 void pawn_default_value_new(Game *g, int ind, bool color)
 {
     /* Initialize pawn with default values, identify by its index and color */
@@ -330,4 +316,16 @@ queen_move_t CanMoveOrEatQueen(Game *g, bool color, int lig, int col, Case damie
     }
     queen_move_t res = {.pos_dame = {.i = VOID_INDEX, .j = VOID_INDEX}, .pos_eaten_pawn = {.i = VOID_INDEX, .j = VOID_INDEX}};
     return res; // No case was found
+}
+
+
+//Memory Function
+void free_game(Game *g){
+    if (g->currentTree != emptyTree) {
+        pathTreeFree(g->currentTree);
+    }
+    if (g->currentRafle != NULL) {
+        pathFree(g->currentRafle);
+    }
+    free(g);
 }

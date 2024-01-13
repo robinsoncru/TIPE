@@ -26,5 +26,5 @@ void onAUP(GraphicCache *cache);
 void onZUp(Game* g, GraphicCache* cache);
 void onKUp(Game* g, GraphicCache* cache);
 //void onAUp(Game* g, GraphicCache* cache);
-//void onRUp(Game* g, GraphicCache* cache);
+void onRUp(Game* g, GraphicCache* cache);
 #endif //INPUT_COMMAND

@@ -24,3 +24,32 @@ int pop(maillon *l);
 
 maillon *create_list();
 /* Creer une liste vide */
+
+typedef struct k_uplet k_uplet;
+
+struct k_uplet
+{
+    int indPawnMoved;
+    int indPawnMovedBack;
+    int indPawnFriendlyMoved;
+    int indPawnEnnemyMoved;
+    int indQueenPromoted;
+    int indQueenMoved;
+};
+
+typedef struct Kmaillon Kmaillon;
+
+struct Kmaillon
+{
+    k_uplet indices;
+    Kmaillon *next;
+};
+
+void pushK(Kmaillon *l, int indPawnMoved, int indPawnMovedBack, int indPawnFriendlyMoved,
+           int indPawnEnnemyMoved, int indQueenPromoted, int indQueenMoved);
+
+bool is_emptyK(Kmaillon *l);
+
+k_uplet popK(Kmaillon *l);
+
+Kmaillon *create_listK();

@@ -59,8 +59,9 @@ GUIDE D'UTILISATION:
 
 Todo list :
 - Implementer l'IA:
--- Victor G: je fais fais les fonctions de mouvement retour (comme NonLoggingChangeForEat mais pour les autres)
+-- Victor G: je fais fais les fonctions de mouvement retour (comme NonLoggingChangeForEat mais pour les autres): idée enregistrer les modifications a chaque coup dans une liste chainé en lisant le jeu (le cloud, l'index) et avec un code couleur, faire les changement inverse nécessaire pour chaque action du code couleur
 -- Victor D: aspect theorique de la gestion aléatoire
+-- Lister les coups possibles (canMove, canMoveQueen, ...) avec un indice donné lorsque la machine à le trait, dans une liste chainé
 
 
 - Etape 1 : (du 18/01/2024 9h au 01/02/2024 14h)
