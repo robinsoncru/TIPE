@@ -178,9 +178,9 @@ void createPawn(Game *g, bool color, int i, int j)
 
 void simplyPawnMove(Game *g, bool is_white, int ind, bool left)
 {
-    pawn *p = &(g->allPawns[is_white][ind]);
-    int i = p->lig;
-    int j = p->col;
+    pawn p = g->allPawns[is_white][ind];
+    int i = p.lig;
+    int j = p.col;
     int di = is_white ? 1 : -1;
     int dj = left ? -1 : 1;
 
@@ -269,6 +269,53 @@ void AleatStormBreaks(Game *g, bool color)
     flush();
     if (ind != VOID_INDEX && canStormBreaksForTheOthers(g, ind, color))
         AleatStormBreaks(g, !color);
+}
+
+void AleatStormBreaksNoGraphicEffect(Game *g, bool color)
+{
+    maillon *l = g->cloud[color];
+    int ind = VOID_INDEX;
+
+    while (!is_empty(l))
+    {
+        ind = get(l); // Here is the modif
+
+        l=l->next;
+        if (is_empty(l))
+        {
+            put_pawn_value(g, color, ind, PBA, 1);
+            break;
+        }
+        else
+        {
+            killPawn(g, g->damier, get_pawn_value(g, color, ind, LIG), get_pawn_value(g, color, ind, COL)); // Seg
+        }
+    }
+    g->lengthCloud[color] = 0;
+
+
+    // C'est une fonction recursive car le pion foudroyer peut etre pres du nuage de la couleur opposee. On verifie donc
+    // dans l'autre nuage
+
+    printf("%d %d %d %d", get_pawn_value(g, color, ind, LIG), get_pawn_value(g, color, ind, COL), ind, color);
+    flush();
+    if (ind != VOID_INDEX && canStormBreaksForTheOthers(g, ind, color))
+        AleatStormBreaksNoGraphicEffect(g, !color);
+}
+
+void handleCloudNoGraphicEffect(Game *g, int indMovedPawn) {
+    bool is_white = g->is_white;
+    // pawn *pprime = &(g->allPawns[is_white][indMovedPawn]); // why ??? Ask Adam
+    if (canStormBreaks(g, indMovedPawn, is_white))
+    {
+        AleatStormBreaksNoGraphicEffect(g, is_white);
+        g->cloud[is_white] = create_list();
+    }
+    else if (canStormBreaksForTheOthers(g, indMovedPawn, is_white))
+    {
+        // AleatStormBreaksNoGraphicEffect(g, !is_white);
+        g->cloud[!is_white] = create_list(); 
+    }
 }
 
 queen_move_t CanMoveOrEatQueen(Game *g, bool color, int lig, int col, Case damier[NB_CASE_LG][NB_CASE_LG], int ind)

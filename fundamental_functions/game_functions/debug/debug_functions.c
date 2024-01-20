@@ -50,8 +50,8 @@ void print_damier(Case damier[NB_CASE_LG][NB_CASE_LG], Game *g)
             c = damier[i][j].pawn_color;
             if (ind != -1)
             {
-                printf("Case ligne %d col %d Coord pion %d %d Ind Pion %d\n", i, j,
-                       g->allPawns[c][ind].lig, g->allPawns[c][ind].col, ind);
+                printf("Case lig %d col %d Ind Pion %d color %d In cloud %d\n",
+                       g->allPawns[c][ind].lig, g->allPawns[c][ind].col, ind, c, 1 != g->allPawns[c][ind].pba);
                 // print_pawn(g->allPawns[c][ind], ind);
                 // printf("---\n");
             }
@@ -90,4 +90,9 @@ void printv(char *s)
     // Affiche direct dans le terminal
     printf("%s\n", s);
     flush();
+}
+
+void picture_this(Game *g) {
+    print_damier(g->damier, g);
+    error();
 }

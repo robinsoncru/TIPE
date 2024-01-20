@@ -34,6 +34,13 @@ int pop(maillon *l)
     return k;
 }
 
+int get(maillon *l)
+{
+    /* Supprime et renvoie le maillon en première position */
+    assert(!is_empty(l));
+    return l->next->ind;
+}
+
 // For the other Kchain_list
 
 void pushK(Kmaillon *l, int indPawnMoved, int indPawnMovedBack, int indPawnFriendlyMoved,

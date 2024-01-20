@@ -17,6 +17,7 @@ void print_pawn(pawn p, int ind);
 void error();
 void print_little_linked_list(maillon *l);
 void printv(char *s);
+void picture_this(Game *g);
 
 
 #endif //  DEBUG_FUNCTIONS

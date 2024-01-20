@@ -90,7 +90,8 @@ void put_pawn_value(Game *g, bool color, int ind, int wich_pmetre_modify, int va
 
 int get_pawn_value(Game *g, bool color, int ind, int wich_pmetre_get)
 {
-    pawn *p = &(g->allPawns[color][ind]);
+    pawn *p = &(g->allPawns[color][ind]); // error
+
     /* 1 : alive |2 : ennemy |3 : friendly |4 : queen |5 : lig |6 : col |7 : pba */
     switch (wich_pmetre_get)
     {

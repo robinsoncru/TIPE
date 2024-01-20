@@ -23,6 +23,23 @@ void moveBackGameManagement(Game *g)
     g->ind_move_back = VOID_INDEX;
 }
 
+void endTurnGameManagementSimple(Game *g, int pawn_played) {
+    // Appeler toujours apres endTurnGameManagement lorsqu'il n'y a plus d'appel recursif sur les coups à faire
+    if (canBePromoted(g, g->is_white, pawn_played))
+    {
+        promote(g, g->is_white, pawn_played);
+    } // A verif
+
+    g->is_white = !g->is_white;
+
+    if (g->currentTree != emptyTree) {
+        PathTree* m = g->currentTree;
+        g->currentTree = NULL;
+        pathTreeFree(m);
+    }    
+
+}
+
 void endTurnGameManagement(Game *g, bool is_white, int indMovedPawn, int indCheck, bool doMoveBack)
 {
     // A penser : pour l'implementation des rafles, il faudrait changer la manniere de manger

@@ -109,6 +109,7 @@ typedef struct {
     Coord pos_eaten_pawn;
 } queen_move_t;
 
+
 /* NOTES :
 
 pawn.alive:

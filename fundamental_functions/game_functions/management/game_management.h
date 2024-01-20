@@ -6,6 +6,5 @@
 void moveBackGameManagement(Game *g);
 void endTurnGameManagement(Game *g, bool is_white, int indMovedPawn, int indCheck, bool doMoveBack);
 void startTurnGameManagement(Game *g);
-
-
+void endTurnGameManagementSimple(Game *g, int pawn_played);
 #endif // GAME_MANAGEMENT

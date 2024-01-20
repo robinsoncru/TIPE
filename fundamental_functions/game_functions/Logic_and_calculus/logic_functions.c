@@ -129,7 +129,8 @@ bool canBeEnnemy(Game *g, int ind, bool color, Case c)
 
 bool isInCloud(Game *g, bool color, int ind)
 {
-    return g->allPawns[color][ind].pba > 1;
+    printv("in");
+    return (g->allPawns[color][ind].pba > 1);
 }
 
 bool canMoveBack(Game *g, bool is_white, int ind, bool left)
@@ -163,19 +164,30 @@ bool canPromotion(Game *g)
 // Seul un pion plein peut faire eclater le nuage
 bool canStormBreaks(Game *g, int ind, int color)
 {
-    if (!isInCloud(g, color, ind)) return false;
+    if (!isInCloud(g, color, ind)) return false;        printv("storm break gohst");
+
     int di, dj;
+    printv("assignation i j");
     int i = get_pawn_value(g, color, ind, LIG);
     int j = get_pawn_value(g, color, ind, COL);
     Case c;
     for (int k = 0; k < 4; k++)
     {
 
+        printv("dir");
         getDirsFromCode(k, &di, &dj);
+        printv("c damier");
         c = g->damier[i + di][j + dj];
+        printv("g allpawns");
+        g->allPawns[!color][c.ind_pawn].pba > 1;
+        error();
+        isInCloud(g, !color, c.ind_pawn); // Seg fault souvent ici
+        error();
         if (!freeCase(c) && c.pawn_color != color && !isInCloud(g, !color, c.ind_pawn))
         {
+            // Ca plante dans le isInCloud dans un damier copié au bout d'un nombre arbitraire de tour
             return true;
+            // Soupconne un probleme de seg fault qui se refile de fonction en fonction
         }
     }
     return false;
@@ -183,7 +195,8 @@ bool canStormBreaks(Game *g, int ind, int color)
 
 // Seul un pion plein peut faire eclater le nuage
 bool canStormBreaksForTheOthers(Game *g, int ind, int color)
-{
+{        printv("storm break other");
+
     if (isInCloud(g, color, ind))
         return false;
     int di, dj;
@@ -193,12 +206,12 @@ bool canStormBreaksForTheOthers(Game *g, int ind, int color)
     for (int k = 0; k < 4; k++)
     {
 
-        getDirsFromCode(k, &di, &dj);
-        c = g->damier[i + di][j + dj];
-        if (!freeCase(c) && c.pawn_color != color && isInCloud(g, !color, c.ind_pawn))
-        {
-            return true;
-        }
+        // getDirsFromCode(k, &di, &dj);
+        // c = g->damier[i + di][j + dj];
+        // if (!freeCase(c) && c.pawn_color != color && isInCloud(g, !color, c.ind_pawn))
+        // {
+        //     return true;
+        // }
     }
     return false;
 }

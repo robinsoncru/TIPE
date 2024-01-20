@@ -22,6 +22,9 @@ bool is_empty(maillon *l);
 int pop(maillon *l);
 /* Supprime et renvoie le maillon en première position */
 
+int get(maillon *l);
+/* Renvoie le premier maillon */
+
 maillon *create_list();
 /* Creer une liste vide */
 

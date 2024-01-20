@@ -1,34 +1,58 @@
 #include "play_back_game_functions.h"
 
-void pawnMovedBack(Game *g, bool is_white, int ind, bool left) {
-    // Redéplace juste le pion en supposant que les amis ont été redéplacés avant
-
-    is_white = !is_white;
-    // With the call of the previous function, the color changed
-   
-    pawn *p = &(g->allPawns[is_white][ind]);
-    int i = p->lig;
-    int j = p->col;
-    int di = is_white ? -1 : 1;
-    int dj = left ? 1 : -1;
+int pawnMoveNoGraphicEffect(Game *g, bool is_white, int ind, bool left)
+{
+    pawn p = g->allPawns[is_white][ind];
+    int i = p.lig;
+    int j = p.col;
+    int di = is_white ? 1 : -1;
+    int dj = left ? -1 : 1;
 
     change_pawn_place_new(g, g->damier, ind, is_white, i + di, j + dj);
+    if (p.friendly != NEUTRAL_IND)
+    {
+        return p.friendly;
+        // le pion indique a partir de son indice
+    }
+    return VOID_INDEX;
 }
 
-Game *record_game(Game *g) {
-    Game *record_game = malloc(sizeof(Game));
-    *record_game = *g;
-    return record_game;
+void pawnMoveBackNoGraphicEffect(Game *g, bool is_white, int ind, bool left)
+{
+    pawn p = g->allPawns[is_white][ind];
+    int i = p.lig;
+    int j = p.col;
+    int di = is_white ? 1 : -1;
+    int dj = left ? -1 : 1;
+
+    change_pawn_place_new(g, g->damier, ind, is_white, i - di, j - dj);
 }
 
-void annuler_coup(Game **g, Game *previous_g) {
-    // Warning: mettre l'adresse du pointeur g pour modifier par effet de bord
-    // free_game(*g);
-    *g=previous_g;
-}
+int biDeplNoGraphicEffect(Game *g, bool color, int ind) {
+    // On suppose le coup legal
+    bool depl = int_to_bool(rand() % 2);
+    // Depl le pion a droite ou a gauche et creera l'autre ghost pawn de l'autre cote
+    int dj = depl ? 1 : -1;
+    int di = color ? 1 : -1;
+    // Creer un pion a droite ou a gauche aleatoirement
+    int newLig = get_pawn_value(g, color, ind, LIG) + di;
+    int newCol = get_pawn_value(g, color, ind, COL) + dj;
+    createPawn(g, color, newLig, newCol);
+    int newInd = g->damier[newLig][newCol].ind_pawn;
+    put_pawn_value(g, color, newInd, PBA, get_pawn_value(g, color, ind, PBA) * 2);
 
-// VIRER TOUT CA ET FAIRE ENREGISTRER TOUTES LES MODIFS DANS UNE LISTE CHAINE AVEC APPEL FONCTION ET 
-// DANS GAME G
+    // Rajoute dans le cloud
+    if (!isInCloud(g, color, ind))
+        push(g->cloud[color], ind);
+    push(g->cloud[color], newInd);
+
+    g->lengthCloud[color]++;
+
+    // Deplace le pion de l'autre cote
+    put_pawn_value(g, color, ind, PBA, get_pawn_value(g, color, ind, PBA) * 2);
+    simplyPawnMove(g, color, ind, depl);
+
+}
 
 // void moveBack(Game *g, Kmaillon *l); // ?
 
