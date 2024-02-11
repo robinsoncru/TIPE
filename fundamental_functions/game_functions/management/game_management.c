@@ -30,7 +30,7 @@ void endTurnGameManagementSimple(Game *g, int pawn_played) {
         promote(g, g->is_white, pawn_played);
     } // A verif
 
-    g->is_white = !g->is_white;
+    // g->is_white = !g->is_white;
 
     if (g->currentTree != emptyTree) {
         PathTree* m = g->currentTree;

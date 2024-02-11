@@ -8,7 +8,7 @@
 #include <assert.h>
 #include <time.h>
 
-#include "../../coord/coord.h"
+#include "../../coord/little_linked_list.h"
 #include "../../../rafle/calc/path_tree.h"
 #include "../../../rafle/rafle_choice/path_struct.h"
 
@@ -66,6 +66,10 @@
 // #define MY_GUARD 1
 // En evaluant dans les files incluant ce file, on évite la double inclusion
 
+// gameplay
+#define GDEPL 1
+#define GCLOUD 2
+
 // Game structure
 typedef struct
 {
@@ -85,8 +89,8 @@ typedef struct
 
 typedef struct
 {
-    Case damier[NB_CASE_LG][NB_CASE_LG];
-    pawn allPawns[2][2 * NB_PAWNS];
+    Case **damier;
+    pawn *allPawns[2];
     // In the impossible but theorical case where for instance whites promote all their pawns and unfortunately they all
     // become blacks, bad choice :(
     int nb_pawns[2];
@@ -108,6 +112,22 @@ typedef struct {
     Coord pos_dame;
     Coord pos_eaten_pawn;
 } queen_move_t;
+
+typedef struct {
+    int ind;
+    int pba;
+} ind_pba_t;
+
+typedef struct {
+    int ind;
+    bool b;
+} ind_bool_t;
+
+typedef struct {
+    int friend;
+    int foe;
+    bool queen;
+} primary_data_t;
 
 
 /* NOTES :

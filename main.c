@@ -27,12 +27,12 @@ int main(int argc, char *argv[])
     // init the game
     Game *g = create_game();
 
-    int allMoves[4][2] = {{LEFT_FORWARD, LEFT_BACK},
-                          {LEFT_BACK, LEFT_FORWARD},
-                          {RIGHT_FORWARD, RIGHT_BACK},
-                          {RIGHT_BACK, RIGHT_FORWARD}};
+    // int allMoves[4][2] = {{LEFT_FORWARD, LEFT_BACK},
+    //                       {LEFT_BACK, LEFT_FORWARD},
+    //                       {RIGHT_FORWARD, RIGHT_BACK},
+    //                       {RIGHT_BACK, RIGHT_FORWARD}};
 
-    // test_start_game(g);
+    test_start_game(g);
 
     // init the graphic cache
     GraphicCache *cache = initCache();

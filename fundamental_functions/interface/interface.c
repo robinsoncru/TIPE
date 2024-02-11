@@ -92,12 +92,6 @@ void drawRect(SDL_Renderer *render, SDL_Color color, const SDL_Rect rect)
     // printf("%d %d %d %d", rect.h, rect.w, rect.x, rect.y);
 }
 
-void drawRects(SDL_Renderer *render, SDL_Color color, const SDL_Rect rect[], int len)
-{
-    SDL_SetRenderDrawColor(render, color.r, color.g, color.b, color.a);
-    SDL_RenderFillRects(render, rect, len);
-}
-
 void draw_little_square(SDL_Renderer *render, int dim, Case c, SDL_Color color)
 {
     SDL_Rect fr;
@@ -127,7 +121,7 @@ void drawLosange(SDL_Renderer *render, Case c, pawn p, Game *g)
     vertices[5].position.x = c.rect.x + LG_CASE / 2;
     vertices[5].position.y = c.rect.y + LG_CASE;
 
-    int colory = p.color ? 255 - NUANCE_EFFECT*(p.pba-1) : NUANCE_EFFECT*(p.pba-1);
+    int colory = p.color ? 255 - NUANCE_EFFECT * (p.pba - 1) : NUANCE_EFFECT * (p.pba - 1);
     // En fonction de la probabilite, le pion est plus ou moins clair ou fonce (selon qu'il soit noir ou blanc)
 
     for (int i = 0; i < 6; i++)
@@ -186,7 +180,7 @@ void selectPawn(Game *g, int x_mouse, int y_mouse)
     // printf("%d, %d\n", x_mouse, y_mouse);
     int lig = y_mouse / LG_CASE;
     int col = x_mouse / LG_CASE;
-    printf("lig %d col %d\n", lig, col);
+    // printf("lig %d col %d\n", lig, col);
     // fflush(stdout);
     if (g->damier[lig][col].pawn_color == g->is_white)
     {
@@ -215,7 +209,7 @@ void selectPawn(Game *g, int x_mouse, int y_mouse)
 
 */
 
-void init_pawn(Game *g, Case damier[NB_CASE_LG][NB_CASE_LG], int i, int init_place, int add, bool init_is_white)
+void init_pawn(Game *g, Case **damier, int i, int init_place, int add, bool init_is_white)
 {
     if (init_is_white)
     {
@@ -294,7 +288,7 @@ void init_pawns(Game *g, bool init_is_white)
     }
 }
 
-void init_damier(Case damier[NB_CASE_LG][NB_CASE_LG])
+void init_damier(Case **damier)
 {
     for (int i = 0; i < NB_CASE_LG; i++)
     {
@@ -317,6 +311,16 @@ void init_damier(Case damier[NB_CASE_LG][NB_CASE_LG])
 Game *create_game()
 {
     Game *g = malloc(sizeof(Game));
+
+    g->damier = malloc(NB_CASE * sizeof(Case *));
+    for (int i = 0; i < NB_CASE; i++)
+    {
+        g->damier[i] = malloc(NB_CASE * sizeof(Case));
+    }
+
+    g->allPawns[0] = malloc(NB_PAWNS * 2 * sizeof(pawn));
+    g->allPawns[1] = malloc(NB_PAWNS * 2 * sizeof(pawn));
+
     g->indCheck = IND_NORMAL;
     g->is_white = true;
     init_damier(g->damier);

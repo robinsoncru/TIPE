@@ -17,19 +17,25 @@
 
 */
 
+// On peut améliorer cette fonction
 void copy_remove_pawn_from_index_to_index(Game *g, int indStart, int indArrive, bool color)
 {
-    g->damier[get_pawn_value(g, color, indStart, LIG)][get_pawn_value(g, color, indStart, COL)].ind_pawn = VOID_INDEX;
-
-    for (int k = 1; k < 9; k++)
+    if (indStart != indArrive)
     {
-        put_pawn_value(g, color, indArrive, k, get_pawn_value(g, color, indStart, k));
-    }
-    pawn_default_value_new(g, indStart, color);
+        int lig = get_pawn_value(g, color, indStart, LIG);
+        int col = get_pawn_value(g, color, indStart, COL);
+        g->damier[lig][col].ind_pawn = VOID_INDEX;
 
-    // Sur le damier
-    g->damier[get_pawn_value(g, color, indArrive, LIG)][get_pawn_value(g, color, indArrive, COL)].ind_pawn = indArrive;
-    g->damier[get_pawn_value(g, color, indArrive, LIG)][get_pawn_value(g, color, indArrive, COL)].pawn_color = color;
+        for (int k = 1; k < 9; k++)
+        {
+            put_pawn_value(g, color, indArrive, k, get_pawn_value(g, color, indStart, k));
+        }
+        pawn_default_value_new(g, indStart, color);
+
+        // Sur le damier
+        g->damier[get_pawn_value(g, color, indArrive, LIG)][get_pawn_value(g, color, indArrive, COL)].ind_pawn = indArrive;
+        g->damier[get_pawn_value(g, color, indArrive, LIG)][get_pawn_value(g, color, indArrive, COL)].pawn_color = color;
+    }
 }
 
 void pawn_default_value_new(Game *g, int ind, bool color)
@@ -49,9 +55,10 @@ void pawn_default_value_new(Game *g, int ind, bool color)
 // Kills the indicated pawn and applies all the necessary rules
 // Les ghosts pawn ne peuvent pas se manger entre eux: attention dans les fonctions eatPawn. Et un pion plein detruit le nuage avant de
 // manger un ghost pawn
-void killPawn(Game *g, Case damier[NB_CASE_LG][NB_CASE_LG], int i, int j)
+void killPawn(Game *g, Case **damier, int i, int j)
 {
     // printf("i, j = %d, %d\n", i, j);
+    // DO NOT remove a pawn from the cloud
     assert(i != -1 && j != -1);
     if (!freeCase(damier[i][j]))
     {
@@ -76,6 +83,12 @@ void killPawn(Game *g, Case damier[NB_CASE_LG][NB_CASE_LG], int i, int j)
     }
 }
 
+void killPawnByInd(Game *g, bool color, int ind) {
+    int i = get_pawn_value(g, color, ind, LIG);
+    int j = get_pawn_value(g, color, ind, COL);
+    killPawn(g, g->damier, i, j);
+}
+
 /*if (!freeCase(damier[i][j]))
     {
         int indPawn = damier[i][j].ind_pawn;
@@ -95,7 +108,7 @@ void killPawn(Game *g, Case damier[NB_CASE_LG][NB_CASE_LG], int i, int j)
 /* Put the pawn in a specific case (lig, col).
 Useful for queen_move and can be used by us
 to go faster for checks : place pawns where we want */
-void change_pawn_place(pawn pawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int ind, int lig, int col)
+void change_pawn_place(pawn *pawns, Case **damier, int ind, int lig, int col)
 {
     damier[pawns[ind].lig][pawns[ind].col].ind_pawn = -1;
     pawns[ind].lig = lig;
@@ -104,7 +117,7 @@ void change_pawn_place(pawn pawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int in
     damier[lig][col].pawn_color = pawns[ind].color;
 }
 
-void change_pawn_place_new(Game *g, Case damier[NB_CASE_LG][NB_CASE_LG], int ind, bool color, int lig, int col)
+void change_pawn_place_new(Game *g, Case **damier, int ind, bool color, int lig, int col)
 {
     damier[get_pawn_value(g, color, ind, LIG)][get_pawn_value(g, color, ind, COL)].ind_pawn = -1;
     put_pawn_value(g, color, ind, LIG, lig);
@@ -130,7 +143,7 @@ void change_pawn_place_new(Game *g, Case damier[NB_CASE_LG][NB_CASE_LG], int ind
 // et deux entiers add0 et add1 qui indiquent la direction dans laquelle manger
 // Sortie : modifie le plateau de maniere a ce que le pion d'indice ind ait mange dans la direction indique
 // et retourne l'index du pion mange
-int nonLoggingChangeForEat(pawn pawns[], pawn NPawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int indEater, int i, int j, int add0, int add1)
+int nonLoggingChangeForEat(pawn *pawns, pawn *NPawns, Case **damier, int indEater, int i, int j, int add0, int add1)
 {
 
     int indVictim = damier[i + add0][j + add1].ind_pawn;
@@ -271,54 +284,45 @@ void AleatStormBreaks(Game *g, bool color)
         AleatStormBreaks(g, !color);
 }
 
-void AleatStormBreaksNoGraphicEffect(Game *g, bool color)
+void AleatStormBreaksNGE(Game *g, bool color, cloud_chain *load, ind_pba_t *survivor)
 {
+    // Liste chaine et valeur du pawn survivor modifies par effet de bord
     maillon *l = g->cloud[color];
     int ind = VOID_INDEX;
 
     while (!is_empty(l))
     {
-        ind = get(l); // Here is the modif
+        ind = pop(l);
 
-        l=l->next;
         if (is_empty(l))
         {
+            survivor->ind = ind;
+            survivor->pba = get_pawn_value(g, color, ind, PBA);
             put_pawn_value(g, color, ind, PBA, 1);
             break;
         }
         else
         {
+            tcloud k = {.coord = {.i = get_pawn_value(g, color, ind, LIG),
+                                  .j = get_pawn_value(g, color, ind, COL)},
+                        .pba = get_pawn_value(g, color, ind, PBA)};
+            cpush(load, k);
             killPawn(g, g->damier, get_pawn_value(g, color, ind, LIG), get_pawn_value(g, color, ind, COL)); // Seg
         }
     }
     g->lengthCloud[color] = 0;
-
-
-    // C'est une fonction recursive car le pion foudroyer peut etre pres du nuage de la couleur opposee. On verifie donc
-    // dans l'autre nuage
-
-    printf("%d %d %d %d", get_pawn_value(g, color, ind, LIG), get_pawn_value(g, color, ind, COL), ind, color);
-    flush();
-    if (ind != VOID_INDEX && canStormBreaksForTheOthers(g, ind, color))
-        AleatStormBreaksNoGraphicEffect(g, !color);
 }
 
-void handleCloudNoGraphicEffect(Game *g, int indMovedPawn) {
+void handleCloudDuePawnMoveNGE(Game *g, int indMovedPawn, ind_pba_t *survivor, cloud_chain *l)
+{
     bool is_white = g->is_white;
-    // pawn *pprime = &(g->allPawns[is_white][indMovedPawn]); // why ??? Ask Adam
-    if (canStormBreaks(g, indMovedPawn, is_white))
+    if (canStormBreaksForTheOthers(g, indMovedPawn, is_white))
     {
-        AleatStormBreaksNoGraphicEffect(g, is_white);
-        g->cloud[is_white] = create_list();
-    }
-    else if (canStormBreaksForTheOthers(g, indMovedPawn, is_white))
-    {
-        // AleatStormBreaksNoGraphicEffect(g, !is_white);
-        g->cloud[!is_white] = create_list(); 
+        AleatStormBreaksNGE(g, !is_white, l, survivor);
     }
 }
 
-queen_move_t CanMoveOrEatQueen(Game *g, bool color, int lig, int col, Case damier[NB_CASE_LG][NB_CASE_LG], int ind)
+queen_move_t CanMoveOrEatQueen(Game *g, bool color, int lig, int col, Case **damier, int ind)
 {
     // Check if the move of the queen is possible and move the queen or eat the next pawn in her path
     lig = color ? NB_CASE_LG - lig - 1 : lig;
@@ -365,13 +369,24 @@ queen_move_t CanMoveOrEatQueen(Game *g, bool color, int lig, int col, Case damie
     return res; // No case was found
 }
 
+void freeCloud(maillon *l) {
+    while (!is_empty(l)) {
+        pop(l);
+    }
+    free(l);
+}
 
-//Memory Function
-void free_game(Game *g){
-    if (g->currentTree != emptyTree) {
+// Memory Function
+void free_game(Game *g)
+{
+    freeCloud(g->cloud[true]);
+    freeCloud(g->cloud[false]);
+    if (g->currentTree != emptyTree)
+    {
         pathTreeFree(g->currentTree);
     }
-    if (g->currentRafle != NULL) {
+    if (g->currentRafle != NULL)
+    {
         pathFree(g->currentRafle);
     }
     free(g);

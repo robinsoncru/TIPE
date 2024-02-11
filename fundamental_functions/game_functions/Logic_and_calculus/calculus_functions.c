@@ -84,6 +84,7 @@ void put_pawn_value(Game *g, bool color, int ind, int wich_pmetre_modify, int va
         break;
     default:
         // Do nothing
+        printv("put pawn value error");
         break;
     }
 }
@@ -113,6 +114,7 @@ int get_pawn_value(Game *g, bool color, int ind, int wich_pmetre_get)
         return p->color;
     default:
         // Do nothing
+        printv("get pawn value error");
         return VOID_INDEX;
     }
 }

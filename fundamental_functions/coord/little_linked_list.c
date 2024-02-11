@@ -41,6 +41,42 @@ int get(maillon *l)
     return l->next->ind;
 }
 
+// For the cloud chain
+
+void cpush(cloud_chain *l, tcloud k) {
+    cloud_chain *m = malloc(sizeof(cloud_chain));
+    m->data = k;
+    m->next = l->next;
+    l->next = m;
+}
+
+bool cis_empty(cloud_chain *l)
+{
+    return (l->next == NULL);
+}
+
+cloud_chain *ccreate_list()
+{
+    /* Creer une liste vide */
+    cloud_chain *l = malloc(sizeof(cloud_chain));
+    tcloud k = {.coord = {.i = -1, .j = -1}, .pba = -1};
+    l->data = k;
+    l->next = NULL;
+    return l;
+}
+
+tcloud cpop(cloud_chain *l)
+{
+    /* Supprime et renvoie le maillon en première position */
+    assert(!cis_empty(l));
+    cloud_chain *m = l->next;
+    l->next = m->next;
+    tcloud k = m->data;
+    free(m);
+    return k;
+}
+
+
 // For the other Kchain_list
 
 void pushK(Kmaillon *l, int indPawnMoved, int indPawnMovedBack, int indPawnFriendlyMoved,

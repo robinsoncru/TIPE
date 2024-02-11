@@ -97,7 +97,7 @@ void queenDepl(Game *g, int ind, bool color, queen_move_t tuple_coord)
 
 */
 
-void promotionPmetre(pawn pawns[], bool is_white, Case damier[NB_CASE_LG][NB_CASE_LG], int ind, Game *g)
+void promotionPmetre(pawn *pawns, bool is_white, Case **damier, int ind, Game *g)
 {
     startTurnGameManagement(g);
     /* Promote the pawn at the ind in pmetre : do nothing, become a queen or become an ennemy pawn */
@@ -151,7 +151,7 @@ void promotion(Game *g)
 
 */
 
-void lienAmitiePmetre(int lig, int col, Case damier[NB_CASE_LG][NB_CASE_LG], int ind, bool is_white, Game *g)
+void lienAmitiePmetre(int lig, int col, Case **damier, int ind, bool is_white, Game *g)
 {
     /* Lie d'amitie le pion en indice avec le pion se trouvant en coord (lig, col) sur le damier, en verifiant qu'il est bien de
     couleur opposé et qu'il existe. Gère le pmetre Pawn.friendly. Si on lie d'amitié un pion qui était déjà ami, l'action n'a pas lieu et
@@ -216,7 +216,7 @@ void moveBack(Game *g)
 
 */
 
-void lienEnnemitiePmetre(bool is_white, int lig, int col, Case damier[NB_CASE_LG][NB_CASE_LG], int ind, Game *g)
+void lienEnnemitiePmetre(bool is_white, int lig, int col, Case **damier, int ind, Game *g)
 {
     /* Declare ennemis pour la vie le pion en indice avec le pion se trouvant en coord (lig, col) sur le damier, en verifiant qu'il est bien de
     couleur opposé et qu'il existe. Gère le pmetre Game.friendly. Si on declare ennemi un pion qui était déjà ennemi, le coup n'est pas joué

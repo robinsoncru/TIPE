@@ -3,5 +3,5 @@
 #include "../../fundamental_functions/interface/interface.h"
 #include "../calc/path_tree.h"
 
-void pathTreeDisplay(SDL_Renderer* render, Case damier[NB_CASE_LG][NB_CASE_LG], PathTree* t);
+void pathTreeDisplay(SDL_Renderer* render, Case **damier, PathTree* t);
 #endif

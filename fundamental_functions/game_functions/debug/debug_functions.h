@@ -8,7 +8,7 @@ void flush();
 // si la condition n'est pas respectee
 void assertAndLog(bool condition, char *message);
 // Affiche ligne, colonne et coordonnees des cases
-void print_damier(Case damier[NB_CASE_LG][NB_CASE_LG], Game *g);
+void print_damier(Case **damier, Game *g);
 
 // Affiche les caracteristiques des Pions
 void print_pawns(Game *g);

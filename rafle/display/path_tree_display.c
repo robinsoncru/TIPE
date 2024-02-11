@@ -13,7 +13,7 @@ void drawLineBetweenCases(SDL_Renderer* render, Case c0, Case c1){
     drawLine(render, orange, x0, y0, x1, y1);
 }
 
-void drawLinesBetweenParentAndChilds(SDL_Renderer* render, Case damier[NB_CASE_LG][NB_CASE_LG], PathTree* t){
+void drawLinesBetweenParentAndChilds(SDL_Renderer* render, Case **damier, PathTree* t){
     if (t != emptyTree) {
         PathTree* child;
         int di, dj;
@@ -33,7 +33,7 @@ void drawLinesBetweenParentAndChilds(SDL_Renderer* render, Case damier[NB_CASE_L
     }
 }
 
-void pathTreeDisplay(SDL_Renderer* render, Case damier[NB_CASE_LG][NB_CASE_LG], PathTree* t){
+void pathTreeDisplay(SDL_Renderer* render, Case **damier, PathTree* t){
     if (t != emptyTree) {
         drawLinesBetweenParentAndChilds(render, damier, t);
         int di, dj;

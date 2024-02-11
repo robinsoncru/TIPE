@@ -38,7 +38,7 @@ void print_pawns(Game *g)
     }
 }
 
-void print_damier(Case damier[NB_CASE_LG][NB_CASE_LG], Game *g)
+void print_damier(Case **damier, Game *g)
 {
     int ind;
     bool c;
@@ -50,8 +50,9 @@ void print_damier(Case damier[NB_CASE_LG][NB_CASE_LG], Game *g)
             c = damier[i][j].pawn_color;
             if (ind != -1)
             {
-                printf("Case lig %d col %d Ind Pion %d color %d In cloud %d\n",
-                       g->allPawns[c][ind].lig, g->allPawns[c][ind].col, ind, c, 1 != g->allPawns[c][ind].pba);
+                printf("Case lig %d col %d Ind Pion %d color %d In cloud %d is queen %d\n",
+                       g->allPawns[c][ind].lig, g->allPawns[c][ind].col, ind, c, 1 != g->allPawns[c][ind].pba, \
+                       g->allPawns[c][ind].queen);
                 // print_pawn(g->allPawns[c][ind], ind);
                 // printf("---\n");
             }

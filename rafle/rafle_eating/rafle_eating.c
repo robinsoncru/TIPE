@@ -11,10 +11,8 @@ void pawnEat(Game* g, int indEater, bool is_white, int di, int dj){
 
 void eatRafle(Game* g, int indEater, bool is_white, PathTree* t, Path* r){    
     PathTree* workTree = t;
-    PathTree* child;
     uint8_t dirCode;
     int di, dj;
-    Coord label;
 
     while (pathTreeDepth(workTree) > 0) {
         switch (pathTreeNBChilds(workTree)) {

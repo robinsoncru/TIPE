@@ -180,10 +180,10 @@ void onLMBDown(Game *g, GraphicCache *cache)
 
     else if (g->indCheck == IND_NORMAL && g->ind_move > VOID_INDEX)
     {
-        printv("ind norm but ind move no");
+        // printv("ind norm but ind move no");
         if (get_pawn_value(g, iw, g->ind_move, QUEEN))
         {
-            printv("now check if queen");
+            // printv("now check if queen");
             // If the pawn is a queen, then it is a queen depl, we verify if the movement is available
             checkQueenDepl(g, cache, iw, lig, col);
         }
@@ -336,86 +336,107 @@ void onKUp(Game *g, GraphicCache *cache)
 
 // Zone de test AI qu'on bougera dans un dossier après
 
-Game pawnMoveAI(Game g_content, int indMovePawn, bool left)
+void pawnMoveAI(Game *g, int indMovePawn, bool left)
 {
     // Test pawn move remove, on suppose qu'on peut jouer, et qu'on a deja une fonction pour faire jouer l'ami en arrière
 
     // Création de la copie dans le frame de la fonction
-    Game *g_prime = &g_content; // Technique Adam', copie du damier
-    picture_this(g_prime);
-    g_prime->ind_move_back = pawnMoveNoGraphicEffect(g_prime, g_prime->is_white, indMovePawn, left);
-    // Attention l'indice de renvoie du friend est dans le structure g_prime
+    picture_this(g);
+    bool iw = g->is_white;
+    pawnMoveNGE(g, iw, indMovePawn, left);
+    // Attention l'indice de renvoie du friend est dans le structure g
 
+    cloud_chain *load_cloud_other = ccreate_list();
+    ind_pba_t *survivor = malloc(sizeof(ind_pba_t));
     // Desecrate
-    handleCloudNoGraphicEffect(g_prime, indMovePawn);
+    handleCloudDuePawnMoveNGE(g, indMovePawn, survivor, load_cloud_other);
     /* Desecrate the endTurnGameManagement to pawnMove to
    check the storm */
 
-    endTurnGameManagementSimple(g_prime, indMovePawn);
+    endTurnGameManagementSimple(g, indMovePawn);
 
-    picture_this(g_prime);
+    picture_this(g);
 
-    // g_prime est automatiquement libérer à la fin de la frame de la fonction
-    return *g_prime;
+    // Here recreate the cloud
+    if (!cis_empty(load_cloud_other))
+    {
+        recreateCloud(g, load_cloud_other, survivor, !iw);
+    }
+
+    pawnMoveCancel(g, iw, indMovePawn, left);
+    free(survivor);
+    free(load_cloud_other);
 }
 
-Game pawnMoveBackAI(Game g_content, int indMovePawnBack, bool left)
+void promotionIA(Game *g, int indMovePawn)
+{
+    picture_this(g);
+
+    int ind_potential_foe = promotionNGE(g, indMovePawn);
+
+    endTurnGameManagementSimple(g, indMovePawn);
+
+    picture_this(g);
+    cancelPromotion(g, indMovePawn, ind_potential_foe);
+}
+
+void pawnMoveBackAI(Game *g, int indMovePawnBack, bool left)
 {
     // On suppose que le move back est faisable
 
     // Création de la copie dans le frame de la fonction
-    Game *g_prime = &g_content; // Technique Adam', copie du damier
-    picture_this(g_prime);
-    pawnMoveBackNoGraphicEffect(g_prime, g_prime->is_white, indMovePawnBack, true);
-    // Attention l'indice de renvoie du friend est dans le structure g_prime
-    g_prime->ind_move_back = VOID_INDEX;
+    picture_this(g);
+    pawnMoveBackNGE(g, g->is_white, indMovePawnBack, true);
+    // Attention l'indice de renvoie du friend est dans le structure g
+    g->ind_move_back = VOID_INDEX;
 
     // Desecrate
-    handleCloudNoGraphicEffect(g_prime, indMovePawnBack);
+    // handleCloudNoGraphicEffect(g, indMovePawnBack);
 
-    picture_this(g_prime);
+    picture_this(g);
 
-    // g_prime est automatiquement libérer à la fin de la frame de la fonction
-    return *g_prime;
+    // g est automatiquement libérer à la fin de la frame de la fonction
 }
 
-Game biDeplAI(Game g_content, int indMovePawn)
+void biDeplAI(Game *g, int indMovePawn)
 {
     // Test pawn move remove, on suppose qu'on peut jouer, et qu'on a deja une fonction pour faire jouer l'ami en arrière
 
     // Création de la copie dans le frame de la fonction
-    Game *g_prime = &g_content; // Technique Adam', copie du damier
-    picture_this(g_prime);
-    biDeplNoGraphicEffect(g_prime, g_prime->is_white, indMovePawn);
-    // Attention l'indice de renvoie du friend est dans le structure g_prime
+    picture_this(g);
+    ind_bool_t data = biDeplNGE(g, g->is_white, indMovePawn);
 
     // Desecrate
-    // handleCloudNoGraphicEffect(g_prime, indMovePawn); 
 
-    // Encore des pb ici
+    endTurnGameManagementSimple(g, indMovePawn);
 
-    // endTurnGameManagementSimple(g_prime, indMovePawn);
-
-    picture_this(g_prime);
-
-    // g_prime est automatiquement libérer à la fin de la frame de la fonction
-    return *g_prime;
+    picture_this(g);
+    cancelBidepl(g, indMovePawn, data);
 }
 
-void CancelBidepl(Game *g_init, Game g_content_last) {
-    bool iw_init = g_init->is_white;
-    int n = g_content_last.lengthCloud[iw_init] - g_init->lengthCloud[iw_init];
-    for (int i=0; i<n; i++) {
-        pop(g_init->cloud[iw_init]);
-    }
-    n = g_content_last.lengthCloud[!iw_init] - g_init->lengthCloud[!iw_init];
-    for (int i=0; i<n; i++) {
-        pop(g_init->cloud[!iw_init]);
-    }
+void queenDeplAI(Game *g, int indMovedPawn, queen_move_t coords)
+{
+    picture_this(g);
+    bool iw = g->is_white;
+    Coord init_coord = {.i = get_pawn_value(g, iw, indMovedPawn, LIG), 
+    .j = get_pawn_value(g, iw, indMovedPawn, COL)};
+    primary_data_t data = queenDeplNGE(g, indMovedPawn, iw, coords);
+    picture_this(g);
+
+    endTurnGameManagementSimple(g, indMovedPawn);
+
+    cancelDeplQueen(g, indMovedPawn, coords, data, init_coord);
 }
 
 void onRUp(Game *g, GraphicCache *cache)
 {
-    Game g_content = pawnMoveAI(*g, g->ind_move_back, true);
+    bool iw = g->is_white;
+    int ind = g->ind_move;
+    int lig = get_pawn_value(g, iw, ind, LIG)-3;
+    int col = get_pawn_value(g, iw, ind, COL)-3;
+    queen_move_t coords = {.pos_dame = {.i = lig, .j = col}, .pos_eaten_pawn = {.i = -1, .j = -1}};
+    queenDeplAI(g, ind, coords);
     picture_this(g);
+
+    // onPUP(g, cache);
 }

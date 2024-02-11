@@ -1,7 +1,7 @@
-#include <stdbool.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <assert.h>
+#ifndef LITTLE_LINKED_LIST
+#define LITTLE_LINKED_LIST
+
+#include "coord.h"
 
 /* Victor G: j'ai implémenter une petite structure de liste chainee pour plus tard pour une fonction */
 
@@ -26,6 +26,33 @@ int get(maillon *l);
 /* Renvoie le premier maillon */
 
 maillon *create_list();
+/* Creer une liste vide */
+
+
+typedef struct {
+    Coord coord;
+    int pba;
+} tcloud;
+
+typedef struct cloud_chain cloud_chain;
+
+struct cloud_chain {
+    tcloud data;
+    cloud_chain *next;
+};
+
+void cpush(cloud_chain *l, tcloud k);
+/* le maillon l est le maillon de tête, on l'utilise pour accéder à la structure et y ajouter le nouveau maillon */
+
+bool cis_empty(cloud_chain *l);
+
+tcloud cpop(cloud_chain *l);
+/* Supprime et renvoie le maillon en première position */
+
+// tcloud cget(maillon *l);
+/* Renvoie le premier maillon */
+
+cloud_chain *ccreate_list();
 /* Creer une liste vide */
 
 typedef struct k_uplet k_uplet;
@@ -56,3 +83,5 @@ bool is_emptyK(Kmaillon *l);
 k_uplet popK(Kmaillon *l);
 
 Kmaillon *create_listK();
+
+#endif

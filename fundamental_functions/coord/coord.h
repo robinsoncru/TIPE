@@ -1,7 +1,10 @@
 #ifndef COORD
 #define COORD
 
-#include "little_linked_list.h"
+#include <stdbool.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <assert.h>
 
 
 #include <SDL2/SDL_stdinc.h>

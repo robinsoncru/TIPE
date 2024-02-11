@@ -7,17 +7,18 @@
 
 
 void copy_remove_pawn_from_index_to_index(Game *g, int indStart, int indArrive, bool color);
-// void pawn_default_value(pawn pawns[], int ind, bool color);
+// void pawn_default_value(pawn *pawns, int ind, bool color);
 void pawn_default_value_new(Game *g, int ind, bool color);
 /* kill the pawn and put its values as default values */
-void killPawn(Game *g, Case damier[NB_CASE_LG][NB_CASE_LG], int i, int j);
+void killPawn(Game *g, Case **damier, int i, int j);
+void killPawnByInd(Game *g, bool color, int ind);
 /* Check if the pawn can move back to the case localised by the coord g->coordForMoveBack */
-void change_pawn_place(pawn pawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int ind, int lig, int col);
-void change_pawn_place_new(Game *g, Case damier[NB_CASE_LG][NB_CASE_LG], int ind, bool color, int lig, int col);
+void change_pawn_place(pawn *pawns, Case **damier, int ind, int lig, int col);
+void change_pawn_place_new(Game *g, Case **damier, int ind, bool color, int lig, int col);
 //  entree : un tableau de pions pawns, un damier, l'index du pion qui mange, les coordonnees i et j dudit pion
 //  des entiers add0 et add1 qui indiquent la direction dans laquelle manger
 //  sortie : booleen indiquant si le pion dans la direction indique peut etre mange
-int nonLoggingChangeForEat(pawn pawns[], pawn NPawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int indEater, int i, int j, int add0, int add1);
+int nonLoggingChangeForEat(pawn *pawns, pawn *NPawns, Case **damier, int indEater, int i, int j, int add0, int add1);
 void promote(Game *g, bool is_white, int ind);
 void createPawn(Game *g, bool color, int i, int j);
 void simplyPawnMove(Game *g, bool is_white, int ind, bool left);
@@ -27,10 +28,9 @@ void putPawnMoveBack(Game *g, bool left);
 
 void stormBreaks(Game *g, bool color, int indSurvivor);
 void AleatStormBreaks(Game *g, bool color);
-void AleatStormBreaksNoGraphicEffect(Game *g, bool color);
-void handleCloudNoGraphicEffect(Game *g, int indMovedPawn);
-
-queen_move_t CanMoveOrEatQueen(Game *g, bool color, int lig, int col, Case damier[NB_CASE_LG][NB_CASE_LG], int ind);
+void handleCloudDuePawnMoveNGE(Game *g, int indMovedPawn, ind_pba_t *survivor, cloud_chain *l);
+void AleatStormBreaksNGE(Game *g, bool color, cloud_chain *load, ind_pba_t *survivor);
+queen_move_t CanMoveOrEatQueen(Game *g, bool color, int lig, int col, Case **damier, int ind);
 
 
 // Memory functions

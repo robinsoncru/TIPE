@@ -2,7 +2,7 @@
 #include <SDL2/SDL_stdinc.h>
 #include <stdio.h>
 
-void spitOut(pawn pawns[], pawn NPawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int indEater, int iEater, int jEater, int indVictim, int add0, int add1){
+void spitOut(pawn *pawns, pawn *NPawns, Case **damier, int indEater, int iEater, int jEater, int indVictim, int add0, int add1){
     //fonction reciproque de changeForEat
     //pour un pion d'index indEater aux coordonnees (iEater, jEater), annule son action de manger indVictim
     //dans la direction add0 et add1
@@ -20,9 +20,9 @@ void spitOut(pawn pawns[], pawn NPawns[], Case damier[NB_CASE_LG][NB_CASE_LG], i
     pawns[indEater].col = jEater - 2 * add1;
 }
 
-PathTree* divideAndGather(pawn pawns[],pawn NPawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int indEater, int i, int j);
+PathTree* divideAndGather(pawn *pawns,pawn *NPawns, Case **damier, int indEater, int i, int j);
 
-PathTree* rafleTreeCalcAux(pawn pawns[],pawn NPawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int indEater, int add0, int add1){
+PathTree* rafleTreeCalcAux(pawn *pawns,pawn *NPawns, Case **damier, int indEater, int add0, int add1){
     int oldI = pawns[indEater].lig;
     int oldJ = pawns[indEater].col;
 
@@ -39,7 +39,7 @@ PathTree* rafleTreeCalcAux(pawn pawns[],pawn NPawns[], Case damier[NB_CASE_LG][N
     return res;
 }
 
-PathTree* rafleTreeCalc(pawn pawns[],pawn NPawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int indSerialKiller){
+PathTree* rafleTreeCalc(pawn *pawns,pawn *NPawns, Case **damier, int indSerialKiller){
     int i = pawns[indSerialKiller].lig;
     int j = pawns[indSerialKiller].col;
 
@@ -48,7 +48,7 @@ PathTree* rafleTreeCalc(pawn pawns[],pawn NPawns[], Case damier[NB_CASE_LG][NB_C
     return res;
 }
 
-PathTree* divideAndGather(pawn pawns[],pawn NPawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int indEater, int i, int j){
+PathTree* divideAndGather(pawn *pawns,pawn *NPawns, Case **damier, int indEater, int i, int j){
     /*
     Pour un pion donne avec ses coordonnees, renvoie son arbre de rafles a partir de la case indiquee en effectuant les
     appels reccursifs de rafleTreeCalcAux*/
