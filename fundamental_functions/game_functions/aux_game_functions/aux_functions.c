@@ -83,7 +83,8 @@ void killPawn(Game *g, Case **damier, int i, int j)
     }
 }
 
-void killPawnByInd(Game *g, bool color, int ind) {
+void killPawnByInd(Game *g, bool color, int ind)
+{
     int i = get_pawn_value(g, color, ind, LIG);
     int j = get_pawn_value(g, color, ind, COL);
     killPawn(g, g->damier, i, j);
@@ -369,8 +370,10 @@ queen_move_t CanMoveOrEatQueen(Game *g, bool color, int lig, int col, Case **dam
     return res; // No case was found
 }
 
-void freeCloud(maillon *l) {
-    while (!is_empty(l)) {
+void freeCloud(maillon *l)
+{
+    while (!is_empty(l))
+    {
         pop(l);
     }
     free(l);
@@ -390,4 +393,11 @@ void free_game(Game *g)
         pathFree(g->currentRafle);
     }
     free(g);
+}
+
+Coord give_coord(Game *g, bool iw, int ind)
+{
+    Coord init_coord = {.i = get_pawn_value(g, iw, ind, LIG),
+                        .j = get_pawn_value(g, iw, ind, COL)};
+    return init_coord;
 }

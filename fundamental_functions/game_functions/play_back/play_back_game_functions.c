@@ -97,8 +97,9 @@ void cancelPromotion(Game *g, int ind_old_friend, int ind_new_foe)
         put_pawn_value(g, iw, ind_old_friend, QUEEN, 0);
 }
 
-void pawnMoveBackNGE(Game *g, bool is_white, int ind, bool left)
+void pawnMoveBackNGE(Game *g, int ind, bool left)
 {
+    bool is_white = g->is_white;
     pawn p = g->allPawns[is_white][ind];
     int i = p.lig;
     int j = p.col;
@@ -106,6 +107,13 @@ void pawnMoveBackNGE(Game *g, bool is_white, int ind, bool left)
     int dj = left ? -1 : 1;
 
     change_pawn_place_new(g, g->damier, ind, is_white, i - di, j - dj);
+
+    g->ind_move_back = VOID_INDEX;
+}
+
+void cancelMoveBack(Game *g, int ind, bool left) {
+    bool iw = g->is_white;
+    simplyPawnMove(g, iw, ind, left);
 }
 
 ind_bool_t biDeplNGE(Game *g, bool color, int ind)
@@ -201,30 +209,136 @@ void cancelDeplQueen(Game *g, int ind_queen, queen_move_t tuple_coord, primary_d
 
     if (!outOfBounds(enn_lig, enn_col))
     {
+        createPawn(g, !iw, enn_lig, enn_col);
         ennInd = g->damier[enn_lig][enn_col].ind_pawn;
-        if (ennInd != VOID_INDEX)
-        {
-            createPawn(g, !iw, enn_lig, enn_col);
-            put_pawn_value(g, !iw, ennInd, FRIENDLY, data.friend);
-            put_pawn_value(g, !iw, ennInd, ENNEMY, data.foe);
-            put_pawn_value(g, !iw, ennInd, QUEEN, bool_to_int(data.queen));
-        }
+        put_pawn_value(g, !iw, ennInd, FRIENDLY, data.friend);
+        put_pawn_value(g, !iw, ennInd, ENNEMY, data.foe);
+        put_pawn_value(g, !iw, ennInd, QUEEN, bool_to_int(data.queen));
     }
 
     change_pawn_place_new(g, g->damier, ind_queen, iw, init_coord.i, init_coord.j);
 }
 
-// void moveBack(Game *g, Kmaillon *l); // ?
+data_chain *eatRafleNGE(Game *g, int indEater, bool is_white, PathTree *t, Path *r)
+{
+    PathTree *workTree = t;
+    uint8_t dirCode;
+    int di, dj;
 
-// void promotionBack(Game *g, Kmaillon *l);
+    data_chain *chainy = dcreate_list();
 
-// void lienAmitieBack(int lig, int col, Game *g, Kmaillon *l);
+    while (pathTreeDepth(workTree) > 0)
+    {
+        switch (pathTreeNBChilds(workTree))
+        {
+        case 1:
+            dirCode = pathTreeFirstChild(workTree);
+            break;
+        default:
+            dirCode = pathPopFirstIn(r);
+            break;
+        }
+        getDirsFromCode(dirCode, &di, &dj);
 
-// void lienEnnemitieBack(int lig, int col, Game *g, Kmaillon *l);
+        int lig_pawn_eaten = get_pawn_value(g, is_white, indEater, LIG) + di;
+        int col_pawn_eaten = get_pawn_value(g, is_white, indEater, COL) + dj;
+        int eatenInd = g->damier[lig_pawn_eaten][col_pawn_eaten].ind_pawn;
+        
+        pawn_info data_eaten = {.relationship = {.friend = get_pawn_value(g, !is_white, eatenInd, FRIENDLY),
+        .foe = get_pawn_value(g, !is_white, eatenInd, ENNEMY), 
+        .queen = int_to_bool(get_pawn_value(g, !is_white, eatenInd, QUEEN))}, 
+        .coord = {.i = lig_pawn_eaten, .j = col_pawn_eaten}};
 
-// void biDeplBack(Game *g, int ind, bool color, Kmaillon *l);
+        dpush(chainy, data_eaten);
+        pawnEat(g, indEater, is_white, di, dj);
+        workTree = pathTreeChild(workTree, dj, di);
+    }
 
-// void queenDeplBack(Game *g, int ind, bool color, queen_move_t tuple_coord, Kmaillon *l);
+    return chainy;
+}
+
+data_chain *rafleNGE(Game *g, int indMovePawn)
+{
+    assert(g->currentTree == emptyTree);
+    moveBackGameManagement(g);
+    bool isWhite = g->is_white;
+    pawn *pawns = g->allPawns[isWhite];
+    pawn *NPawns = g->allPawns[!isWhite];
+    g->currentTree = rafleTreeCalc(pawns, NPawns, g->damier, g->ind_move);
+
+    printf("lazyRafle called\n");
+    Path *r = lazyRafle(g->currentTree);
+    printf("eatRafle called\n");
+    data_chain *chainy = eatRafleNGE(g, g->ind_move, g->is_white, g->currentTree, r);
+    printf("pathFree called\n");
+    pathFree(r);
+    return chainy;
+}
+
+void cancelRafle(Game *g, int indMovedPawn, Coord init_pos, data_chain *chainy) {
+    bool iw = g->is_white;
+    while (!dis_empty(chainy)) {
+        pawn_info reborn_pawn = dpop(chainy);
+        int i = reborn_pawn.coord.i;
+        int j = reborn_pawn.coord.j;
+        createPawn(g, !iw, i, j);
+        int reborn_ind = g->damier[i][j].ind_pawn;
+        put_pawn_value(g, !iw, reborn_ind, FRIENDLY, reborn_pawn.relationship.friend);
+        put_pawn_value(g, !iw, reborn_ind, ENNEMY, reborn_pawn.relationship.foe);
+        put_pawn_value(g, !iw, reborn_ind, QUEEN, bool_to_int(reborn_pawn.relationship.queen));
+    }
+    free(chainy);
+
+    change_pawn_place_new(g, g->damier, indMovedPawn, iw, init_pos.i, init_pos.j);
+}
+
+void lienAmitiePmetreNGE(int lig, int col, Case **damier, int ind, bool is_white, Game *g)
+{
+    moveBackGameManagement(g);
+    Case c = damier[lig][col];
+    assert(c.ind_pawn != VOID_INDEX);
+    put_pawn_value(g, is_white, ind, FRIENDLY, c.ind_pawn);
+    put_pawn_value(g, c.pawn_color, c.ind_pawn, FRIENDLY, ind);
+}
+
+void lienAmitieNGE(int lig, int col, Game *g, int indPawn)
+{
+    // On suppose le coup legal
+    bool iw = g->is_white;
+    lienAmitiePmetreNGE(lig, col, g->damier, indPawn, iw, g);
+}
+
+void cancelLienAmitie(Game *g, int indPawn, int lig, int col) {
+    bool iw = g->is_white;
+    int ennInd = g->damier[lig][col].ind_pawn;
+    assert(ennInd != VOID_INDEX);
+    put_pawn_value(g, iw, indPawn, FRIENDLY, -1);
+    put_pawn_value(g, !iw, ennInd, FRIENDLY, -1);
+}
+
+void lienEnnemitiePmetreNGE(bool is_white, int lig, int col, Case **damier, int ind, Game *g)
+{
+    moveBackGameManagement(g);
+    Case c = damier[lig][col];
+    assert(c.ind_pawn != -1);
+    put_pawn_value(g, is_white, ind, 2, c.ind_pawn);
+    put_pawn_value(g, c.pawn_color, c.ind_pawn, 2, ind);
+}
+
+void lienEnnemitieNGE(int lig, int col, Game *g, int indPawn)
+{
+    // Suppose legal move
+    bool iw = g->is_white;
+    lienEnnemitiePmetreNGE(iw, lig, col, g->damier, indPawn, g);
+}
+
+void cancelLienEnnemitie(Game *g, int indPawn, int lig, int col) {
+    bool iw = g->is_white;
+    int ennInd = g->damier[lig][col].ind_pawn;
+    assert(ennInd != VOID_INDEX);
+    put_pawn_value(g, iw, indPawn, ENNEMY, -1);
+    put_pawn_value(g, !iw, ennInd, ENNEMY, -1);
+}
 
 /*
 
@@ -367,29 +481,7 @@ void cancelDeplQueen(Game *g, int ind_queen, queen_move_t tuple_coord, primary_d
 
 // */
 
-// void lienEnnemitiePmetre(bool is_white, int lig, int col, Case **damier, int ind, Game *g)
-// {
-//     /* Declare ennemis pour la vie le pion en indice avec le pion se trouvant en coord (lig, col) sur le damier, en verifiant qu'il est bien de
-//     couleur opposé et qu'il existe. Gère le pmetre Game.friendly. Si on declare ennemi un pion qui était déjà ennemi, le coup n'est pas joué
-//     Suppose legal move */
-//     startTurnGameManagement(g);
-//     Case c = damier[lig][col];
-//     put_pawn_value(g, is_white, ind, 2, c.ind_pawn);
-//     put_pawn_value(g, c.pawn_color, c.ind_pawn, 2, ind);
-//     // printf("Enn %d %d\n", lig, col);
-//     // print_pawn(g->allPawns[c.pawn_color][c.ind_pawn], c.ind_pawn);
-//     // printf("Actu pawn");
-//     // print_pawn(g->allPawns[is_white][ind], ind);
-//     // flush();
-//     endTurnGameManagement(g, is_white, ind, IND_CHANGE_ALLOWED, false);
-// }
 
-// void lienEnnemitie(int lig, int col, Game *g)
-// {
-//     // Suppose legal move
-//     bool iw = g->is_white;
-//     lienEnnemitiePmetre(iw, lig, col, g->damier, g->ind_move, g);
-// }
 
 // /*
 

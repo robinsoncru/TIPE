@@ -48,11 +48,12 @@ void print_damier(Case **damier, Game *g)
         {
             ind = damier[i][j].ind_pawn;
             c = damier[i][j].pawn_color;
+            pawn p = g->allPawns[c][ind];
             if (ind != -1)
             {
-                printf("Case lig %d col %d Ind Pion %d color %d In cloud %d is queen %d\n",
-                       g->allPawns[c][ind].lig, g->allPawns[c][ind].col, ind, c, 1 != g->allPawns[c][ind].pba, \
-                       g->allPawns[c][ind].queen);
+                printf("Case lig %d col %d Ind Pion %d color %d In cloud %d is queen %d ind friend %d ind foe %d\n \n",
+                       p.lig, p.col, ind, c, 1 != p.pba, \
+                       p.queen, p.friendly, p.ennemy);
                 // print_pawn(g->allPawns[c][ind], ind);
                 // printf("---\n");
             }
@@ -95,5 +96,6 @@ void printv(char *s)
 
 void picture_this(Game *g) {
     print_damier(g->damier, g);
+    error();
     error();
 }

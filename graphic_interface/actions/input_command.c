@@ -181,7 +181,7 @@ void onLMBDown(Game *g, GraphicCache *cache)
     else if (g->indCheck == IND_NORMAL && g->ind_move > VOID_INDEX)
     {
         // printv("ind norm but ind move no");
-        if (get_pawn_value(g, iw, g->ind_move, QUEEN))
+        if (int_to_bool(get_pawn_value(g, iw, g->ind_move, QUEEN)))
         {
             // printv("now check if queen");
             // If the pawn is a queen, then it is a queen depl, we verify if the movement is available
@@ -334,109 +334,30 @@ void onKUp(Game *g, GraphicCache *cache)
     print_damier(g->damier, g);
 }
 
-// Zone de test AI qu'on bougera dans un dossier après
-
-void pawnMoveAI(Game *g, int indMovePawn, bool left)
-{
-    // Test pawn move remove, on suppose qu'on peut jouer, et qu'on a deja une fonction pour faire jouer l'ami en arrière
-
-    // Création de la copie dans le frame de la fonction
-    picture_this(g);
-    bool iw = g->is_white;
-    pawnMoveNGE(g, iw, indMovePawn, left);
-    // Attention l'indice de renvoie du friend est dans le structure g
-
-    cloud_chain *load_cloud_other = ccreate_list();
-    ind_pba_t *survivor = malloc(sizeof(ind_pba_t));
-    // Desecrate
-    handleCloudDuePawnMoveNGE(g, indMovePawn, survivor, load_cloud_other);
-    /* Desecrate the endTurnGameManagement to pawnMove to
-   check the storm */
-
-    endTurnGameManagementSimple(g, indMovePawn);
-
-    picture_this(g);
-
-    // Here recreate the cloud
-    if (!cis_empty(load_cloud_other))
-    {
-        recreateCloud(g, load_cloud_other, survivor, !iw);
-    }
-
-    pawnMoveCancel(g, iw, indMovePawn, left);
-    free(survivor);
-    free(load_cloud_other);
-}
-
-void promotionIA(Game *g, int indMovePawn)
-{
-    picture_this(g);
-
-    int ind_potential_foe = promotionNGE(g, indMovePawn);
-
-    endTurnGameManagementSimple(g, indMovePawn);
-
-    picture_this(g);
-    cancelPromotion(g, indMovePawn, ind_potential_foe);
-}
-
-void pawnMoveBackAI(Game *g, int indMovePawnBack, bool left)
-{
-    // On suppose que le move back est faisable
-
-    // Création de la copie dans le frame de la fonction
-    picture_this(g);
-    pawnMoveBackNGE(g, g->is_white, indMovePawnBack, true);
-    // Attention l'indice de renvoie du friend est dans le structure g
-    g->ind_move_back = VOID_INDEX;
-
-    // Desecrate
-    // handleCloudNoGraphicEffect(g, indMovePawnBack);
-
-    picture_this(g);
-
-    // g est automatiquement libérer à la fin de la frame de la fonction
-}
-
-void biDeplAI(Game *g, int indMovePawn)
-{
-    // Test pawn move remove, on suppose qu'on peut jouer, et qu'on a deja une fonction pour faire jouer l'ami en arrière
-
-    // Création de la copie dans le frame de la fonction
-    picture_this(g);
-    ind_bool_t data = biDeplNGE(g, g->is_white, indMovePawn);
-
-    // Desecrate
-
-    endTurnGameManagementSimple(g, indMovePawn);
-
-    picture_this(g);
-    cancelBidepl(g, indMovePawn, data);
-}
-
-void queenDeplAI(Game *g, int indMovedPawn, queen_move_t coords)
-{
-    picture_this(g);
-    bool iw = g->is_white;
-    Coord init_coord = {.i = get_pawn_value(g, iw, indMovedPawn, LIG), 
-    .j = get_pawn_value(g, iw, indMovedPawn, COL)};
-    primary_data_t data = queenDeplNGE(g, indMovedPawn, iw, coords);
-    picture_this(g);
-
-    endTurnGameManagementSimple(g, indMovedPawn);
-
-    cancelDeplQueen(g, indMovedPawn, coords, data, init_coord);
-}
 
 void onRUp(Game *g, GraphicCache *cache)
 {
-    bool iw = g->is_white;
-    int ind = g->ind_move;
-    int lig = get_pawn_value(g, iw, ind, LIG)-3;
-    int col = get_pawn_value(g, iw, ind, COL)-3;
-    queen_move_t coords = {.pos_dame = {.i = lig, .j = col}, .pos_eaten_pawn = {.i = -1, .j = -1}};
-    queenDeplAI(g, ind, coords);
     picture_this(g);
+    // Teste for the queen 
 
-    // onPUP(g, cache);
+    // bool iw = g->is_white;
+    // int ind = g->ind_move;
+    // SDL_Event event = cache->event;
+
+    // int x = event.button.x;
+    // int y = event.button.y;
+    // int lig = y / LG_CASE;
+    // int col =  x/ LG_CASE;
+
+    // queen_move_t coords = CanMoveOrEatQueen(g, iw, lig, col, g->damier, ind);
+    // int dame_lig = coords.pos_dame.i;
+    // int dame_col = coords.pos_dame.j;
+    // if (basicChecks(g) && dame_lig != VOID_INDEX && dame_col != VOID_INDEX)
+    // {
+    //     queenDeplAI(g, ind, coords);
+    // }
+    // else
+    //     printv("big queen pb");
+    // lienEnnemitieAI(g, ind, lig, col);
+    picture_this(g);
 }

@@ -25,6 +25,28 @@ typedef struct Coord{
     l'origine (0, 0) est la case inferieure gauche du plateau.*/
 } Coord;
 
+
+typedef struct {
+    Coord pos_dame;
+    Coord pos_eaten_pawn;
+} queen_move_t;
+
+typedef struct {
+    int ind;
+    int pba;
+} ind_pba_t;
+
+typedef struct {
+    int ind;
+    bool b;
+} ind_bool_t;
+
+typedef struct {
+    int friend;
+    int foe;
+    bool queen;
+} primary_data_t;
+
 int dir(int a);
 Uint8 getCodeFromDirs(int horizontalDir, int verticalDir);
 void getDirsFromCode(Uint8 c, int* di, int* dj);

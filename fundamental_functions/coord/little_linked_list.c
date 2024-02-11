@@ -76,6 +76,37 @@ tcloud cpop(cloud_chain *l)
     return k;
 }
 
+// For all info pawns
+
+void dpush(data_chain *l, pawn_info data) {
+    data_chain *m = malloc(sizeof(data_chain));
+    m->data = data;
+    m->next = l->next;
+    l->next = m;
+}
+bool dis_empty(data_chain *l) {
+    return (l->next == NULL);
+}
+
+pawn_info dpop(data_chain *l) {
+    assert(!dis_empty(l));
+    data_chain *m = l->next;
+    l->next = m->next;
+    pawn_info k = m->data;
+    free(m);
+    return k;
+}
+
+
+data_chain *dcreate_list() {
+    data_chain *l = malloc(sizeof(data_chain));
+    pawn_info data_set = {.relationship = {.friend = -1, .foe = -1, .queen = false}, 
+    .coord = {.i = -1, .j = -1}};
+    l->data = data_set;
+    l->next = NULL;
+    return l;
+}
+
 
 // For the other Kchain_list
 

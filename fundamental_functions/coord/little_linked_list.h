@@ -3,8 +3,6 @@
 
 #include "coord.h"
 
-/* Victor G: j'ai implémenter une petite structure de liste chainee pour plus tard pour une fonction */
-
 typedef struct maillon maillon;
 
 struct maillon
@@ -54,6 +52,33 @@ tcloud cpop(cloud_chain *l);
 
 cloud_chain *ccreate_list();
 /* Creer une liste vide */
+
+typedef struct {
+    primary_data_t relationship;
+    Coord coord;
+} pawn_info;
+
+typedef struct data_chain data_chain;
+
+struct data_chain {
+    pawn_info data;
+    data_chain *next;
+};
+
+void dpush(data_chain *l, pawn_info data);
+/* le maillon l est le maillon de tête, on l'utilise pour accéder à la structure et y ajouter le nouveau maillon */
+
+bool dis_empty(data_chain *l);
+
+pawn_info dpop(data_chain *l);
+/* Supprime et renvoie le maillon en première position */
+
+// tcloud cget(maillon *l);
+/* Renvoie le premier maillon */
+
+data_chain *dcreate_list();
+/* Creer une liste vide */
+
 
 typedef struct k_uplet k_uplet;
 

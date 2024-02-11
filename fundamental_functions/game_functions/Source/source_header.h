@@ -108,27 +108,6 @@ typedef struct
     Path* currentRafle;
 } Game;
 
-typedef struct {
-    Coord pos_dame;
-    Coord pos_eaten_pawn;
-} queen_move_t;
-
-typedef struct {
-    int ind;
-    int pba;
-} ind_pba_t;
-
-typedef struct {
-    int ind;
-    bool b;
-} ind_bool_t;
-
-typedef struct {
-    int friend;
-    int foe;
-    bool queen;
-} primary_data_t;
-
 
 /* NOTES :
 

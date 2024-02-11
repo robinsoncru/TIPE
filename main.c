@@ -12,14 +12,24 @@ int quit(Game *g, GraphicCache *cache)
 void test_start_game(Game *g)
 {
     // très pratique pour promouvoir une dame en qq coups
-    for (int i = NB_PAWNS - 1; i > 1; i--)
+    for (int i = NB_PAWNS - 1; i > 2; i--)
     {
 
         killPawn(g, g->damier, g->allPawns[1][i].lig, g->allPawns[1][i].col);
         killPawn(g, g->damier, g->allPawns[0][i].lig, g->allPawns[0][i].col);
     }
-    change_pawn_place(g->allPawns[1], g->damier, 0, 4, 0);
-    change_pawn_place(g->allPawns[1], g->damier, 1, 4, 2);
+
+    // Configuration triangle
+    // change_pawn_place(g->allPawns[1], g->damier, 0, 6, 6);
+    // change_pawn_place(g->allPawns[0], g->damier, 0, 5, 3);
+    // change_pawn_place(g->allPawns[0], g->damier, 1, 3, 5);
+    // change_pawn_place(g->allPawns[0], g->damier, 2, 5, 5);
+
+    // Configuration move back + cloud
+    change_pawn_place(g->allPawns[1], g->damier, 0, 6, 6);
+    change_pawn_place(g->allPawns[1], g->damier, 1, 4, 4);
+    change_pawn_place(g->allPawns[0], g->damier, 1, 3, 5);
+    change_pawn_place(g->allPawns[0], g->damier, 2, 1, 1);
 }
 
 int main(int argc, char *argv[])

@@ -1,7 +1,7 @@
 #ifndef INPUT_COMMAND
 #define INPUT_COMMAND
 
-#include "../../fundamental_functions/interface/interface.h"
+#include "../AI_functions/AI_functions.h"
 #include "../memory_update/graphic_cache.h"
 #include "../../rafle/rafle.h"
 #include <SDL2/SDL_events.h>

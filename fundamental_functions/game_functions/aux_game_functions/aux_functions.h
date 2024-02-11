@@ -32,7 +32,7 @@ void handleCloudDuePawnMoveNGE(Game *g, int indMovedPawn, ind_pba_t *survivor, c
 void AleatStormBreaksNGE(Game *g, bool color, cloud_chain *load, ind_pba_t *survivor);
 queen_move_t CanMoveOrEatQueen(Game *g, bool color, int lig, int col, Case **damier, int ind);
 
-
+Coord give_coord(Game *g, bool iw, int ind);
 // Memory functions
 void free_game(Game *g);
 

@@ -163,7 +163,8 @@ bool canPromotion(Game *g)
 // Seul un pion plein peut faire eclater le nuage
 bool canStormBreaks(Game *g, int ind, int color)
 {
-    if (!isInCloud(g, color, ind)) return false;
+    if (!isInCloud(g, color, ind))
+        return false;
 
     int di, dj;
     int i = get_pawn_value(g, color, ind, LIG);
@@ -196,10 +197,13 @@ bool canStormBreaksForTheOthers(Game *g, int ind, int color)
     {
 
         getDirsFromCode(k, &di, &dj);
-        c = g->damier[i + di][j + dj];
-        if (!freeCase(c) && c.pawn_color != color && isInCloud(g, !color, c.ind_pawn))
+        if (!outOfBounds(i + di, j + dj))
         {
-            return true;
+            c = g->damier[i + di][j + dj];
+            if (!freeCase(c) && c.pawn_color != color && isInCloud(g, !color, c.ind_pawn))
+            {
+                return true;
+            }
         }
     }
     return false;

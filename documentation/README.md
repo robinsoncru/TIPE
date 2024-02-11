@@ -15,6 +15,11 @@ Sources :
 - http://sylvain.archenault.free.fr/projets/Jeu_De_Dames/c/Jeu_de_Dames-C-Rapport.pdf (benofb)
 ___
 
+Il y a un Makefile qui permet de ne compiler que les fichiers qui ont été modifiés:
+Commande à taper dans le terminal, dans le répertoire TIPE:
+
+make dames.out
+
 Regles du jeu:
 
 On ne peut lier d'amitie que deux amis au max, sinon le coup n'est pas joué
@@ -47,12 +52,14 @@ GUIDE D'UTILISATION:
 
 BUG REPORT:
 au niveau des rafles: apparition d'un nv pion ou segfault
-Makefile: comment échapper un $ dans le makefile: pb de lecture
 
 
 Todo list :
 - Implementer l'IA:
 -- Victor G: je fais fais les fonctions de mouvement retour (comme NonLoggingChangeForEat mais pour les autres): idée enregistrer les modifications a chaque coup dans une liste chainé en lisant le jeu (le cloud, l'index) et avec un code couleur, faire les changement inverse nécessaire pour chaque action du code couleur
+
+Note: j'ai du supprimer le répertoire main car l'option debug ne permet pas de sortir d'un dossier (comme fundamental functions) pour rentrer dans le main
+
 -- Victor D: aspect theorique de la gestion aléatoire
 -- Lister les coups possibles (canMove, canMoveQueen, ...) avec un indice donné lorsque la machine à le trait, dans une liste chainé: Victor D
 
