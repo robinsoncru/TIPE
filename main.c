@@ -20,16 +20,18 @@ void test_start_game(Game *g)
     }
 
     // Configuration triangle
-    // change_pawn_place(g->allPawns[1], g->damier, 0, 6, 6);
+    change_pawn_place(g->allPawns[1], g->damier, 0, 6, 6);
+    change_pawn_place(g->allPawns[0], g->damier, 2, 5, 5);
     // change_pawn_place(g->allPawns[0], g->damier, 0, 5, 3);
     // change_pawn_place(g->allPawns[0], g->damier, 1, 3, 5);
-    // change_pawn_place(g->allPawns[0], g->damier, 2, 5, 5);
+    change_pawn_place(g->allPawns[0], g->damier, 1, 3, 3);
+    change_pawn_place(g->allPawns[0], g->damier, 0, 3, 1);
 
     // Configuration move back + cloud
-    change_pawn_place(g->allPawns[1], g->damier, 0, 6, 6);
-    change_pawn_place(g->allPawns[1], g->damier, 1, 4, 4);
-    change_pawn_place(g->allPawns[0], g->damier, 1, 3, 5);
-    change_pawn_place(g->allPawns[0], g->damier, 2, 1, 1);
+    // change_pawn_place(g->allPawns[1], g->damier, 0, 6, 6);
+    // change_pawn_place(g->allPawns[1], g->damier, 1, 4, 4);
+    // change_pawn_place(g->allPawns[0], g->damier, 1, 3, 5);
+    // change_pawn_place(g->allPawns[0], g->damier, 2, 1, 1);
 }
 
 int main(int argc, char *argv[])

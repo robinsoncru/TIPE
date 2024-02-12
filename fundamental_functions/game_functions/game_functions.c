@@ -63,21 +63,44 @@ void pawnMove(Game *g, bool is_white, int ind, bool left)
 void queenDepl(Game *g, int ind, bool color, queen_move_t tuple_coord)
 {
     // Suppose que l'entree est valide
+    bool doMoveBack = true;
     int lig = tuple_coord.pos_dame.i;
     int col = tuple_coord.pos_dame.j;
     int enn_lig = tuple_coord.pos_eaten_pawn.i;
     int enn_col = tuple_coord.pos_eaten_pawn.j;
     startTurnGameManagement(g);
     change_pawn_place_new(g, g->damier, ind, color, lig, col);
-    if (enn_lig != -1 && enn_col != -1)
+    if (enn_lig != -1 && enn_col != -1) {
+        // In fact, this is useless because eatRafle do the job but it is satisfying to jump an ennemy pawn
         killPawn(g, g->damier, enn_lig, enn_col);
+        doMoveBack = false;
+    }
 
-    if (get_pawn_value(g, color, ind, FRIENDLY) != NEUTRAL_IND)
+    // Gonna check if the queen can take a rafle
+
+    assert(g->currentTree == emptyTree);
+    bool isWhite = g->is_white;
+    pawn *pawns = g->allPawns[isWhite];
+    pawn *NPawns = g->allPawns[!isWhite];
+    g->currentTree = rafleTreeCalc(pawns, NPawns, g->damier, g->ind_move);
+
+    printf("lazyRafle called\n");
+    Path *r = lazyRafle(g->currentTree);
+    printf("eatRafle called\n");
+    bool had_eaten = eatRafleNGM(g, g->ind_move, g->is_white, g->currentTree, r);
+    if (doMoveBack) doMoveBack = !had_eaten;
+    printf("pathFree called\n");
+    pathFree(r);
+
+    if (get_pawn_value(g, color, ind, FRIENDLY) != NEUTRAL_IND && doMoveBack)
     {
         g->ind_move_back = get_pawn_value(g, color, ind, FRIENDLY);
         // le pion indique a partir de son indice
     }
-    endTurnGameManagement(g, color, ind, IND_CHANGE_ALLOWED, true);
+    else g->ind_move_back = VOID_INDEX;
+
+    endTurnGameManagement(g, color, ind, IND_CHANGE_ALLOWED, doMoveBack); 
+    // Do a move back only if the queen didn't eat
 }
 
 /*

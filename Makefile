@@ -1,9 +1,9 @@
 dames.out: main.o coord.o little_linked_list.o game_functions.o aux_functions.o debug_functions.o game_management.o \
 calculus_functions.o logic_functions.o play_back_game_functions.o interface.o input_command.o on_input.o graphic_cache.o update.o \
-basic_play_function.o path_tree.o rafle_tree_calc.o path_tree_display.o rafle_management.o four_pack.o path_struct.o rafle_eating.o
+path_tree.o rafle_tree_calc.o path_tree_display.o rafle_management.o four_pack.o path_struct.o rafle_eating.o AI_functions.o
 	gcc -g -Wall -o dames.out main.o coord.o little_linked_list.o game_functions.o aux_functions.o debug_functions.o game_management.o \
 calculus_functions.o logic_functions.o play_back_game_functions.o interface.o input_command.o on_input.o graphic_cache.o update.o \
-basic_play_function.o path_tree.o rafle_tree_calc.o path_tree_display.o rafle_management.o four_pack.o path_struct.o rafle_eating.o \
+path_tree.o rafle_tree_calc.o path_tree_display.o rafle_management.o four_pack.o path_struct.o rafle_eating.o AI_functions.o \
 $$(sdl2-config --cflags --libs) -lSDL2_ttf
 
 main.o: main.c
@@ -51,9 +51,6 @@ graphic_cache.o: graphic_interface/memory_update/graphic_cache.c
 update.o: graphic_interface/memory_update/update.c
 	gcc -g -c -Wall graphic_interface/memory_update/update.c
 
-basic_play_function.o: graphic_interface/autoplay_functions/basic_play_function.c
-	gcc -g -c -Wall graphic_interface/autoplay_functions/basic_play_function.c
-
 path_tree.o: rafle/calc/path_tree.c
 	gcc -g -c -Wall rafle/calc/path_tree.c
 
@@ -74,3 +71,6 @@ path_struct.o: rafle/rafle_choice/path_struct.c
 
 rafle_eating.o: rafle/rafle_eating/rafle_eating.c
 	gcc -g -c -Wall rafle/rafle_eating/rafle_eating.c
+
+AI_functions.o: graphic_interface/AI_functions/AI_functions.c
+	gcc -g -c -Wall graphic_interface/AI_functions/AI_functions.c

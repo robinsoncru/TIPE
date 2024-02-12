@@ -4,8 +4,6 @@ void pawnMoveAI(Game *g, int indMovePawn, bool left)
 {
     // Test pawn move remove, on suppose qu'on peut jouer, et qu'on a deja une fonction pour faire jouer l'ami en arrière
 
-    // Création de la copie dans le frame de la fonction
-    picture_this(g);
     bool iw = g->is_white;
     pawnMoveNGE(g, iw, indMovePawn, left);
     // Attention l'indice de renvoie du friend est dans le structure g
@@ -34,7 +32,6 @@ void pawnMoveAI(Game *g, int indMovePawn, bool left)
 
 void promotionIA(Game *g, int indMovePawn)
 {
-    picture_this(g);
 
     int ind_potential_foe = promotionNGE(g, indMovePawn);
 
@@ -73,10 +70,7 @@ void pawnMoveBackAI(Game *g, int indMovePawnBack, bool left)
 
 void biDeplAI(Game *g, int indMovePawn)
 {
-    // Test pawn move remove, on suppose qu'on peut jouer, et qu'on a deja une fonction pour faire jouer l'ami en arrière
 
-    // Création de la copie dans le frame de la fonction
-    picture_this(g);
     ind_bool_t data = biDeplNGE(g, g->is_white, indMovePawn);
 
     // Desecrate
@@ -89,15 +83,14 @@ void biDeplAI(Game *g, int indMovePawn)
 
 void queenDeplAI(Game *g, int indMovePawn, queen_move_t coords)
 {
-    picture_this(g);
     bool iw = g->is_white;
     Coord init_coord = give_coord(g, iw, indMovePawn);
-    primary_data_t data = queenDeplNGE(g, indMovePawn, iw, coords);
+    data_chain *chainy = queenDeplNGE(g, indMovePawn, iw, coords);
     picture_this(g);
 
     endTurnGameManagementSimple(g, indMovePawn);
 
-    cancelDeplQueen(g, indMovePawn, coords, data, init_coord);
+    cancelDeplQueen(g, indMovePawn, chainy, init_coord);
 }
 
 void rafleAI(Game *g, int indMovePawn)

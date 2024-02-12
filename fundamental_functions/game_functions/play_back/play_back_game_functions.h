@@ -24,8 +24,8 @@ void cancelBidepl(Game *g, int oldInd, ind_bool_t data);
 int promotionNGE(Game *g, int ind);
 void cancelPromotion(Game *g, int ind_old_friend, int ind_new_foe);
 
-primary_data_t queenDeplNGE(Game *g, int ind, bool color, queen_move_t tuple_coord);
-void cancelDeplQueen(Game *g, int ind_queen, queen_move_t tuple_coord, primary_data_t data, Coord init_coord);
+data_chain *queenDeplNGE(Game *g, int ind, bool color, queen_move_t tuple_coord);
+void cancelDeplQueen(Game *g, int ind_queen, data_chain *chainy, Coord init_coord);
 
 data_chain *rafleNGE(Game *g, int indMovePawn);
 void cancelRafle(Game *g, int indMovedPawn, Coord init_pos, data_chain *chainy);

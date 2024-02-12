@@ -5,6 +5,7 @@
 #include "../calc/path_tree.h"
 
 void pawnEat(Game* g, int indEater, bool is_white, int di, int dj);
+bool eatRafleNGM(Game* g, int indEater, bool is_white, PathTree* t, Path* r);
 void eatRafle(Game* g, int indEater, bool is_white, PathTree* t, Path* r);
 Path* lazyRafle(PathTree* t);
 #endif //RAFLE_EATING

@@ -30,6 +30,30 @@ void eatRafle(Game* g, int indEater, bool is_white, PathTree* t, Path* r){
     endTurnGameManagement(g, g->is_white, g->ind_move, IND_CHANGE_ALLOWED, false);
 }
 
+bool eatRafleNGM(Game* g, int indEater, bool is_white, PathTree* t, Path* r){    
+    // eatRafleNoGameManagement
+    PathTree* workTree = t;
+    uint8_t dirCode;
+    int di, dj;
+    bool had_eaten = false;
+
+    while (pathTreeDepth(workTree) > 0) {
+        switch (pathTreeNBChilds(workTree)) {
+            case 1:
+                dirCode = pathTreeFirstChild(workTree);
+                break;
+            default:
+                dirCode = pathPopFirstIn(r);
+                break;
+        }
+        getDirsFromCode(dirCode, &di, &dj);
+        pawnEat(g, indEater, is_white, di, dj);
+        workTree = pathTreeChild(workTree, dj, di);
+        if (!had_eaten) had_eaten = true;
+    }
+    return had_eaten;
+}
+
 Path* lazyRafle(PathTree* t){
     Path* res = pathCreate(pathTreeDepth(t));
     PathTree* workTree = t;
