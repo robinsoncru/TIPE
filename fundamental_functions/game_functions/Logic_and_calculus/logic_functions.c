@@ -138,9 +138,12 @@ bool canMoveBack(Game *g, bool is_white, int ind, bool left)
     int dj = left ? -1 : 1;
     Coord finalPos = {g->allPawns[is_white][ind].lig - di,
                       g->allPawns[is_white][ind].col + dj};
-    bool posInGame = inGame(finalPos.i, finalPos.j);
-    bool wayIsFree = freeCase(g->damier[finalPos.i][finalPos.j]);
-    return posInGame && wayIsFree;
+    if (inGame(finalPos.i, finalPos.j))
+    {
+        return freeCase(g->damier[finalPos.i][finalPos.j]);
+    }
+    else
+        return false;
 }
 
 bool canBiDepl(Game *g, int ind, bool color)
@@ -209,6 +212,7 @@ bool canStormBreaksForTheOthers(Game *g, int ind, int color)
     return false;
 }
 
-bool has_friend(Game *g, int ind, int color) {
+bool has_friend(Game *g, int ind, int color)
+{
     return ((get_pawn_value(g, color, ind, FRIENDLY)) != VOID_INDEX);
 }

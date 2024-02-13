@@ -89,7 +89,6 @@ void killPawn(Game *g, Case **damier, int i, int j)
         /* Supprimer l'indice et optimiser la memoire */
         copy_remove_pawn_from_index_to_index(g, g->nb_pawns[color] - 1, indPawn, color);
         g->nb_pawns[color]--;
-        picture_this(g);
     }
 }
 

@@ -337,27 +337,31 @@ void onKUp(Game *g, GraphicCache *cache)
 
 void onRUp(Game *g, GraphicCache *cache)
 {
-    picture_this(g);
-    // Teste for the queen 
+    // picture_this(g);
+    // // Teste for the queen 
 
-    bool iw = g->is_white;
-    int ind = g->ind_move;
-    SDL_Event event = cache->event;
+    // bool iw = g->is_white;
+    // int ind = g->ind_move;
+    // SDL_Event event = cache->event;
 
-    int x = event.button.x;
-    int y = event.button.y;
-    int lig = y / LG_CASE;
-    int col =  x/ LG_CASE;
+    // int x = event.button.x;
+    // int y = event.button.y;
+    // int lig = y / LG_CASE;
+    // int col =  x/ LG_CASE;
 
-    queen_move_t coords = CanMoveOrEatQueen(g, iw, lig, col, g->damier, ind);
-    int dame_lig = coords.pos_dame.i;
-    int dame_col = coords.pos_dame.j;
-    if (basicChecks(g) && dame_lig != VOID_INDEX && dame_col != VOID_INDEX)
-    {
-        queenDeplAI(g, ind, coords);
-    }
-    else
-        printv("big queen pb");
-    // lienEnnemitieAI(g, ind, lig, col);
-    picture_this(g);
+    // queen_move_t coords = CanMoveOrEatQueen(g, iw, lig, col, g->damier, ind);
+    // int dame_lig = coords.pos_dame.i;
+    // int dame_col = coords.pos_dame.j;
+    // if (basicChecks(g) && dame_lig != VOID_INDEX && dame_col != VOID_INDEX)
+    // {
+    //     queenDeplAI(g, ind, coords);
+    // }
+    // else
+    //     printv("big queen pb");
+    // // lienEnnemitieAI(g, ind, lig, col);
+    // picture_this(g);
+
+    picture_game(g, g->is_white);
+    printf("max moves %d", maxMoves(g));
+    flush();
 }
