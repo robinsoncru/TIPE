@@ -70,7 +70,8 @@ void queenDepl(Game *g, int ind, bool color, queen_move_t tuple_coord)
     int enn_col = tuple_coord.pos_eaten_pawn.j;
     startTurnGameManagement(g);
     change_pawn_place_new(g, g->damier, ind, color, lig, col);
-    if (enn_lig != -1 && enn_col != -1) {
+    if (enn_lig != -1 && enn_col != -1)
+    {
         // In fact, this is useless because eatRafle do the job but it is satisfying to jump an ennemy pawn
         killPawn(g, g->damier, enn_lig, enn_col);
         doMoveBack = false;
@@ -88,7 +89,8 @@ void queenDepl(Game *g, int ind, bool color, queen_move_t tuple_coord)
     Path *r = lazyRafle(g->currentTree);
     printf("eatRafle called\n");
     bool had_eaten = eatRafleNGM(g, g->ind_move, g->is_white, g->currentTree, r);
-    if (doMoveBack) doMoveBack = !had_eaten;
+    if (doMoveBack)
+        doMoveBack = !had_eaten;
     printf("pathFree called\n");
     pathFree(r);
 
@@ -97,9 +99,10 @@ void queenDepl(Game *g, int ind, bool color, queen_move_t tuple_coord)
         g->ind_move_back = get_pawn_value(g, color, ind, FRIENDLY);
         // le pion indique a partir de son indice
     }
-    else g->ind_move_back = VOID_INDEX;
+    else
+        g->ind_move_back = VOID_INDEX;
 
-    endTurnGameManagement(g, color, ind, IND_CHANGE_ALLOWED, doMoveBack); 
+    endTurnGameManagement(g, color, ind, IND_CHANGE_ALLOWED, doMoveBack);
     // Do a move back only if the queen didn't eat
 }
 
@@ -127,7 +130,7 @@ void promotionPmetre(pawn *pawns, bool is_white, Case **damier, int ind, Game *g
     int choice = rand() % 3;
     if (choice == 1)
     {
-        pawns[ind].queen = true;
+        promote(g, is_white, ind);
         endTurnGameManagement(g, is_white, ind, IND_GLORY_QUEEN, false);
         return;
     }
@@ -174,24 +177,18 @@ void promotion(Game *g)
 
 */
 
-void lienAmitiePmetre(int lig, int col, Case **damier, int ind, bool is_white, Game *g)
+void lienAmitie(int lig, int col, Game *g)
 {
+    // On suppose le coup legal
+
     /* Lie d'amitie le pion en indice avec le pion se trouvant en coord (lig, col) sur le damier, en verifiant qu'il est bien de
     couleur opposé et qu'il existe. Gère le pmetre Pawn.friendly. Si on lie d'amitié un pion qui était déjà ami, l'action n'a pas lieu et
     le joueur doit rejouer.
     Suppose le pion ainsi que le pion ami selectionne valides */
     startTurnGameManagement(g);
-    Case c = damier[lig][col];
-    put_pawn_value(g, is_white, ind, 3, c.ind_pawn);
-    put_pawn_value(g, c.pawn_color, c.ind_pawn, 3, ind);
-    endTurnGameManagement(g, is_white, ind, IND_CHANGE_ALLOWED, false);
-}
-
-void lienAmitie(int lig, int col, Game *g)
-{
-    // On suppose le coup legal
     bool iw = g->is_white;
-    lienAmitiePmetre(lig, col, g->damier, g->ind_move, iw, g);
+    lienAmitiePmetreNGE(lig, col, g->damier, g->ind_move, iw, g);
+    endTurnGameManagement(g, iw, g->ind_move, IND_CHANGE_ALLOWED, false);
 }
 
 /*
@@ -239,28 +236,17 @@ void moveBack(Game *g)
 
 */
 
-void lienEnnemitiePmetre(bool is_white, int lig, int col, Case **damier, int ind, Game *g)
+void lienEnnemitie(int lig, int col, Game *g)
 {
+    // Suppose legal move
+
     /* Declare ennemis pour la vie le pion en indice avec le pion se trouvant en coord (lig, col) sur le damier, en verifiant qu'il est bien de
     couleur opposé et qu'il existe. Gère le pmetre Game.friendly. Si on declare ennemi un pion qui était déjà ennemi, le coup n'est pas joué
     Suppose legal move */
     startTurnGameManagement(g);
-    Case c = damier[lig][col];
-    put_pawn_value(g, is_white, ind, 2, c.ind_pawn);
-    put_pawn_value(g, c.pawn_color, c.ind_pawn, 2, ind);
-    // printf("Enn %d %d\n", lig, col);
-    // print_pawn(g->allPawns[c.pawn_color][c.ind_pawn], c.ind_pawn);
-    // printf("Actu pawn");
-    // print_pawn(g->allPawns[is_white][ind], ind);
-    // flush();
-    endTurnGameManagement(g, is_white, ind, IND_CHANGE_ALLOWED, false);
-}
-
-void lienEnnemitie(int lig, int col, Game *g)
-{
-    // Suppose legal move
     bool iw = g->is_white;
-    lienEnnemitiePmetre(iw, lig, col, g->damier, g->ind_move, g);
+    lienEnnemitiePmetreNGE(iw, lig, col, g->damier, g->ind_move, g);
+    endTurnGameManagement(g, iw, g->ind_move, IND_CHANGE_ALLOWED, false);
 }
 
 /*

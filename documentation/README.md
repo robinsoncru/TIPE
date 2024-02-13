@@ -25,6 +25,8 @@ Regles du jeu:
 On ne peut lier d'amitie que deux amis au max, sinon le coup n'est pas joué
 De même pour ennemie
 
+Note: J'ai (Victor G) du supprimer le répertoire main car l'option debug ne permet pas de sortir d'un dossier (comme fundamental functions) pour rentrer dans le main
+
 Conseils de code:
 - Executer toujours le compile.sh dans le dossier ou est le main sinon les inclusions des autres fichiers font planter les fonctions du module SDL_ttf (TTF_OpenFont)
 La selection avec la souris ne permet pas de revenir en arriere, donc si on selectionne un pion coincé, le jeu est bloqué
@@ -56,9 +58,7 @@ au niveau des rafles: apparition d'un nv pion ou segfault
 
 Todo list :
 - Implementer l'IA:
--- Victor G: je fais fais les fonctions de mouvement retour (comme NonLoggingChangeForEat mais pour les autres): idée enregistrer les modifications a chaque coup dans une liste chainé en lisant le jeu (le cloud, l'index) et avec un code couleur, faire les changement inverse nécessaire pour chaque action du code couleur
-
-Note: j'ai du supprimer le répertoire main car l'option debug ne permet pas de sortir d'un dossier (comme fundamental functions) pour rentrer dans le main
+-- Victor G: donner une majo du jeu à chaque trait en temps constant: idée mettre à jour le nb de dame: avec commentaire
 
 -- Victor D: aspect theorique de la gestion aléatoire
 -- Lister les coups possibles (canMove, canMoveQueen, ...) avec un indice donné lorsque la machine à le trait, dans une liste chainé: Victor D

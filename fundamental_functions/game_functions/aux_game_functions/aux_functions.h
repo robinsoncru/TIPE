@@ -36,4 +36,8 @@ Coord give_coord(Game *g, bool iw, int ind);
 // Memory functions
 void free_game(Game *g);
 
+void doubleTabInit(int t[2]);
+void incrBothTab(int t[2]);
+void decrBothTab(int t[2]);
+
 #endif // AUX_FUNCTIONS

@@ -64,22 +64,32 @@ void killPawn(Game *g, Case **damier, int i, int j)
     {
         int indPawn = damier[i][j].ind_pawn;
         bool color = damier[i][j].pawn_color;
-        int indEnnemy = get_pawn_value(g, color, indPawn, ENNEMY);
-        int indAmi = get_pawn_value(g, color, indPawn, FRIENDLY);
-        if (indEnnemy != -1)
+        int indEnnemy = get_pawn_value(g, !color, indPawn, ENNEMY);
+        int indAmi = get_pawn_value(g, !color, indPawn, FRIENDLY);
+        bool is_queen = int_to_bool(get_pawn_value(g, color, indPawn, QUEEN));
+        bool opposee_is_queen = int_to_bool(get_pawn_value(g, !color, indAmi, QUEEN));
+        if (indEnnemy != VOID_INDEX)
         {
             put_pawn_value(g, !color, indEnnemy, ENNEMY, -1);
             put_pawn_value(g, !color, indEnnemy, QUEEN, 1);
+            decrBothTab(g->nbFoe);
         }
-        if (indAmi != -1)
+        else if (indAmi != VOID_INDEX)
         {
             put_pawn_value(g, !color, indAmi, FRIENDLY, -1);
+            if (is_queen) g->nbQueenWithFriend[color]--;
+            else g->nbFriendNoQueen[color]--;
+
+            if (opposee_is_queen) g->nbQueenWithFriend[!color]--;
+            else g->nbFriendNoQueen[!color]--;
         }
+        else if (is_queen) g->nbQueenWithoutFriend[color]--;
         pawn_default_value_new(g, indPawn, color);
         damier[i][j].ind_pawn = -1;
         /* Supprimer l'indice et optimiser la memoire */
         copy_remove_pawn_from_index_to_index(g, g->nb_pawns[color] - 1, indPawn, color);
         g->nb_pawns[color]--;
+        picture_this(g);
     }
 }
 
@@ -163,6 +173,8 @@ void promote(Game *g, bool is_white, int ind)
 {
     pawn *p = &(g->allPawns[is_white][ind]);
     p->queen = true;
+    if (has_friend(g, ind, is_white)) g->nbQueenWithFriend[is_white]++;
+    else g->nbQueenWithoutFriend[is_white]++;
     if (p->ennemy != NEUTRAL_IND)
     {
         pawn *ennemyPawn = &(g->allPawns[!is_white][p->ennemy]);
@@ -400,4 +412,19 @@ Coord give_coord(Game *g, bool iw, int ind)
     Coord init_coord = {.i = get_pawn_value(g, iw, ind, LIG),
                         .j = get_pawn_value(g, iw, ind, COL)};
     return init_coord;
+}
+
+void doubleTabInit(int t[2]) {
+    t[0] = 0;
+    t[1] = 0;
+}
+
+void incrBothTab(int t[2]) {
+    t[0]++;
+    t[1]++;
+}
+
+void decrBothTab(int t[2]) {
+    t[0]--;
+    t[1]--;
 }

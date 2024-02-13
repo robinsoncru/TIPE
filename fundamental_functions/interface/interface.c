@@ -341,8 +341,13 @@ Game *create_game()
 
     g->cloud[true] = create_list();
     g->cloud[false] = create_list();
-    g->lengthCloud[true] = 0;
-    g->lengthCloud[false] = 0;
+    doubleTabInit(g->lengthCloud);
+
+    doubleTabInit(g->nbFoe);
+    doubleTabInit(g->nbFriendNoQueen);
+    doubleTabInit(g->nbQueenWithFriend);
+    doubleTabInit(g->nbQueenWithoutFriend);
+
     return g;
 }
 

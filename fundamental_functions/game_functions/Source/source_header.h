@@ -70,6 +70,11 @@
 #define GDEPL 1
 #define GCLOUD 2
 
+// Variables to handle number of each type of pawns
+#define NB_QUEEN 0
+#define NB_FRIEND 1
+#define NB_FOE 2
+
 // Game structure
 typedef struct
 {
@@ -103,6 +108,10 @@ typedef struct
     Coord coordForMoveBack;
     maillon* cloud[2];
     int lengthCloud[2];
+    int nbFriendNoQueen[2];
+    int nbFoe[2];
+    int nbQueenWithoutFriend[2];
+    int nbQueenWithFriend[2];
 
     PathTree* currentTree;
     Path* currentRafle;

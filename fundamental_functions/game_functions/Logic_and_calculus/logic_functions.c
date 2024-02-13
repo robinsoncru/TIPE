@@ -208,3 +208,7 @@ bool canStormBreaksForTheOthers(Game *g, int ind, int color)
     }
     return false;
 }
+
+bool has_friend(Game *g, int ind, int color) {
+    return ((get_pawn_value(g, color, ind, FRIENDLY)) != VOID_INDEX);
+}

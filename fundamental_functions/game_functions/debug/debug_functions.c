@@ -99,3 +99,9 @@ void picture_this(Game *g) {
     error();
     error();
 }
+
+void picture_game(Game *g, bool iw) {
+    printf("nb pawns %d\n nb queen with friend %d\n nb queen without friend %d\n nb ghost pawn %d\n \
+    nb friend no queen %d\n nb foe %d\n \n", g->nb_pawns[iw], g->nbQueenWithFriend[iw], \
+     g->nbQueenWithoutFriend[iw], g->lengthCloud[iw], g->nbFriendNoQueen[iw], g->nbFoe[iw]);
+}

@@ -253,18 +253,6 @@ data_chain *queenDeplNGE(Game *g, int ind, bool color, queen_move_t tuple_coord)
     int lig = tuple_coord.pos_dame.i;
     int col = tuple_coord.pos_dame.j;
     change_pawn_place_new(g, g->damier, ind, color, lig, col);
-    // primary_data_t data = {.friend = -1, .foe = -1, .queen = false};
-    // if (enn_lig != -1 && enn_col != -1)
-    // {
-    //     ennInd = g->damier[enn_lig][enn_col].ind_pawn;
-    //     if (ennInd != VOID_INDEX)
-    //     {
-    //         data.friend = get_pawn_value(g, !color, ennInd, FRIENDLY);
-    //         data.foe = get_pawn_value(g, !color, ennInd, ENNEMY);
-    //         data.queen = int_to_bool(get_pawn_value(g, !color, ennInd, QUEEN));
-    //         killPawn(g, g->damier, enn_lig, enn_col);
-    //     }
-    // }
 
     // Gonna check if the queen can take a rafle
     data_chain *chainy = rafleNGE(g, ind);
@@ -288,9 +276,20 @@ void lienAmitiePmetreNGE(int lig, int col, Case **damier, int ind, bool is_white
 {
     moveBackGameManagement(g);
     Case c = damier[lig][col];
-    assert(c.ind_pawn != VOID_INDEX);
+    assert(c.ind_pawn != VOID_INDEX && c.pawn_color == !is_white);
     put_pawn_value(g, is_white, ind, FRIENDLY, c.ind_pawn);
     put_pawn_value(g, c.pawn_color, c.ind_pawn, FRIENDLY, ind);
+    if (int_to_bool(get_pawn_value(g, is_white, ind, QUEEN))) {
+        g->nbQueenWithFriend[is_white]++;
+        g->nbQueenWithoutFriend[is_white]--;
+    }
+    else g->nbFriendNoQueen[is_white]++;
+    
+    if (int_to_bool(get_pawn_value(g, !is_white, c.ind_pawn, QUEEN))) {
+        g->nbQueenWithFriend[!is_white]++;
+        g->nbQueenWithoutFriend[!is_white]--;
+    }
+    else g->nbFriendNoQueen[!is_white]++;
 }
 
 void lienAmitieNGE(int lig, int col, Game *g, int indPawn)
@@ -315,6 +314,7 @@ void lienEnnemitiePmetreNGE(bool is_white, int lig, int col, Case **damier, int 
     assert(c.ind_pawn != -1);
     put_pawn_value(g, is_white, ind, 2, c.ind_pawn);
     put_pawn_value(g, c.pawn_color, c.ind_pawn, 2, ind);
+    incrBothTab(g->nbFoe);
 }
 
 void lienEnnemitieNGE(int lig, int col, Game *g, int indPawn)

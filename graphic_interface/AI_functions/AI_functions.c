@@ -17,6 +17,8 @@ void pawnMoveAI(Game *g, int indMovePawn, bool left)
 
     endTurnGameManagementSimple(g, indMovePawn);
 
+    // appel recursif d'une autre fonction de jeu
+
     picture_this(g);
 
     // Here recreate the cloud

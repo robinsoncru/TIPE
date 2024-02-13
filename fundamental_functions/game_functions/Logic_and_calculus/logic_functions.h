@@ -29,4 +29,6 @@ bool isInCloud(Game *g, bool color, int ind);
 bool canStormBreaks(Game *g, int ind, int color);
 bool canStormBreaksForTheOthers(Game *g, int ind, int color);
 
+bool has_friend(Game *g, int ind, int color);
+
 #endif // LOGIC_FUNCTIONS

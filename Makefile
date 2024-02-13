@@ -1,9 +1,11 @@
 dames.out: main.o coord.o little_linked_list.o game_functions.o aux_functions.o debug_functions.o game_management.o \
 calculus_functions.o logic_functions.o play_back_game_functions.o interface.o input_command.o on_input.o graphic_cache.o update.o \
-path_tree.o rafle_tree_calc.o path_tree_display.o rafle_management.o four_pack.o path_struct.o rafle_eating.o AI_functions.o
+path_tree.o rafle_tree_calc.o path_tree_display.o rafle_management.o four_pack.o path_struct.o rafle_eating.o AI_functions.o \
+possible_moves.o
 	gcc -g -Wall -o dames.out main.o coord.o little_linked_list.o game_functions.o aux_functions.o debug_functions.o game_management.o \
 calculus_functions.o logic_functions.o play_back_game_functions.o interface.o input_command.o on_input.o graphic_cache.o update.o \
 path_tree.o rafle_tree_calc.o path_tree_display.o rafle_management.o four_pack.o path_struct.o rafle_eating.o AI_functions.o \
+possible_moves.o \
 $$(sdl2-config --cflags --libs) -lSDL2_ttf
 
 main.o: main.c
@@ -74,3 +76,6 @@ rafle_eating.o: rafle/rafle_eating/rafle_eating.c
 
 AI_functions.o: graphic_interface/AI_functions/AI_functions.c
 	gcc -g -c -Wall graphic_interface/AI_functions/AI_functions.c
+
+possible_moves.o: graphic_interface/AI_functions/possible_moves.c
+	gcc -g -c -Wall graphic_interface/AI_functions/possible_moves.c

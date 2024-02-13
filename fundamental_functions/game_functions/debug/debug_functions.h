@@ -18,6 +18,7 @@ void error();
 void print_little_linked_list(maillon *l);
 void printv(char *s);
 void picture_this(Game *g);
+void picture_game(Game *g, bool iw);
 
 
 #endif //  DEBUG_FUNCTIONS

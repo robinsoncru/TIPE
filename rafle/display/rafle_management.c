@@ -33,7 +33,7 @@ void freeCurrentRafle(PathTree** cacheTree){
         printf("freeing rafle tree...");
         PathTree* m = *cacheTree;
         *cacheTree = emptyTree;
-        pathTreeFree(m);
+        pathTreeFree(m); // Potentiellement ca plante
         printf("\nrafle tree freed");
     }
     printf("\n");
