@@ -188,7 +188,8 @@ void lienAmitie(int lig, int col, Game *g)
     startTurnGameManagement(g);
     bool iw = g->is_white;
     lienAmitiePmetreNGE(lig, col, g->damier, g->ind_move, iw, g);
-    endTurnGameManagement(g, iw, g->ind_move, IND_CHANGE_ALLOWED, false);
+    endTurnGameManagement(g, iw, g->ind_move, IND_CHANGE_ALLOWED, false); /* Pb, on rentre dans la 
+    fonction et g->currentTree devient invalide */
 }
 
 /*
