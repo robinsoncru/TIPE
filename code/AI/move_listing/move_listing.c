@@ -3,19 +3,12 @@
 #include <stdlib.h>
 
 Move* listMovesMoveBack(Game* g, int* resSize){
-    pawn pawnToMove = g->allPawns[g->is_white][g->ind_move_back];
-    int i = pawnToMove.lig, j = pawnToMove.col;
-    int perspective = (g->is_white) ? 1 : -1;
-
     Move* temporaryResult = malloc(2 * sizeof(Move));
     Move currentMove;
     int nbMoves = 0;
 
     currentMove.type = pawnMoveBackType;
     currentMove.manipulatedPawn = g->ind_move_back;
-
-    int colShift[2] = {-1, 1};
-    int newLig = i - perspective;
     for (int k = 0; k < 2; k++) {
         if (canMoveBack(g, g->is_white, g->ind_move_back, k != 1)) {
             currentMove.left = k != 1;
@@ -26,6 +19,26 @@ Move* listMovesMoveBack(Game* g, int* resSize){
 
     *resSize = nbMoves;
     return temporaryResult;
+}
+
+void listMovesForGhostPawns(Game* g, int selectedPawn, Move* temporaryResult, int* nbMoves){
+    Move currentMove;
+    currentMove.manipulatedPawn = selectedPawn;
+    
+    currentMove.type = biDeplType;
+    if (canBiDepl(g, selectedPawn, g->is_white)) {
+        temporaryResult[*nbMoves] = currentMove;
+        *nbMoves = *nbMoves + 1;
+    }
+
+    currentMove.type = pawnMoveType;
+    for (int k = 0; k < 2; k++) {
+        if (canMove(g, g->is_white, selectedPawn, k!=1)) {
+            currentMove.left = k != 1;
+            temporaryResult[*nbMoves] = currentMove;
+            *nbMoves = *nbMoves + 1;
+        }
+    }
 }
 
 
