@@ -28,6 +28,8 @@ Move* listMovesMoveBack(Game* g, int* resSize){
     return temporaryResult;
 }
 
+
+
 MoveTab* listMoves(Game* g){
     Move* temporaryResult;
     int nbMoves;
