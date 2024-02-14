@@ -1,4 +1,4 @@
-#include "possible_moves.h"
+#include "move_max.h"
 
 // Soit t'es ghost
 

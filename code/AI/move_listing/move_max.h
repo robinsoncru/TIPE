@@ -1,7 +1,7 @@
 #ifndef POSSIBLE_MOVES 
 #define POSSIBLE_MOVES
 
-#include "AI_functions.h"
+#include "../../fundamental_functions/game_functions/Source/source_header.h"
 
 int maxMoves(Game *g);
 
