@@ -15,5 +15,6 @@ void put_pawn_value(Game *g, bool color, int ind, int wich_pmetre_modify, int va
 int get_pawn_value(Game *g, bool color, int ind, int wich_pmetre_get);
 int ind_from_coord(Game *g, int lig, int col);
 
+int quickPow(int a, int n);
 
 #endif //CALCULUS FUNCTIONS

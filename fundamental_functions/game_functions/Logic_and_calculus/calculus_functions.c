@@ -123,3 +123,18 @@ int ind_from_coord(Game *g, int lig, int col) {
     // Give the ind from the coord in the damier
     return g->damier[lig][col].ind_pawn;
 }
+
+int quickPow(int a, int n)
+{
+    /* Return a^n, exp rapide */
+    if (n == 0)
+        return 1;
+    else
+    {
+        int b = quickPow(a, n / 2);
+        if (n % 2 == 1)
+            return a * b * b;
+        else
+            return b * b;
+    }
+}

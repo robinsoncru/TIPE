@@ -26,6 +26,8 @@ On ne peut lier d'amitie que deux amis au max, sinon le coup n'est pas joué
 De même pour ennemie
 
 Note: J'ai (Victor G) du supprimer le répertoire main car l'option debug ne permet pas de sortir d'un dossier (comme fundamental functions) pour rentrer dans le main
+J'ai (Victor G) reporté un bug très bizarre, je passe le pointeur Game *g à une fonction dont l'attribut currentTree est à null à une fonction et dans le corps de la
+fonction, currentTree devient invalid adress, bug résolu en copiant-collant la fonction
 
 Conseils de code:
 - Executer toujours le compile.sh dans le dossier ou est le main sinon les inclusions des autres fichiers font planter les fonctions du module SDL_ttf (TTF_OpenFont)
