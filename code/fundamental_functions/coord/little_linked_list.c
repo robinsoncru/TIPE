@@ -100,7 +100,7 @@ pawn_info dpop(data_chain *l) {
 
 data_chain *dcreate_list() {
     data_chain *l = malloc(sizeof(data_chain));
-    pawn_info data_set = {.relationship = {.friend = -1, .foe = -1, .queen = false}, 
+    pawn_info data_set = {.relationship = {.friendId = -1, .foe = -1, .queen = false}, 
     .coord = {.i = -1, .j = -1}};
     l->data = data_set;
     l->next = NULL;

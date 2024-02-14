@@ -193,7 +193,7 @@ data_chain *eatRafleNGE(Game *g, int indEater, bool is_white, PathTree *t, Path 
         int col_pawn_eaten = get_pawn_value(g, is_white, indEater, COL) + dj;
         int eatenInd = g->damier[lig_pawn_eaten][col_pawn_eaten].ind_pawn;
         
-        pawn_info data_eaten = {.relationship = {.friend = get_pawn_value(g, !is_white, eatenInd, FRIENDLY),
+        pawn_info data_eaten = {.relationship = {.friendId = get_pawn_value(g, !is_white, eatenInd, FRIENDLY),
         .foe = get_pawn_value(g, !is_white, eatenInd, ENNEMY), 
         .queen = int_to_bool(get_pawn_value(g, !is_white, eatenInd, QUEEN))}, 
         .coord = {.i = lig_pawn_eaten, .j = col_pawn_eaten}};
@@ -232,7 +232,7 @@ void cancelRafle(Game *g, int indMovedPawn, Coord init_pos, data_chain *chainy) 
         int j = reborn_pawn.coord.j;
         createPawn(g, !iw, i, j);
         int reborn_ind = g->damier[i][j].ind_pawn;
-        put_pawn_value(g, !iw, reborn_ind, FRIENDLY, reborn_pawn.relationship.friend);
+        put_pawn_value(g, !iw, reborn_ind, FRIENDLY, reborn_pawn.relationship.friendId);
         put_pawn_value(g, !iw, reborn_ind, ENNEMY, reborn_pawn.relationship.foe);
         put_pawn_value(g, !iw, reborn_ind, QUEEN, bool_to_int(reborn_pawn.relationship.queen));
     }
