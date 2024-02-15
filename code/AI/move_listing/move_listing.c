@@ -41,7 +41,36 @@ void listMovesForGhostPawns(Game* g, int selectedPawn, Move* temporaryResult, in
     }
 }
 
+void listMovesForQueen(Game* g, int selectedPawn, Move* temporaryResult, int* nbMoves){
+    //possible cases where to move for a queen
+    Move currentMove;
+    currentMove.manipulatedPawn = selectedPawn;
 
+    currentMove.type = queenDeplType;
+    int possibleShifts[2] = {-1, 1};
+    Coord dir;
+    for (int i = 0; i < 2; i++) {
+        for (int j = 0; j < 2; j++) {
+            dir.i = possibleShifts[i];
+            dir.j = possibleShifts[j];
+            for (int k = 1; k < NB_CASE_LG; k++) {
+                currentMove.coords.pos_dame = dir;
+                if (caseIsAccessible(g, g->is_white, dir.i, dir.j)) {
+                    temporaryResult[*nbMoves] = currentMove;
+                    *nbMoves = *nbMoves + 1;
+                    dir.i += possibleShifts[i];
+                    dir.j += possibleShifts[j];
+                }
+                else {
+                    break;
+                }
+            }
+        }
+    
+    }
+
+    currentMove.type = 
+}
 
 MoveTab* listMoves(Game* g){
     Move* temporaryResult;

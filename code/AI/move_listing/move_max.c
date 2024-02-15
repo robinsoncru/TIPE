@@ -16,12 +16,13 @@ int possibleMoveForOneGhostPawn()
 
 int possibleMoveForOneQueenWithoutFriend(Game *g)
 {
-    // Une queen n'a pas d'ennemi, mais peut avoir un (petit) ami (genre le frère du roi)
+    // Une queen n'a pas d'ennemi, mais peut avoir un (petit) ami (genre son cousin, on parle de nobles hein)
     bool iw = g->is_white;
-    int deplPossibles = NB_CASE_LG * 2;                                    /* Pire cas ou la dame est au centre du damier, comprend le
-                                      déplacement arrière forcé par un pion ami */
-    int eatPossible = quickPow(4, g->nb_pawns[!iw] - g->lengthCloud[!iw]); /* Mange tous les pions restants avec 4 directions
-    possibles */
+    int deplPossibles = NB_CASE_LG * 2;
+    /* Pire cas ou la dame est au centre du damier, comprend le
+    déplacement arrière forcé par un pion ami */
+    int eatPossible = quickPow(4, g->nb_pawns[!iw] - g->lengthCloud[!iw]);
+    /* Mange tous les pions restants avec 4 directions possibles */
     int friendPossible = g->nb_pawns[!iw] - g->nbFoe[!iw] - g->nbFriendNoQueen[!iw] - g->lengthCloud[!iw] - g->nbQueenWithFriend[!iw];
     /* La dame peut devenir ami, donc on compte les pions adverses qui peuvent encore devenir amis
     avec la dame */

@@ -158,6 +158,10 @@ bool needPutMoveBack(Game *g)
     return g->ind_move_back > -1 && g->coordForMoveBack.i == IND_LISTENING_MOVE_BACK && g->coordForMoveBack.j == IND_LISTENING_MOVE_BACK;
 }
 
+bool caseIsAccessible(Game *g, bool is_white, int i, int j){
+    return !outOfBounds(i, j) && g->damier[i][j].ind_pawn == VOID_INDEX;
+}
+
 bool canPromotion(Game *g)
 {
     return basicChecks(g) && !isInCloud(g, g->is_white, g->ind_move);
