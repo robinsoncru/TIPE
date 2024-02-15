@@ -1,5 +1,6 @@
 #include "path_struct.h"
 #include "four_pack.h"
+#include <SDL2/SDL_stdinc.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -42,6 +43,17 @@ void pathAdd(Uint8 c, Path* path){
     pathSet(c, path->fin, path);
     path->fin = (path->fin + 1) % path->c;
     path->n ++;
+}
+
+Path* pathCopy(Path* path){
+    Path* res = pathCreate(path->c);
+    res->n = path->n;
+    res->deb = path->deb;
+    res->fin = path->fin;
+    for (int k = 0; k < path->c; k++) {
+        pathSet(pathGet(k, path), k, res);
+    }
+    return res;
 }
 
 Uint8 pathPeekFirstIn(Path* path){
