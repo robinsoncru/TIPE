@@ -154,6 +154,55 @@ void listMovesForPawn(Game* g, int selectedPawn, Move* temporaryResult, int* nbM
     }
 }
 
+void listMovesRafleCount(Move* temporaryResult, int nbMoves, int* rafleCount, int* length){
+    int nbRafles = 0;
+    int maxRafleLength = 0;
+    int currentLength;
+    Move currentMove;
+    for (int k = 0; k < nbMoves; k++) {
+        currentMove = temporaryResult[k];
+        currentLength = pathTreeDepth(currentMove.rafleTree);
+        if (currentMove.type == rafleType && currentLength > maxRafleLength) {
+            nbRafles = 1;
+            maxRafleLength = currentLength;
+        }
+        else if (currentLength == maxRafleLength) {
+            nbRafles++;
+        }
+    }
+
+    *rafleCount = nbRafles;
+    *length = maxRafleLength;
+}
+
+MoveTab* listMovesFilterRafles(Move* temporaryResult, int nbMoves){
+    int rafleCount, length;
+    listMovesRafleCount(temporaryResult, nbMoves, &rafleCount, &length);
+
+    MoveTab* res = malloc(sizeof(MoveTab));
+    Move currentMove;
+    switch (rafleCount) {
+        case 0:
+            res->size = nbMoves;
+            res->tab = temporaryResult;
+            break;
+        
+        default:
+            res->size = 0;
+            res->tab = malloc(rafleCount * sizeof(Move));
+            for (int k = 0; k < nbMoves; k++) {
+                currentMove = temporaryResult[k];
+                if (pathTreeDepth(currentMove.rafleTree) == length) {
+                    res->tab[res->size] = currentMove;
+                    res->size++;
+                }
+            }
+            free(temporaryResult);
+            break;
+    }
+    return res;
+}
+
 MoveTab* listMoves(Game* g){
     Move* temporaryResult;
     int nbMoves;
@@ -163,13 +212,25 @@ MoveTab* listMoves(Game* g){
     else {
         temporaryResult = malloc(maxMoves(g) * sizeof(Move));
         nbMoves = 0;
+        listMovesPromotion(g, temporaryResult, &nbMoves);
+
+        pawn p;
+        for (int k = 0; k < 2 * NB_PAWNS; k++) {
+            p = g->allPawns[g->is_white][k];
+            if (p.alive) {
+                if (p.queen) {
+                    listMovesForQueen(g, k, temporaryResult, &nbMoves);
+                }
+                else if (p.pba != 1) {
+                    listMovesForGhostPawns(g, k, temporaryResult, &nbMoves);
+                }
+                else {
+                    listMovesForPawn(g, k, temporaryResult, &nbMoves);
+                }
+            }
+        }
     }
 
-    MoveTab* actualResult = malloc(sizeof(MoveTab));
-    actualResult -> size = nbMoves;
-    for (int k = 0; k < nbMoves; k++) {
-        actualResult->tab[k] = temporaryResult[k];
-    }
-    free(temporaryResult);
-    return actualResult;
+    
+    return listMovesFilterRafles(temporaryResult, nbMoves);
 }

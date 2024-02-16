@@ -45,7 +45,7 @@ void listRafles(Game* g, int selectedPawn, Coord tmpPos, Move* temporaryResult, 
 
     if (pathTreeDepth(tree) > 0) {
         Move currentMove;
-        currentMove.type = (p.queen) ? queenDeplType : rafleType;
+        currentMove.type = rafleType;
         currentMove.manipulatedPawn = selectedPawn;
         currentMove.rafleTree = tree;
 
@@ -53,8 +53,10 @@ void listRafles(Game* g, int selectedPawn, Coord tmpPos, Move* temporaryResult, 
         listPathsOfTrees(tree, currentPath, currentMove, temporaryResult, nbMoves);
         pathFree(currentPath);
     }
+    else {
+        pathTreeFree(tree);
+    }
 
     //retour a l'etat initial
-    pathTreeFree(tree);
     change_pawn_place_new(g, g->damier, selectedPawn, g->is_white, initI, initJ);
 }
