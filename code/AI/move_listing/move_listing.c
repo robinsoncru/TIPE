@@ -103,6 +103,11 @@ void listMovesForGhostPawns(Game* g, int selectedPawn, Move* temporaryResult, in
 
 void listMovesForQueen(Game* g, int selectedPawn, Move* temporaryResult, int* nbMoves){
     pawn p = g->allPawns[g->is_white][selectedPawn];
+
+    if (p.friendly == VOID_INDEX) {
+        listMovesBefriend(g, selectedPawn, temporaryResult, nbMoves);
+    }
+
     Coord pos = {p.lig, p.col};
     //possible cases where to move for a queen
     Move currentMove;
@@ -143,6 +148,10 @@ void listMovesForPawn(Game* g, int selectedPawn, Move* temporaryResult, int* nbM
     listMovesMovePawn(g, selectedPawn, temporaryResult, nbMoves);
     Coord tmpPos = {.i = p.lig, .j = p.col};
     listRafles(g, selectedPawn, tmpPos, temporaryResult, nbMoves);
+    if (p.friendly == VOID_INDEX && p.ennemy == VOID_INDEX) {
+        listMovesBefriend(g, selectedPawn, temporaryResult, nbMoves);
+        listMovesEnnemy(g, selectedPawn, temporaryResult, nbMoves);
+    }
 }
 
 MoveTab* listMoves(Game* g){
