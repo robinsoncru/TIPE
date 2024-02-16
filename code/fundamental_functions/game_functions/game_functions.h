@@ -1,8 +1,11 @@
 #ifndef GAME_FUNCTIONS
 #define GAME_FUNCTIONS
 
+#include "Source/source_header.h"
+#include "aux_game_functions/aux_functions.h"
+#include "management/game_management.h"
+#include "../../rafle/rafle.h"
 #include "play_back/play_back_game_functions.h"
-
 
 
 

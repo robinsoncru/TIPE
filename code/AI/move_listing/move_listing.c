@@ -1,5 +1,8 @@
 #include "move_listing.h"
+#include "listing_checks/listing_checks.h"
 #include "move_max.h"
+#include "move_struct/move_struct.h"
+#include "rafle_listing/rafle_listing.h"
 #include <stdlib.h>
 
 Move* listMovesMoveBack(Game* g, int* resSize){
@@ -21,7 +24,7 @@ Move* listMovesMoveBack(Game* g, int* resSize){
     return temporaryResult;
 }
 
-void listMovesForGhostPawns(Game* g, int selectedPawn, Move* temporaryResult, int* nbMoves){
+void listMovesBiDepl(Game* g, int selectedPawn, Move* temporaryResult, int* nbMoves){
     Move currentMove;
     currentMove.manipulatedPawn = selectedPawn;
     
@@ -30,6 +33,11 @@ void listMovesForGhostPawns(Game* g, int selectedPawn, Move* temporaryResult, in
         temporaryResult[*nbMoves] = currentMove;
         *nbMoves = *nbMoves + 1;
     }
+}
+
+void listMovesMovePawn(Game* g, int selectedPawn, Move* temporaryResult, int* nbMoves){
+    Move currentMove;
+    currentMove.manipulatedPawn = selectedPawn;
 
     currentMove.type = pawnMoveType;
     for (int k = 0; k < 2; k++) {
@@ -41,41 +49,106 @@ void listMovesForGhostPawns(Game* g, int selectedPawn, Move* temporaryResult, in
     }
 }
 
+void listMovesPromotion(Game* g, Move* temporaryResult, int* nbMoves){
+    Move currentMove;
+    currentMove.manipulatedPawn = promotionType;
+
+    for (int k = 0; k < 2 * NB_PAWNS; k++) {
+        if (isPromotable(g, k, g->is_white)) {
+            currentMove.manipulatedPawn = k;
+            temporaryResult[*nbMoves] = currentMove;
+            *nbMoves = *nbMoves + 1;
+        }
+    }
+}
+
+void listMovesBefriend(Game* g, int selectedPawn, Move* temporaryResult, int* nbMoves){
+    Move currentMove;
+    currentMove.manipulatedPawn = selectedPawn;
+    currentMove.type = lienAmitieType;
+
+    pawn p;
+    for (int k = 0; k < 2 * NB_PAWNS; k++) {
+        if (isFriendable(g, k, !g->is_white)) {
+            p = g->allPawns[!g->is_white][k];
+            currentMove.lig = p.lig;
+            currentMove.col = p.col;
+            temporaryResult[*nbMoves] = currentMove;
+            *nbMoves = *nbMoves + 1;
+        }
+    }
+}
+
+void listMovesEnnemy(Game* g, int selectedPawn, Move* temporaryResult, int* nbMoves){
+    Move currentMove;
+    currentMove.manipulatedPawn = selectedPawn;
+    currentMove.type = lienEnnemitieType;
+
+    pawn p;
+    for (int k = 0; k < 2 * NB_PAWNS; k++) {
+        if (isEnnemiable(g, k, !g->is_white)) {
+            p = g->allPawns[!g->is_white][k];
+            currentMove.lig = p.lig;
+            currentMove.col = p.col;
+            temporaryResult[*nbMoves] = currentMove;
+            *nbMoves = *nbMoves + 1;
+        }
+    }
+}
+
+void listMovesForGhostPawns(Game* g, int selectedPawn, Move* temporaryResult, int* nbMoves){
+    listMovesBiDepl(g, selectedPawn, temporaryResult, nbMoves);
+    listMovesMovePawn(g, selectedPawn, temporaryResult, nbMoves);
+}
+
 void listMovesForQueen(Game* g, int selectedPawn, Move* temporaryResult, int* nbMoves){
+    pawn p = g->allPawns[g->is_white][selectedPawn];
+    Coord pos = {p.lig, p.col};
     //possible cases where to move for a queen
     Move currentMove;
     currentMove.manipulatedPawn = selectedPawn;
-
     currentMove.type = queenDeplType;
+
     int possibleShifts[2] = {-1, 1};
     Coord dir;
+    int oldNbMoves;
     for (int i = 0; i < 2; i++) {
         for (int j = 0; j < 2; j++) {
             dir.i = possibleShifts[i];
             dir.j = possibleShifts[j];
             for (int k = 1; k < NB_CASE_LG; k++) {
-                currentMove.coords.pos_dame = dir;
-                if (caseIsAccessible(g, g->is_white, dir.i, dir.j)) {
-                    temporaryResult[*nbMoves] = currentMove;
-                    *nbMoves = *nbMoves + 1;
-                    dir.i += possibleShifts[i];
-                    dir.j += possibleShifts[j];
+                currentMove.coords.pos_dame = add(pos, dir);
+                if (!caseIsAccessible(g, g->is_white, dir.i, dir.j)) {
+                    break;
                 }
                 else {
-                    break;
+                    oldNbMoves = *nbMoves;
+                    listRafles(g, selectedPawn, currentMove.coords.pos_dame, temporaryResult, nbMoves);
+                    if (oldNbMoves == *nbMoves) { //s'il n'y a aucune rafle a jouer
+                        temporaryResult[*nbMoves] = currentMove;
+                        *nbMoves = *nbMoves + 1;
+                    }
+                    dir.i += possibleShifts[i];
+                    dir.j += possibleShifts[j];
                 }
             }
         }
     
     }
+}
 
-    currentMove.type = 
+void listMovesForPawn(Game* g, int selectedPawn, Move* temporaryResult, int* nbMoves){
+    pawn p = g->allPawns[g->is_white][selectedPawn];
+    listMovesBiDepl(g, selectedPawn, temporaryResult, nbMoves);
+    listMovesMovePawn(g, selectedPawn, temporaryResult, nbMoves);
+    Coord tmpPos = {.i = p.lig, .j = p.col};
+    listRafles(g, selectedPawn, tmpPos, temporaryResult, nbMoves);
 }
 
 MoveTab* listMoves(Game* g){
     Move* temporaryResult;
     int nbMoves;
-    if (g->ind_move_back == VOID_INDEX) {
+    if (g->ind_move_back != VOID_INDEX) {
         temporaryResult = listMovesMoveBack(g, &nbMoves);
     }
     else {

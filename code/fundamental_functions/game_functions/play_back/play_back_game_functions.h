@@ -3,7 +3,6 @@
 
 
 #include "../management/game_management.h"
-
 #include "../../../rafle/calc/rafle_tree_calc.h"
 #include "../../../rafle/rafle_eating/rafle_eating.h"
 

@@ -1,7 +1,7 @@
 #ifndef RAFLE_EATING
 #define RAFLE_EATING
 
-#include "../../fundamental_functions/game_functions/game_functions.h"
+#include "../../fundamental_functions/game_functions/aux_game_functions/aux_functions.h"
 #include "../calc/path_tree.h"
 
 void pawnEat(Game* g, int indEater, bool is_white, int di, int dj);
