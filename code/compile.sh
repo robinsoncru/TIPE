@@ -8,6 +8,7 @@
 
 files_array=("main.c"
              "AI/move_listing/listing_checks/listing_checks.c"
+             "AI/move_listing/move_struct/move_struct.c"
              "AI/move_listing/rafle_listing/rafle_listing.c"
              "AI/move_listing/move_listing.c"
              "AI/move_listing/move_max.c"
@@ -37,7 +38,7 @@ files_array=("main.c"
 
 echo "Compilation en cours..."
 
-gcc -g ${files_array[*]} $(sdl2-config --cflags --libs) -lSDL2_ttf -o dames.out
+gcc -g -fdebug ${files_array[*]} $(sdl2-config --cflags --libs) -lSDL2_ttf -o dames.out
 
 echo "Code compilé"
 echo "Pour exécuter, tappez la commande"

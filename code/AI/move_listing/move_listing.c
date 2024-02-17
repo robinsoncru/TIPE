@@ -161,8 +161,8 @@ void listMovesRafleCount(Move* temporaryResult, int nbMoves, int* rafleCount, in
     Move currentMove;
     for (int k = 0; k < nbMoves; k++) {
         currentMove = temporaryResult[k];
-        currentLength = pathTreeDepth(currentMove.rafleTree);
-        if (currentMove.type == rafleType && currentLength > maxRafleLength) {
+        currentLength = (currentMove.type == rafleType) ? pathTreeDepth(currentMove.rafleTree) : -1; 
+        if (currentLength > maxRafleLength) {
             nbRafles = 1;
             maxRafleLength = currentLength;
         }
@@ -184,7 +184,13 @@ MoveTab* listMovesFilterRafles(Move* temporaryResult, int nbMoves){
     switch (rafleCount) {
         case 0:
             res->size = nbMoves;
-            res->tab = temporaryResult;
+            res->tab = malloc(nbMoves * sizeof(Move));
+            for (int k = 0; k < nbMoves; k++) {
+                currentMove = temporaryResult[k];
+                currentMove.rafle = NULL;
+                currentMove.rafleTree = emptyTree;
+                res->tab[k] = currentMove;
+            }
             break;
         
         default:
@@ -192,7 +198,7 @@ MoveTab* listMovesFilterRafles(Move* temporaryResult, int nbMoves){
             res->tab = malloc(rafleCount * sizeof(Move));
             for (int k = 0; k < nbMoves; k++) {
                 currentMove = temporaryResult[k];
-                if (pathTreeDepth(currentMove.rafleTree) == length) {
+                if (res->tab[k].type == rafleType && pathTreeDepth(currentMove.rafleTree) == length) {
                     res->tab[res->size] = currentMove;
                     res->size++;
                 }

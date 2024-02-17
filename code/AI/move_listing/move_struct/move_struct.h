@@ -32,4 +32,7 @@ typedef struct MoveTab{
     Move* tab;
 } MoveTab;
 
+void moveTabFree(MoveTab* moveTab);
+void printMove(Move m);
+void printMoveTab(MoveTab* t);
 #endif
