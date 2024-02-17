@@ -3,6 +3,7 @@
 
 #include "../memory_update/graphic_cache.h"
 #include "../../rafle/rafle.h"
+#include "../../AI/move_listing/move_max.h"
 #include <SDL2/SDL_events.h>
 #include <stdio.h>
 
