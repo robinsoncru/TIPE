@@ -65,8 +65,8 @@ bool canBePromoted(Game *g, bool is_white, int ind)
     pawn *p = &(g->allPawns[is_white][ind]);
     int border = is_white ? (NB_CASE_LG - 1) : 0;
     bool isOnBorder = p->lig == border;
-    bool ennmyIsDead = p->ennemy != NEUTRAL_IND && !g->allPawns[!is_white][p->ennemy].alive;
-    return !p->queen && (isOnBorder || ennmyIsDead) && p->pba == 1;
+    bool ennemyIsDead = p->ennemy != NEUTRAL_IND && !g->allPawns[!is_white][p->ennemy].alive;
+    return !p->queen && (isOnBorder || ennemyIsDead) && p->pba == 1;
 }
 
 // On suppose que les coordonnees sont bien sur la meme diagonale
@@ -156,6 +156,10 @@ bool canBiDepl(Game *g, int ind, bool color)
 bool needPutMoveBack(Game *g)
 {
     return g->ind_move_back > -1 && g->coordForMoveBack.i == IND_LISTENING_MOVE_BACK && g->coordForMoveBack.j == IND_LISTENING_MOVE_BACK;
+}
+
+bool caseIsAccessible(Game *g, bool is_white, int i, int j){
+    return !outOfBounds(i, j) && g->damier[i][j].ind_pawn == VOID_INDEX;
 }
 
 bool canPromotion(Game *g)

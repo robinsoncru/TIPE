@@ -363,5 +363,7 @@ void onRUp(Game *g, GraphicCache *cache)
 
     picture_game(g, g->is_white);
     printf("max moves %d", maxMoves(g));
+    MoveTab* moveTab = listMoves(g);
+    moveTabFree(moveTab);
     flush();
 }

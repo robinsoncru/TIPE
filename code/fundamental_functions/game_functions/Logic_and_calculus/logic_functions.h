@@ -19,6 +19,8 @@ bool moveBackAvailable(Game *g);
 bool canMoveBack(Game *g, bool is_white, int ind, bool left);
 bool needPutMoveBack(Game *g);
 
+bool caseIsAccessible(Game* g, bool is_white, int i, int j);
+
 bool canPromotion(Game *g);
 
 bool canBeFriend(Game *g, int ind, bool color, Case c);

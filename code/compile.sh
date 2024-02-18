@@ -7,6 +7,12 @@
 #ce sera beaucoup plus simple pour compiler et tester le code :)
 
 files_array=("main.c"
+             "AI/move_listing/listing_checks/listing_checks.c"
+             "AI/move_listing/move_struct/move_struct.c"
+             "AI/move_listing/rafle_listing/rafle_listing.c"
+             "AI/move_listing/move_listing.c"
+             "AI/move_listing/move_max.c"
+             "AI/move_simulation/move_simulation.c"
              "fundamental_functions/coord/coord.c"
              "fundamental_functions/coord/little_linked_list.c"
              "fundamental_functions/game_functions/game_functions.c"
@@ -21,7 +27,7 @@ files_array=("main.c"
              "graphic_interface/actions/on_input.c"
              "graphic_interface/memory_update/graphic_cache.c"
              "graphic_interface/memory_update/update.c"
-             "graphic_interface/autoplay_functions/basic_play_function.c"
+             "graphic_interface/autoplay_random_functions/basic_play_function.c"
              "rafle/calc/path_tree.c"
              "rafle/calc/rafle_tree_calc.c"
              "rafle/display/path_tree_display.c"
@@ -32,7 +38,7 @@ files_array=("main.c"
 
 echo "Compilation en cours..."
 
-gcc -g ${files_array[*]} $(sdl2-config --cflags --libs) -lSDL2_ttf -o dames.out
+gcc -g -fdebug ${files_array[*]} $(sdl2-config --cflags --libs) -lSDL2_ttf -o dames.out
 
 echo "Code compilé"
 echo "Pour exécuter, tappez la commande"
