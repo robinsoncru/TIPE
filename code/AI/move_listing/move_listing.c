@@ -33,7 +33,7 @@ Move* listMovesMoveBack(Game* g, int* resSize){
 MoveTab* listMoves(Game* g){
     Move* temporaryResult;
     int nbMoves;
-    if (g->ind_move_back == VOID_INDEX) {
+    if (g->ind_move_back == VOID_INDEX) { // Ca plante
         temporaryResult = listMovesMoveBack(g, &nbMoves);
     }
     else {
