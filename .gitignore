@@ -35,5 +35,6 @@ code/listing_checks.o
 code/move_struct.o
 code/rafle_listing.o
 code/give_issues.o
+code/memory_move.o
 
 
