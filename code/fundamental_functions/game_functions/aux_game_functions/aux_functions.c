@@ -17,7 +17,6 @@
 
 */
 
-// On peut améliorer cette fonction
 void copy_remove_pawn_from_index_to_index(Game *g, int indStart, int indArrive, bool color)
 {
     if (indStart != indArrive)
@@ -25,6 +24,21 @@ void copy_remove_pawn_from_index_to_index(Game *g, int indStart, int indArrive, 
         int lig = get_pawn_value(g, color, indStart, LIG);
         int col = get_pawn_value(g, color, indStart, COL);
         g->damier[lig][col].ind_pawn = VOID_INDEX;
+
+        int indFriend = get_pawn_value(g, color, indStart, FRIENDLY);
+        int indEnn = get_pawn_value(g, color, indStart, ENNEMY);
+        if (indFriend != VOID_INDEX)
+        {
+            put_pawn_value(g, !color, indFriend, FRIENDLY, indArrive);
+        }
+        if (indEnn != VOID_INDEX)
+        {
+            put_pawn_value(g, !color, indEnn, ENNEMY, indArrive);
+        }
+
+        // Pas d'autre choix que de parcourir toute la liste chainée pour modifier la valeur
+        if (isInCloud(g, color, indStart))
+            change_ind_value(g->cloud[color], indStart, indArrive);
 
         for (int k = 1; k < 9; k++)
         {
@@ -77,13 +91,18 @@ void killPawn(Game *g, Case **damier, int i, int j)
         else if (indAmi != VOID_INDEX)
         {
             put_pawn_value(g, !color, indAmi, FRIENDLY, -1);
-            if (is_queen) g->nbQueenWithFriend[color]--;
-            else g->nbFriendNoQueen[color]--;
+            if (is_queen)
+                g->nbQueenWithFriend[color]--;
+            else
+                g->nbFriendNoQueen[color]--;
 
-            if (opposee_is_queen) g->nbQueenWithFriend[!color]--;
-            else g->nbFriendNoQueen[!color]--;
+            if (opposee_is_queen)
+                g->nbQueenWithFriend[!color]--;
+            else
+                g->nbFriendNoQueen[!color]--;
         }
-        else if (is_queen) g->nbQueenWithoutFriend[color]--;
+        else if (is_queen)
+            g->nbQueenWithoutFriend[color]--;
         pawn_default_value_new(g, indPawn, color);
         damier[i][j].ind_pawn = -1;
         /* Supprimer l'indice et optimiser la memoire */
@@ -136,6 +155,11 @@ void change_pawn_place_new(Game *g, Case **damier, int ind, bool color, int lig,
     damier[lig][col].pawn_color = color;
 }
 
+void change_pawn_place_newbie(Game *g, int ind, bool color, Coord pos)
+{
+    change_pawn_place_new(g, g->damier, ind, color, pos.i, pos.j);
+}
+
 /* May be useful later */
 // Case forbiddenCase()
 // {
@@ -172,8 +196,10 @@ void promote(Game *g, bool is_white, int ind)
 {
     pawn *p = &(g->allPawns[is_white][ind]);
     p->queen = true;
-    if (has_friend(g, ind, is_white)) g->nbQueenWithFriend[is_white]++;
-    else g->nbQueenWithoutFriend[is_white]++;
+    if (has_friend(g, ind, is_white))
+        g->nbQueenWithFriend[is_white]++;
+    else
+        g->nbQueenWithoutFriend[is_white]++;
     if (p->ennemy != NEUTRAL_IND)
     {
         pawn *ennemyPawn = &(g->allPawns[!is_white][p->ennemy]);
@@ -296,7 +322,7 @@ void AleatStormBreaks(Game *g, bool color)
         AleatStormBreaks(g, !color);
 }
 
-void AleatStormBreaksNGE(Game *g, bool color, cloud_chain *load, ind_pba_t *survivor)
+void stormBreaksNGE(Game *g, bool color, cloud_chain *load, ind_pba_t *survivor, Coord pos_survivor)
 {
     // Liste chaine et valeur du pawn survivor modifies par effet de bord
     maillon *l = g->cloud[color];
@@ -323,15 +349,7 @@ void AleatStormBreaksNGE(Game *g, bool color, cloud_chain *load, ind_pba_t *surv
         }
     }
     g->lengthCloud[color] = 0;
-}
-
-void handleCloudDuePawnMoveNGE(Game *g, int indMovedPawn, ind_pba_t *survivor, cloud_chain *l)
-{
-    bool is_white = g->is_white;
-    if (canStormBreaksForTheOthers(g, indMovedPawn, is_white))
-    {
-        AleatStormBreaksNGE(g, !is_white, l, survivor);
-    }
+    change_pawn_place_newbie(g, survivor->ind, color, pos_survivor);
 }
 
 queen_move_t CanMoveOrEatQueen(Game *g, bool color, int lig, int col, Case **damier, int ind)
@@ -413,17 +431,20 @@ Coord give_coord(Game *g, bool iw, int ind)
     return init_coord;
 }
 
-void doubleTabInit(int t[2]) {
+void doubleTabInit(int t[2])
+{
     t[0] = 0;
     t[1] = 0;
 }
 
-void incrBothTab(int t[2]) {
+void incrBothTab(int t[2])
+{
     t[0]++;
     t[1]++;
 }
 
-void decrBothTab(int t[2]) {
+void decrBothTab(int t[2])
+{
     t[0]--;
     t[1]--;
 }

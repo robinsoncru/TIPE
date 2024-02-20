@@ -15,6 +15,7 @@ void killPawnByInd(Game *g, bool color, int ind);
 /* Check if the pawn can move back to the case localised by the coord g->coordForMoveBack */
 void change_pawn_place(pawn *pawns, Case **damier, int ind, int lig, int col);
 void change_pawn_place_new(Game *g, Case **damier, int ind, bool color, int lig, int col);
+void change_pawn_place_newbie(Game *g, int ind, bool color, Coord pos);
 //  entree : un tableau de pions pawns, un damier, l'index du pion qui mange, les coordonnees i et j dudit pion
 //  des entiers add0 et add1 qui indiquent la direction dans laquelle manger
 //  sortie : booleen indiquant si le pion dans la direction indique peut etre mange
@@ -28,8 +29,7 @@ void putPawnMoveBack(Game *g, bool left);
 
 void stormBreaks(Game *g, bool color, int indSurvivor);
 void AleatStormBreaks(Game *g, bool color);
-void handleCloudDuePawnMoveNGE(Game *g, int indMovedPawn, ind_pba_t *survivor, cloud_chain *l);
-void AleatStormBreaksNGE(Game *g, bool color, cloud_chain *load, ind_pba_t *survivor);
+void stormBreaksNGE(Game *g, bool color, cloud_chain *load, ind_pba_t *survivor, Coord pos_survivor);
 queen_move_t CanMoveOrEatQueen(Game *g, bool color, int lig, int col, Case **damier, int ind);
 
 Coord give_coord(Game *g, bool iw, int ind);

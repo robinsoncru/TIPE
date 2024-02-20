@@ -48,20 +48,19 @@ void recreateCloud(Game *g, cloud_chain *l, ind_pba_t *survivor, bool iw)
     g->lengthCloud[iw]++;
 }
 
-int promotionNGE(Game *g, int ind)
+int promotionNGE(Game *g, int ind, int choice)
 {
     moveBackGameManagement(g);
     /* Promote the pawn at the ind in pmetre : do nothing, become a queen or become an ennemy pawn */
     // Return the index of the ennemy pawn created, -1 else
     bool iw = g->is_white;
-    int choice = rand() % 3;
-    if (choice == 1)
+    if (choice == IND_GLORY_QUEEN)
     {
         put_pawn_value(g, iw, ind, QUEEN, 1);
         printv("QUEEN");
         return VOID_INDEX;
     }
-    else if (choice == 2)
+    else if (choice == IND_BAD_CHOICE)
     {
         printv("BLACK");
         int i = get_pawn_value(g, iw, ind, LIG);
@@ -88,8 +87,8 @@ void cancelPromotion(Game *g, int ind_old_friend, int ind_new_foe)
     bool iw = g->is_white;
     if (ind_new_foe != -1)
     {
-        int i = get_pawn_value(g, iw, ind_new_foe, LIG);
-        int j = get_pawn_value(g, iw, ind_new_foe, COL);
+        int i = get_pawn_value(g, !iw, ind_new_foe, LIG);
+        int j = get_pawn_value(g, !iw, ind_new_foe, COL);
         killPawn(g, g->damier, i, j);
         createPawn(g, iw, i, j);
     }
@@ -104,7 +103,7 @@ void pawnMoveBackNGE(Game *g, int ind, bool left)
     int i = p.lig;
     int j = p.col;
     int di = is_white ? 1 : -1;
-    int dj = left ? -1 : 1;
+    int dj = left ? 1 : -1;
 
     change_pawn_place_new(g, g->damier, ind, is_white, i - di, j - dj);
 
@@ -113,7 +112,7 @@ void pawnMoveBackNGE(Game *g, int ind, bool left)
 
 void cancelMoveBack(Game *g, int ind, bool left) {
     bool iw = g->is_white;
-    simplyPawnMove(g, iw, ind, left);
+    simplyPawnMove(g, iw, ind, !left);
 }
 
 ind_bool_t biDeplNGE(Game *g, bool color, int ind)
@@ -133,7 +132,10 @@ ind_bool_t biDeplNGE(Game *g, bool color, int ind)
 
     // Rajoute dans le cloud
     if (!isInCloud(g, color, ind))
+    {
         push(g->cloud[color], ind);
+        g->lengthCloud[color]++;
+    }
     push(g->cloud[color], newInd);
 
     g->lengthCloud[color]++;

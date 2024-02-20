@@ -337,33 +337,46 @@ void onKUp(Game *g, GraphicCache *cache)
 
 void onRUp(Game *g, GraphicCache *cache)
 {
+    picture_this(g);
+    // Teste for the queen 
+
+    bool iw = g->is_white;
+    int ind = g->ind_move;
+    SDL_Event event = cache->event;
+
+    int x = event.button.x;
+    int y = event.button.y;
+    int lig = y / LG_CASE;
+    int col =  x/ LG_CASE;
+
+    queen_move_t coords = CanMoveOrEatQueen(g, iw, lig, col, g->damier, ind);
+    int dame_lig = coords.pos_dame.i;
+    int dame_col = coords.pos_dame.j;
+    if (basicChecks(g) && dame_lig != VOID_INDEX && dame_col != VOID_INDEX)
+    {
+        memory_move_t *mem = issueQueenDepl(g, g->ind_move, coords);
+        queenDeplAI(g, mem, 0);
+        picture_this(g);
+
+    cancelQueenDeplAI(g, mem);
+    }
+    else
+        printv("big queen pb");
+    
+    // memory_move_t mem = lienAmitieAI(g, g->ind_move, lig, col);
+    // cancelLienAmitieAI(g, mem);
+    picture_this(g);
+
+    // picture_game(g, g->is_white);
+    // printf("max moves %d", maxMoves(g));
+    // MoveTab* moveTab = listMoves(g);
+    // moveTabFree(moveTab);
+    // flush();
+
     // picture_this(g);
-    // // Teste for the queen 
-
-    // bool iw = g->is_white;
-    // int ind = g->ind_move;
-    // SDL_Event event = cache->event;
-
-    // int x = event.button.x;
-    // int y = event.button.y;
-    // int lig = y / LG_CASE;
-    // int col =  x/ LG_CASE;
-
-    // queen_move_t coords = CanMoveOrEatQueen(g, iw, lig, col, g->damier, ind);
-    // int dame_lig = coords.pos_dame.i;
-    // int dame_col = coords.pos_dame.j;
-    // if (basicChecks(g) && dame_lig != VOID_INDEX && dame_col != VOID_INDEX)
-    // {
-    //     queenDeplAI(g, ind, coords);
-    // }
-    // else
-    //     printv("big queen pb");
-    // // lienEnnemitieAI(g, ind, lig, col);
+    // memory_move_t *mem = issueRafle(g, g->ind_move);
+    // rafleAI(g, mem, 0);
     // picture_this(g);
-
-    picture_game(g, g->is_white);
-    printf("max moves %d", maxMoves(g));
-    MoveTab* moveTab = listMoves(g);
-    moveTabFree(moveTab);
-    flush();
+    // cancelRafleAI(g, mem);
+    // picture_this(g);
 }

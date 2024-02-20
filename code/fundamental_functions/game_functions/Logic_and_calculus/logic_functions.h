@@ -14,7 +14,7 @@ bool canMove(Game *g, bool is_white, int ind, bool left);
 bool canBePromoted(Game *g, bool is_white, int ind);
 bool diagIsFree(Game *g, Coord initPos, Coord finalPos);
 bool queenCanMove(Game *g, bool is_white, int ind, Coord finalPos);
-bool canEat(pawn *pawns, Case **damier, int ind, int i, int j, int add0, int add1);
+bool canEat(pawn *pawns, pawn *Npawns, Case **damier, int ind, int i, int j, int add0, int add1);
 bool moveBackAvailable(Game *g);
 bool canMoveBack(Game *g, bool is_white, int ind, bool left);
 bool needPutMoveBack(Game *g);

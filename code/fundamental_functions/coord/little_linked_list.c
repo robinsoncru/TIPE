@@ -41,6 +41,17 @@ int get(maillon *l)
     return l->next->ind;
 }
 
+void change_ind_value(maillon *l, int indDepart, int indArrive)
+{
+    assert(!is_empty(l));
+    if (l->next->ind == indDepart)
+    {
+        l->next->ind = indArrive;
+    }
+    else
+        change_ind_value(l->next, indDepart, indArrive);
+}
+
 // For the cloud chain
 
 void cpush(cloud_chain *l, tcloud k) {

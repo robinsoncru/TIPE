@@ -27,6 +27,10 @@ maillon *create_list();
 /* Creer une liste vide */
 
 
+void change_ind_value(maillon *l, int indDepart, int indArrive);
+// Modifie par effet de bord une liste pour changer une valeur
+
+
 typedef struct {
     Coord coord;
     int pba;

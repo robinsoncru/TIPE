@@ -58,7 +58,7 @@ PathTree* divideAndGather(pawn *pawns,pawn *NPawns, Case **damier, int indEater,
     for (Uint8 k = 0; k < 4; k++) {
         //Petite astuce pour parcourir les voisins :)
         getDirsFromCode(k, &di, &dj);
-        if (!eatingIsOutOfBounds(i, j, di, dj) && canEat(pawns, damier, indEater, i, j, di, dj)) {
+        if (!eatingIsOutOfBounds(i, j, di, dj) && canEat(pawns, NPawns, damier, indEater, i, j, di, dj)) {
             child = rafleTreeCalcAux(pawns, NPawns, damier, indEater, di, dj);
             pathTreeConnect(res, child, dj, di);
         }

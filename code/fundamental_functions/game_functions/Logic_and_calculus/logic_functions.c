@@ -101,10 +101,10 @@ bool queenCanMove(Game *g, bool is_white, int ind, Coord finalPos)
 }
 
 // For eatPawn and rafle calculation
-bool canEat(pawn *pawns, Case **damier, int ind, int i, int j, int add0, int add1)
+bool canEat(pawn *pawns, pawn *Npawns, Case **damier, int ind, int i, int j, int add0, int add1)
 {
     return (freeCase(damier[i + 2 * add0][j + 2 * add1]) && damier[i + add0][j + add1].pawn_color == !pawns[ind].color &&
-            !freeCase(damier[i + add0][j + add1]));
+            !freeCase(damier[i + add0][j + add1]) && Npawns[damier[i + add0][j + add1].ind_pawn].pba == 1);
 }
 
 bool moveBackAvailable(Game *g)
@@ -158,7 +158,8 @@ bool needPutMoveBack(Game *g)
     return g->ind_move_back > -1 && g->coordForMoveBack.i == IND_LISTENING_MOVE_BACK && g->coordForMoveBack.j == IND_LISTENING_MOVE_BACK;
 }
 
-bool caseIsAccessible(Game *g, bool is_white, int i, int j){
+bool caseIsAccessible(Game *g, bool is_white, int i, int j)
+{
     return !outOfBounds(i, j) && g->damier[i][j].ind_pawn == VOID_INDEX;
 }
 

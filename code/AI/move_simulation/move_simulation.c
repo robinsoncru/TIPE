@@ -1,121 +1,139 @@
 #include "move_simulation.h"
 
-void pawnMoveAI(Game *g, int indMovePawn, bool left)
+void pawnMoveAI(Game *g, memory_move_t *mem, int index)
 {
     // Test pawn move remove, on suppose qu'on peut jouer, et qu'on a deja une fonction pour faire jouer l'ami en arrière
+    // If the index != -1, this mean there are ghost pawns killed
 
+    lightnightStrike(g, mem, index);
+
+    endTurnGameManagementSimple(g, mem->indMovePawn);
+}
+
+void cancelPawnMoveAI(Game *g, memory_move_t *mem)
+{
     bool iw = g->is_white;
-    pawnMoveNGE(g, iw, indMovePawn, left);
-    // Attention l'indice de renvoie du friend est dans le structure g
-
-    cloud_chain *load_cloud_other = ccreate_list();
-    ind_pba_t *survivor = malloc(sizeof(ind_pba_t));
-    // Desecrate
-    handleCloudDuePawnMoveNGE(g, indMovePawn, survivor, load_cloud_other);
-    /* Desecrate the endTurnGameManagement to pawnMove to
-   check the storm */
-
-    endTurnGameManagementSimple(g, indMovePawn);
-
-    // appel recursif d'une autre fonction de jeu
-
-    picture_this(g);
 
     // Here recreate the cloud
-    if (!cis_empty(load_cloud_other))
-    {
-        recreateCloud(g, load_cloud_other, survivor, !iw);
-    }
+    cancelLightnightStrike(g, mem);
 
-    pawnMoveCancel(g, iw, indMovePawn, left);
-    free(survivor);
-    free(load_cloud_other);
+    pawnMoveCancel(g, iw, mem->indMovePawn, mem->left);
+    freeMemMove(mem);
 }
 
-void promotionIA(Game *g, int indMovePawn)
+void promotionAI(Game *g, memory_move_t *mem, int index)
 {
 
-    int ind_potential_foe = promotionNGE(g, indMovePawn);
+    mem->ind_potential_foe = promotionNGE(g, mem->indMovePawn, mem->issues[index].index);
 
-    endTurnGameManagementSimple(g, indMovePawn);
-
-    picture_this(g);
-    cancelPromotion(g, indMovePawn, ind_potential_foe);
+    endTurnGameManagementSimple(g, mem->indMovePawn);
 }
 
-void pawnMoveBackAI(Game *g, int indMovePawnBack, bool left)
+void cancelPromotionAI(Game *g, memory_move_t *mem)
 {
-    // On suppose que le move back est faisable
-    bool iw = g->is_white;
-    pawnMoveBackNGE(g, indMovePawnBack, left);
-    // la fonction ci dessus remet g->ind_move_back a VOID_INDEX
-    
-    cloud_chain *load_cloud_other = ccreate_list();
-    ind_pba_t *survivor = malloc(sizeof(ind_pba_t));
-    // Desecrate
-    handleCloudDuePawnMoveNGE(g, indMovePawnBack, survivor, load_cloud_other);
-
-    endTurnGameManagementSimple(g, indMovePawnBack);
-
-    picture_this(g);
-
-    if (!cis_empty(load_cloud_other))
-    {
-        recreateCloud(g, load_cloud_other, survivor, !iw);
-    }
-
-    cancelMoveBack(g, indMovePawnBack, left);
-    
-    free(load_cloud_other);
-    free(survivor);
+    cancelPromotion(g, mem->indMovePawn, mem->ind_potential_foe);
+    freeMemMove(mem);
 }
 
-void biDeplAI(Game *g, int indMovePawn)
+void pawnMoveBackAI(Game *g, memory_move_t *mem, int index)
+{
+    lightnightStrike(g, mem, index);
+
+    endTurnGameManagementSimple(g, mem->indMovePawn);
+}
+
+void cancelPawnMoveBackAI(Game *g, memory_move_t *mem)
 {
 
-    ind_bool_t data = biDeplNGE(g, g->is_white, indMovePawn);
+    cancelLightnightStrike(g, mem);
+
+    cancelMoveBack(g, mem->indMovePawn, mem->left);
+    freeMemMove(mem);
+}
+
+memory_move_t *biDeplAI(Game *g, int indMovePawn)
+{
+    memory_move_t *mem = initMemMove(indMovePawn);
+    mem->full_pawn_data = biDeplNGE(g, g->is_white, indMovePawn);
 
     // Desecrate
 
     endTurnGameManagementSimple(g, indMovePawn);
 
-    picture_this(g);
-    cancelBidepl(g, indMovePawn, data);
+    return mem;
 }
 
-void queenDeplAI(Game *g, int indMovePawn, queen_move_t coords)
+void cancelBiDeplAI(Game *g, memory_move_t *mem)
 {
-    bool iw = g->is_white;
-    Coord init_coord = give_coord(g, iw, indMovePawn);
-    data_chain *chainy = queenDeplNGE(g, indMovePawn, iw, coords);
-    picture_this(g);
-
-    endTurnGameManagementSimple(g, indMovePawn);
-
-    cancelDeplQueen(g, indMovePawn, chainy, init_coord);
+    cancelBidepl(g, mem->indMovePawn, mem->full_pawn_data);
+    freeMemMove(mem);
 }
 
-void rafleAI(Game *g, int indMovePawn)
+void queenDeplAI(Game *g, memory_move_t *mem, int index)
 {
-    bool iw = g->is_white;
-    Coord init_coord = give_coord(g, iw, indMovePawn);
-    data_chain *chainy = rafleNGE(g, indMovePawn);
-    picture_this(g);
-    cancelRafle(g, indMovePawn, init_coord, chainy);
+    lightnightStrike(g, mem, index);
+
+    endTurnGameManagementSimple(g, mem->indMovePawn);
 }
 
-void lienAmitieAI(Game *g, int indPawn, int lig, int col) {
-    if (g->is_white) lig = NB_CASE_LG-lig-1;
+void cancelQueenDeplAI(Game *g, memory_move_t *mem)
+{
+    cancelLightnightStrike(g, mem);
+    cancelDeplQueen(g, mem->indMovePawn, mem->chainy, mem->init_coord);
+    freeMemMove(mem);
+}
+
+void rafleAI(Game *g, memory_move_t *mem, int index)
+{
+
+    lightnightStrike(g, mem, index);
+
+    endTurnGameManagementSimple(g, mem->indMovePawn);
+}
+
+void cancelRafleAI(Game *g, memory_move_t *mem)
+{
+    cancelLightnightStrike(g, mem);
+    cancelRafle(g, mem->indMovePawn, mem->init_coord, mem->chainy);
+    freeMemMove(mem);
+}
+
+memory_move_t *lienAmitieAI(Game *g, int indPawn, int lig, int col)
+{
+    if (g->is_white)
+        lig = NB_CASE_LG - lig - 1;
+
+    memory_move_t *mem = initMemMove(indPawn);
+    mem->lig = lig;
+    mem->col = col;
     lienAmitieNGE(lig, col, g, indPawn);
     endTurnGameManagementSimple(g, indPawn);
-    picture_this(g);
-    cancelLienAmitie(g, indPawn, lig, col);
+    return mem;
 }
 
-void lienEnnemitieAI(Game *g, int indPawn, int lig, int col) {
-    if (g->is_white) lig = NB_CASE_LG-lig-1;
+void cancelLienAmitieAI(Game *g, memory_move_t *mem)
+{
+
+    cancelLienAmitie(g, mem->indMovePawn, mem->lig, mem->col);
+    freeMemMove(mem);
+}
+
+memory_move_t *lienEnnemitieAI(Game *g, int indPawn, int lig, int col)
+{
+    if (g->is_white)
+        lig = NB_CASE_LG - lig - 1;
+
+    memory_move_t *mem = initMemMove(indPawn);
+    mem->lig = lig;
+    mem->col = col;
     lienEnnemitieNGE(lig, col, g, indPawn);
     endTurnGameManagementSimple(g, indPawn);
-    picture_this(g);
-    cancelLienEnnemitie(g, indPawn, lig, col);
+    return mem;
+}
+
+void cancelLienEnnemitieAI(Game *g, memory_move_t *mem)
+{
+
+    cancelLienEnnemitie(g, mem->indMovePawn, mem->lig, mem->col);
+    freeMemMove(mem);
 }

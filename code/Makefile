@@ -1,11 +1,11 @@
 dames.out: main.o coord.o little_linked_list.o game_functions.o aux_functions.o debug_functions.o game_management.o \
 calculus_functions.o logic_functions.o play_back_game_functions.o interface.o input_command.o on_input.o graphic_cache.o update.o \
 path_tree.o rafle_tree_calc.o path_tree_display.o rafle_management.o four_pack.o path_struct.o rafle_eating.o move_simulation.o \
-move_max.o move_listing.o listing_checks.o move_struct.o rafle_listing.o
+move_max.o move_listing.o listing_checks.o move_struct.o rafle_listing.o memory_move.o give_issues.o
 	gcc -g -Wall -o dames.out main.o coord.o little_linked_list.o game_functions.o aux_functions.o debug_functions.o game_management.o \
 calculus_functions.o logic_functions.o play_back_game_functions.o interface.o input_command.o on_input.o graphic_cache.o update.o \
 path_tree.o rafle_tree_calc.o path_tree_display.o rafle_management.o four_pack.o path_struct.o rafle_eating.o move_simulation.o \
-move_max.o move_listing.o listing_checks.o move_struct.o rafle_listing.o \
+move_max.o move_listing.o listing_checks.o move_struct.o rafle_listing.o memory_move.o give_issues.o \
 $$(sdl2-config --cflags --libs) -lSDL2_ttf
 
 main.o: main.c
@@ -91,3 +91,9 @@ move_struct.o: AI/move_listing/move_struct/move_struct.c
 
 rafle_listing.o: AI/move_listing/rafle_listing/rafle_listing.c
 	gcc -g -c -Wall AI/move_listing/rafle_listing/rafle_listing.c
+
+memory_move.o: AI/move_simulation/memory_move/memory_move.c
+	gcc -g -c -Wall AI/move_simulation/memory_move/memory_move.c
+
+give_issues.o: AI/move_simulation/give_issues.c
+	gcc -g -c -Wall AI/move_simulation/give_issues.c

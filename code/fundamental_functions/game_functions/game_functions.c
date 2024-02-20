@@ -285,7 +285,10 @@ void biDepl(Game *g, int ind, bool color)
 
     // Rajoute dans le cloud
     if (!isInCloud(g, color, ind))
+    {
         push(g->cloud[color], ind);
+        g->lengthCloud[color]++;
+    }
     push(g->cloud[color], newInd);
 
     g->lengthCloud[color]++;

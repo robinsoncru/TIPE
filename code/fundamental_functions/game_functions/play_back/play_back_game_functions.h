@@ -20,7 +20,7 @@ void cancelMoveBack(Game *g, int ind, bool left);
 void recreateCloud(Game *g, cloud_chain *l, ind_pba_t *survivor, bool iw);
 ind_bool_t biDeplNGE(Game *g, bool color, int ind);
 void cancelBidepl(Game *g, int oldInd, ind_bool_t data);
-int promotionNGE(Game *g, int ind);
+int promotionNGE(Game *g, int ind, int choice);
 void cancelPromotion(Game *g, int ind_old_friend, int ind_new_foe);
 
 data_chain *queenDeplNGE(Game *g, int ind, bool color, queen_move_t tuple_coord);
