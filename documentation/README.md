@@ -60,11 +60,13 @@ au niveau des rafles: apparition d'un nv pion ou segfault
 
 Todo list :
 - Implementer l'IA:
--- Victor G: donner une majo du jeu à chaque trait en temps constant: idée mettre à jour le nb de dame: avec commentaire
+-- Victor G: implémenter une heuristique
 
 -- Victor D: aspect theorique de la gestion aléatoire
--- Lister les coups possibles (canMove, canMoveQueen, ...) avec un indice donné lorsque la machine à le trait, dans une liste chainé: Victor D
 
+-- Victor G à l'adresse de Victor D: le tableau qui contient les différentes issues possibles du jeu est dans la structure memory_move_t dans l'instance issue, il 
+contient un entier entre IND_GLORY_QUEEN, IND_BAD_MOVE, IND_NOTHING_HAPPENED pour promotion et sinon un entier représentant le numero d'une des positions possibles du
+survivant dans le nuage de pions fantomes, toute associé avec leur pba
 
 - Etape 1 : (du 18/01/2024 9h au 01/02/2024 14h)
     - Titre
