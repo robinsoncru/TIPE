@@ -119,7 +119,7 @@ ind_bool_t biDeplNGE(Game *g, bool color, int ind)
 {
     moveBackGameManagement(g);
     // On suppose le coup legal
-    bool depl = int_to_bool(rand() % 2);
+    bool depl = true;
     // Depl le pion a droite ou a gauche et creera l'autre ghost pawn de l'autre cote
     int dj = depl ? 1 : -1;
     int di = color ? 1 : -1;

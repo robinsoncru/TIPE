@@ -358,6 +358,7 @@ void onRUp(Game *g, GraphicCache *cache)
         queenDeplAI(g, mem, 0);
         picture_this(g);
 
+    cancelSelectedIssue(g, mem);
     cancelQueenDeplAI(g, mem);
     }
     else

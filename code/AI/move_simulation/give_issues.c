@@ -54,7 +54,7 @@ void lightnightStrike(Game *g, memory_move_t *mem, int index)
         stormBreaksNGE(g, !iw, mem->load_cloud_other, mem->survivor, mem->issues[index].pos_survivor);
 }
 
-void cancelLightnightStrike(Game *g, memory_move_t *mem)
+void cancelSelectedIssue(Game *g, memory_move_t *mem)
 {
     bool iw = g->is_white;
     int index_origin = mem->lenghtIssues - 1;

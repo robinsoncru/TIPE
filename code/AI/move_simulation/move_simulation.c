@@ -14,9 +14,6 @@ void cancelPawnMoveAI(Game *g, memory_move_t *mem)
 {
     bool iw = g->is_white;
 
-    // Here recreate the cloud
-    cancelLightnightStrike(g, mem);
-
     pawnMoveCancel(g, iw, mem->indMovePawn, mem->left);
     freeMemMove(mem);
 }
@@ -44,9 +41,6 @@ void pawnMoveBackAI(Game *g, memory_move_t *mem, int index)
 
 void cancelPawnMoveBackAI(Game *g, memory_move_t *mem)
 {
-
-    cancelLightnightStrike(g, mem);
-
     cancelMoveBack(g, mem->indMovePawn, mem->left);
     freeMemMove(mem);
 }
@@ -78,7 +72,7 @@ void queenDeplAI(Game *g, memory_move_t *mem, int index)
 
 void cancelQueenDeplAI(Game *g, memory_move_t *mem)
 {
-    cancelLightnightStrike(g, mem);
+    
     cancelDeplQueen(g, mem->indMovePawn, mem->chainy, mem->init_coord);
     freeMemMove(mem);
 }
@@ -93,7 +87,7 @@ void rafleAI(Game *g, memory_move_t *mem, int index)
 
 void cancelRafleAI(Game *g, memory_move_t *mem)
 {
-    cancelLightnightStrike(g, mem);
+    
     cancelRafle(g, mem->indMovePawn, mem->init_coord, mem->chainy);
     freeMemMove(mem);
 }
