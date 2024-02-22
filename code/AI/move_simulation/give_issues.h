@@ -13,6 +13,7 @@ void signCloudDuePawnMove(Game *g, memory_move_t *mem);
 
 void lightnightStrike(Game *g, memory_move_t *mem, int index);
 void cancelSelectedIssue(Game *g, memory_move_t *mem);
+void cancelIssuePromotion(Game *g, memory_move_t *mem);
 
 memory_move_t *issuePawnMove(Game *g, int indMovePawn, bool left);
 memory_move_t *issuePromotion(Game *g, int indPawn);

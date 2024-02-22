@@ -28,7 +28,6 @@ void promotionAI(Game *g, memory_move_t *mem, int index)
 
 void cancelPromotionAI(Game *g, memory_move_t *mem)
 {
-    cancelPromotion(g, mem->indMovePawn, mem->ind_potential_foe);
     freeMemMove(mem);
 }
 

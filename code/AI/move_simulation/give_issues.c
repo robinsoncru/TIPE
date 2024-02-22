@@ -94,6 +94,11 @@ memory_move_t *issuePromotion(Game *g, int indPawn)
     return mem;
 }
 
+void cancelIssuePromotion(Game *g, memory_move_t *mem)
+{
+    cancelPromotion(g, mem->indMovePawn, mem->ind_potential_foe);
+}
+
 memory_move_t *issueMoveBack(Game *g, int indMovePawnBack, bool left)
 {
     // On suppose que le move back est faisable
@@ -107,8 +112,6 @@ memory_move_t *issueMoveBack(Game *g, int indMovePawnBack, bool left)
     return mem;
 }
 
-
-
 memory_move_t *issueRafle(Game *g, int indMovePawn)
 {
     bool iw = g->is_white;
@@ -120,8 +123,6 @@ memory_move_t *issueRafle(Game *g, int indMovePawn)
 
     return mem;
 }
-
-
 
 memory_move_t *issueQueenDepl(Game *g, int indMovePawn, queen_move_t coords)
 {

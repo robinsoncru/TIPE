@@ -93,7 +93,7 @@ void onInput(Game *g, GraphicCache *cache, SDL_Event event)
             break;
 
         case SDLK_r:
-            // onRUp(g, cache);
+            onRUp(g, cache);
 
             break;
         }
