@@ -69,6 +69,7 @@ contient un entier entre IND_GLORY_QUEEN, IND_BAD_MOVE, IND_NOTHING_HAPPENED pou
 survivant dans le nuage de pions fantomes, toute associé avec leur pba.
 Pour un coup déterministe, tu fais : coupAI, ..., cancelCoupAI
 Pour un coup non déterministe, faire: issueCoup, (tu selectionne l'issue que tu veux avec index), coupAI(..., index), ..., cancelSelectedIssue, cancelCoupAI
+Pour promotion: issuePromotion, (selectionne l'indice), promotionAI(..., index), ..., cancelIssuePromotion, cancelPromotion
 
 - Etape 1 : (du 18/01/2024 9h au 01/02/2024 14h)
     - Titre
