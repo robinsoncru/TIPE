@@ -15,10 +15,11 @@ void lightnightStrike(Game *g, memory_move_t *mem, int index);
 void cancelSelectedIssue(Game *g, memory_move_t *mem);
 void cancelIssuePromotion(Game *g, memory_move_t *mem);
 
-memory_move_t *issuePawnMove(Game *g, int indMovePawn, bool left);
-memory_move_t *issuePromotion(Game *g, int indPawn);
-memory_move_t *issueMoveBack(Game *g, int indMovePawnBack, bool left);
-memory_move_t *issueRafle(Game *g, int indMovePawn);
-memory_move_t *issueQueenDepl(Game *g, int indMovePawn, queen_move_t coords);
+memory_move_t *issuePawnMove(Game *g, int indMovePawn, bool left, moveType type);
+memory_move_t *issuePromotion(Game *g, int indPawn, moveType type);
+memory_move_t *issueMoveBack(Game *g, int indMovePawnBack, bool left, moveType type);
+memory_move_t *issueRafle(Game *g, int indMovePawn, PathTree *rafleTree, Path *rafle, moveType type);
+memory_move_t *issueQueenDepl(Game *g, int indMovePawn, queen_move_t coords, PathTree *rafleTree, Path *rafle, moveType type);
+memory_move_t *issueDeter(int indMovePawn, moveType type);
 
 #endif

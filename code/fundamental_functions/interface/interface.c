@@ -274,11 +274,17 @@ void init_pawns(Game *g, bool init_is_white)
                 init_pawn(g, g->damier, i, init_place, 0, init_is_white);
             }
         }
-        g->allPawns[init_is_white][i].alive = true;
-        g->allPawns[init_is_white][i].queen = false;
-        g->allPawns[init_is_white][i].friendly = -1;
-        g->allPawns[init_is_white][i].ennemy = -1;
-        g->allPawns[init_is_white][i].pba = 1;
+        // put_pawn_value(g, init_is_white, 0, ALIVE, true); // Could help if errors occur
+        // g->allPawns[init_is_white][i].alive = true;
+        // g->allPawns[init_is_white][i].queen = false;
+        // g->allPawns[init_is_white][i].friendly = -1;
+        // g->allPawns[init_is_white][i].ennemy = -1;
+        // g->allPawns[init_is_white][i].pba = 1;
+        put_pawn_value(g, init_is_white, i, ALIVE, true);
+        put_pawn_value(g, init_is_white, i, QUEEN, false);
+        put_pawn_value(g, init_is_white, i, FRIENDLY, VOID_INDEX);
+        put_pawn_value(g, init_is_white, i, ENNEMY, VOID_INDEX);
+        put_pawn_value(g, init_is_white, i, PBA, 1);
     }
 
     // Initialize the rest of pawns with default pmetre and the good color
@@ -318,15 +324,10 @@ Game *create_game()
         g->damier[i] = malloc(NB_CASE * sizeof(Case));
     }
 
-    g->allPawns[0] = malloc(NB_PAWNS * 2 * sizeof(pawn));
-    g->allPawns[1] = malloc(NB_PAWNS * 2 * sizeof(pawn));
-
     g->indCheck = IND_NORMAL;
     g->is_white = true;
-    init_damier(g->damier);
 
-    init_pawns(g, true);
-    init_pawns(g, false);
+    g->nb_pawns = malloc(2 * sizeof(int));
     g->nb_pawns[true] = NB_PAWNS;
     g->nb_pawns[false] = NB_PAWNS;
 
@@ -339,14 +340,24 @@ Game *create_game()
     g->coordForMoveBack.i = IND_LISTENING_MOVE_BACK;
     g->coordForMoveBack.j = IND_LISTENING_MOVE_BACK;
 
+    g->cloud = malloc(2 * sizeof(maillon *));
     g->cloud[true] = create_list();
     g->cloud[false] = create_list();
-    doubleTabInit(g->lengthCloud);
+    g->lengthCloud = doubleTabInit();
 
-    doubleTabInit(g->nbFoe);
-    doubleTabInit(g->nbFriendNoQueen);
-    doubleTabInit(g->nbQueenWithFriend);
-    doubleTabInit(g->nbQueenWithoutFriend);
+    g->nbFoe = doubleTabInit();
+    g->nbFriendNoQueen = doubleTabInit();
+    g->nbQueenWithFriend = doubleTabInit();
+    g->nbQueenWithoutFriend = doubleTabInit();
+
+    g->allPawns = malloc(2 * sizeof(pawn *));
+    g->allPawns[false] = malloc(NB_PAWNS * 2 * sizeof(pawn));
+    g->allPawns[true] = malloc(NB_PAWNS * 2 * sizeof(pawn));
+
+    init_damier(g->damier);
+
+    init_pawns(g, 1);
+    init_pawns(g, 0);
 
     return g;
 }

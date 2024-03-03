@@ -55,14 +55,15 @@ void copy_remove_pawn_from_index_to_index(Game *g, int indStart, int indArrive, 
 void pawn_default_value_new(Game *g, int ind, bool color)
 {
     /* Initialize pawn with default values, identify by its index and color */
-    g->allPawns[color][ind].alive = false;
-    g->allPawns[color][ind].col = -1;
-    g->allPawns[color][ind].lig = -1;
-    g->allPawns[color][ind].queen = false;
-    g->allPawns[color][ind].color = color;
-    g->allPawns[color][ind].friendly = -1;
-    g->allPawns[color][ind].ennemy = -1;
-    g->allPawns[color][ind].pba = 1;
+    // Use put_pawn_value if error Write Memroy
+    put_pawn_value(g, color, ind, ALIVE, bool_to_int(false));
+    put_pawn_value(g, color, ind, COL, -1);
+    put_pawn_value(g, color, ind, LIG, -1);
+    put_pawn_value(g, color, ind, QUEEN, bool_to_int(false));
+    put_pawn_value(g, color, ind, FRIENDLY, VOID_INDEX);
+    put_pawn_value(g, color, ind, ENNEMY, VOID_INDEX);
+    put_pawn_value(g, color, ind, PBA, 1);
+    put_pawn_value(g, color, ind, COLOR, bool_to_int(color));
 }
 
 // We are sure about the pawn we delete (no check control so be careful)
@@ -411,8 +412,29 @@ void freeCloud(maillon *l)
 // Memory Function
 void free_game(Game *g)
 {
+    // Free the damier
+
+    for (int i = 0; i < NB_CASE; i++)
+    {
+        free(g->damier[i]);
+    }
+
+    free(g->damier);
+
+    free(g->allPawns[0]);
+    free(g->allPawns[1]);
+    free(g->allPawns);
+
+    free(g->lengthCloud);
+    free(g->nbFoe);
+    free(g->nbFriendNoQueen);
+    free(g->nbQueenWithFriend);
+    free(g->nbQueenWithoutFriend);
+    free(g->nb_pawns);
+
     freeCloud(g->cloud[true]);
     freeCloud(g->cloud[false]);
+    free(g->cloud);
     if (g->currentTree != emptyTree)
     {
         pathTreeFree(g->currentTree);
@@ -431,19 +453,21 @@ Coord give_coord(Game *g, bool iw, int ind)
     return init_coord;
 }
 
-void doubleTabInit(int t[2])
+int *doubleTabInit()
 {
+    int *t = malloc(2 * sizeof(int));
     t[0] = 0;
     t[1] = 0;
+    return t;
 }
 
-void incrBothTab(int t[2])
+void incrBothTab(int *t)
 {
     t[0]++;
     t[1]++;
 }
 
-void decrBothTab(int t[2])
+void decrBothTab(int *t)
 {
     t[0]--;
     t[1]--;

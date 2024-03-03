@@ -334,56 +334,19 @@ void onKUp(Game *g, GraphicCache *cache)
     print_damier(g->damier, g);
 }
 
-
 void onRUp(Game *g, GraphicCache *cache)
 {
-    // picture_this(g);
-    // // Teste for the queen 
-
-    // bool iw = g->is_white;
-    // int ind = g->ind_move;
-    // SDL_Event event = cache->event;
-
-    // int x = event.button.x;
-    // int y = event.button.y;
-    // int lig = y / LG_CASE;
-    // int col =  x/ LG_CASE;
-
-    // queen_move_t coords = CanMoveOrEatQueen(g, iw, lig, col, g->damier, ind);
-    // int dame_lig = coords.pos_dame.i;
-    // int dame_col = coords.pos_dame.j;
-    // if (basicChecks(g) && dame_lig != VOID_INDEX && dame_col != VOID_INDEX)
-    // {
-    //     memory_move_t *mem = issueQueenDepl(g, g->ind_move, coords);
-    //     queenDeplAI(g, mem, 0);
-    //     picture_this(g);
-
-    // cancelSelectedIssue(g, mem);
-    // cancelQueenDeplAI(g, mem);
-    // }
-    // else
-    //     printv("big queen pb");
-    
-    // // memory_move_t mem = lienAmitieAI(g, g->ind_move, lig, col);
-    // // cancelLienAmitieAI(g, mem);
-    // picture_this(g);
-
-    // picture_game(g, g->is_white);
-    // printf("max moves %d", maxMoves(g));
-    // MoveTab* moveTab = listMoves(g);
-    // moveTabFree(moveTab);
-    // flush();
-
-    picture_this(g);
-    memory_move_t *mem = issuePromotion(g, g->ind_move);
-    promotionAI(g, mem, 1);
-    picture_this(g);
-    cancelIssuePromotion(g, mem);
-
-    promotionAI(g, mem, 2);
-    picture_this(g);
-    cancelIssuePromotion(g, mem);
-
-    cancelPromotionAI(g, mem);
-    picture_this(g);
+    MoveTab *coups = listMoves(g);
+    memory_move_t *mem;
+    for (int i = 0; i < coups->size; i++)
+    {
+        mem = applyDeter(g, coups->tab[i]);
+        picture_this(g);
+        for (int j = 0; j < mem->lenghtIssues; j++)
+        {
+            applyMove(g, mem, j);
+            applyRecipMove(g, mem);
+        }
+        applyRecipDeter(g, mem);
+    }
 }

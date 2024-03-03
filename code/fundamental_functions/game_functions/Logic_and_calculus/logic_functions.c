@@ -136,8 +136,8 @@ bool canMoveBack(Game *g, bool is_white, int ind, bool left)
 {
     int di = is_white ? 1 : -1;
     int dj = left ? -1 : 1;
-    Coord finalPos = {g->allPawns[is_white][ind].lig - di,
-                      g->allPawns[is_white][ind].col + dj};
+    Coord finalPos = {get_pawn_value(g, is_white, ind, LIG) - di,
+                      get_pawn_value(g, is_white, ind, COL) + dj};
     if (inGame(finalPos.i, finalPos.j))
     {
         return freeCase(g->damier[finalPos.i][finalPos.j]);

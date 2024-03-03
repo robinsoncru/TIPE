@@ -58,28 +58,28 @@ void put_pawn_value(Game *g, bool color, int ind, int wich_pmetre_modify, int va
     Permet de modifier les pmetres d'un pion de la liste de g reperer avec sa couleur, wich_pmetre_modify modifie le i-ième pmetre */
     switch (wich_pmetre_modify)
     {
-    case 1:
+    case ALIVE:
         g->allPawns[color][ind].alive = int_to_bool(value);
         break;
-    case 2:
+    case ENNEMY:
         g->allPawns[color][ind].ennemy = value;
         break;
-    case 3:
+    case FRIENDLY:
         g->allPawns[color][ind].friendly = value;
         break;
-    case 4:
+    case QUEEN:
         g->allPawns[color][ind].queen = int_to_bool(value);
         break;
-    case 5:
+    case LIG:
         g->allPawns[color][ind].lig = value;
         break;
-    case 6:
+    case COL:
         g->allPawns[color][ind].col = value;
         break;
-    case 7:
+    case PBA:
         g->allPawns[color][ind].pba = value;
         break;
-    case 8:
+    case COLOR:
         g->allPawns[color][ind].color = int_to_bool(value);
         break;
     default:
@@ -91,26 +91,26 @@ void put_pawn_value(Game *g, bool color, int ind, int wich_pmetre_modify, int va
 
 int get_pawn_value(Game *g, bool color, int ind, int wich_pmetre_get)
 {
-    pawn *p = &(g->allPawns[color][ind]); // error
+    pawn *p = &(g->allPawns[color][ind]);
 
     /* 1 : alive |2 : ennemy |3 : friendly |4 : queen |5 : lig |6 : col |7 : pba */
     switch (wich_pmetre_get)
     {
-    case 1:
+    case ALIVE:
         return bool_to_int(p->alive);
-    case 2:
+    case ENNEMY:
         return p->ennemy;
-    case 3:
+    case FRIENDLY:
         return p->friendly;
-    case 4:
+    case QUEEN:
         return bool_to_int(p->queen);
-    case 5:
+    case LIG:
         return p->lig;
-    case 6:
+    case COL:
         return p->col;
-    case 7:
+    case PBA:
         return p->pba;
-    case 8:
+    case COLOR:
         return p->color;
     default:
         // Do nothing

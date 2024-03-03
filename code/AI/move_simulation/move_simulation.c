@@ -44,16 +44,13 @@ void cancelPawnMoveBackAI(Game *g, memory_move_t *mem)
     freeMemMove(mem);
 }
 
-memory_move_t *biDeplAI(Game *g, int indMovePawn)
+void biDeplAI(Game *g, int indMovePawn, memory_move_t *mem)
 {
-    memory_move_t *mem = initMemMove(indMovePawn);
     mem->full_pawn_data = biDeplNGE(g, g->is_white, indMovePawn);
 
     // Desecrate
 
     endTurnGameManagementSimple(g, indMovePawn);
-
-    return mem;
 }
 
 void cancelBiDeplAI(Game *g, memory_move_t *mem)
@@ -79,7 +76,7 @@ void cancelQueenDeplAI(Game *g, memory_move_t *mem)
 void rafleAI(Game *g, memory_move_t *mem, int index)
 {
 
-    lightnightStrike(g, mem, index);
+    lightnightStrike(g, mem, index); // Dépassement pile
 
     endTurnGameManagementSimple(g, mem->indMovePawn);
 }
@@ -91,17 +88,15 @@ void cancelRafleAI(Game *g, memory_move_t *mem)
     freeMemMove(mem);
 }
 
-memory_move_t *lienAmitieAI(Game *g, int indPawn, int lig, int col)
+void lienAmitieAI(Game *g, int indPawn, int lig, int col, memory_move_t *mem)
 {
     if (g->is_white)
         lig = NB_CASE_LG - lig - 1;
 
-    memory_move_t *mem = initMemMove(indPawn);
     mem->lig = lig;
     mem->col = col;
     lienAmitieNGE(lig, col, g, indPawn);
     endTurnGameManagementSimple(g, indPawn);
-    return mem;
 }
 
 void cancelLienAmitieAI(Game *g, memory_move_t *mem)
@@ -111,17 +106,15 @@ void cancelLienAmitieAI(Game *g, memory_move_t *mem)
     freeMemMove(mem);
 }
 
-memory_move_t *lienEnnemitieAI(Game *g, int indPawn, int lig, int col)
+void lienEnnemitieAI(Game *g, int indPawn, int lig, int col, memory_move_t *mem)
 {
     if (g->is_white)
         lig = NB_CASE_LG - lig - 1;
 
-    memory_move_t *mem = initMemMove(indPawn);
     mem->lig = lig;
     mem->col = col;
     lienEnnemitieNGE(lig, col, g, indPawn);
     endTurnGameManagementSimple(g, indPawn);
-    return mem;
 }
 
 void cancelLienEnnemitieAI(Game *g, memory_move_t *mem)

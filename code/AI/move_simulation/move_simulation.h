@@ -9,9 +9,9 @@ void pawnMoveBackAI(Game *g, memory_move_t *mem, int index);
 void rafleAI(Game *g, memory_move_t *mem, int index);
 void queenDeplAI(Game *g, memory_move_t *mem, int index);
 
-memory_move_t *biDeplAI(Game *g, int indMovePawn);
-memory_move_t *lienAmitieAI(Game *g, int indPawn, int lig, int col);
-memory_move_t *lienEnnemitieAI(Game *g, int indPawn, int lig, int col);
+void biDeplAI(Game *g, int indMovePawn, memory_move_t *mem);
+void lienAmitieAI(Game *g, int indPawn, int lig, int col, memory_move_t *mem);
+void lienEnnemitieAI(Game *g, int indPawn, int lig, int col, memory_move_t *mem);
 
 void cancelPawnMoveAI(Game *g, memory_move_t *mem);
 void cancelPromotionAI(Game *g, memory_move_t *mem);

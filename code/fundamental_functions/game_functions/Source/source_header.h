@@ -95,23 +95,23 @@ typedef struct
 typedef struct
 {
     Case **damier;
-    pawn *allPawns[2];
+    pawn **allPawns;
     // In the impossible but theorical case where for instance whites promote all their pawns and unfortunately they all
     // become blacks, bad choice :(
-    int nb_pawns[2];
+    int *nb_pawns;
     /* Access with is_white
     Keep in memory an overapproximation of the nb of pawns, but like for merge to union_find, don't decrease the value.
     Indeed, we need a free indice to create a new ennemy pawn, not necessary the first free indice */
     int ind_move, ind_move_back, indCheck;
-    int players[2]; //the first is white, the second black, useful to be able to identify AIs
+    // int *players; //the first is white, the second black, useful to be able to identify AIs
     bool is_white;
     Coord coordForMoveBack;
-    maillon* cloud[2];
-    int lengthCloud[2];
-    int nbFriendNoQueen[2];
-    int nbFoe[2];
-    int nbQueenWithoutFriend[2];
-    int nbQueenWithFriend[2];
+    maillon **cloud;
+    int *lengthCloud;
+    int *nbFriendNoQueen;
+    int *nbFoe;
+    int *nbQueenWithoutFriend;
+    int *nbQueenWithFriend;
 
     PathTree* currentTree;
     Path* currentRafle;

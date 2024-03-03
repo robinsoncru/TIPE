@@ -7,8 +7,11 @@
 
 enum moveType{pawnMoveType, promotionType, pawnMoveBackType, biDeplType, queenDeplType, rafleType, lienAmitieType, lienEnnemitieType};
 
+typedef int moveType;
+
+
 typedef struct Move{
-    enum moveType type;
+    moveType type;
     int manipulatedPawn;
 
     //wether or not the movement of the pawn

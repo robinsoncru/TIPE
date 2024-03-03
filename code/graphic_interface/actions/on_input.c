@@ -96,6 +96,12 @@ void onInput(Game *g, GraphicCache *cache, SDL_Event event)
             onRUp(g, cache);
 
             break;
+
+        default:
+            break;
         }
+    
+    default:
+        break;
     }
 }

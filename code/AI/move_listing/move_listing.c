@@ -198,7 +198,7 @@ MoveTab* listMovesFilterRafles(Move* temporaryResult, int nbMoves){
             res->tab = malloc(rafleCount * sizeof(Move));
             for (int k = 0; k < nbMoves; k++) {
                 currentMove = temporaryResult[k];
-                if (res->tab[k].type == rafleType && pathTreeDepth(currentMove.rafleTree) == length) {
+                if (currentMove.type == rafleType && pathTreeDepth(currentMove.rafleTree) == length) {
                     res->tab[res->size] = currentMove;
                     res->size++;
                 }

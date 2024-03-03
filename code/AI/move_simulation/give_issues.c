@@ -2,6 +2,7 @@
 
 void initTabIssue(Game *g, int what_kind_of_creation, memory_move_t *mem)
 {
+    // Appeler pour les fonctions non déterministe
     bool color = !g->is_white;
 
     switch (what_kind_of_creation)
@@ -35,6 +36,7 @@ void initTabIssue(Game *g, int what_kind_of_creation, memory_move_t *mem)
 
         break;
     }
+    mem->is_deter = false;
 }
 
 void signCloudDuePawnMove(Game *g, memory_move_t *mem)
@@ -50,7 +52,7 @@ void signCloudDuePawnMove(Game *g, memory_move_t *mem)
 void lightnightStrike(Game *g, memory_move_t *mem, int index)
 {
     bool iw = g->is_white;
-    if (index != VOID_INDEX)
+    if (!mem->is_deter)
         stormBreaksNGE(g, !iw, mem->load_cloud_other, mem->survivor, mem->issues[index].pos_survivor);
 }
 
@@ -58,7 +60,7 @@ void cancelSelectedIssue(Game *g, memory_move_t *mem)
 {
     bool iw = g->is_white;
     int index_origin = mem->lenghtIssues - 1;
-    if (index_origin != VOID_INDEX)
+    if ((index_origin-1) != VOID_INDEX)
         change_pawn_place_newbie(g, mem->survivor->ind, !iw, mem->issues[index_origin].pos_survivor);
 
     if (!cis_empty(mem->load_cloud_other))
@@ -67,7 +69,7 @@ void cancelSelectedIssue(Game *g, memory_move_t *mem)
     }
 }
 
-memory_move_t *issuePawnMove(Game *g, int indMovePawn, bool left)
+memory_move_t *issuePawnMove(Game *g, int indMovePawn, bool left, moveType type)
 {
     // Test pawn move remove, on suppose qu'on peut jouer, et qu'on a deja une fonction pour faire jouer l'ami en arrière
 
@@ -75,7 +77,7 @@ memory_move_t *issuePawnMove(Game *g, int indMovePawn, bool left)
     pawnMoveNGE(g, iw, indMovePawn, left);
     // Attention l'indice de renvoie du friend est dans le structure g
 
-    memory_move_t *mem = initMemMove(indMovePawn);
+    memory_move_t *mem = initMemMove(indMovePawn, type);
     mem->left = left;
 
     // signCloudDuePawnMove(g, indMovePawn, mem->survivor, mem->load_cloud_other);
@@ -86,10 +88,10 @@ memory_move_t *issuePawnMove(Game *g, int indMovePawn, bool left)
     return mem;
 }
 
-memory_move_t *issuePromotion(Game *g, int indPawn)
+memory_move_t *issuePromotion(Game *g, int indPawn, moveType type)
 {
 
-    memory_move_t *mem = initMemMove(indPawn);
+    memory_move_t *mem = initMemMove(indPawn, type);
     initTabIssue(g, CREATE_PROM_TAB, mem);
     return mem;
 }
@@ -99,38 +101,42 @@ void cancelIssuePromotion(Game *g, memory_move_t *mem)
     cancelPromotion(g, mem->indMovePawn, mem->ind_potential_foe);
 }
 
-memory_move_t *issueMoveBack(Game *g, int indMovePawnBack, bool left)
+memory_move_t *issueMoveBack(Game *g, int indMovePawnBack, bool left, moveType type)
 {
     // On suppose que le move back est faisable
     pawnMoveBackNGE(g, indMovePawnBack, left);
     // la fonction ci dessus remet g->ind_move_back a VOID_INDEX
 
-    memory_move_t *mem = initMemMove(indMovePawnBack);
+    memory_move_t *mem = initMemMove(indMovePawnBack, type);
     mem->left = left;
     // Desecrate
     signCloudDuePawnMove(g, mem);
     return mem;
 }
 
-memory_move_t *issueRafle(Game *g, int indMovePawn)
+memory_move_t *issueRafle(Game *g, int indMovePawn, PathTree *rafleTree, Path *rafle, moveType type)
 {
     bool iw = g->is_white;
-    memory_move_t *mem = initMemMove(indMovePawn);
+    memory_move_t *mem = initMemMove(indMovePawn, type);
     mem->init_coord = give_coord(g, iw, indMovePawn);
-    mem->chainy = rafleNGE(g, indMovePawn);
+    mem->chainy = rafleNGE(g, indMovePawn, rafleTree, rafle);
 
     signCloudDuePawnMove(g, mem);
 
     return mem;
 }
 
-memory_move_t *issueQueenDepl(Game *g, int indMovePawn, queen_move_t coords)
+memory_move_t *issueQueenDepl(Game *g, int indMovePawn, queen_move_t coords, PathTree *rafleTree, Path *rafle, moveType type)
 {
     bool iw = g->is_white;
-    memory_move_t *mem = initMemMove(indMovePawn);
+    memory_move_t *mem = initMemMove(indMovePawn, type);
     mem->init_coord = give_coord(g, iw, indMovePawn);
-    mem->chainy = queenDeplNGE(g, indMovePawn, iw, coords);
+    mem->chainy = queenDeplNGE(g, indMovePawn, iw, coords, rafleTree, rafle);
 
     signCloudDuePawnMove(g, mem);
     return mem;
+}
+
+memory_move_t *issueDeter(int indMovePawn, moveType type) {
+    return initMemMove(indMovePawn, type);
 }

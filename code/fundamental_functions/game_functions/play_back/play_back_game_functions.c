@@ -208,22 +208,21 @@ data_chain *eatRafleNGE(Game *g, int indEater, bool is_white, PathTree *t, Path 
     return chainy;
 }
 
-data_chain *rafleNGE(Game *g, int indMovePawn)
+data_chain *rafleNGE(Game *g, int indMovePawn, PathTree *rafleTree, Path *rafle)
 {
-    assert(g->currentTree == emptyTree);
+    if (rafleTree != emptyTree) {
     moveBackGameManagement(g);
-    bool isWhite = g->is_white;
-    pawn *pawns = g->allPawns[isWhite];
-    pawn *NPawns = g->allPawns[!isWhite];
-    g->currentTree = rafleTreeCalc(pawns, NPawns, g->damier, g->ind_move);
+    g->currentTree = rafleTree;
 
-    printf("lazyRafle called\n");
-    Path *r = lazyRafle(g->currentTree);
     printf("eatRafle called\n");
-    data_chain *chainy = eatRafleNGE(g, g->ind_move, g->is_white, g->currentTree, r);
+    data_chain *chainy = eatRafleNGE(g, indMovePawn, g->is_white, g->currentTree, rafle);
     printf("pathFree called\n");
-    pathFree(r);
+    pathFree(rafle);
     return chainy;
+    }
+    else {
+        return dcreate_list();
+    }
 }
 
 void cancelRafle(Game *g, int indMovedPawn, Coord init_pos, data_chain *chainy) {
@@ -243,7 +242,7 @@ void cancelRafle(Game *g, int indMovedPawn, Coord init_pos, data_chain *chainy) 
     change_pawn_place_new(g, g->damier, indMovedPawn, iw, init_pos.i, init_pos.j);
 }
 
-data_chain *queenDeplNGE(Game *g, int ind, bool color, queen_move_t tuple_coord)
+data_chain *queenDeplNGE(Game *g, int ind, bool color, queen_move_t tuple_coord, PathTree *rafleTree, Path *rafle)
 {
     moveBackGameManagement(g);
     // Suppose que l'entree est valide
@@ -257,7 +256,7 @@ data_chain *queenDeplNGE(Game *g, int ind, bool color, queen_move_t tuple_coord)
     change_pawn_place_new(g, g->damier, ind, color, lig, col);
 
     // Gonna check if the queen can take a rafle
-    data_chain *chainy = rafleNGE(g, ind);
+    data_chain *chainy = rafleNGE(g, ind, rafleTree, rafle);
 
     if (dis_empty(chainy))
     {

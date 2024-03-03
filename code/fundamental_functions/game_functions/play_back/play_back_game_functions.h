@@ -23,10 +23,10 @@ void cancelBidepl(Game *g, int oldInd, ind_bool_t data);
 int promotionNGE(Game *g, int ind, int choice);
 void cancelPromotion(Game *g, int ind_old_friend, int ind_new_foe);
 
-data_chain *queenDeplNGE(Game *g, int ind, bool color, queen_move_t tuple_coord);
+data_chain *queenDeplNGE(Game *g, int ind, bool color, queen_move_t tuple_coord, PathTree *rafleTree, Path *rafle);
 void cancelDeplQueen(Game *g, int ind_queen, data_chain *chainy, Coord init_coord);
 
-data_chain *rafleNGE(Game *g, int indMovePawn);
+data_chain *rafleNGE(Game *g, int indMovePawn, PathTree *rafleTree, Path *rafle);
 void cancelRafle(Game *g, int indMovedPawn, Coord init_pos, data_chain *chainy);
 
 void lienAmitieNGE(int lig, int col, Game *g, int indPawn);

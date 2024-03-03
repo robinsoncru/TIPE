@@ -63,14 +63,18 @@ int main(int argc, char *argv[])
     // init the graphic cache
     GraphicCache *cache = initCache();
 
-    // end debug
-
     if (cache->statut != EXIT_SUCCESS)
     {
         return quit(g, cache);
     }
 
     cache->last_time = SDL_GetTicks();
+
+
+
+    // g->allPawns[g->is_white][NB_PAWNS+1].pba;
+    // print_pawn(g->allPawns[g->is_white][NB_PAWNS+1], NB_PAWNS+1);
+    print_pawns(g);
 
     // Start the game
     while (cache->is_playing)
