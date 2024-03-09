@@ -337,7 +337,7 @@ void onKUp(Game *g, GraphicCache *cache)
 void onRUp(Game *g, GraphicCache *cache)
 {
     MoveTab *coups = listMoves(g);
-    memory_move_t *mem;
+    memory_move_t *mem = NULL;
     for (int i = 0; i < coups->size; i++)
     {
         mem = applyDeter(g, coups->tab[i]);

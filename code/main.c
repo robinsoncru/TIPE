@@ -51,7 +51,7 @@ void test_start_game(Game *g)
 int main(int argc, char *argv[])
 {
     // init the game
-    Game *g = create_game();
+     Game *g = create_game();
 
     // int allMoves[4][2] = {{LEFT_FORWARD, LEFT_BACK},
     //                       {LEFT_BACK, LEFT_FORWARD},

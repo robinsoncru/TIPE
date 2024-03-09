@@ -36,5 +36,6 @@ code/move_struct.o
 code/rafle_listing.o
 code/give_issues.o
 code/memory_move.o
+code/play_move.o
 
 
