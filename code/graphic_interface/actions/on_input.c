@@ -5,13 +5,6 @@
 // called when the player makes an input
 void onInput(Game *g, GraphicCache *cache, SDL_Event event)
 {
-    // if (event.type == SDL_MOUSEBUTTONDOWN
-    //     || (event.type == SDL_KEYUP && event.key.keysym.sym != SDLK_z)) {
-    //     cache->display_tree = false;
-    //     if (cache->cacheTree != emptyTree) {
-    //         freeCurrentRafle(&(cache->cacheTree));
-    //     }
-    // }
 
     switch (event.type)
     {
@@ -20,7 +13,7 @@ void onInput(Game *g, GraphicCache *cache, SDL_Event event)
     case SDL_MOUSEBUTTONDOWN:
         if (event.button.button == SDL_BUTTON_LEFT)
         {
-            onLMBDown(g, cache);
+            onLMBDown(g, cache);  // M. Lick: c'est dans cette fonction que le bug apparaît
         }
         else if (event.button.button == SDL_BUTTON_RIGHT)
         {
@@ -100,7 +93,8 @@ void onInput(Game *g, GraphicCache *cache, SDL_Event event)
         default:
             break;
         }
-    
+        break;
+
     default:
         break;
     }

@@ -167,6 +167,7 @@ void checkQueenDepl(Game *g, GraphicCache *cache, bool iw, int lig, int col)
 // Click on a pawn to select it
 void onLMBDown(Game *g, GraphicCache *cache)
 {
+     // M. Lick: on voit que le champ g->ind_move_back passe de -1 à -148000
     SDL_Event event = cache->event;
 
     int lig = event.button.y / LG_CASE;

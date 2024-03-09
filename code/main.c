@@ -95,7 +95,8 @@ int main(int argc, char *argv[])
             SDL_RenderPresent(cache->draw);
 
             // update the data in the cache
-            update(g, cache);
+            update(g, cache); // M. Lick: fonction appelé pour mettre à jour l'état du jeu en fonction
+            // des entrées utilisateurs
         }
     }
     return quit(g, cache);

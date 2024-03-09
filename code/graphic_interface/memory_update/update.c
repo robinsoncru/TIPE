@@ -48,7 +48,7 @@ void update(Game *g, GraphicCache *cache)
 
         default:
             // called if any input is made
-            onInput(g, cache, cache->event);
+            onInput(g, cache, cache->event);  // M. Lick: Ici, selon le bouton pressé, on rentre dans cette fonction
             break;
         }
     }

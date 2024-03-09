@@ -16,7 +16,7 @@ Sources :
 ___
 
 Il y a un Makefile qui permet de ne compiler que les fichiers qui ont été modifiés:
-Commande à taper dans le terminal, dans le répertoire TIPE:
+Commande à taper dans le terminal, dans le répertoire TIPE/code:
 
 make dames.out
 
@@ -25,7 +25,7 @@ Regles du jeu:
 On ne peut lier d'amitie que deux amis au max, sinon le coup n'est pas joué
 De même pour ennemie
 
-Note: J'ai (Victor G) du supprimer le répertoire main car l'option debug ne permet pas de sortir d'un dossier (comme fundamental functions) pour rentrer dans le main
+Note:
 J'ai (Victor G) reporté un bug très bizarre, je passe le pointeur Game *g à une fonction dont l'attribut currentTree est à null à une fonction et dans le corps de la
 fonction, currentTree devient invalid adress, bug résolu en copiant-collant la fonction
 
@@ -52,10 +52,11 @@ GUIDE D'UTILISATION:
 - a: lance le jeu automatique
 - z: affiche l'arbre des rafles pour le pion sélectionné
 - k: affiche l'état du damier instantanément dans le terminal (redondant avec h)
+- r: Action la plus difficile, liste tout les coups que le joueur qui a le trait peut faire, puis les applique tous (dans un premier temps leur action déterministe, puis la structure mem permet d'appliquer toutes les issues possibles l'une après l'autre en les executant puis les annulant) puis il annule le coup et passe au suivant, tout cela sans voir les effets sur le plateau: ce sont les fonctions de minmax
 
 
 BUG REPORT:
-au niveau des rafles: apparition d'un nv pion ou segfault
+g->ind_move_back est modifié involontairement par passage aux fonctions
 
 
 Todo list :

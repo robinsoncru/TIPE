@@ -52,9 +52,10 @@ void listMovesMovePawn(Game* g, int selectedPawn, Move* temporaryResult, int* nb
 void listMovesPromotion(Game* g, Move* temporaryResult, int* nbMoves){
     Move currentMove;
     currentMove.manipulatedPawn = promotionType;
+    bool iw = g->is_white;
 
-    for (int k = 0; k < 2 * NB_PAWNS; k++) {
-        if (isPromotable(g, k, g->is_white)) {
+    for (int k = 0; k <  g->nb_pawns[iw]; k++) {
+        if (isPromotable(g, k, iw)) {
             currentMove.manipulatedPawn = k;
             temporaryResult[*nbMoves] = currentMove;
             *nbMoves = *nbMoves + 1;
@@ -66,10 +67,11 @@ void listMovesBefriend(Game* g, int selectedPawn, Move* temporaryResult, int* nb
     Move currentMove;
     currentMove.manipulatedPawn = selectedPawn;
     currentMove.type = lienAmitieType;
+    bool iw = g->is_white;
 
     pawn p;
-    for (int k = 0; k < 2 * NB_PAWNS; k++) {
-        if (isFriendable(g, k, !g->is_white)) {
+    for (int k = 0; k < g->nb_pawns[iw]; k++) {
+        if (isFriendable(g, k, !iw)) {
             p = g->allPawns[!g->is_white][k];
             currentMove.lig = p.lig;
             currentMove.col = p.col;
@@ -83,11 +85,12 @@ void listMovesEnnemy(Game* g, int selectedPawn, Move* temporaryResult, int* nbMo
     Move currentMove;
     currentMove.manipulatedPawn = selectedPawn;
     currentMove.type = lienEnnemitieType;
+    bool iw = g->is_white;
 
     pawn p;
-    for (int k = 0; k < 2 * NB_PAWNS; k++) {
-        if (isEnnemiable(g, k, !g->is_white)) {
-            p = g->allPawns[!g->is_white][k];
+    for (int k = 0; k < g->nb_pawns[iw]; k++) {
+        if (isEnnemiable(g, k, !iw)) {
+            p = g->allPawns[!iw][k];
             currentMove.lig = p.lig;
             currentMove.col = p.col;
             temporaryResult[*nbMoves] = currentMove;
@@ -212,6 +215,9 @@ MoveTab* listMovesFilterRafles(Move* temporaryResult, int nbMoves){
 MoveTab* listMoves(Game* g){
     Move* temporaryResult;
     int nbMoves;
+    bool iw = g->is_white;
+
+
     if (g->ind_move_back != VOID_INDEX) {
         temporaryResult = listMovesMoveBack(g, &nbMoves);
     }
@@ -221,8 +227,8 @@ MoveTab* listMoves(Game* g){
         listMovesPromotion(g, temporaryResult, &nbMoves);
 
         pawn p;
-        for (int k = 0; k < 2 * NB_PAWNS; k++) {
-            p = g->allPawns[g->is_white][k];
+        for (int k = 0; k < g->nb_pawns[iw]; k++) {
+            p = g->allPawns[iw][k];
             if (p.alive) {
                 if (p.queen) {
                     listMovesForQueen(g, k, temporaryResult, &nbMoves);
