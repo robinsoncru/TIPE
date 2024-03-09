@@ -102,9 +102,7 @@ typedef struct
     /* Access with is_white
     Keep in memory an overapproximation of the nb of pawns, but like for merge to union_find, don't decrease the value.
     Indeed, we need a free indice to create a new ennemy pawn, not necessary the first free indice */
-    int ind_move;
-    int ind_move_back;
-    int indCheck;
+    int ind_move, ind_move_back, indCheck;
     // int *players; //the first is white, the second black, useful to be able to identify AIs
     bool is_white;
     Coord coordForMoveBack;

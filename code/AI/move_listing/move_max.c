@@ -98,5 +98,4 @@ int maxMoves(Game *g)
     return g->lengthCloud[iw] * possibleMoveForOneGhostPawn() + g->nbQueenWithFriend[iw] * possibleMoveForOneQueenWithFriend(g) +
            g->nbQueenWithoutFriend[iw] * possibleMoveForOneQueenWithoutFriend(g) + g->nbFoe[iw] * possibleMoveForOneFoe(g) +
            g->nbFriendNoQueen[iw] * possibleMoveForOneFriendNoQueen(g) + casualPawns * possibleMoveForOneCasualPawn(g);
-
 }

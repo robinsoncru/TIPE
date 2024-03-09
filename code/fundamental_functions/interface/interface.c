@@ -316,7 +316,6 @@ void init_damier(Case **damier)
 
 Game *create_game()
 {
-    
     Game *g = malloc(sizeof(Game));
 
     g->damier = malloc(NB_CASE * sizeof(Case *));

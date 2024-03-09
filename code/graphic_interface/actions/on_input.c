@@ -21,12 +21,11 @@ void onInput(Game *g, GraphicCache *cache, SDL_Event event)
         if (event.button.button == SDL_BUTTON_LEFT)
         {
             onLMBDown(g, cache);
-
         }
         else if (event.button.button == SDL_BUTTON_RIGHT)
         {
             /* Pour les clics droit (prefere une double verif qu'un simple else)*/
-            // onRMBDown(g, cache);
+            onRMBDown(g, cache);
             // onRUp(g, cache);
         }
         break;
@@ -101,7 +100,6 @@ void onInput(Game *g, GraphicCache *cache, SDL_Event event)
         default:
             break;
         }
-        break;
     
     default:
         break;
