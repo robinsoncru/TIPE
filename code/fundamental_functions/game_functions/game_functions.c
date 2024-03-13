@@ -27,7 +27,7 @@
 
 void pawnMove(Game *g, bool is_white, int ind, bool left)
 {
-    startTurnGameManagement(g);
+    startTurnGameManagement(g); // C'est ici qu'il y a corruption du paramètre
     pawn *p = &(g->allPawns[is_white][ind]);
     int i = p->lig;
     int j = p->col;

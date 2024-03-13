@@ -46,7 +46,7 @@ PathTree* pathTreeCreateNode(int i, int j){
 
 void pathTreeFree(PathTree* t){
     //Libere l'integralite de l'abre de chemin
-    if (t != emptyTree) {
+    if (t != NULL && t != emptyTree) {
         for (int i = 0; i < ARITE; i++) {
             pathTreeFree(t -> childs[i]);
         }

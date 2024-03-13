@@ -334,7 +334,7 @@ Game *create_game()
     g->ind_move = NEUTRAL_IND;
     g->ind_move_back = NEUTRAL_IND;
 
-    g->currentTree = emptyTree;
+    g->currentTree = NULL;
     g->currentRafle = NULL;
 
     g->coordForMoveBack.i = IND_LISTENING_MOVE_BACK;

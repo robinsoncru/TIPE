@@ -68,5 +68,7 @@ void endTurnGameManagement(Game *g, bool is_white, int indMovedPawn, int indChec
 
 void startTurnGameManagement(Game *g)
 {
-    moveBackGameManagement(g);
+    int i=4;
+    g;
+    // moveBackGameManagement(g);
 }
