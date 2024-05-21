@@ -58,11 +58,11 @@ int update(Game *g, GraphicCache *cache, int nb_coups, int *l_coups)
         // Autoplay take over
         if (cache->autoplay)
         {
-            play_a_move(PAWNMOVELEFT, random_index(g), g, cache);
-            play_a_move(PAWNMOVERIGHT, random_index(g), g, cache);
+            play_a_move(LIENAMITIE, random_index(g), g, cache);
+            play_a_move(LIENAMITIE, random_index(g), g, cache);
 
-            // play_a_move(PAWNMOVELEFT, plannifier_index(g, nb_coups, l_coups), g, cache);
-            // play_a_move(PAWNMOVERIGHT, plannifier_index(g, nb_coups, l_coups), g, cache);
+            // play_a_move(LIENAMITIE, plannifier_index(g, nb_coups, l_coups), g, cache);
+            // play_a_move(LIENAMITIE, plannifier_index(g, nb_coups, l_coups), g, cache);
             return nb_coups+1;
         }
     }

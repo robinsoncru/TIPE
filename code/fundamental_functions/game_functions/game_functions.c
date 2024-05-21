@@ -148,7 +148,7 @@ void promotionPmetre( Game *g, bool is_white, int ind)
         if (canBePromoted(g, !is_white, indNew))
             promote(g, !is_white, indNew);
 
-        endTurnGameManagement(g, is_white, ind, IND_BAD_CHOICE, false);
+        endTurnGameManagement(g, is_white, indNew, IND_BAD_CHOICE, false);
         return;
     }
     endTurnGameManagement(g, is_white, ind, IND_NOTHING_HAPPENED, false);

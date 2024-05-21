@@ -56,6 +56,13 @@ int ind_from_coord(Game *g, int lig, int col) {
     return g->damier[lig][col].ind_pawn;
 }
 
+Coord coord_from_ind(Game *g, int ind, bool color) {
+    // Donne les coordonnees du pion a partir de l'indice
+    assert(isValidIndexInGame(g, ind, color));
+    Coord coord = {.i = g->allPawns[color][ind].lig, .j = g->allPawns[color][ind].col};
+    return coord;
+}
+
 int quickPow(int a, int n)
 {
     /* Return a^n, exp rapide */

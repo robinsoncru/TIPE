@@ -23,7 +23,8 @@ void moveBackGameManagement(Game *g)
     g->ind_move_back = VOID_INDEX;
 }
 
-void endTurnGameManagementSimple(Game *g, int pawn_played) {
+void endTurnGameManagementSimple(Game *g, int pawn_played)
+{
     // Appeler toujours apres endTurnGameManagement lorsqu'il n'y a plus d'appel recursif sur les coups à faire
     if (canBePromoted(g, g->is_white, pawn_played))
     {
@@ -32,27 +33,31 @@ void endTurnGameManagementSimple(Game *g, int pawn_played) {
 
     // g->is_white = !g->is_white;
 
-    if (g->currentTree != emptyTree) {
-        PathTree* m = g->currentTree;
+    if (g->currentTree != emptyTree)
+    {
+        PathTree *m = g->currentTree;
         g->currentTree = NULL;
         pathTreeFree(m);
-    }    
-
+    }
 }
 
 void endTurnGameManagement(Game *g, bool is_white, int indMovedPawn, int indCheck, bool doMoveBack)
 {
-    if (canBePromoted(g, is_white, indMovedPawn))
-    {
-        promote(g, is_white, indMovedPawn);
-    }
 
-    if (indCheck != IND_BAD_CHOICE) {
-    if (canStormBreaks(g, indMovedPawn, is_white)) AleatStormBreaks(g, is_white);
-    else if (canStormBreaksForTheOthers(g, indMovedPawn, is_white)) AleatStormBreaks(g, !is_white);
+    if (indCheck != IND_BAD_CHOICE)
+    {
+
+        if (canBePromoted(g, is_white, indMovedPawn))
+        {
+            promote(g, is_white, indMovedPawn);
+        }
+        if (canStormBreaks(g, indMovedPawn, is_white))
+            AleatStormBreaks(g, is_white);
+        else if (canStormBreaksForTheOthers(g, indMovedPawn, is_white))
+            AleatStormBreaks(g, !is_white);
     }
-    else if (canStormBreaks(g, indMovedPawn, !is_white)) AleatStormBreaks(g, !is_white);
-    
+    else if (canStormBreaksForTheOthers(g, indMovedPawn, !is_white))
+        AleatStormBreaks(g, is_white);
 
     g->is_white = !g->is_white;
     g->ind_move = NEUTRAL_IND;
@@ -62,8 +67,9 @@ void endTurnGameManagement(Game *g, bool is_white, int indMovedPawn, int indChec
         g->coordForMoveBack.i = IND_LISTENING_MOVE_BACK;
         g->coordForMoveBack.j = IND_LISTENING_MOVE_BACK;
     }
-    if (g->currentTree != emptyTree) {
-        PathTree* m = g->currentTree;
+    if (g->currentTree != emptyTree)
+    {
+        PathTree *m = g->currentTree;
         g->currentTree = NULL;
         pathTreeFree(m);
     }

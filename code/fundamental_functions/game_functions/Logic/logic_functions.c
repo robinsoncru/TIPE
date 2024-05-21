@@ -26,8 +26,7 @@ bool canMove(Game *g, bool is_white, int ind, bool left)
     Coord finalPos = {get_pawn_value(g, is_white, ind, LIG) + di,
                       get_pawn_value(g, is_white, ind, COL) + dj};
     bool posInGame = inGame(finalPos.i, finalPos.j);
-    bool wayIsFree = freeCase(get_case_damier(g, finalPos.i, finalPos.j));
-    return posInGame && wayIsFree;
+    return posInGame && freeCase(get_case_damier(g, finalPos.i, finalPos.j));
 }
 
 // un ghost pawn ne peut pas devenir une dame
@@ -155,10 +154,13 @@ bool canStormBreaks(Game *g, int ind, int color)
     {
 
         getDirsFromCode(k, &di, &dj);
-        c = get_case_damier(g, i + di, j + dj);
-        if (!freeCase(c) && c.pawn_color != color && !isInCloud(g, !color, c.ind_pawn))
+        if (inGame(i + di, j + dj))
         {
-            return true;
+            c = get_case_damier(g, i + di, j + dj);
+            if (!freeCase(c) && c.pawn_color != color && !isInCloud(g, !color, c.ind_pawn))
+            {
+                return true;
+            }
         }
     }
     return false;

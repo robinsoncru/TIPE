@@ -58,7 +58,7 @@ int main(int argc, char *argv[])
 
     cache->last_time = SDL_GetTicks();
     int nb_coups = 0;
-    int l_coups[4] = {3, 2, 0, 8};
+    int l_coups[4] = {4};
 
     // Start the game
     while (cache->is_playing)
