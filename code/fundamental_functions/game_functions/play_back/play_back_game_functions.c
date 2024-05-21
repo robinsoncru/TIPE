@@ -3,7 +3,7 @@
 void pawnMoveNGE(Game *g, bool is_white, int ind, bool left)
 {
     moveBackGameManagement(g);
-    pawn p = g->allPawns[is_white][ind];
+    pawn p = get_pawn(g, is_white, ind);
     int i = p.lig;
     int j = p.col;
     int di = is_white ? 1 : -1;
@@ -19,7 +19,7 @@ void pawnMoveNGE(Game *g, bool is_white, int ind, bool left)
 
 void pawnMoveCancel(Game *g, bool is_white, int ind, bool left)
 {
-    pawn p = g->allPawns[is_white][ind];
+    pawn p = get_pawn(g, is_white, ind);
     int i = p.lig;
     int j = p.col;
     int di = is_white ? 1 : -1;
@@ -37,7 +37,7 @@ void recreateCloud(Game *g, cloud_chain *l, ind_pba_t *survivor, bool iw)
         int i = data.coord.i;
         int j = data.coord.j;
         createPawn(g, iw, i, j);
-        int ind = g->damier[i][j].ind_pawn;
+        int ind = get_case_damier(g, i, j).ind_pawn;
         put_pawn_value(g, iw, ind, PBA, data.pba);
         push(g->cloud[iw], ind);
         g->lengthCloud[iw]++;
@@ -68,11 +68,11 @@ int promotionNGE(Game *g, int ind)
         int j = get_pawn_value(g, iw, ind, COL);
 
         // Kill the former pawn
-        killPawn(g, g->damier, i, j);
+        killPawn(g, i, j);
 
         // Give birth to the ennemy pawn
         createPawn(g, !iw, i, j);
-        int indNew = g->damier[i][j].ind_pawn;
+        int indNew = get_case_damier(g, i, j).ind_pawn;
         if (canBePromoted(g, !iw, indNew))
             promote(g, !iw, indNew);
 
@@ -90,7 +90,7 @@ void cancelPromotion(Game *g, int ind_old_friend, int ind_new_foe)
     {
         int i = get_pawn_value(g, iw, ind_new_foe, LIG);
         int j = get_pawn_value(g, iw, ind_new_foe, COL);
-        killPawn(g, g->damier, i, j);
+        killPawn(g, i, j);
         createPawn(g, iw, i, j);
     }
     else
@@ -100,7 +100,7 @@ void cancelPromotion(Game *g, int ind_old_friend, int ind_new_foe)
 void pawnMoveBackNGE(Game *g, int ind, bool left)
 {
     bool is_white = g->is_white;
-    pawn p = g->allPawns[is_white][ind];
+    pawn p = get_pawn(g, is_white, ind);
     int i = p.lig;
     int j = p.col;
     int di = is_white ? 1 : -1;
@@ -128,7 +128,7 @@ ind_bool_t biDeplNGE(Game *g, bool color, int ind)
     int newLig = get_pawn_value(g, color, ind, LIG) + di;
     int newCol = get_pawn_value(g, color, ind, COL) + dj;
     createPawn(g, color, newLig, newCol);
-    int newInd = g->damier[newLig][newCol].ind_pawn;
+    int newInd = get_case_damier(g, newLig, newCol).ind_pawn;
     put_pawn_value(g, color, newInd, PBA, get_pawn_value(g, color, ind, PBA) * 2);
 
     // Rajoute dans le cloud
@@ -191,7 +191,7 @@ data_chain *eatRafleNGE(Game *g, int indEater, bool is_white, PathTree *t, Path 
 
         int lig_pawn_eaten = get_pawn_value(g, is_white, indEater, LIG) + di;
         int col_pawn_eaten = get_pawn_value(g, is_white, indEater, COL) + dj;
-        int eatenInd = g->damier[lig_pawn_eaten][col_pawn_eaten].ind_pawn;
+        int eatenInd = get_case_damier(g, lig_pawn_eaten, col_pawn_eaten).ind_pawn;
         
         pawn_info data_eaten = {.relationship = {.friendId = get_pawn_value(g, !is_white, eatenInd, FRIENDLY),
         .foe = get_pawn_value(g, !is_white, eatenInd, ENNEMY), 
@@ -211,9 +211,7 @@ data_chain *rafleNGE(Game *g, int indMovePawn)
     assert(g->currentTree == emptyTree);
     moveBackGameManagement(g);
     bool isWhite = g->is_white;
-    pawn *pawns = g->allPawns[isWhite];
-    pawn *NPawns = g->allPawns[!isWhite];
-    g->currentTree = rafleTreeCalc(pawns, NPawns, g->damier, g->ind_move);
+    g->currentTree = rafleTreeCalc(g, isWhite, g->ind_move);
 
     printf("lazyRafle called\n");
     Path *r = lazyRafle(g->currentTree);
@@ -231,7 +229,7 @@ void cancelRafle(Game *g, int indMovedPawn, Coord init_pos, data_chain *chainy) 
         int i = reborn_pawn.coord.i;
         int j = reborn_pawn.coord.j;
         createPawn(g, !iw, i, j);
-        int reborn_ind = g->damier[i][j].ind_pawn;
+        int reborn_ind = get_case_damier(g, i, j).ind_pawn;
         put_pawn_value(g, !iw, reborn_ind, FRIENDLY, reborn_pawn.relationship.friendId);
         put_pawn_value(g, !iw, reborn_ind, ENNEMY, reborn_pawn.relationship.foe);
         put_pawn_value(g, !iw, reborn_ind, QUEEN, bool_to_int(reborn_pawn.relationship.queen));
@@ -272,10 +270,10 @@ void cancelDeplQueen(Game *g, int ind_queen, data_chain *chainy, Coord init_coor
     cancelRafle(g, ind_queen, init_coord, chainy);
 }
 
-void lienAmitiePmetreNGE(int lig, int col, Case **damier, int ind, bool is_white, Game *g)
+void lienAmitiePmetreNGE(int lig, int col, int ind, bool is_white, Game *g)
 {
     moveBackGameManagement(g);
-    Case c = damier[lig][col];
+    Case c = get_case_damier(g, lig, col);
     assert(c.ind_pawn != VOID_INDEX && c.pawn_color == !is_white);
     put_pawn_value(g, is_white, ind, FRIENDLY, c.ind_pawn);
     put_pawn_value(g, c.pawn_color, c.ind_pawn, FRIENDLY, ind);
@@ -296,21 +294,21 @@ void lienAmitieNGE(int lig, int col, Game *g, int indPawn)
 {
     // On suppose le coup legal
     bool iw = g->is_white;
-    lienAmitiePmetreNGE(lig, col, g->damier, indPawn, iw, g);
+    lienAmitiePmetreNGE(lig, col, indPawn, iw, g);
 }
 
 void cancelLienAmitie(Game *g, int indPawn, int lig, int col) {
     bool iw = g->is_white;
-    int ennInd = g->damier[lig][col].ind_pawn;
+    int ennInd = get_case_damier(g, lig, col).ind_pawn;
     assert(ennInd != VOID_INDEX);
     put_pawn_value(g, iw, indPawn, FRIENDLY, -1);
     put_pawn_value(g, !iw, ennInd, FRIENDLY, -1);
 }
 
-void lienEnnemitiePmetreNGE(bool is_white, int lig, int col, Case **damier, int ind, Game *g)
+void lienEnnemitiePmetreNGE(bool is_white, int lig, int col, int ind, Game *g)
 {
     moveBackGameManagement(g);
-    Case c = damier[lig][col];
+    Case c = get_case_damier(g, lig, col);
     assert(c.ind_pawn != -1);
     put_pawn_value(g, is_white, ind, 2, c.ind_pawn);
     put_pawn_value(g, c.pawn_color, c.ind_pawn, 2, ind);
@@ -321,12 +319,12 @@ void lienEnnemitieNGE(int lig, int col, Game *g, int indPawn)
 {
     // Suppose legal move
     bool iw = g->is_white;
-    lienEnnemitiePmetreNGE(iw, lig, col, g->damier, indPawn, g);
+    lienEnnemitiePmetreNGE(iw, lig, col, indPawn, g);
 }
 
 void cancelLienEnnemitie(Game *g, int indPawn, int lig, int col) {
     bool iw = g->is_white;
-    int ennInd = g->damier[lig][col].ind_pawn;
+    int ennInd = get_case_damier(g, lig, col).ind_pawn;
     assert(ennInd != VOID_INDEX);
     put_pawn_value(g, iw, indPawn, ENNEMY, -1);
     put_pawn_value(g, !iw, ennInd, ENNEMY, -1);

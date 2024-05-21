@@ -1,54 +1,4 @@
-#include "calculus_functions.h"
-
-/*
-
-
-
-
-
-
-
-   CALCULUS FUNCTIONS
-
-
-
-
-
-
-*/
-
-int NON(int b)
-{
-    return (b + 1) % 2;
-}
-
-int abs(int a)
-{
-    return (a >= 0) ? a : -a;
-}
-
-// la direction est donnee sous la forme d'un couple
-//(dx, dy) ou dx et dy peuvent valoir -1 ou 1.
-// On lui associe un nombre entre 0 et 3 inclus
-// dont le bit de poids faible est la direction horizontale
-// et le bit de poids fort la direction verticale.
-// 0 sens negatif, 1 sens positif
-
-bool int_to_bool(int integer)
-{
-    if (integer == 1)
-        return true;
-    else
-        return false;
-}
-
-int bool_to_int(bool b)
-{
-    if (b)
-        return 1;
-    else
-        return 0;
-}
+#include "fonctions_correctes.h"
 
 // handle structure
 
@@ -59,32 +9,31 @@ void put_pawn_value(Game *g, bool color, int ind, int wich_pmetre_modify, int va
     assert(isValidIndex(ind));
     switch (wich_pmetre_modify)
     {
-    case 1:
+    case ALIVE:
         g->allPawns[color][ind].alive = int_to_bool(value);
         break;
-    case 2:
+    case ENNEMY:
         g->allPawns[color][ind].ennemy = value;
         break;
-    case 3:
+    case FRIENDLY:
         g->allPawns[color][ind].friendly = value;
         break;
-    case 4:
+    case QUEEN:
         g->allPawns[color][ind].queen = int_to_bool(value);
         break;
-    case 5:
+    case LIG:
         g->allPawns[color][ind].lig = value;
         break;
-    case 6:
+    case COL:
         g->allPawns[color][ind].col = value;
         break;
-    case 7:
+    case PBA:
         g->allPawns[color][ind].pba = value;
         break;
-    case 8:
+    case COLOR:
         g->allPawns[color][ind].color = int_to_bool(value);
         break;
     default:
-        // Do nothing
         printv("put pawn value error");
         assert(false);
         break;
@@ -99,47 +48,59 @@ int get_pawn_value(Game *g, bool color, int ind, int wich_pmetre_get)
     /* 1 : alive |2 : ennemy |3 : friendly |4 : queen |5 : lig |6 : col |7 : pba */
     switch (wich_pmetre_get)
     {
-    case 1:
+    case ALIVE:
         return bool_to_int(p->alive);
-    case 2:
+    case ENNEMY:
         return p->ennemy;
-    case 3:
+    case FRIENDLY:
         return p->friendly;
-    case 4:
+    case QUEEN:
         return bool_to_int(p->queen);
-    case 5:
+    case LIG:
         return p->lig;
-    case 6:
+    case COL:
         return p->col;
-    case 7:
+    case PBA:
         return p->pba;
-    case 8:
+    case COLOR:
         return p->color;
     default:
-        // Do nothing
         printv("get pawn value error");
         assert(false);
         return VOID_INDEX;
     }
 }
 
-int ind_from_coord(Game *g, int lig, int col) {
-    // Give the ind from the coord in the damier
-    assert(inGame(lig, col));
-    return g->damier[lig][col].ind_pawn;
+pawn get_pawn(Game *g, bool color, int ind)
+{
+    assert(isValidIndexInGame(g, ind, color));
+    return g->allPawns[color][ind];
 }
 
-int quickPow(int a, int n)
+Case get_case_damier(Game *g, int i, int j)
 {
-    /* Return a^n, exp rapide */
-    if (n == 0)
-        return 1;
-    else
+    assert(inGame(i, j));
+    return g->damier[i][j];
+}
+
+void put_case_damier(Game *g, int i, int j, int whichPmetre, int valeur)
+{
+    assert(inGame(i, j));
+    // A appeler pour modifier les champs color, pawn_color, ind_pawn de la case
+    switch (whichPmetre)
     {
-        int b = quickPow(a, n / 2);
-        if (n % 2 == 1)
-            return a * b * b;
-        else
-            return b * b;
+    case CASE_COLOR:
+        g->damier[i][j].color = int_to_bool(valeur);
+        break;
+    case PAWN_COLOR:
+        g->damier[i][j].pawn_color = int_to_bool(valeur);
+        break;
+    case IND_PAWN_ON_CASE:
+        g->damier[i][j].ind_pawn = valeur;
+        break;
+    default:
+        printv("put_case_damier error");
+        assert(false);
+        break;
     }
 }

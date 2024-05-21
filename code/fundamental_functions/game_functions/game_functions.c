@@ -28,16 +28,15 @@
 void pawnMove(Game *g, bool is_white, int ind, bool left)
 {
     startTurnGameManagement(g);
-    pawn *p = &(g->allPawns[is_white][ind]);
-    int i = p->lig;
-    int j = p->col;
+    int i = get_pawn_value(g, is_white, ind, LIG);
+    int j = get_pawn_value(g, is_white, ind, COL);
     int di = is_white ? 1 : -1;
     int dj = left ? -1 : 1;
 
     change_pawn_place(g, ind, is_white, i + di, j + dj);
-    if (p->friendly != NEUTRAL_IND)
+    if (get_pawn_value(g, is_white, ind, FRIENDLY) != NEUTRAL_IND)
     {
-        g->ind_move_back = p->friendly;
+        g->ind_move_back = get_pawn_value(g, is_white, ind, FRIENDLY);
         // le pion indique a partir de son indice
     }
     endTurnGameManagement(g, is_white, ind, IND_CHANGE_ALLOWED, true);
@@ -73,7 +72,7 @@ void queenDepl(Game *g, int ind, bool color, queen_move_t tuple_coord)
     if (enn_lig != -1 && enn_col != -1)
     {
         // In fact, this is useless because eatRafle do the job but it is satisfying to jump an ennemy pawn
-        killPawn(g, g->damier, enn_lig, enn_col);
+        killPawn(g, enn_lig, enn_col);
         doMoveBack = false;
     }
 
@@ -121,7 +120,7 @@ void queenDepl(Game *g, int ind, bool color, queen_move_t tuple_coord)
 
 */
 
-void promotionPmetre(pawn *pawns, bool is_white, Case **damier, int ind, Game *g)
+void promotionPmetre( Game *g, bool is_white, int ind)
 {
     startTurnGameManagement(g);
     /* Promote the pawn at the ind in pmetre : do nothing, become a queen or become an ennemy pawn */
@@ -135,16 +134,17 @@ void promotionPmetre(pawn *pawns, bool is_white, Case **damier, int ind, Game *g
     }
     else if (choice == 2)
     {
-        int i = pawns[ind].lig;
-        int j = pawns[ind].col;
+        int i = get_pawn_value(g, is_white, ind, LIG);
+        int j = get_pawn_value(g, is_white, ind, COL);
+
         // printf("Quantic %d %d", i, j);
 
         // Kill the former pawn
-        killPawn(g, damier, i, j);
+        killPawn(g, i, j);
 
         // Give birth to the ennemy pawn
         createPawn(g, !is_white, i, j);
-        int indNew = damier[i][j].ind_pawn;
+        int indNew = get_case_damier(g, i, j).ind_pawn;
         if (canBePromoted(g, !is_white, indNew))
             promote(g, !is_white, indNew);
 
@@ -156,7 +156,7 @@ void promotionPmetre(pawn *pawns, bool is_white, Case **damier, int ind, Game *g
 
 void promotion(Game *g)
 {
-    promotionPmetre(g->allPawns[g->is_white], g->is_white, g->damier, g->ind_move, g);
+    promotionPmetre(g, g->is_white, g->ind_move);
 }
 
 /*
@@ -186,7 +186,7 @@ void lienAmitie(int lig, int col, Game *g)
     Suppose le pion ainsi que le pion ami selectionne valides */
     startTurnGameManagement(g);
     bool iw = g->is_white;
-    lienAmitiePmetreNGE(lig, col, g->damier, g->ind_move, iw, g);
+    lienAmitiePmetreNGE(lig, col, g->ind_move, iw, g);
 
     endTurnGameManagement(g, iw, g->ind_move, IND_CHANGE_ALLOWED, false);
 }
@@ -245,7 +245,7 @@ void lienEnnemitie(int lig, int col, Game *g)
     Suppose legal move */
     startTurnGameManagement(g);
     bool iw = g->is_white;
-    lienEnnemitiePmetreNGE(iw, lig, col, g->damier, g->ind_move, g);
+    lienEnnemitiePmetreNGE(iw, lig, col, g->ind_move, g);
     endTurnGameManagement(g, iw, g->ind_move, IND_CHANGE_ALLOWED, false);
 }
 
@@ -279,7 +279,7 @@ void biDepl(Game *g, int ind, bool color)
     int newLig = get_pawn_value(g, color, ind, LIG) + di;
     int newCol = get_pawn_value(g, color, ind, COL) + dj;
     createPawn(g, color, newLig, newCol);
-    int newInd = g->damier[newLig][newCol].ind_pawn;
+    int newInd = get_case_damier(g, newLig, newCol).ind_pawn;
     put_pawn_value(g, color, newInd, PBA, get_pawn_value(g, color, ind, PBA) * 2);
 
     // Rajoute dans le cloud

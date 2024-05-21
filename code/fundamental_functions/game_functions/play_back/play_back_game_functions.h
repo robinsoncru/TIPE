@@ -31,10 +31,10 @@ void cancelRafle(Game *g, int indMovedPawn, Coord init_pos, data_chain *chainy);
 
 void lienAmitieNGE(int lig, int col, Game *g, int indPawn);
 void cancelLienAmitie(Game *g, int indPawn, int lig, int col);
-void lienAmitiePmetreNGE(int lig, int col, Case **damier, int ind, bool is_white, Game *g);
+void lienAmitiePmetreNGE(int lig, int col, int ind, bool is_white, Game *g);
 
 void lienEnnemitieNGE(int lig, int col, Game *g, int indPawn);
 void cancelLienEnnemitie(Game *g, int indPawn, int lig, int col);
-void lienEnnemitiePmetreNGE(bool is_white, int lig, int col, Case **damier, int ind, Game *g);
+void lienEnnemitiePmetreNGE(bool is_white, int lig, int col, int ind, Game *g);
 
 #endif

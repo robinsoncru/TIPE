@@ -23,21 +23,21 @@ bool canMove(Game *g, bool is_white, int ind, bool left)
 {
     int di = is_white ? 1 : -1;
     int dj = left ? -1 : 1;
-    Coord finalPos = {g->allPawns[is_white][ind].lig + di,
-                      g->allPawns[is_white][ind].col + dj};
+    Coord finalPos = {get_pawn_value(g, is_white, ind, LIG) + di,
+                      get_pawn_value(g, is_white, ind, COL) + dj};
     bool posInGame = inGame(finalPos.i, finalPos.j);
-    bool wayIsFree = freeCase(g->damier[finalPos.i][finalPos.j]);
+    bool wayIsFree = freeCase(get_case_damier(g, finalPos.i, finalPos.j));
     return posInGame && wayIsFree;
 }
 
 // un ghost pawn ne peut pas devenir une dame
 bool canBePromoted(Game *g, bool is_white, int ind)
 {
-    pawn *p = &(g->allPawns[is_white][ind]);
+    pawn p = get_pawn(g, is_white, ind);
     int border = is_white ? (NB_CASE_LG - 1) : 0;
-    bool isOnBorder = p->lig == border;
-    bool ennemyIsDead = p->ennemy != NEUTRAL_IND && !g->allPawns[!is_white][p->ennemy].alive;
-    return !p->queen && (isOnBorder || ennemyIsDead) && p->pba == 1;
+    bool isOnBorder = p.lig == border;
+    bool ennemyIsDead = p.ennemy != NEUTRAL_IND && !int_to_bool(get_pawn_value(g, !is_white, p.ennemy, ALIVE));
+    return !p.queen && (isOnBorder || ennemyIsDead) && p.pba == 1;
 }
 
 // On suppose que les coordonnees sont bien sur la meme diagonale
@@ -52,7 +52,7 @@ bool diagIsFree(Game *g, Coord initPos, Coord finalPos)
     for (int k = 1; k < dist; k++)
     {
         testedPos = add(initPos, mult(k, dir));
-        if (!freeCase(g->damier[testedPos.i][testedPos.j]))
+        if (!freeCase(get_case_damier(g, testedPos.i, testedPos.j)))
         {
             return false;
         }
@@ -64,8 +64,8 @@ bool diagIsFree(Game *g, Coord initPos, Coord finalPos)
 bool queenCanMove(Game *g, bool is_white, int ind, Coord finalPos)
 {
     Coord initPos = {
-        g->allPawns[is_white][ind].lig,
-        g->allPawns[is_white][ind].col};
+        get_pawn_value(g, is_white, ind, LIG),
+        get_pawn_value(g, is_white, ind, COL)};
     bool isInGame = inGame(finalPos.i, finalPos.j);
     bool isOnDiag = abs(finalPos.i - initPos.i) == abs(finalPos.j - initPos.j);
     return isInGame && isOnDiag && diagIsFree(g, initPos, finalPos);
@@ -77,11 +77,11 @@ bool canEat(Game *g, bool color, int ind, int i, int j, int add0, int add1)
     assert(isValidIndexInGame(g, ind, color));
     assert(inGame(i, j));
     assert(inGame(i + 2 * add0, j + 2 * add1));
-    return (freeCase(g->damier[i + 2 * add0][j + 2 * add1]) &&
-            !freeCase(g->damier[i + add0][j + add1]) &&
-            g->damier[i + add0][j + add1].pawn_color == !g->allPawns[color][ind].color &&
+    return (freeCase(get_case_damier(g, i + 2 * add0, j + 2 * add1)) &&
+            !freeCase(get_case_damier(g, i + add0, j + add1)) &&
+            get_case_damier(g, i + add0, j + add1).pawn_color == !int_to_bool(get_pawn_value(g, color, ind, COLOR)) &&
             int_to_bool(
-                get_pawn_value(g, g->damier[i + add0][j + add1].pawn_color, g->damier[i + add0][j + add1].ind_pawn,
+                get_pawn_value(g, get_case_damier(g, i + add0, j + add1).pawn_color, get_case_damier(g, i + add0, j + add1).ind_pawn,
                                ALIVE)));
 }
 
@@ -93,10 +93,10 @@ bool moveBackAvailable(Game *g)
 bool canBeFriend(Game *g, int ind, bool color, Case c)
 {
     // Check if a pawn and the pawn on the case c can be friend
-    pawn p = g->allPawns[color][ind];
+    pawn p = get_pawn(g, color, ind);
     if (freeCase(c))
         return false;
-    pawn ap = g->allPawns[!color][c.ind_pawn];
+    pawn ap = get_pawn(g, !color, c.ind_pawn);
     return c.pawn_color != p.color && ap.friendly == -1 && p.friendly == -1 && p.ennemy == -1 && ap.ennemy == -1;
 }
 
@@ -109,11 +109,11 @@ bool canMoveBack(Game *g, bool is_white, int ind, bool left)
 {
     int di = is_white ? 1 : -1;
     int dj = left ? -1 : 1;
-    Coord finalPos = {g->allPawns[is_white][ind].lig - di,
-                      g->allPawns[is_white][ind].col + dj};
+    Coord finalPos = {get_pawn_value(g, is_white, ind, LIG) - di,
+                      get_pawn_value(g, is_white, ind, COL) + dj};
     if (inGame(finalPos.i, finalPos.j))
     {
-        return freeCase(g->damier[finalPos.i][finalPos.j]);
+        return freeCase(get_case_damier(g, finalPos.i, finalPos.j));
     }
     else
         return false;
@@ -133,7 +133,7 @@ bool needPutMoveBack(Game *g)
 
 bool caseIsAccessible(Game *g, bool is_white, int i, int j)
 {
-    return !outOfBounds(i, j) && g->damier[i][j].ind_pawn == VOID_INDEX;
+    return !outOfBounds(i, j) && get_case_damier(g, i, j).ind_pawn == VOID_INDEX;
 }
 
 bool canPromotion(Game *g)
@@ -155,7 +155,7 @@ bool canStormBreaks(Game *g, int ind, int color)
     {
 
         getDirsFromCode(k, &di, &dj);
-        c = g->damier[i + di][j + dj];
+        c = get_case_damier(g, i + di, j + dj);
         if (!freeCase(c) && c.pawn_color != color && !isInCloud(g, !color, c.ind_pawn))
         {
             return true;
@@ -180,7 +180,7 @@ bool canStormBreaksForTheOthers(Game *g, int ind, int color)
         getDirsFromCode(k, &di, &dj);
         if (!outOfBounds(i + di, j + dj))
         {
-            c = g->damier[i + di][j + dj];
+            c = get_case_damier(g, i + di, j + dj);
             if (!freeCase(c) && c.pawn_color != color && isInCloud(g, !color, c.ind_pawn))
             {
                 return true;

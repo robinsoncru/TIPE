@@ -38,10 +38,10 @@ void listPathsOfTrees(PathTree* rafleTree, Path* currentPath, Move currentMove, 
 
 void listRafles(Game* g, int selectedPawn, Coord tmpPos, Move* temporaryResult, int* nbMoves){
     //precalcul necessaire a l'enumeration des rafles
-    pawn p = g->allPawns[g->is_white][selectedPawn];
+    pawn p = get_pawn(g, g->is_white, selectedPawn);
     int initI = p.lig, initJ = p.col;
     change_pawn_place(g, selectedPawn, g->is_white, tmpPos.i, tmpPos.j);
-    PathTree* tree = rafleTreeCalc(g->allPawns[g->is_white], g->allPawns[!g->is_white], g->damier, selectedPawn);
+    PathTree* tree = rafleTreeCalc(g, !g->is_white, selectedPawn);
 
     if (pathTreeDepth(tree) > 0) {
         Move currentMove;

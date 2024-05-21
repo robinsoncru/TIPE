@@ -8,11 +8,11 @@ void spitOut(Game *g, bool color, int indEater, int iEater, int jEater, int indV
     // pour un pion d'index indEater aux coordonnees (iEater, jEater), annule son action de manger indVictim
     // dans la direction add0 et add1
 
-    g->damier[iEater - add0][jEater - add1].pawn_color = !color;
-    g->damier[iEater - add0][jEater - add1].ind_pawn = indVictim;
-    g->damier[iEater][jEater].ind_pawn = VOID_INDEX;
-    g->damier[iEater - 2 * add0][jEater - 2 * add1].pawn_color = color;
-    g->damier[iEater - 2 * add0][jEater - 2 * add1].ind_pawn = indEater;
+    put_case_damier(g, iEater - add0, jEater - add1, PAWN_COLOR, bool_to_int(!color));
+    put_case_damier(g, iEater - add0, jEater - add1, IND_PAWN_ON_CASE, indVictim);
+    put_case_damier(g, iEater, jEater, IND_PAWN_ON_CASE, VOID_INDEX);
+    put_case_damier(g, iEater - 2 * add0, jEater - 2 * add1, PAWN_COLOR, color);
+    put_case_damier(g, iEater - 2 * add0, jEater - 2 * add1, IND_PAWN_ON_CASE, indEater);
 
     put_pawn_value(g, !color, indVictim, ALIVE, 1);
     put_pawn_value(g, !color, indVictim, LIG, iEater - add0);

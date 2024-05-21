@@ -19,7 +19,7 @@ void eatingTest(Game *g, bool color, PathTree* t){
     printf("\neatingTest called\n");
     if (t != emptyTree) {
         Coord startPos = pathTreeLabel(t);
-        int indEater = g->damier[startPos.i][startPos.j].ind_pawn;
+        int indEater = get_case_damier(g, startPos.i, startPos.j).ind_pawn;
         Coord vector, initPos, finalPos;
         PathTree* parent = t;
         PathTree* child = firstChildEncountered(t);

@@ -1,7 +1,7 @@
 #ifndef LOGIC_FUNCTIONS
 #define LOGIC_FUNCTIONS
 
-#include "calculus_functions.h"
+#include "../fonctions_correctes/fonctions_correctes.h"
 
 // Logic functions
 bool canMove(Game *g, bool is_white, int ind, bool left);

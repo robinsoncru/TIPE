@@ -1,7 +1,7 @@
 #ifndef AUX_FUNCTIONS
 #define AUX_FUNCTIONS
 
-#include "../Logic_and_calculus/logic_functions.h"
+#include "../Logic/logic_functions.h"
 
 
 
@@ -10,7 +10,7 @@ void copy_remove_pawn_from_index_to_index(Game *g, int indStart, int indArrive, 
 // void pawn_default_value(pawn *pawns, int ind, bool color);
 void pawn_default_value_new(Game *g, int ind, bool color);
 /* kill the pawn and put its values as default values */
-void killPawn(Game *g, Case **damier, int i, int j);
+void killPawn(Game *g, int i, int j);
 void killPawnByInd(Game *g, bool color, int ind);
 /* Check if the pawn can move back to the case localised by the coord g->coordForMoveBack */
 void change_pawn_place(Game *g, int ind, bool color, int lig, int col);
@@ -29,7 +29,7 @@ void stormBreaks(Game *g, bool color, int indSurvivor);
 void AleatStormBreaks(Game *g, bool color);
 void handleCloudDuePawnMoveNGE(Game *g, int indMovedPawn, ind_pba_t *survivor, cloud_chain *l);
 void AleatStormBreaksNGE(Game *g, bool color, cloud_chain *load, ind_pba_t *survivor);
-queen_move_t CanMoveOrEatQueen(Game *g, bool color, int lig, int col, Case **damier, int ind);
+queen_move_t CanMoveOrEatQueen(Game *g, bool color, int lig, int col, int ind);
 
 Coord give_coord(Game *g, bool iw, int ind);
 // Memory functions

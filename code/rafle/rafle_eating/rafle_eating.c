@@ -3,10 +3,10 @@
 #include <stdio.h>
 
 void pawnEat(Game* g, int indEater, bool is_white, int di, int dj){
-    pawn* p = &(g->allPawns[is_white][indEater]);
-    killPawn(g, g->damier, p->lig + di, p->col + dj);
+    pawn p = get_pawn(g, is_white, indEater);
+    killPawn(g, p.lig + di, p.col + dj);
     change_pawn_place(g, indEater, is_white,
-        p->lig + 2*di, p->col + 2*dj);
+        p.lig + 2*di, p.col + 2*dj);
 }
 
 void eatRafle(Game* g, int indEater, bool is_white, PathTree* t, Path* r){    

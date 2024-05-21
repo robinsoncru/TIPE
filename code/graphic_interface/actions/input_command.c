@@ -50,8 +50,8 @@ void checkPawnMove(Game *g, GraphicCache *cache, bool left)
     bool is_white = g->is_white;
 
     bool validIndex = ind > -1;
-    bool pawnAlive = g->allPawns[is_white][ind].alive; // ha, ha, ha, ha, pawn alive, pawn alive !
-    bool isQueen = g->allPawns[is_white][ind].queen;
+    bool pawnAlive = int_to_bool(get_pawn_value(g, is_white, ind, ALIVE)); // ha, ha, ha, ha, pawn alive, pawn alive !
+    bool isQueen = int_to_bool(get_pawn_value(g, is_white, ind, QUEEN));
     bool legalMove = canMove(g, g->is_white, g->ind_move, left);
     if (!validIndex || !pawnAlive || isQueen || !legalMove)
     {
@@ -69,7 +69,7 @@ void checkLienAmitie(int i, int j, Game *g, GraphicCache *cache)
     int iw = g->is_white;
     int ind = g->ind_move;
     i = iw ? NB_CASE_LG - i - 1 : i;
-    if (isPawnValid(g) && canBeFriend(g, ind, iw, g->damier[i][j]))
+    if (isPawnValid(g) && canBeFriend(g, ind, iw, get_case_damier(g, i, j)))
     {
         lienAmitie(i, j, g);
         endTurnGraphics(g, cache);
@@ -84,7 +84,7 @@ void checkPawnMoveBack(Game *g, GraphicCache *cache)
 {
     int iw = g->is_white;
     int indBack = g->ind_move_back;
-    if (indBack > -1 && g->allPawns[iw][indBack].alive)
+    if (indBack > -1 && int_to_bool(get_pawn_value(g, iw, indBack, ALIVE)))
     {
         moveBack(g);
     }
@@ -98,9 +98,8 @@ void checkLienEnnemitie(int i, int j, Game *g, GraphicCache *cache)
     int ind = g->ind_move;
     i = iw ? NB_CASE_LG - i - 1 : i;
     // j = !iw ? j : NB_CASE_LG - j - 1;
-    // printf("%d %d %d", i, lig, freeCase(g->damier[i][j]));
     // fflush(stdout);
-    if (isPawnValid(g) && canBeEnnemy(g, ind, iw, g->damier[i][j]))
+    if (isPawnValid(g) && canBeEnnemy(g, ind, iw, get_case_damier(g, i, j)))
     {
         lienEnnemitie(i, j, g);
         endTurnGraphics(g, cache);
@@ -135,7 +134,7 @@ void checkBiDepl(Game *g, GraphicCache *cache)
 
 void checkQueenDepl(Game *g, GraphicCache *cache, bool iw, int lig, int col)
 {
-    queen_move_t tuple_coord = CanMoveOrEatQueen(g, iw, lig, col, g->damier, g->ind_move);
+    queen_move_t tuple_coord = CanMoveOrEatQueen(g, iw, lig, col, g->ind_move);
     int dame_lig = tuple_coord.pos_dame.i;
     int dame_col = tuple_coord.pos_dame.j;
     if (isPawnValid(g) && dame_lig != VOID_INDEX && dame_col != VOID_INDEX)

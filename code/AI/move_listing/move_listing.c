@@ -67,12 +67,10 @@ void listMovesBefriend(Game* g, int selectedPawn, Move* temporaryResult, int* nb
     currentMove.manipulatedPawn = selectedPawn;
     currentMove.type = lienAmitieType;
 
-    pawn p;
-    for (int k = 0; k < 2 * NB_PAWNS; k++) {
+    for (int k = 0; k < g->nb_pawns[!g->is_white]; k++) {
         if (isFriendable(g, k, !g->is_white)) {
-            p = g->allPawns[!g->is_white][k];
-            currentMove.lig = p.lig;
-            currentMove.col = p.col;
+            currentMove.lig = get_pawn_value(g, !g->is_white, k, LIG);
+            currentMove.col = get_pawn_value(g, !g->is_white, k, COL);
             temporaryResult[*nbMoves] = currentMove;
             *nbMoves = *nbMoves + 1;
         }
@@ -84,12 +82,10 @@ void listMovesEnnemy(Game* g, int selectedPawn, Move* temporaryResult, int* nbMo
     currentMove.manipulatedPawn = selectedPawn;
     currentMove.type = lienEnnemitieType;
 
-    pawn p;
     for (int k = 0; k < 2 * NB_PAWNS; k++) {
         if (isEnnemiable(g, k, !g->is_white)) {
-            p = g->allPawns[!g->is_white][k];
-            currentMove.lig = p.lig;
-            currentMove.col = p.col;
+            currentMove.lig = get_pawn_value(g, !g->is_white, k, LIG);
+            currentMove.col = get_pawn_value(g, !g->is_white, k, COL);
             temporaryResult[*nbMoves] = currentMove;
             *nbMoves = *nbMoves + 1;
         }
@@ -102,12 +98,12 @@ void listMovesForGhostPawns(Game* g, int selectedPawn, Move* temporaryResult, in
 }
 
 void listMovesForQueen(Game* g, int selectedPawn, Move* temporaryResult, int* nbMoves){
-    pawn p = g->allPawns[g->is_white][selectedPawn];
 
-    if (p.friendly == VOID_INDEX) {
+    if (get_pawn_value(g, g->is_white, selectedPawn, FRIENDLY) == VOID_INDEX) {
         listMovesBefriend(g, selectedPawn, temporaryResult, nbMoves);
     }
 
+    pawn p = get_pawn(g, g->is_white, selectedPawn);
     Coord pos = {p.lig, p.col};
     //possible cases where to move for a queen
     Move currentMove;
@@ -143,12 +139,13 @@ void listMovesForQueen(Game* g, int selectedPawn, Move* temporaryResult, int* nb
 }
 
 void listMovesForPawn(Game* g, int selectedPawn, Move* temporaryResult, int* nbMoves){
-    pawn p = g->allPawns[g->is_white][selectedPawn];
     listMovesBiDepl(g, selectedPawn, temporaryResult, nbMoves);
     listMovesMovePawn(g, selectedPawn, temporaryResult, nbMoves);
-    Coord tmpPos = {.i = p.lig, .j = p.col};
+    Coord tmpPos = {.i = get_pawn_value(g, g->is_white, selectedPawn, LIG), 
+    .j = get_pawn_value(g, g->is_white, selectedPawn, COL)};
     listRafles(g, selectedPawn, tmpPos, temporaryResult, nbMoves);
-    if (p.friendly == VOID_INDEX && p.ennemy == VOID_INDEX) {
+    if (get_pawn_value(g, g->is_white, selectedPawn, FRIENDLY) == VOID_INDEX 
+    && get_pawn_value(g, g->is_white, selectedPawn, ENNEMY) == VOID_INDEX) {
         listMovesBefriend(g, selectedPawn, temporaryResult, nbMoves);
         listMovesEnnemy(g, selectedPawn, temporaryResult, nbMoves);
     }
@@ -220,14 +217,12 @@ MoveTab* listMoves(Game* g){
         nbMoves = 0;
         listMovesPromotion(g, temporaryResult, &nbMoves);
 
-        pawn p;
         for (int k = 0; k < 2 * NB_PAWNS; k++) {
-            p = g->allPawns[g->is_white][k];
-            if (p.alive) {
-                if (p.queen) {
+            if (get_pawn_value(g, g->is_white, k, ALIVE)) {
+                if (get_pawn_value(g, g->is_white, k, QUEEN)) {
                     listMovesForQueen(g, k, temporaryResult, &nbMoves);
                 }
-                else if (p.pba != 1) {
+                else if (get_pawn_value(g, g->is_white, k, PBA) != 1) {
                     listMovesForGhostPawns(g, k, temporaryResult, &nbMoves);
                 }
                 else {

@@ -214,17 +214,17 @@ void init_pawn(Game *g, Case **damier, int i, int init_place, int add, bool init
     if (init_is_white)
     {
         put_pawn_value(g, init_is_white, i, LIG, init_place);
-        damier[init_place][add + 2 * i - init_place * NB_CASE_LG].pawn_color = true;
+        put_case_damier(g, init_place, add + 2 * i - init_place * NB_CASE_LG, PAWN_COLOR, 1);
         put_pawn_value(g, init_is_white, i, COL, add + 2 * i - init_place * NB_CASE_LG);
     }
     else
     {
         put_pawn_value(g, init_is_white, i, LIG, NB_CASE_LG - init_place - 1);
         // pawns[i].lig = init_place;
-        damier[NB_CASE_LG - init_place - 1][NON(add) + 2 * i - init_place * NB_CASE_LG].pawn_color = false;
+        put_case_damier(g, NB_CASE_LG - init_place - 1, NON(add) + 2 * i - init_place * NB_CASE_LG, PAWN_COLOR, 0);
         put_pawn_value(g, init_is_white, i, COL, NON(add) + 2 * i - init_place * NB_CASE_LG);
     }
-    damier[get_pawn_value(g, init_is_white, i, LIG)][get_pawn_value(g, init_is_white, i, COL)].ind_pawn = i;
+    put_case_damier(g, get_pawn_value(g, init_is_white, i, LIG), get_pawn_value(g, init_is_white, i, COL), IND_PAWN_ON_CASE, i);
     put_pawn_value(g, init_is_white, i, COLOR, init_is_white);
 }
 
@@ -279,11 +279,6 @@ void init_pawns(Game *g, bool init_is_white)
                 init_pawn(g, g->damier, i, init_place, 0, init_is_white);
             }
         }
-        g->allPawns[init_is_white][i].alive = true;
-        g->allPawns[init_is_white][i].queen = false;
-        g->allPawns[init_is_white][i].friendly = -1;
-        g->allPawns[init_is_white][i].ennemy = -1;
-        g->allPawns[init_is_white][i].pba = 1;
     }
 
     // Initialize the rest of pawns with default pmetre and the good color
@@ -293,22 +288,22 @@ void init_pawns(Game *g, bool init_is_white)
     }
 }
 
-void init_damier(Case **damier)
+void init_damier(Game *g)
 {
     for (int i = 0; i < NB_CASE_LG; i++)
     {
         for (int j = 0; j < NB_CASE_LG; j++)
         {
-            damier[i][j].rect.x = LG_CASE * j;
-            damier[i][j].rect.y = LG_CASE * (NB_CASE_LG - i - 1);
-            damier[i][j].rect.w = LG_CASE;
-            damier[i][j].rect.h = LG_CASE;
-            damier[i][j].pawn_color = false;
-            damier[i][j].ind_pawn = -1;
+            g->damier[i][j].rect.x = LG_CASE * j;
+            g->damier[i][j].rect.y = LG_CASE * (NB_CASE_LG - i - 1);
+            g->damier[i][j].rect.w = LG_CASE;
+            g->damier[i][j].rect.h = LG_CASE;
+            put_case_damier(g, i, j, PAWN_COLOR, 0);
+            put_case_damier(g, i, j, IND_PAWN_ON_CASE, -1);
             if ((i + j) % 2 == 0)
-                damier[i][j].color = false;
+                put_case_damier(g, i, j, CASE_COLOR, 0);
             else
-                damier[i][j].color = true;
+                put_case_damier(g, i, j, CASE_COLOR, 1);
         }
     }
 }
@@ -328,7 +323,7 @@ Game *create_game()
 
     g->indCheck = IND_NORMAL;
     g->is_white = true;
-    init_damier(g->damier);
+    init_damier(g);
     g->nb_pawns[true] = NB_PAWNS;
     g->nb_pawns[false] = NB_PAWNS;
 

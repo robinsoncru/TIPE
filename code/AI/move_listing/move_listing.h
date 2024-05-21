@@ -3,7 +3,7 @@
 
 #include <stdlib.h>
 #include "../../fundamental_functions/game_functions/Source/source_header.h"
-#include "../../fundamental_functions/game_functions/Logic_and_calculus/logic_functions.h"
+#include "../../fundamental_functions/game_functions/Logic/logic_functions.h"
 #include "move_max.h"
 #include "move_struct/move_struct.h"
 #include "rafle_listing/rafle_listing.h"

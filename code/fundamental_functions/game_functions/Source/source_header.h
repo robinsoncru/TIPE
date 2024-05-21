@@ -51,6 +51,11 @@
 #define PBA 7
 #define COLOR 8
 
+// To modify damier
+#define CASE_COLOR 1
+#define PAWN_COLOR 2
+#define IND_PAWN_ON_CASE 3
+
 // Define index to play a move
 #define PAWNMOVELEFT 0
 #define PROMOTION 1
