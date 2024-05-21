@@ -3,8 +3,9 @@
 
 #include "graphic_cache.h"
 #include "../actions/on_input.h"
+#include "../autoplay_random_functions/basic_play_function.h"
 
 //called every tick.
 //updates the memory
-void update(Game* g, GraphicCache* cache);
+int update(Game *g, GraphicCache *cache, int nb_coups, int *l_coups);
 #endif //UPDATE

@@ -1,4 +1,4 @@
-#include "interface.h"
+#include "affichage.h"
 
 /*
 
@@ -252,6 +252,11 @@ void init_pawns(Game *g, bool init_is_white)
     for (int i = 0; i < NB_PAWNS; i++)
     // for (int i=0; i < NB_PAWNS/3; i++)
     {
+        put_pawn_value(g, init_is_white, i, ALIVE, 1);
+        put_pawn_value(g, init_is_white, i, QUEEN, false);
+        put_pawn_value(g, init_is_white, i, FRIENDLY, -1);
+        put_pawn_value(g, init_is_white, i, ENNEMY, -1);
+        put_pawn_value(g, init_is_white, i, PBA, 1);
         if (init_place % 2 == 0)
         {
             if (2 * i - init_place * NB_CASE_LG < NB_CASE_LG)
@@ -324,11 +329,11 @@ Game *create_game()
     g->indCheck = IND_NORMAL;
     g->is_white = true;
     init_damier(g->damier);
+    g->nb_pawns[true] = NB_PAWNS;
+    g->nb_pawns[false] = NB_PAWNS;
 
     init_pawns(g, true);
     init_pawns(g, false);
-    g->nb_pawns[true] = NB_PAWNS;
-    g->nb_pawns[false] = NB_PAWNS;
 
     g->ind_move = NEUTRAL_IND;
     g->ind_move_back = NEUTRAL_IND;

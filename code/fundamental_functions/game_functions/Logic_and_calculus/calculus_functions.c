@@ -56,6 +56,7 @@ void put_pawn_value(Game *g, bool color, int ind, int wich_pmetre_modify, int va
 {
     /* 1:alive | 2:ennemy | 3:friendly | 4:queen | 5:lig | 6:col | 7:pba | 8:color
     Permet de modifier les pmetres d'un pion de la liste de g reperer avec sa couleur, wich_pmetre_modify modifie le i-ième pmetre */
+    assert(isValidIndex(ind));
     switch (wich_pmetre_modify)
     {
     case 1:
@@ -85,13 +86,15 @@ void put_pawn_value(Game *g, bool color, int ind, int wich_pmetre_modify, int va
     default:
         // Do nothing
         printv("put pawn value error");
+        assert(false);
         break;
     }
 }
 
 int get_pawn_value(Game *g, bool color, int ind, int wich_pmetre_get)
 {
-    pawn *p = &(g->allPawns[color][ind]); // error
+    assert(isValidIndexInGame(g, ind, color));
+    pawn *p = &(g->allPawns[color][ind]);
 
     /* 1 : alive |2 : ennemy |3 : friendly |4 : queen |5 : lig |6 : col |7 : pba */
     switch (wich_pmetre_get)
@@ -115,12 +118,14 @@ int get_pawn_value(Game *g, bool color, int ind, int wich_pmetre_get)
     default:
         // Do nothing
         printv("get pawn value error");
+        assert(false);
         return VOID_INDEX;
     }
 }
 
 int ind_from_coord(Game *g, int lig, int col) {
     // Give the ind from the coord in the damier
+    assert(inGame(lig, col));
     return g->damier[lig][col].ind_pawn;
 }
 

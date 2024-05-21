@@ -1,7 +1,7 @@
 #ifndef DEBUG_FUNCTIONS
 #define  DEBUG_FUNCTIONS
 
-#include "../Source/source_header.h"
+#include "../precondition/precondition.h"
 
 void flush();
 // Fait planter le programme en affichant un message d'erreur

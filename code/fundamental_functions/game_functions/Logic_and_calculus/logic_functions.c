@@ -17,35 +17,6 @@
 
 */
 
-bool freeCase(Case c)
-{
-    return c.ind_pawn == -1;
-}
-
-bool basicChecks(Game *g)
-{
-    // Do the basic checks: ind_move is a valid index and the pawn selected is alive
-    return g->ind_move > VOID_INDEX && g->allPawns[g->is_white][g->ind_move].alive;
-}
-
-// Checks if the (i, j) position is out of bounds
-bool outOfBounds(int i, int j)
-{
-    return i < 0 || i >= NB_CASE_LG || j < 0 || j >= NB_CASE_LG;
-}
-
-// Checks if a case is in the game
-bool inGame(int lig, int col)
-{
-    return !outOfBounds(lig, col);
-}
-
-// Checks if eating from position (i, j) in the (add0, add1) direction leads to an out of bounds position
-bool eatingIsOutOfBounds(int i, int j, int add0, int add1)
-{
-    return outOfBounds(i + 2 * add0, j + 2 * add1);
-}
-
 // checks if a pawn is allowed to move forward
 // in the indicated direction
 bool canMove(Game *g, bool is_white, int ind, bool left)
@@ -101,10 +72,17 @@ bool queenCanMove(Game *g, bool is_white, int ind, Coord finalPos)
 }
 
 // For eatPawn and rafle calculation
-bool canEat(pawn *pawns, Case **damier, int ind, int i, int j, int add0, int add1)
+bool canEat(Game *g, bool color, int ind, int i, int j, int add0, int add1)
 {
-    return (freeCase(damier[i + 2 * add0][j + 2 * add1]) && damier[i + add0][j + add1].pawn_color == !pawns[ind].color &&
-            !freeCase(damier[i + add0][j + add1]));
+    assert(isValidIndexInGame(g, ind, color));
+    assert(inGame(i, j));
+    assert(inGame(i + 2 * add0, j + 2 * add1));
+    return (freeCase(g->damier[i + 2 * add0][j + 2 * add1]) &&
+            !freeCase(g->damier[i + add0][j + add1]) &&
+            g->damier[i + add0][j + add1].pawn_color == !g->allPawns[color][ind].color &&
+            int_to_bool(
+                get_pawn_value(g, g->damier[i + add0][j + add1].pawn_color, g->damier[i + add0][j + add1].ind_pawn,
+                               ALIVE)));
 }
 
 bool moveBackAvailable(Game *g)
@@ -127,11 +105,6 @@ bool canBeEnnemy(Game *g, int ind, bool color, Case c)
     return canBeFriend(g, ind, color, c);
 }
 
-bool isInCloud(Game *g, bool color, int ind)
-{
-    return (g->allPawns[color][ind].pba > 1);
-}
-
 bool canMoveBack(Game *g, bool is_white, int ind, bool left)
 {
     int di = is_white ? 1 : -1;
@@ -149,7 +122,7 @@ bool canMoveBack(Game *g, bool is_white, int ind, bool left)
 bool canBiDepl(Game *g, int ind, bool color)
 {
     /* On ne peut pas bidepl une dame. Si le pion est ami ou ennemi, le pion clone a gauche conservera cette amitie ou ennemitie */
-    return basicChecks(g) && !int_to_bool(get_pawn_value(g, color, ind, QUEEN)) && canMove(g, color, ind, true) &&
+    return isPawnValid(g) && !int_to_bool(get_pawn_value(g, color, ind, QUEEN)) && canMove(g, color, ind, true) &&
            canMove(g, color, ind, false);
 }
 
@@ -158,13 +131,14 @@ bool needPutMoveBack(Game *g)
     return g->ind_move_back > -1 && g->coordForMoveBack.i == IND_LISTENING_MOVE_BACK && g->coordForMoveBack.j == IND_LISTENING_MOVE_BACK;
 }
 
-bool caseIsAccessible(Game *g, bool is_white, int i, int j){
+bool caseIsAccessible(Game *g, bool is_white, int i, int j)
+{
     return !outOfBounds(i, j) && g->damier[i][j].ind_pawn == VOID_INDEX;
 }
 
 bool canPromotion(Game *g)
 {
-    return basicChecks(g) && !isInCloud(g, g->is_white, g->ind_move);
+    return isPawnValid(g) && !isInCloud(g, g->is_white, g->ind_move);
 }
 
 // Seul un pion plein peut faire eclater le nuage

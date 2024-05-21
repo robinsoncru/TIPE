@@ -12,12 +12,12 @@ int quit(Game *g, GraphicCache *cache)
 void test_start_game(Game *g)
 {
     // très pratique pour promouvoir une dame en qq coups
-    for (int i = NB_PAWNS - 1; i > 0; i--)
-    {
+    // for (int i = NB_PAWNS - 1; i > 0; i--)
+    // {
 
-        killPawn(g, g->damier, g->allPawns[1][i].lig, g->allPawns[1][i].col);
-        killPawn(g, g->damier, g->allPawns[0][i].lig, g->allPawns[0][i].col);
-    }
+    //     killPawn(g, g->damier, g->allPawns[1][i].lig, g->allPawns[1][i].col);
+    //     killPawn(g, g->damier, g->allPawns[0][i].lig, g->allPawns[0][i].col);
+    // }
 
     // // Configuration triangle
     // change_pawn_place(g->allPawns[1], g->damier, 0, 6, 6);
@@ -57,6 +57,8 @@ int main(int argc, char *argv[])
     }
 
     cache->last_time = SDL_GetTicks();
+    int nb_coups = 0;
+    int l_coups[4] = {3, 2, 0, 8};
 
     // Start the game
     while (cache->is_playing)
@@ -77,7 +79,8 @@ int main(int argc, char *argv[])
             SDL_RenderPresent(cache->draw);
 
             // update the data in the cache
-            update(g, cache);
+            nb_coups = update(g, cache, nb_coups, l_coups);
+            
         }
     }
     return quit(g, cache);

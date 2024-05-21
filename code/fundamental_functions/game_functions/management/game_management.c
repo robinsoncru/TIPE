@@ -47,9 +47,12 @@ void endTurnGameManagement(Game *g, bool is_white, int indMovedPawn, int indChec
         promote(g, is_white, indMovedPawn);
     }
 
-
+    if (indCheck != IND_BAD_CHOICE) {
     if (canStormBreaks(g, indMovedPawn, is_white)) AleatStormBreaks(g, is_white);
     else if (canStormBreaksForTheOthers(g, indMovedPawn, is_white)) AleatStormBreaks(g, !is_white);
+    }
+    else if (canStormBreaks(g, indMovedPawn, !is_white)) AleatStormBreaks(g, !is_white);
+    
 
     g->is_white = !g->is_white;
     g->ind_move = NEUTRAL_IND;

@@ -1,9 +1,10 @@
 #include "update.h"
+#include <unistd.h>
 
 // called every frame.
 // updates the memory, useful to manage stuff that must be done
 // or displayed for a certain time
-void update(Game *g, GraphicCache *cache)
+int update(Game *g, GraphicCache *cache, int nb_coups, int *l_coups)
 {
 
     // increments all chronometers
@@ -57,8 +58,13 @@ void update(Game *g, GraphicCache *cache)
         // Autoplay take over
         if (cache->autoplay)
         {
-        // play_a_move(PAWNMOVERIGHT, random_index(g), g, cache);
-        // play_a_move(PAWNMOVELEFT, random_index(g), g, cache);
+            play_a_move(PAWNMOVELEFT, random_index(g), g, cache);
+            play_a_move(PAWNMOVERIGHT, random_index(g), g, cache);
+
+            // play_a_move(PAWNMOVELEFT, plannifier_index(g, nb_coups, l_coups), g, cache);
+            // play_a_move(PAWNMOVERIGHT, plannifier_index(g, nb_coups, l_coups), g, cache);
+            return nb_coups+1;
         }
     }
+    return nb_coups;
 }

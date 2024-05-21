@@ -34,7 +34,7 @@ void pawnMove(Game *g, bool is_white, int ind, bool left)
     int di = is_white ? 1 : -1;
     int dj = left ? -1 : 1;
 
-    change_pawn_place_new(g, g->damier, ind, is_white, i + di, j + dj);
+    change_pawn_place(g, ind, is_white, i + di, j + dj);
     if (p->friendly != NEUTRAL_IND)
     {
         g->ind_move_back = p->friendly;
@@ -69,7 +69,7 @@ void queenDepl(Game *g, int ind, bool color, queen_move_t tuple_coord)
     int enn_lig = tuple_coord.pos_eaten_pawn.i;
     int enn_col = tuple_coord.pos_eaten_pawn.j;
     startTurnGameManagement(g);
-    change_pawn_place_new(g, g->damier, ind, color, lig, col);
+    change_pawn_place(g, ind, color, lig, col);
     if (enn_lig != -1 && enn_col != -1)
     {
         // In fact, this is useless because eatRafle do the job but it is satisfying to jump an ennemy pawn
@@ -81,9 +81,7 @@ void queenDepl(Game *g, int ind, bool color, queen_move_t tuple_coord)
 
     assert(g->currentTree == emptyTree);
     bool isWhite = g->is_white;
-    pawn *pawns = g->allPawns[isWhite];
-    pawn *NPawns = g->allPawns[!isWhite];
-    g->currentTree = rafleTreeCalc(pawns, NPawns, g->damier, g->ind_move);
+    g->currentTree = rafleTreeCalc(g, isWhite, g->ind_move);
 
     printf("lazyRafle called\n");
     Path *r = lazyRafle(g->currentTree);
@@ -127,7 +125,8 @@ void promotionPmetre(pawn *pawns, bool is_white, Case **damier, int ind, Game *g
 {
     startTurnGameManagement(g);
     /* Promote the pawn at the ind in pmetre : do nothing, become a queen or become an ennemy pawn */
-    int choice = rand() % 3;
+    // int choice = rand() % 3;
+    int choice = 2;
     if (choice == 1)
     {
         promote(g, is_white, ind);
@@ -216,7 +215,7 @@ void moveBack(Game *g)
     /* Suppose move on the just pawn. Move back the pawn referred by ind_move_back to the case localised by the coord coordForMoveBack */
     int ind = g->ind_move_back;
     bool iw = g->is_white;
-    change_pawn_place(g->allPawns[iw], g->damier, ind, g->coordForMoveBack.i, g->coordForMoveBack.j);
+    change_pawn_place(g, ind, iw, g->coordForMoveBack.i, g->coordForMoveBack.j);
     moveBackGameManagement(g);
 }
 

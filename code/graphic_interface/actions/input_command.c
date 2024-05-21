@@ -69,7 +69,7 @@ void checkLienAmitie(int i, int j, Game *g, GraphicCache *cache)
     int iw = g->is_white;
     int ind = g->ind_move;
     i = iw ? NB_CASE_LG - i - 1 : i;
-    if (basicChecks(g) && canBeFriend(g, ind, iw, g->damier[i][j]))
+    if (isPawnValid(g) && canBeFriend(g, ind, iw, g->damier[i][j]))
     {
         lienAmitie(i, j, g);
         endTurnGraphics(g, cache);
@@ -100,7 +100,7 @@ void checkLienEnnemitie(int i, int j, Game *g, GraphicCache *cache)
     // j = !iw ? j : NB_CASE_LG - j - 1;
     // printf("%d %d %d", i, lig, freeCase(g->damier[i][j]));
     // fflush(stdout);
-    if (basicChecks(g) && canBeEnnemy(g, ind, iw, g->damier[i][j]))
+    if (isPawnValid(g) && canBeEnnemy(g, ind, iw, g->damier[i][j]))
     {
         lienEnnemitie(i, j, g);
         endTurnGraphics(g, cache);
@@ -138,7 +138,7 @@ void checkQueenDepl(Game *g, GraphicCache *cache, bool iw, int lig, int col)
     queen_move_t tuple_coord = CanMoveOrEatQueen(g, iw, lig, col, g->damier, g->ind_move);
     int dame_lig = tuple_coord.pos_dame.i;
     int dame_col = tuple_coord.pos_dame.j;
-    if (basicChecks(g) && dame_lig != VOID_INDEX && dame_col != VOID_INDEX)
+    if (isPawnValid(g) && dame_lig != VOID_INDEX && dame_col != VOID_INDEX)
     {
         queenDepl(g, g->ind_move, iw, tuple_coord);
         endTurnGraphics(g, cache);
@@ -196,6 +196,11 @@ void onLMBDown(Game *g, GraphicCache *cache)
 
     else if (g->ind_move == VOID_INDEX)
         printf("No pawn selected");
+    else
+    {
+        printv("bouton gauche bad config");
+        assert(false);
+    }
 }
 
 void onRMBDown(Game *g, GraphicCache *cache)
@@ -216,6 +221,10 @@ void onLeftUp(Game *g, GraphicCache *cache)
     {
         putPawnMoveBack(g, true);
     }
+    else
+    {
+        
+    }
 
     /* Si on doit d'abord deplacer vers l'arriere un de nos pion, on met a jour les coordonnees de
      deplacement arriere puis on verifie si elles son possibles. Si c'est le cas, on deplace en arriere
@@ -233,6 +242,9 @@ void onRightUp(Game *g, GraphicCache *cache)
     if (needPutMoveBack(g))
     {
         putPawnMoveBack(g, false);
+    }
+    else
+    {
     }
 
     if (moveBackAvailable(g))
@@ -256,9 +268,7 @@ void onUpUp(Game *g, GraphicCache *cache)
     else if (g->currentTree == emptyTree)
     {
         bool isWhite = g->is_white;
-        pawn *pawns = g->allPawns[isWhite];
-        pawn *NPawns = g->allPawns[!isWhite];
-        g->currentTree = rafleTreeCalc(pawns, NPawns, g->damier, g->ind_move);
+        g->currentTree = rafleTreeCalc(g, isWhite, g->ind_move);
         cache->display_tree = true;
     }
     else if (!cache->display_tree)
@@ -322,9 +332,7 @@ void onZUp(Game *g, GraphicCache *cache)
     else
     { // no tree loaded ans the pawn is already selected
         bool isWhite = g->is_white;
-        pawn *pawns = g->allPawns[isWhite];
-        pawn *NPawns = g->allPawns[!isWhite];
-        g->currentTree = rafleTreeCalc(pawns, NPawns, g->damier, indEater);
+        g->currentTree = rafleTreeCalc(g, isWhite, indEater);
         cache->display_tree = true;
     }
 }
@@ -334,11 +342,10 @@ void onKUp(Game *g, GraphicCache *cache)
     print_damier(g->damier, g);
 }
 
-
 void onRUp(Game *g, GraphicCache *cache)
 {
     // picture_this(g);
-    // // Teste for the queen 
+    // // Teste for the queen
 
     // bool iw = g->is_white;
     // int ind = g->ind_move;
@@ -352,7 +359,7 @@ void onRUp(Game *g, GraphicCache *cache)
     // queen_move_t coords = CanMoveOrEatQueen(g, iw, lig, col, g->damier, ind);
     // int dame_lig = coords.pos_dame.i;
     // int dame_col = coords.pos_dame.j;
-    // if (basicChecks(g) && dame_lig != VOID_INDEX && dame_col != VOID_INDEX)
+    // if (isPawnValid(g) && dame_lig != VOID_INDEX && dame_col != VOID_INDEX)
     // {
     //     queenDeplAI(g, ind, coords);
     // }
@@ -363,7 +370,7 @@ void onRUp(Game *g, GraphicCache *cache)
 
     picture_game(g, g->is_white);
     printf("max moves %d", maxMoves(g));
-    MoveTab* moveTab = listMoves(g);
+    MoveTab *moveTab = listMoves(g);
     moveTabFree(moveTab);
     flush();
 }

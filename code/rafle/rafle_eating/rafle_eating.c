@@ -5,7 +5,7 @@
 void pawnEat(Game* g, int indEater, bool is_white, int di, int dj){
     pawn* p = &(g->allPawns[is_white][indEater]);
     killPawn(g, g->damier, p->lig + di, p->col + dj);
-    change_pawn_place(g->allPawns[is_white], g->damier, indEater,
+    change_pawn_place(g, indEater, is_white,
         p->lig + 2*di, p->col + 2*dj);
 }
 

@@ -1,5 +1,5 @@
-#ifndef INTERFACE_JEU_DAMES
-#define INTERFACE_JEU_DAMES
+#ifndef affichage_JEU_DAMES
+#define affichage_JEU_DAMES
 
 #include <SDL2/SDL_ttf.h>
 
@@ -18,7 +18,7 @@
 #define NUANCE_EFFECT 20
 
 
-// Interface structure
+// affichage structure
 typedef struct
 {
     bool loaded; //text must be loaded only when it's necessary
@@ -59,4 +59,4 @@ void display_damier(SDL_Renderer *render, Game *g);
 void change_damier(Game *g);
 void prepareText(SDL_Renderer *render, text *txt, char *string);
 
-#endif //INTERFACE_JEU_DAMES
+#endif //affichage_JEU_DAMES

@@ -1,7 +1,7 @@
 #ifndef AI_FUNCTIONS
 #define AI_FUNCTIONS 
 
-#include "../../fundamental_functions/interface/interface.h"
+#include "../../fundamental_functions/affichage/affichage.h"
 
 void pawnMoveAI(Game *g, int indMovePawn, bool left);
 void promotionIA(Game *g, int indMovePawn);

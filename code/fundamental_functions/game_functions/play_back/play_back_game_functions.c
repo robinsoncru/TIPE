@@ -9,7 +9,7 @@ void pawnMoveNGE(Game *g, bool is_white, int ind, bool left)
     int di = is_white ? 1 : -1;
     int dj = left ? -1 : 1;
 
-    change_pawn_place_new(g, g->damier, ind, is_white, i + di, j + dj);
+    change_pawn_place(g, ind, is_white, i + di, j + dj);
     if (p.friendly != NEUTRAL_IND)
     {
         g->ind_move_back = p.friendly;
@@ -25,7 +25,7 @@ void pawnMoveCancel(Game *g, bool is_white, int ind, bool left)
     int di = is_white ? 1 : -1;
     int dj = left ? -1 : 1;
 
-    change_pawn_place_new(g, g->damier, ind, is_white, i - di, j - dj);
+    change_pawn_place(g, ind, is_white, i - di, j - dj);
 }
 
 void recreateCloud(Game *g, cloud_chain *l, ind_pba_t *survivor, bool iw)
@@ -106,7 +106,7 @@ void pawnMoveBackNGE(Game *g, int ind, bool left)
     int di = is_white ? 1 : -1;
     int dj = left ? -1 : 1;
 
-    change_pawn_place_new(g, g->damier, ind, is_white, i - di, j - dj);
+    change_pawn_place(g, ind, is_white, i - di, j - dj);
 
     g->ind_move_back = VOID_INDEX;
 }
@@ -238,7 +238,7 @@ void cancelRafle(Game *g, int indMovedPawn, Coord init_pos, data_chain *chainy) 
     }
     free(chainy);
 
-    change_pawn_place_new(g, g->damier, indMovedPawn, iw, init_pos.i, init_pos.j);
+    change_pawn_place(g, indMovedPawn, iw, init_pos.i, init_pos.j);
 }
 
 data_chain *queenDeplNGE(Game *g, int ind, bool color, queen_move_t tuple_coord)
@@ -252,7 +252,7 @@ data_chain *queenDeplNGE(Game *g, int ind, bool color, queen_move_t tuple_coord)
     // So pos_eaten_pawn is useless here
     int lig = tuple_coord.pos_dame.i;
     int col = tuple_coord.pos_dame.j;
-    change_pawn_place_new(g, g->damier, ind, color, lig, col);
+    change_pawn_place(g, ind, color, lig, col);
 
     // Gonna check if the queen can take a rafle
     data_chain *chainy = rafleNGE(g, ind);

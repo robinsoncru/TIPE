@@ -1,11 +1,11 @@
 dames.out: main.o coord.o little_linked_list.o game_functions.o aux_functions.o debug_functions.o game_management.o \
-calculus_functions.o logic_functions.o play_back_game_functions.o interface.o input_command.o on_input.o graphic_cache.o update.o \
+calculus_functions.o logic_functions.o play_back_game_functions.o affichage.o input_command.o on_input.o graphic_cache.o update.o \
 path_tree.o rafle_tree_calc.o path_tree_display.o rafle_management.o four_pack.o path_struct.o rafle_eating.o move_simulation.o \
-move_max.o move_listing.o listing_checks.o move_struct.o rafle_listing.o
+move_max.o move_listing.o listing_checks.o move_struct.o rafle_listing.o basic_play_function.o precondition.o
 	gcc -g -Wall -o dames.out main.o coord.o little_linked_list.o game_functions.o aux_functions.o debug_functions.o game_management.o \
-calculus_functions.o logic_functions.o play_back_game_functions.o interface.o input_command.o on_input.o graphic_cache.o update.o \
+calculus_functions.o logic_functions.o play_back_game_functions.o affichage.o input_command.o on_input.o graphic_cache.o update.o \
 path_tree.o rafle_tree_calc.o path_tree_display.o rafle_management.o four_pack.o path_struct.o rafle_eating.o move_simulation.o \
-move_max.o move_listing.o listing_checks.o move_struct.o rafle_listing.o \
+move_max.o move_listing.o listing_checks.o move_struct.o rafle_listing.o basic_play_function.o precondition.o \
 $$(sdl2-config --cflags --libs) -lSDL2_ttf
 
 main.o: main.c
@@ -38,8 +38,8 @@ logic_functions.o: fundamental_functions/game_functions/Logic_and_calculus/logic
 play_back_game_functions.o: fundamental_functions/game_functions/play_back/play_back_game_functions.c
 	gcc -g -c -Wall fundamental_functions/game_functions/play_back/play_back_game_functions.c
 
-interface.o: fundamental_functions/interface/interface.c
-	gcc -g -c -Wall fundamental_functions/interface/interface.c
+affichage.o: fundamental_functions/affichage/affichage.c
+	gcc -g -c -Wall fundamental_functions/affichage/affichage.c
 
 input_command.o: graphic_interface/actions/input_command.c
 	gcc -g -c -Wall graphic_interface/actions/input_command.c
@@ -91,3 +91,9 @@ move_struct.o: AI/move_listing/move_struct/move_struct.c
 
 rafle_listing.o: AI/move_listing/rafle_listing/rafle_listing.c
 	gcc -g -c -Wall AI/move_listing/rafle_listing/rafle_listing.c
+
+basic_play_function.o: graphic_interface/autoplay_random_functions/basic_play_function.c
+	gcc -g -c -Wall graphic_interface/autoplay_random_functions/basic_play_function.c
+
+precondition.o: fundamental_functions/game_functions/precondition/precondition.c
+	gcc -g -c -Wall fundamental_functions/game_functions/precondition/precondition.c

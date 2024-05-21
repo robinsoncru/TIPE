@@ -15,11 +15,11 @@ PathTree* firstChildEncountered(PathTree* t){
     return emptyTree;
 }
 
-void eatingTest(pawn pawns[], pawn NPawns[], Case damier[NB_CASE_LG][NB_CASE_LG], PathTree* t){
+void eatingTest(Game *g, bool color, PathTree* t){
     printf("\neatingTest called\n");
     if (t != emptyTree) {
         Coord startPos = pathTreeLabel(t);
-        int indEater = damier[startPos.i][startPos.j].ind_pawn;
+        int indEater = g->damier[startPos.i][startPos.j].ind_pawn;
         Coord vector, initPos, finalPos;
         PathTree* parent = t;
         PathTree* child = firstChildEncountered(t);
@@ -28,18 +28,18 @@ void eatingTest(pawn pawns[], pawn NPawns[], Case damier[NB_CASE_LG][NB_CASE_LG]
             finalPos = pathTreeLabel(child);
             vector = sub(finalPos, initPos);
             vector = reduceNormOfOne(vector);
-            nonLoggingChangeForEat(pawns, NPawns, damier, indEater, initPos.i, initPos.j, vector.i, vector.j);
+            nonLoggingChangeForEat(g, color, indEater, initPos.i, initPos.j, vector.i, vector.j);
             parent = child;
             child = firstChildEncountered(child);
         }
     }
 }
 
-int testRafleTreePmetre(pawn pawns[], pawn NPawns[], Case damier[NB_CASE_LG][NB_CASE_LG], int ind){
+int testRafleTreePmetre(Game *g, bool color, int ind){
     if (ind == NEUTRAL_IND) {
         return NEUTRAL_IND;
     }
-    PathTree* t = rafleTreeCalc(pawns, NPawns, damier, ind);
+    PathTree* t = rafleTreeCalc(g, color, ind);
     if (t == emptyTree) {
         return IND_PB;
     }
@@ -47,12 +47,12 @@ int testRafleTreePmetre(pawn pawns[], pawn NPawns[], Case damier[NB_CASE_LG][NB_
     if (pathTreeDepth(t) == 0) {
         return ind;
     }
-    eatingTest(pawns, NPawns, damier, t);
+    eatingTest(g, color, t);
     pathTreeFree(t);
     return IND_CHANGE_ALLOWED;
 }
 
 void testRafleTree(Game* g){
     bool is_white = g -> is_white;
-    g -> ind_move = testRafleTreePmetre(g -> allPawns[is_white], g -> allPawns[!is_white], g -> damier, g -> ind_move);
+    g -> ind_move = testRafleTreePmetre(g, is_white, g -> ind_move);
 }

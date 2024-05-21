@@ -20,6 +20,8 @@
 // On peut améliorer cette fonction
 void copy_remove_pawn_from_index_to_index(Game *g, int indStart, int indArrive, bool color)
 {
+    assert(isValidIndexInGame(g, indStart, color));
+    assert(isValidIndex(indArrive));
     if (indStart != indArrive)
     {
         int lig = get_pawn_value(g, color, indStart, LIG);
@@ -41,14 +43,15 @@ void copy_remove_pawn_from_index_to_index(Game *g, int indStart, int indArrive, 
 void pawn_default_value_new(Game *g, int ind, bool color)
 {
     /* Initialize pawn with default values, identify by its index and color */
-    g->allPawns[color][ind].alive = false;
-    g->allPawns[color][ind].col = -1;
-    g->allPawns[color][ind].lig = -1;
-    g->allPawns[color][ind].queen = false;
-    g->allPawns[color][ind].color = color;
-    g->allPawns[color][ind].friendly = -1;
-    g->allPawns[color][ind].ennemy = -1;
-    g->allPawns[color][ind].pba = 1;
+    assert(isValidIndex(ind));
+    put_pawn_value(g, color, ind, ALIVE, 0);
+    put_pawn_value(g, color, ind, COL, -1);
+    put_pawn_value(g, color, ind, LIG, -1);
+    put_pawn_value(g, color, ind, QUEEN, 0);
+    put_pawn_value(g, color, ind, COLOR, int_to_bool(color));
+    put_pawn_value(g, color, ind, FRIENDLY, -1);
+    put_pawn_value(g, color, ind, ENNEMY, -1);
+    put_pawn_value(g, color, ind, PBA, 1);
 }
 
 // We are sure about the pawn we delete (no check control so be careful)
@@ -59,15 +62,15 @@ void killPawn(Game *g, Case **damier, int i, int j)
 {
     // printf("i, j = %d, %d\n", i, j);
     // DO NOT remove a pawn from the cloud
-    assert(i != -1 && j != -1);
+    assert(inGame(i, j));
     if (!freeCase(damier[i][j]))
     {
         int indPawn = damier[i][j].ind_pawn;
         bool color = damier[i][j].pawn_color;
-        int indEnnemy = get_pawn_value(g, !color, indPawn, ENNEMY);
-        int indAmi = get_pawn_value(g, !color, indPawn, FRIENDLY);
+        assert(isValidIndexInGame(g, indPawn, color));
+        int indEnnemy = get_pawn_value(g, color, indPawn, ENNEMY);
+        int indAmi = get_pawn_value(g, color, indPawn, FRIENDLY);
         bool is_queen = int_to_bool(get_pawn_value(g, color, indPawn, QUEEN));
-        bool opposee_is_queen = int_to_bool(get_pawn_value(g, !color, indAmi, QUEEN));
         if (indEnnemy != VOID_INDEX)
         {
             put_pawn_value(g, !color, indEnnemy, ENNEMY, -1);
@@ -76,6 +79,7 @@ void killPawn(Game *g, Case **damier, int i, int j)
         }
         else if (indAmi != VOID_INDEX)
         {
+            bool opposee_is_queen = int_to_bool(get_pawn_value(g, !color, indAmi, QUEEN));
             put_pawn_value(g, !color, indAmi, FRIENDLY, -1);
             if (is_queen) g->nbQueenWithFriend[color]--;
             else g->nbFriendNoQueen[color]--;
@@ -84,18 +88,23 @@ void killPawn(Game *g, Case **damier, int i, int j)
             else g->nbFriendNoQueen[!color]--;
         }
         else if (is_queen) g->nbQueenWithoutFriend[color]--;
-        pawn_default_value_new(g, indPawn, color);
         damier[i][j].ind_pawn = -1;
         /* Supprimer l'indice et optimiser la memoire */
         copy_remove_pawn_from_index_to_index(g, g->nb_pawns[color] - 1, indPawn, color);
         g->nb_pawns[color]--;
     }
+    else {
+        printv("Personne a tuer ici");
+        assert(false);
+    }
 }
 
 void killPawnByInd(Game *g, bool color, int ind)
 {
+    assert(isValidIndexInGame(g, ind, color));
     int i = get_pawn_value(g, color, ind, LIG);
     int j = get_pawn_value(g, color, ind, COL);
+    assert(inGame(i, j));
     killPawn(g, g->damier, i, j);
 }
 
@@ -118,22 +127,14 @@ void killPawnByInd(Game *g, bool color, int ind)
 /* Put the pawn in a specific case (lig, col).
 Useful for queen_move and can be used by us
 to go faster for checks : place pawns where we want */
-void change_pawn_place(pawn *pawns, Case **damier, int ind, int lig, int col)
-{
-    damier[pawns[ind].lig][pawns[ind].col].ind_pawn = -1;
-    pawns[ind].lig = lig;
-    pawns[ind].col = col;
-    damier[lig][col].ind_pawn = ind;
-    damier[lig][col].pawn_color = pawns[ind].color;
-}
 
-void change_pawn_place_new(Game *g, Case **damier, int ind, bool color, int lig, int col)
+void change_pawn_place(Game *g, int ind, bool color, int lig, int col)
 {
-    damier[get_pawn_value(g, color, ind, LIG)][get_pawn_value(g, color, ind, COL)].ind_pawn = -1;
+    g->damier[get_pawn_value(g, color, ind, LIG)][get_pawn_value(g, color, ind, COL)].ind_pawn = -1;
     put_pawn_value(g, color, ind, LIG, lig);
     put_pawn_value(g, color, ind, COL, col);
-    damier[lig][col].ind_pawn = ind;
-    damier[lig][col].pawn_color = color;
+    g->damier[lig][col].ind_pawn = ind;
+    g->damier[lig][col].pawn_color = color;
 }
 
 /* May be useful later */
@@ -153,16 +154,16 @@ void change_pawn_place_new(Game *g, Case **damier, int ind, bool color, int lig,
 // et deux entiers add0 et add1 qui indiquent la direction dans laquelle manger
 // Sortie : modifie le plateau de maniere a ce que le pion d'indice ind ait mange dans la direction indique
 // et retourne l'index du pion mange
-int nonLoggingChangeForEat(pawn *pawns, pawn *NPawns, Case **damier, int indEater, int i, int j, int add0, int add1)
+int nonLoggingChangeForEat(Game *g, bool color, int indEater, int i, int j, int add0, int add1)
 {
 
-    int indVictim = damier[i + add0][j + add1].ind_pawn;
+    int indVictim = g->damier[i + add0][j + add1].ind_pawn;
     // assert(ind > -1);
-    change_pawn_place(pawns, damier, indEater, i + 2 * add0, j + 2 * add1);
+    change_pawn_place(g, indEater, color, i + 2 * add0, j + 2 * add1);
 
     // Kill pawn indVictim
-    NPawns[indVictim].alive = false;
-    damier[i + add0][j + add1].ind_pawn = VOID_INDEX;
+    put_pawn_value(g, !color, indVictim, ALIVE, 0);
+    g->damier[i + add0][j + add1].ind_pawn = VOID_INDEX;
     // printf("change allowed %d %d", i + 2 * add0, j + 2 * add1);
     return indVictim;
 }
@@ -209,7 +210,7 @@ void simplyPawnMove(Game *g, bool is_white, int ind, bool left)
     int di = is_white ? 1 : -1;
     int dj = left ? -1 : 1;
 
-    change_pawn_place_new(g, g->damier, ind, is_white, i + di, j + dj);
+    change_pawn_place(g, ind, is_white, i + di, j + dj);
 }
 
 void putPawnMoveBack(Game *g, bool left)

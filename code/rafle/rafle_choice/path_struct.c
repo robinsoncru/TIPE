@@ -9,7 +9,7 @@ int practicalMod(int a, int m){
     return (a >= 0) ? a % m : m - 1;
 }
 
-//Actual interface
+//Actual affichage
 Path* pathCreate(unsigned int c){
     Path* res = malloc(sizeof(Path));
     res->c = c;

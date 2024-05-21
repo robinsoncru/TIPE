@@ -1,7 +1,7 @@
-#ifndef CACHE_INTERFACE
-#define CACHE_INTERFACE
+#ifndef CACHE_affichage
+#define CACHE_affichage
 
-#include "../../fundamental_functions/interface/interface.h"
+#include "../../fundamental_functions/affichage/affichage.h"
 #include "../rafle_display/path_tree_display.h"
 #include <stdlib.h>
 #include <SDL2/SDL_ttf.h>
@@ -64,4 +64,4 @@ void display(Game* g, GraphicCache* cache);
 //displays an alert on the screen
 //and does other stuff depending of the chosen timer
 void alert(GraphicCache* cache, int alertIndex, int timerIndex);
-#endif //CACHE_INTERFACE
+#endif //CACHE_affichage
