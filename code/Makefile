@@ -1,11 +1,11 @@
 dames.out: main.o coord.o little_linked_list.o game_functions.o aux_functions.o debug_functions.o game_management.o \
 calculus_functions.o logic_functions.o play_back_game_functions.o affichage.o input_command.o on_input.o graphic_cache.o update.o \
 path_tree.o rafle_tree_calc.o path_tree_display.o rafle_management.o four_pack.o path_struct.o rafle_eating.o move_simulation.o \
-move_max.o move_listing.o listing_checks.o move_struct.o rafle_listing.o basic_play_function.o precondition.o fonctions_correctes.o
+move_max.o move_listing.o listing_checks.o move_struct.o rafle_listing.o basic_play_function.o precondition.o access_functions.o
 	gcc -g -Wall -o dames.out main.o coord.o little_linked_list.o game_functions.o aux_functions.o debug_functions.o game_management.o \
 calculus_functions.o logic_functions.o play_back_game_functions.o affichage.o input_command.o on_input.o graphic_cache.o update.o \
 path_tree.o rafle_tree_calc.o path_tree_display.o rafle_management.o four_pack.o path_struct.o rafle_eating.o move_simulation.o \
-move_max.o move_listing.o listing_checks.o move_struct.o rafle_listing.o basic_play_function.o precondition.o fonctions_correctes.o \
+move_max.o move_listing.o listing_checks.o move_struct.o rafle_listing.o basic_play_function.o precondition.o access_functions.o \
 $$(sdl2-config --cflags --libs) -lSDL2_ttf
 
 main.o: main.c
@@ -32,8 +32,8 @@ game_management.o: fundamental_functions/game_functions/management/game_manageme
 calculus_functions.o: fundamental_functions/game_functions/Calculus/calculus_functions.c
 	gcc -g -c -Wall fundamental_functions/game_functions/Calculus/calculus_functions.c
 
-fonctions_correctes.o: fundamental_functions/game_functions/fonctions_correctes/fonctions_correctes.c
-	gcc -g -c -Wall fundamental_functions/game_functions/fonctions_correctes/fonctions_correctes.c
+access_functions.o: fundamental_functions/game_functions/access_functions/access_functions.c
+	gcc -g -c -Wall fundamental_functions/game_functions/access_functions/access_functions.c
 
 logic_functions.o: fundamental_functions/game_functions/Logic/logic_functions.c
 	gcc -g -c -Wall fundamental_functions/game_functions/Logic/logic_functions.c
