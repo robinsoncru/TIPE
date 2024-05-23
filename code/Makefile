@@ -1,12 +1,13 @@
 dames.out: main.o coord.o little_linked_list.o game_functions.o aux_functions.o debug_functions.o game_management.o \
 calculus_functions.o logic_functions.o play_back_game_functions.o affichage.o input_command.o on_input.o graphic_cache.o update.o \
 path_tree.o rafle_tree_calc.o path_tree_display.o rafle_management.o four_pack.o path_struct.o rafle_eating.o move_simulation.o \
-move_max.o move_listing.o listing_checks.o move_struct.o rafle_listing.o basic_play_function.o precondition.o fonctions_correctes.o
+move_max.o move_listing.o listing_checks.o move_struct.o rafle_listing.o basic_play_function.o precondition.o fonctions_correctes.o \
+debug_autoplay.o
 	gcc -g -Wall -o dames.out main.o coord.o little_linked_list.o game_functions.o aux_functions.o debug_functions.o game_management.o \
 calculus_functions.o logic_functions.o play_back_game_functions.o affichage.o input_command.o on_input.o graphic_cache.o update.o \
 path_tree.o rafle_tree_calc.o path_tree_display.o rafle_management.o four_pack.o path_struct.o rafle_eating.o move_simulation.o \
 move_max.o move_listing.o listing_checks.o move_struct.o rafle_listing.o basic_play_function.o precondition.o fonctions_correctes.o \
-$$(sdl2-config --cflags --libs) -lSDL2_ttf
+debug_autoplay.o $$(sdl2-config --cflags --libs) -lSDL2_ttf
 
 main.o: main.c
 	gcc -g -c -Wall main.c
@@ -100,3 +101,6 @@ basic_play_function.o: graphic_interface/autoplay_random_functions/basic_play_fu
 
 precondition.o: fundamental_functions/game_functions/precondition/precondition.c
 	gcc -g -c -Wall fundamental_functions/game_functions/precondition/precondition.c
+
+debug_autoplay.o: graphic_interface/autoplay_random_functions/debug_autoplay.c
+	gcc -g -c -Wall graphic_interface/autoplay_random_functions/debug_autoplay.c

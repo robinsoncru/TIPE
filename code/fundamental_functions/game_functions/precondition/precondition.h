@@ -1,4 +1,5 @@
-
+#ifndef PRECONDITION
+#define PRECONDITION
 #include "../Source/source_header.h"
 
 bool freeCase(Case c);
@@ -11,3 +12,5 @@ bool outOfBounds(int i, int j);
 bool eatingIsOutOfBounds(int i, int j, int add0, int add1);
 bool isInCloud(Game *g, bool color, int ind);
 bool enoughPawns(Game *g, bool color);
+
+#endif
