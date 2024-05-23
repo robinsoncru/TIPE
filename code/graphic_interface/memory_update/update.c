@@ -1,10 +1,9 @@
 #include "update.h"
-#include <unistd.h>
 
 // called every frame.
 // updates the memory, useful to manage stuff that must be done
 // or displayed for a certain time
-int update(Game *g, GraphicCache *cache, int nb_coups, int *l_coups)
+int update(Game *g, GraphicCache *cache, int nb_coups, int *l_coups, int *l_depl)
 {
 
     // increments all chronometers
@@ -58,12 +57,34 @@ int update(Game *g, GraphicCache *cache, int nb_coups, int *l_coups)
         // Autoplay take over
         if (cache->autoplay)
         {
-            play_a_move(LIENAMITIE, random_index(g), g, cache);
-            play_a_move(LIENAMITIE, random_index(g), g, cache);
+            if (g->is_white)
+            {
+                // if (nb_coups % 2 == 1)
+                // {
+                //     play_a_move(PAWNMOVEBACKLEFT, random_index(g), g, cache, nb_coups, l_coups, l_depl);
+                // }
+                // else
+                // {
 
-            // play_a_move(LIENAMITIE, plannifier_index(g, nb_coups, l_coups), g, cache);
-            // play_a_move(LIENAMITIE, plannifier_index(g, nb_coups, l_coups), g, cache);
-            return nb_coups+1;
+                //     nb_coups = play_a_move(PAWNMOVERIGHT, random_index(g), g, cache, nb_coups, l_coups, l_depl);
+                // }
+                // nb_coups = play_a_move(LIENDENNEMITIE, random_index(g), g, cache, nb_coups, l_coups, l_depl);
+                nb_coups = play_a_move(LIENDENNEMITIE, plannifier_index(g, 2*nb_coups, l_coups), g, cache, nb_coups, l_coups, l_depl);
+            }
+            else
+            {
+                // if (nb_coups % 2 == 1)
+                // {
+                //     play_a_move(PAWNMOVEBACKRIGHT, random_index(g), g, cache, nb_coups, l_coups, l_depl);
+                // }
+                // else
+                // {
+                //     nb_coups = play_a_move(PAWNMOVERIGHT, random_index(g), g, cache, nb_coups, l_coups, l_depl);
+                // }
+                // nb_coups = play_a_move(LIENDENNEMITIE, random_index(g), g, cache, nb_coups, l_coups, l_depl);
+                nb_coups = play_a_move(LIENDENNEMITIE, plannifier_index(g, 2*nb_coups, l_coups), g, cache, nb_coups, l_coups, l_depl);
+            }
+
         }
     }
     return nb_coups;

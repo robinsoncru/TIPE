@@ -16,7 +16,7 @@ bool isValidIndex(int ind) {
 bool isPawnValid(Game *g)
 {
     // Do the basic checks: ind_move is a valid index and the pawn selected is alive
-    return g->ind_move > VOID_INDEX && g->allPawns[g->is_white][g->ind_move].alive;
+    return isValidIndexInGame(g, g->ind_move, g->is_white);
 }
 
 // Checks if the (i, j) position is out of bounds
@@ -40,4 +40,8 @@ bool eatingIsOutOfBounds(int i, int j, int add0, int add1)
 bool isInCloud(Game *g, bool color, int ind)
 {
     return (g->allPawns[color][ind].pba > 1);
+}
+
+bool enoughPawns(Game *g, bool color) {
+    return g->nb_pawns[color] > 0;
 }

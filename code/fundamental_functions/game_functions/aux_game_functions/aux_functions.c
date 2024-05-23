@@ -28,6 +28,15 @@ void copy_remove_pawn_from_index_to_index(Game *g, int indStart, int indArrive, 
         int col = get_pawn_value(g, color, indStart, COL);
         put_case_damier(g, lig, col, IND_PAWN_ON_CASE, VOID_INDEX);
 
+        // Il faut gérer les liens amicaux
+        pawn p = get_pawn(g, color, indStart);
+        if (isValidIndexInGame(g, p.friendly, !color)) {
+            put_pawn_value(g, !color, p.friendly, FRIENDLY, indArrive);
+        }
+        if (isValidIndexInGame(g, p.ennemy, !color)) {
+            put_pawn_value(g, !color, p.ennemy, ENNEMY, indArrive);
+        }
+
         for (int k = 1; k < 9; k++)
         {
             put_pawn_value(g, color, indArrive, k, get_pawn_value(g, color, indStart, k));
@@ -95,7 +104,7 @@ void killPawn(Game *g, int i, int j)
         }
         else if (is_queen)
             g->nbQueenWithoutFriend[color]--;
-        c.ind_pawn = -1;
+        put_case_damier(g, i, j, IND_PAWN_ON_CASE, -1);
         /* Supprimer l'indice et optimiser la memoire */
         copy_remove_pawn_from_index_to_index(g, g->nb_pawns[color] - 1, indPawn, color);
         g->nb_pawns[color]--;
@@ -182,6 +191,7 @@ void promote(Game *g, bool is_white, int ind)
     put_pawn_value(g, is_white, ind, QUEEN, 1);
     if (has_friend(g, ind, is_white))
         g->nbQueenWithFriend[is_white]++;
+        // Seul les pions qui ont eu des amis peuvent devenir des reines avec amitié
     else
         g->nbQueenWithoutFriend[is_white]++;
     int ind_ennemy = get_pawn_value(g, is_white, ind, ENNEMY);
@@ -250,33 +260,6 @@ void putPawnMoveBack(Game *g, bool left)
     }
 }
 
-// Ca bug
-
-// void stormBreaks(Game *g, bool color, int indSurvivor)
-// {
-//     maillon *l = g->cloud[color];
-//     int iSurvivor = get_pawn_value(g, color, indSurvivor, LIG);
-//     int jSurvivor = get_pawn_value(g, color, indSurvivor, COL);
-
-//     put_pawn_value(g, color, indSurvivor, PBA, 1);
-//     while (!is_empty(l))
-//     {
-//         int ind = pop(l);
-//         if (ind != put_case_damier(iSurvivor][jSurvivor].ind_pawn)
-//             ;
-//         {
-//             killPawn(g, put_case_damier( get_pawn_value(g, color, ind, LIG), get_pawn_value(g, color, ind, COL));
-//         }
-//     }
-//     g->lengthCloud[color] = 0;
-
-//     // C'est une fonction mutuellement recursive car le pion foudroyer peut etre pres du nuage de la couleur opposee. On verifie donc
-//     // dans l'autre nuage
-
-//     if (canStormBreaksForTheOthers(g, put_case_damier(iSurvivor][jSurvivor].ind_pawn, color))
-//         AleatStormBreaks(g, !color);
-// }
-
 void AleatStormBreaks(Game *g, bool color)
 {
     maillon *l = g->cloud[color];
@@ -344,10 +327,15 @@ void handleCloudDuePawnMoveNGE(Game *g, int indMovedPawn, ind_pba_t *survivor, c
     }
 }
 
-queen_move_t CanMoveOrEatQueen(Game *g, bool color, int lig, int col, int ind)
+queen_move_t CanMoveOrEatQueen(Game *g, bool color, int lig, int col, int ind, bool screen_switch)
 {
     // Check if the move of the queen is possible and move the queen or eat the next pawn in her path
-    lig = color ? NB_CASE_LG - lig - 1 : lig;
+    assertAndLog(inGame(lig, col), "Tuple queen pas dans damier");
+    assertAndLog(isValidIndexInGame(g, ind, color), "Dame pas valide index");
+    if (screen_switch)
+    {
+        lig = color ? NB_CASE_LG - lig - 1 : lig;
+    }
     int pcol = get_pawn_value(g, color, ind, COL);
     int plig = get_pawn_value(g, color, ind, LIG);
     int dcol = col - pcol;
@@ -374,7 +362,12 @@ queen_move_t CanMoveOrEatQueen(Game *g, bool color, int lig, int col, int ind)
                 }
                 else if (c.pawn_color == color)
                 {
-                    // printf("jump sheep");
+                    printv("jump sheep");
+                    if (!screen_switch)
+                    {
+                        // On est intransigeant avec la machine
+                        assertAndLog(false, "");
+                    }
                     queen_move_t res = {.pos_dame = {.i = VOID_INDEX, .j = VOID_INDEX}, .pos_eaten_pawn = {.i = VOID_INDEX, .j = VOID_INDEX}};
                     return res; // Pb: the queen jumps a pawn of her own color or a ghost pawn
                 }
@@ -387,10 +380,16 @@ queen_move_t CanMoveOrEatQueen(Game *g, bool color, int lig, int col, int ind)
             return res;
         }
     }
+    printv("Le deplacement n'est pas diagonale");
+    if (!screen_switch)
+    {
+        assertAndLog(false, "");
+    }
     queen_move_t res = {.pos_dame = {.i = VOID_INDEX, .j = VOID_INDEX}, .pos_eaten_pawn = {.i = VOID_INDEX, .j = VOID_INDEX}};
     return res; // No case was found
 }
 
+// printf("jump sheep");
 void freeCloud(maillon *l)
 {
     while (!is_empty(l))
@@ -439,4 +438,46 @@ void decrBothTab(int t[2])
 {
     t[0]--;
     t[1]--;
+}
+
+Coord queen_valide_case(Game *g, int ind, bool color)
+{
+    int possibleShifts[2] = {-1, 1};
+    Coord dir;
+    Coord dir0 = coord_from_ind(g, ind, color);
+    Coord arr;
+
+    for (int i = 0; i < 2; i++)
+    {
+        for (int j = 0; j < 2; j++)
+        {
+            dir.i = possibleShifts[i];
+            dir.j = possibleShifts[j];
+            for (int k = NB_CASE_LG - 1; k > 0; k--)
+            {
+                arr = add(dir0, mult(k, dir));
+                if (caseIsAccessible(g, g->is_white, arr.i, arr.j))
+                {
+                    bool is_diag_clean = true;
+                    for (int l = 1; l < k; l++)
+                    {
+                        arr = add(dir0, mult(l, dir));
+                        Case c = get_case_damier(g, arr.i, arr.j);
+                        if (!freeCase(c) && c.pawn_color == color)
+                        {
+                            is_diag_clean = false;
+                            break;
+                        }
+                    }
+                    if (is_diag_clean)
+                    {
+                        arr = add(dir0, mult(k, dir));
+                        return arr;
+                    }
+                }
+            }
+        }
+    }
+    assertAndLog(false, "Dame : aucune case trouve");
+    return dir;
 }

@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include <assert.h>
 #include <time.h>
+#include <unistd.h> // Pour le temps de sommeil
 
 #include "../../coord/little_linked_list.h"
 #include "../../../rafle/calc/path_tree.h"
@@ -64,6 +65,9 @@
 #define BIDEPL 4
 #define PAWNMOVERIGHT 5
 #define EATRAFLE 6
+#define QUEENDEPL 7
+#define PAWNMOVEBACKLEFT 8
+#define PAWNMOVEBACKRIGHT 9
 
 //Indexes of the players
 #define HUMAN 0

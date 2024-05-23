@@ -12,12 +12,30 @@ int quit(Game *g, GraphicCache *cache)
 void test_start_game(Game *g)
 {
     // très pratique pour promouvoir une dame en qq coups
-    // for (int i = NB_PAWNS - 1; i > 0; i--)
-    // {
 
-    //     killPawn(g, g->damier, g->allPawns[1][i].lig, g->allPawns[1][i].col);
-    //     killPawn(g, g->damier, g->allPawns[0][i].lig, g->allPawns[0][i].col);
+    // for (int i = 0; i < NB_PAWNS / 2; i++)
+    // {
+    //     put_pawn_value(g, true, i, QUEEN, 1);
+    //     put_pawn_value(g, false, i, QUEEN, 1);
     // }
+
+    // for (int i = NB_PAWNS - 1; i >= NB_PAWNS / 4; i--)
+    // {
+    //     killPawnByInd(g, true, i);
+    //     killPawnByInd(g, false, i);
+    // }
+
+    // for (int i = 0; i > -1; i--)
+    // {
+    //     killPawnByInd(g, true, i);
+    //     killPawnByInd(g, false, i);
+    // }
+
+    // change_pawn_place(g, 0, true, get_pawn_value(g, true, 0, LIG)+1, NB_CASE_LG-3);
+    // change_pawn_place(g, 0, false, get_pawn_value(g, false, 0, LIG) - 1, NB_CASE_LG-3);
+
+    // change_pawn_place(g, 1, true, get_pawn_value(g, true, 1, LIG) + 1, NB_CASE_LG-3);
+    // change_pawn_place(g, 1, false, get_pawn_value(g, false, 1, LIG) - 1, NB_CASE_LG-3);
 
     // // Configuration triangle
     // change_pawn_place(g->allPawns[1], g->damier, 0, 6, 6);
@@ -58,7 +76,8 @@ int main(int argc, char *argv[])
 
     cache->last_time = SDL_GetTicks();
     int nb_coups = 0;
-    int l_coups[4] = {4};
+    int l_coups[10] = {4, 6, 2, 5, 5, 7};
+    int l_depl[20] = {1, 1, 6, 4, 1, 5, 6, 6, 1, 3, 6, 2, 2, 0};
 
     // Start the game
     while (cache->is_playing)
@@ -79,8 +98,7 @@ int main(int argc, char *argv[])
             SDL_RenderPresent(cache->draw);
 
             // update the data in the cache
-            nb_coups = update(g, cache, nb_coups, l_coups);
-            
+            nb_coups = update(g, cache, nb_coups, l_coups, l_depl);
         }
     }
     return quit(g, cache);

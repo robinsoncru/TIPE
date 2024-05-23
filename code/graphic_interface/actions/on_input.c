@@ -36,12 +36,12 @@ void onInput(Game *g, GraphicCache *cache, SDL_Event event)
         {
         case SDLK_LEFT:
             // on avance le pion a gauche
-            onLeftUp(g, cache);
+            onLeftUp(g, cache, false);
             break;
 
         case SDLK_RIGHT:
             // on avance le pion a droite
-            onRightUp(g, cache);
+            onRightUp(g, cache, false);
             break;
 
         case SDLK_UP:
@@ -57,7 +57,7 @@ void onInput(Game *g, GraphicCache *cache, SDL_Event event)
         case SDLK_p:
 
             /* Promote the selected pawn */
-            onPUP(g, cache);
+            onPUP(g, cache, false);
             break;
 
         case SDLK_j:
@@ -73,7 +73,7 @@ void onInput(Game *g, GraphicCache *cache, SDL_Event event)
 
         case SDLK_b:
             // Bidepl le pion
-            onBUP(g, cache);
+            onBUP(g, cache, false);
             break;
 
         case SDLK_l:

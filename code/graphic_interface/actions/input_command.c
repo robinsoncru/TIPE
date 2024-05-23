@@ -44,17 +44,21 @@ void endTurnGraphics(Game *g, GraphicCache *cache)
 */
 
 // moves the pawn after checking the move is valid
-void checkPawnMove(Game *g, GraphicCache *cache, bool left)
+void checkPawnMove(Game *g, GraphicCache *cache, bool left, bool autoplay)
 {
     int ind = g->ind_move; // selected pawn
     bool is_white = g->is_white;
 
-    bool validIndex = ind > -1;
-    bool pawnAlive = int_to_bool(get_pawn_value(g, is_white, ind, ALIVE)); // ha, ha, ha, ha, pawn alive, pawn alive !
+    assertAndLog(isValidIndex(ind), "Pion depl index non valide");
     bool isQueen = int_to_bool(get_pawn_value(g, is_white, ind, QUEEN));
+
     bool legalMove = canMove(g, g->is_white, g->ind_move, left);
-    if (!validIndex || !pawnAlive || isQueen || !legalMove)
+    if (!legalMove || isQueen)
     {
+        if (autoplay)
+        {
+            assertAndLog(false, "Depl pion pas valide ou pion dame");
+        }
         alert(cache, IND_PB, ERROR_TICKS);
     }
     else
@@ -64,11 +68,15 @@ void checkPawnMove(Game *g, GraphicCache *cache, bool left)
     }
 }
 
-void checkLienAmitie(int i, int j, Game *g, GraphicCache *cache)
+void checkLienAmitie(int i, int j, Game *g, GraphicCache *cache, bool screen_switch)
 {
+    // Lors du jeu automatique, l'écran ne tourne pas donc screen_switch vaut false
     int iw = g->is_white;
     int ind = g->ind_move;
-    i = iw ? NB_CASE_LG - i - 1 : i;
+    if (screen_switch)
+    {
+        i = iw ? NB_CASE_LG - i - 1 : i;
+    }
     if (isPawnValid(g) && canBeFriend(g, ind, iw, get_case_damier(g, i, j)))
     {
         lienAmitie(i, j, g);
@@ -76,29 +84,44 @@ void checkLienAmitie(int i, int j, Game *g, GraphicCache *cache)
     }
     else
     {
+        if (!screen_switch)
+        {
+            // C'est la machine qui joue
+            assertAndLog(false, "Pion peut pas être amis ou index pas valide");
+        }
         alert(cache, IND_PB, ERROR_TICKS);
     }
 }
 
-void checkPawnMoveBack(Game *g, GraphicCache *cache)
+void checkPawnMoveBack(Game *g, GraphicCache *cache, bool autoplay)
 {
     int iw = g->is_white;
     int indBack = g->ind_move_back;
-    if (indBack > -1 && int_to_bool(get_pawn_value(g, iw, indBack, ALIVE)))
+    if (isValidIndexInGame(g, indBack, iw))
     {
         moveBack(g);
     }
     else
+    {
+        if (autoplay)
+        {
+            // C'est la machine qui joue
+            assertAndLog(false, "Indice pas valide");
+        }
         alert(cache, IND_PB, ERROR_TICKS);
+    }
 }
 
-void checkLienEnnemitie(int i, int j, Game *g, GraphicCache *cache)
+void checkLienEnnemitie(int i, int j, Game *g, GraphicCache *cache, bool screen_switch)
 {
+    // Lors du jeu automatique, l'écran ne tourne pas donc screen_switch vaut false
+
     int iw = g->is_white;
     int ind = g->ind_move;
-    i = iw ? NB_CASE_LG - i - 1 : i;
-    // j = !iw ? j : NB_CASE_LG - j - 1;
-    // fflush(stdout);
+    if (screen_switch)
+    {
+        i = iw ? NB_CASE_LG - i - 1 : i;
+    }
     if (isPawnValid(g) && canBeEnnemy(g, ind, iw, get_case_damier(g, i, j)))
     {
         lienEnnemitie(i, j, g);
@@ -106,11 +129,16 @@ void checkLienEnnemitie(int i, int j, Game *g, GraphicCache *cache)
     }
     else
     {
+        if (!screen_switch)
+        {
+            // C'est la machine qui joue
+            assertAndLog(false, "Pion peut pas être ennemi ou index pas valide");
+        }
         alert(cache, IND_PB, ERROR_TICKS);
     }
 }
 
-void checkPromotion(Game *g, GraphicCache *cache)
+void checkPromotion(Game *g, GraphicCache *cache, bool autoplay)
 {
     if (canPromotion(g))
     {
@@ -118,10 +146,17 @@ void checkPromotion(Game *g, GraphicCache *cache)
         endTurnGraphics(g, cache);
     }
     else
+    {
+        if (autoplay)
+        {
+            // C'est la machine qui joue
+            assertAndLog(false, "Pion peut pas être promu ou index pas valide");
+        }
         alert(cache, IND_PB, ERROR_TICKS);
+    }
 }
 
-void checkBiDepl(Game *g, GraphicCache *cache)
+void checkBiDepl(Game *g, GraphicCache *cache, bool autoplay)
 {
     if (canBiDepl(g, g->ind_move, g->is_white))
     {
@@ -129,12 +164,20 @@ void checkBiDepl(Game *g, GraphicCache *cache)
         endTurnGraphics(g, cache);
     }
     else
-        alert(cache, IND_PB, ERROR_TICKS);
+    {
+        if (autoplay) {
+            // C'est la machine qui joue
+            assertAndLog(false, "Pion peut pas être ghost depl ou index pas valide");
+        }
+        alert(cache, IND_PB, ERROR_TICKS);}
 }
 
-void checkQueenDepl(Game *g, GraphicCache *cache, bool iw, int lig, int col)
+void checkQueenDepl(Game *g, GraphicCache *cache, bool iw, int lig, int col, bool autoplay)
 {
-    queen_move_t tuple_coord = CanMoveOrEatQueen(g, iw, lig, col, g->ind_move);
+    // Jeu plante si une machine joue un coup non valide, alors qu'on avertit
+    // simplement l'utilisateur avec un message s'il fait un coup non valide et le coup est annulé
+    // On distingue les deux avec autoplay
+    queen_move_t tuple_coord = CanMoveOrEatQueen(g, iw, lig, col, g->ind_move, !autoplay);
     int dame_lig = tuple_coord.pos_dame.i;
     int dame_col = tuple_coord.pos_dame.j;
     if (isPawnValid(g) && dame_lig != VOID_INDEX && dame_col != VOID_INDEX)
@@ -143,7 +186,16 @@ void checkQueenDepl(Game *g, GraphicCache *cache, bool iw, int lig, int col)
         endTurnGraphics(g, cache);
     }
     else
-        alert(cache, IND_PB, ERROR_TICKS);
+    {
+        if (autoplay)
+        {
+            assertAndLog(false, "Reine: index pas valide ou case arrive pas valide");
+        }
+        else
+        {
+            alert(cache, IND_PB, ERROR_TICKS);
+        }
+    }
 }
 
 /*
@@ -184,12 +236,12 @@ void onLMBDown(Game *g, GraphicCache *cache)
         {
             // printv("now check if queen");
             // If the pawn is a queen, then it is a queen depl, we verify if the movement is available
-            checkQueenDepl(g, cache, iw, lig, col);
+            checkQueenDepl(g, cache, iw, lig, col, false);
         }
         else
         {
             // Else it is an ennemy link
-            checkLienEnnemitie(lig, col, g, cache);
+            checkLienEnnemitie(lig, col, g, cache, true);
         }
     }
 
@@ -206,36 +258,32 @@ void onRMBDown(Game *g, GraphicCache *cache)
 {
     SDL_Event event = cache->event;
     if (g->indCheck == IND_NORMAL)
-        checkLienAmitie(event.button.y / LG_CASE, event.button.x / LG_CASE, g, cache);
+        checkLienAmitie(event.button.y / LG_CASE, event.button.x / LG_CASE, g, cache, true);
     else
         printf("No pawn selected by right click");
 }
 
 // Moves the pawns to the left.
 // After verifying it's possible
-void onLeftUp(Game *g, GraphicCache *cache)
+void onLeftUp(Game *g, GraphicCache *cache, bool autoplay)
 {
     /* Move pawn to left, first back if possible, then forward */
     if (needPutMoveBack(g))
     {
         putPawnMoveBack(g, true);
     }
-    else
-    {
-        
-    }
 
     /* Si on doit d'abord deplacer vers l'arriere un de nos pion, on met a jour les coordonnees de
      deplacement arriere puis on verifie si elles son possibles. Si c'est le cas, on deplace en arriere
      sinon on deplace un pion en avant (la disjonction de cas est correct) */
     if (moveBackAvailable(g))
-        checkPawnMoveBack(g, cache);
+        checkPawnMoveBack(g, cache, autoplay);
     // Don't need to update the cache, just the game
     else
-        checkPawnMove(g, cache, true);
+        checkPawnMove(g, cache, true, autoplay);
 }
 
-void onRightUp(Game *g, GraphicCache *cache)
+void onRightUp(Game *g, GraphicCache *cache, bool autoplay)
 {
     /* Move pawn to right, same */
     if (needPutMoveBack(g))
@@ -247,10 +295,10 @@ void onRightUp(Game *g, GraphicCache *cache)
     }
 
     if (moveBackAvailable(g))
-        checkPawnMoveBack(g, cache);
+        checkPawnMoveBack(g, cache, autoplay);
     // same
     else
-        checkPawnMove(g, cache, false);
+        checkPawnMove(g, cache, false, autoplay);
 }
 
 void onEscapeUp(Game *g, GraphicCache *cache)
@@ -286,10 +334,10 @@ void onUpUp(Game *g, GraphicCache *cache)
     }
 }
 
-void onPUP(Game *g, GraphicCache *cache)
+void onPUP(Game *g, GraphicCache *cache, bool autoplay)
 {
     /* Promote the selected pawn */
-    checkPromotion(g, cache);
+    checkPromotion(g, cache, autoplay);
 }
 
 void onJUP(Game *g, GraphicCache *cache)
@@ -302,9 +350,9 @@ void onHUP(Game *g, GraphicCache *cache)
     print_damier(g->damier, g);
 }
 
-void onBUP(Game *g, GraphicCache *cache)
+void onBUP(Game *g, GraphicCache *cache, bool autoplay)
 {
-    checkBiDepl(g, cache);
+    checkBiDepl(g, cache, autoplay);
 }
 
 void onLUP(Game *g)

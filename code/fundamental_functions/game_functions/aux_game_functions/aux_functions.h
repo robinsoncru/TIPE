@@ -29,7 +29,7 @@ void stormBreaks(Game *g, bool color, int indSurvivor);
 void AleatStormBreaks(Game *g, bool color);
 void handleCloudDuePawnMoveNGE(Game *g, int indMovedPawn, ind_pba_t *survivor, cloud_chain *l);
 void AleatStormBreaksNGE(Game *g, bool color, cloud_chain *load, ind_pba_t *survivor);
-queen_move_t CanMoveOrEatQueen(Game *g, bool color, int lig, int col, int ind);
+queen_move_t CanMoveOrEatQueen(Game *g, bool color, int lig, int col, int ind, bool screen_switch);
 
 Coord give_coord(Game *g, bool iw, int ind);
 // Memory functions
@@ -38,5 +38,7 @@ void free_game(Game *g);
 void doubleTabInit(int t[2]);
 void incrBothTab(int t[2]);
 void decrBothTab(int t[2]);
+
+Coord queen_valide_case(Game *g, int ind, bool color);
 
 #endif // AUX_FUNCTIONS
