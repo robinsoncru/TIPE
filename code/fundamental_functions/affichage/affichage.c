@@ -166,9 +166,16 @@ void drawLosange(SDL_Renderer *render, Case c, pawn p, Game *g)
         draw_little_square(render, 30, c, gold);
     }
 
-    if (c.ind_pawn == g->ind_move_back && c.pawn_color == g->is_white)
+    int_chain *l = g->inds_move_back;
+    if (!is_empty(l))
     {
-        draw_little_square(render, 30, c, silver);
+        for (int i = 0; i < l->ind_actu; i++)
+        {
+            if (c.pawn_color == g->is_white)
+            {
+                draw_little_square(render, 30, c, silver);
+            }
+        }
     }
 }
 
@@ -331,7 +338,7 @@ Game *create_game()
     init_pawns(g, false);
 
     g->ind_move = NEUTRAL_IND;
-    g->ind_move_back = NEUTRAL_IND;
+    g->inds_move_back = create_list();
 
     g->currentTree = emptyTree;
     g->currentRafle = NULL;

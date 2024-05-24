@@ -43,13 +43,28 @@ void promotionIA(Game *g, int indMovePawn)
     cancelPromotion(g, indMovePawn, ind_potential_foe);
 }
 
+void lazzyMoveBack(Game *g, int indMovePawnBack, bool left)
+{
+    // On considère le pire cas, si un pion s'approche d'un fantome de couleur opposée, il le considère
+    // de pba 1
+    assertAndLog(isValidIndexInGame(g, indMovePawnBack, g->is_white), "lazzyMoveBack ind non valide");
+    pawnMoveBackNGE(g, indMovePawnBack, left);
+}
+
+void cancelLazzyMoveBack(Game *g, int indMovePawnBack, bool left)
+{
+    assertAndLog(isValidIndexInGame(g, indMovePawnBack, g->is_white), "cancellazzyMoveBack ind non valide");
+
+    cancelMoveBack(g, indMovePawnBack, left);
+}
+
 void pawnMoveBackAI(Game *g, int indMovePawnBack, bool left)
 {
     // On suppose que le move back est faisable
     bool iw = g->is_white;
     pawnMoveBackNGE(g, indMovePawnBack, left);
-    // la fonction ci dessus remet g->ind_move_back a VOID_INDEX
-    
+    // la fonction ci dessus remet g->inds_move_back a VOID_INDEX
+
     cloud_chain *load_cloud_other = ccreate_list();
     ind_pba_t *survivor = malloc(sizeof(ind_pba_t));
     // Desecrate
@@ -65,7 +80,7 @@ void pawnMoveBackAI(Game *g, int indMovePawnBack, bool left)
     }
 
     cancelMoveBack(g, indMovePawnBack, left);
-    
+
     free(load_cloud_other);
     free(survivor);
 }
@@ -104,16 +119,20 @@ void rafleAI(Game *g, int indMovePawn)
     cancelRafle(g, indMovePawn, init_coord, chainy);
 }
 
-void lienAmitieAI(Game *g, int indPawn, int lig, int col) {
-    if (g->is_white) lig = NB_CASE_LG-lig-1;
+void lienAmitieAI(Game *g, int indPawn, int lig, int col)
+{
+    if (g->is_white)
+        lig = NB_CASE_LG - lig - 1;
     lienAmitieNGE(lig, col, g, indPawn);
     endTurnGameManagementSimple(g, indPawn);
     picture_this(g);
     cancelLienAmitie(g, indPawn, lig, col);
 }
 
-void lienEnnemitieAI(Game *g, int indPawn, int lig, int col) {
-    if (g->is_white) lig = NB_CASE_LG-lig-1;
+void lienEnnemitieAI(Game *g, int indPawn, int lig, int col)
+{
+    if (g->is_white)
+        lig = NB_CASE_LG - lig - 1;
     lienEnnemitieNGE(lig, col, g, indPawn);
     endTurnGameManagementSimple(g, indPawn);
     picture_this(g);

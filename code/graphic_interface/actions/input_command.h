@@ -32,4 +32,6 @@ void onRUp(Game* g, GraphicCache* cache);
 void checkLienAmitie(int i, int j, Game *g, GraphicCache *cache, bool screen_switch);
 void checkLienEnnemitie(int i, int j, Game *g, GraphicCache *cache, bool screen_switch);
 void checkQueenDepl(Game *g, GraphicCache *cache, bool iw, int lig, int col, bool autoplay);
+void checkPawnMove(Game *g, GraphicCache *cache, bool left, bool autoplay);
+void checkPawnMoveBack(Game *g, GraphicCache *cache, bool autoplay);
 #endif //INPUT_COMMAND

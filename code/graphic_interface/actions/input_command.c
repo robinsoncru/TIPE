@@ -96,7 +96,7 @@ void checkLienAmitie(int i, int j, Game *g, GraphicCache *cache, bool screen_swi
 void checkPawnMoveBack(Game *g, GraphicCache *cache, bool autoplay)
 {
     int iw = g->is_white;
-    int indBack = g->ind_move_back;
+    int indBack = g->inds_move_back;
     if (isValidIndexInGame(g, indBack, iw))
     {
         moveBack(g);
@@ -165,11 +165,13 @@ void checkBiDepl(Game *g, GraphicCache *cache, bool autoplay)
     }
     else
     {
-        if (autoplay) {
+        if (autoplay)
+        {
             // C'est la machine qui joue
             assertAndLog(false, "Pion peut pas être ghost depl ou index pas valide");
         }
-        alert(cache, IND_PB, ERROR_TICKS);}
+        alert(cache, IND_PB, ERROR_TICKS);
+    }
 }
 
 void checkQueenDepl(Game *g, GraphicCache *cache, bool iw, int lig, int col, bool autoplay)
@@ -268,37 +270,40 @@ void onRMBDown(Game *g, GraphicCache *cache)
 void onLeftUp(Game *g, GraphicCache *cache, bool autoplay)
 {
     /* Move pawn to left, first back if possible, then forward */
-    if (needPutMoveBack(g))
-    {
-        putPawnMoveBack(g, true);
-    }
+    assertAndLog(false, "pour inds_move_back, la fonction onleftup n'est plus valide");
+    // if (needPutMoveBack(g))
+    // {
+    //     putPawnMoveBack(g, true);
+    // }
 
-    /* Si on doit d'abord deplacer vers l'arriere un de nos pion, on met a jour les coordonnees de
-     deplacement arriere puis on verifie si elles son possibles. Si c'est le cas, on deplace en arriere
-     sinon on deplace un pion en avant (la disjonction de cas est correct) */
-    if (moveBackAvailable(g))
-        checkPawnMoveBack(g, cache, autoplay);
-    // Don't need to update the cache, just the game
-    else
-        checkPawnMove(g, cache, true, autoplay);
+    // /* Si on doit d'abord deplacer vers l'arriere un de nos pion, on met a jour les coordonnees de
+    //  deplacement arriere puis on verifie si elles son possibles. Si c'est le cas, on deplace en arriere
+    //  sinon on deplace un pion en avant (la disjonction de cas est correct) */
+    // if (moveBackAvailable(g))
+    //     checkPawnMoveBack(g, cache, autoplay);
+    // // Don't need to update the cache, just the game
+    // else
+    //     checkPawnMove(g, cache, true, autoplay);
 }
 
 void onRightUp(Game *g, GraphicCache *cache, bool autoplay)
 {
     /* Move pawn to right, same */
-    if (needPutMoveBack(g))
-    {
-        putPawnMoveBack(g, false);
-    }
-    else
-    {
-    }
+    assertAndLog(false, "pour inds_move_back, la fonction onrightup n'est plus valide");
 
-    if (moveBackAvailable(g))
-        checkPawnMoveBack(g, cache, autoplay);
-    // same
-    else
-        checkPawnMove(g, cache, false, autoplay);
+    // if (needPutMoveBack(g))
+    // {
+    //     putPawnMoveBack(g, false);
+    // }
+    // else
+    // {
+    // }
+
+    // if (moveBackAvailable(g))
+    //     checkPawnMoveBack(g, cache, autoplay);
+    // // same
+    // else
+    //     checkPawnMove(g, cache, false, autoplay);
 }
 
 void onEscapeUp(Game *g, GraphicCache *cache)

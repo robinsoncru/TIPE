@@ -20,7 +20,7 @@
 void moveBackGameManagement(Game *g)
 {
     // Remet par defaut les differents indices apres un mouvement arriere du pion
-    g->ind_move_back = VOID_INDEX;
+    g->inds_move_back = VOID_INDEX;
 }
 
 void endTurnGameManagementSimple(Game *g, int pawn_played)

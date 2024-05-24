@@ -3,27 +3,28 @@
 
 #include "coord.h"
 
-typedef struct maillon maillon;
+typedef struct int_chain int_chain;
 
-struct maillon
+struct int_chain
 {
-    int ind;
-    maillon *next;
+    int *tableau;
+    int ind_actu;
+    int size_max;
 };
 /* Liste chainée contenant les indices des pions amis à faire bouger pour le joueur actuel */
 
-void push(maillon *l, int k);
-/* le maillon l est le maillon de tête, on l'utilise pour accéder à la structure et y ajouter le nouveau maillon */
+void push(int_chain *l, int k);
+/* le int_chain l est le int_chain de tête, on l'utilise pour accéder à la structure et y ajouter le nouveau int_chain */
 
-bool is_empty(maillon *l);
+bool is_empty(int_chain *l);
 
-int pop(maillon *l);
-/* Supprime et renvoie le maillon en première position */
+int pop(int_chain *l);
+/* Supprime et renvoie le int_chain en première position */
 
-int get(maillon *l);
-/* Renvoie le premier maillon */
+int get(int_chain *l);
+/* Renvoie le premier int_chain */
 
-maillon *create_list();
+int_chain *create_list();
 /* Creer une liste vide */
 
 
@@ -40,15 +41,15 @@ struct cloud_chain {
 };
 
 void cpush(cloud_chain *l, tcloud k);
-/* le maillon l est le maillon de tête, on l'utilise pour accéder à la structure et y ajouter le nouveau maillon */
+/* le int_chain l est le int_chain de tête, on l'utilise pour accéder à la structure et y ajouter le nouveau int_chain */
 
 bool cis_empty(cloud_chain *l);
 
 tcloud cpop(cloud_chain *l);
-/* Supprime et renvoie le maillon en première position */
+/* Supprime et renvoie le int_chain en première position */
 
-// tcloud cget(maillon *l);
-/* Renvoie le premier maillon */
+// tcloud cget(int_chain *l);
+/* Renvoie le premier int_chain */
 
 cloud_chain *ccreate_list();
 /* Creer une liste vide */
@@ -66,15 +67,15 @@ struct data_chain {
 };
 
 void dpush(data_chain *l, pawn_info data);
-/* le maillon l est le maillon de tête, on l'utilise pour accéder à la structure et y ajouter le nouveau maillon */
+/* le int_chain l est le int_chain de tête, on l'utilise pour accéder à la structure et y ajouter le nouveau int_chain */
 
 bool dis_empty(data_chain *l);
 
 pawn_info dpop(data_chain *l);
-/* Supprime et renvoie le maillon en première position */
+/* Supprime et renvoie le int_chain en première position */
 
-// tcloud cget(maillon *l);
-/* Renvoie le premier maillon */
+// tcloud cget(int_chain *l);
+/* Renvoie le premier int_chain */
 
 data_chain *dcreate_list();
 /* Creer une liste vide */
@@ -92,21 +93,21 @@ struct k_uplet
     int indQueenMoved;
 };
 
-typedef struct Kmaillon Kmaillon;
+typedef struct Kint_chain Kint_chain;
 
-struct Kmaillon
+struct Kint_chain
 {
     k_uplet indices;
-    Kmaillon *next;
+    Kint_chain *next;
 };
 
-void pushK(Kmaillon *l, int indPawnMoved, int indPawnMovedBack, int indPawnFriendlyMoved,
+void pushK(Kint_chain *l, int indPawnMoved, int indPawnMovedBack, int indPawnFriendlyMoved,
            int indPawnEnnemyMoved, int indQueenPromoted, int indQueenMoved);
 
-bool is_emptyK(Kmaillon *l);
+bool is_emptyK(Kint_chain *l);
 
-k_uplet popK(Kmaillon *l);
+k_uplet popK(Kint_chain *l);
 
-Kmaillon *create_listK();
+Kint_chain *create_listK();
 
 #endif

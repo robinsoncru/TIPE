@@ -236,7 +236,7 @@ void putPawnMoveBack(Game *g, bool left)
 {
     /* Give the coord of the case where moves back a pawn when it is linked with a friend and the friend has just moved. Return (-1, -1)
     if no case available */
-    int ind = g->ind_move_back;
+    int ind = g->inds_move_back;
     bool is_white = g->is_white;
     pawn p = get_pawn(g, is_white, ind);
     int i = p.lig;
@@ -262,7 +262,7 @@ void putPawnMoveBack(Game *g, bool left)
 
 void AleatStormBreaks(Game *g, bool color)
 {
-    maillon *l = g->cloud[color];
+    int_chain *l = g->cloud[color];
     int ind = VOID_INDEX;
 
     while (!is_empty(l))
@@ -292,7 +292,7 @@ void AleatStormBreaks(Game *g, bool color)
 void AleatStormBreaksNGE(Game *g, bool color, cloud_chain *load, ind_pba_t *survivor)
 {
     // Liste chaine et valeur du pawn survivor modifies par effet de bord
-    maillon *l = g->cloud[color];
+    int_chain *l = g->cloud[color];
     int ind = VOID_INDEX;
 
     while (!is_empty(l))
@@ -390,7 +390,7 @@ queen_move_t CanMoveOrEatQueen(Game *g, bool color, int lig, int col, int ind, b
 }
 
 // printf("jump sheep");
-void freeCloud(maillon *l)
+void freeCloud(int_chain *l)
 {
     while (!is_empty(l))
     {

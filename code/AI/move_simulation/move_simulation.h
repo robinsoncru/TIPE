@@ -12,4 +12,7 @@ void rafleAI(Game *g, int indMovePawn);
 void lienAmitieAI(Game *g, int indPawn, int lig, int col);
 void lienEnnemitieAI(Game *g, int indPawn, int lig, int col);
 
+void lazzyMoveBack(Game *g, int indMovePawnBack, bool left);
+void cancelLazzyMoveBack(Game *g, int indMovePawnBack, bool left);
+
 #endif

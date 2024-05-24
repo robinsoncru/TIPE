@@ -36,7 +36,7 @@ void pawnMove(Game *g, bool is_white, int ind, bool left)
     change_pawn_place(g, ind, is_white, i + di, j + dj);
     if (get_pawn_value(g, is_white, ind, FRIENDLY) != NEUTRAL_IND)
     {
-        g->ind_move_back = get_pawn_value(g, is_white, ind, FRIENDLY);
+        push(g->inds_move_back, get_pawn_value(g, is_white, ind, FRIENDLY));
         // le pion indique a partir de son indice
     }
     endTurnGameManagement(g, is_white, ind, IND_CHANGE_ALLOWED, true);
@@ -93,11 +93,11 @@ void queenDepl(Game *g, int ind, bool color, queen_move_t tuple_coord)
 
     if (get_pawn_value(g, color, ind, FRIENDLY) != NEUTRAL_IND && doMoveBack)
     {
-        g->ind_move_back = get_pawn_value(g, color, ind, FRIENDLY);
+        push(g->inds_move_back, get_pawn_value(g, color, ind, FRIENDLY));
         // le pion indique a partir de son indice
     }
     else
-        g->ind_move_back = VOID_INDEX;
+        push(g->inds_move_back, VOID_INDEX);
 
     endTurnGameManagement(g, color, ind, IND_CHANGE_ALLOWED, doMoveBack);
     // Do a move back only if the queen didn't eat
@@ -120,7 +120,7 @@ void queenDepl(Game *g, int ind, bool color, queen_move_t tuple_coord)
 
 */
 
-void promotionPmetre( Game *g, bool is_white, int ind)
+void promotionPmetre(Game *g, bool is_white, int ind)
 {
     startTurnGameManagement(g);
     /* Promote the pawn at the ind in pmetre : do nothing, become a queen or become an ennemy pawn */
@@ -210,46 +210,25 @@ void lienAmitie(int lig, int col, Game *g)
 
 // Functions to move back a pawn because the friend has just moved
 
-void moveBack(Game *g)
+void moveBack(Game *g, bool autoplay, float (*f)(Game *))
 {
-    /* Suppose move on the just pawn. Move back the pawn referred by ind_move_back to the case localised by the coord coordForMoveBack */
-    int ind = g->ind_move_back;
+    /* Suppose move on the just pawn. Move back the pawn referred by inds_move_back to the case localised by the coord coordForMoveBack */
+
     bool iw = g->is_white;
-    change_pawn_place(g, ind, iw, g->coordForMoveBack.i, g->coordForMoveBack.j);
-    moveBackGameManagement(g);
-}
+    if (autoplay)
+    {
+        while (!is_empty(g->inds_move_back)) {
+        int ind = pop(g->inds_move_back);
+        bool recul_gauche = canMoveBack(g, iw, ind, true);
+        bool recul_droite = canMoveBack(g, iw, ind, false);
+        if (recul_droite && recul_gauche) {
+            
+        }
+        change_pawn_place(g, ind, iw, g->coordForMoveBack.i, g->coordForMoveBack.j);}
+        moveBackGameManagement(g);
+    }
 
-/*
-
-
-
-
-
-
-
-   LienEnnemitie functions
-
-
-
-
-
-
-*/
-
-void lienEnnemitie(int lig, int col, Game *g)
-{
-    // Suppose legal move
-
-    /* Declare ennemis pour la vie le pion en indice avec le pion se trouvant en coord (lig, col) sur le damier, en verifiant qu'il est bien de
-    couleur opposé et qu'il existe. Gère le pmetre Game.friendly. Si on declare ennemi un pion qui était déjà ennemi, le coup n'est pas joué
-    Suppose legal move */
-    startTurnGameManagement(g);
-    bool iw = g->is_white;
-    lienEnnemitiePmetreNGE(iw, lig, col, g->ind_move, g);
-    endTurnGameManagement(g, iw, g->ind_move, IND_CHANGE_ALLOWED, false);
-}
-
-/*
+    /*
 
 
 
@@ -257,47 +236,77 @@ void lienEnnemitie(int lig, int col, Game *g)
 
 
 
-   Deplacement quantique : bi-deplacement
+       LienEnnemitie functions
 
 
 
 
 
 
-*/
+    */
 
-void biDepl(Game *g, int ind, bool color)
-{
-    // On suppose le coup legal
-    bool depl = int_to_bool(rand() % 2);
-    // Depl le pion a droite ou a gauche et creera l'autre ghost pawn de l'autre cote
-    int dj = depl ? 1 : -1;
+    void lienEnnemitie(int lig, int col, Game *g)
+    {
+        // Suppose legal move
 
-    startTurnGameManagement(g);
-    int di = color ? 1 : -1;
-    // Creer un pion a droite ou a gauche aleatoirement
-    int newLig = get_pawn_value(g, color, ind, LIG) + di;
-    int newCol = get_pawn_value(g, color, ind, COL) + dj;
-    createPawn(g, color, newLig, newCol);
-    int newInd = get_case_damier(g, newLig, newCol).ind_pawn;
-    put_pawn_value(g, color, newInd, PBA, get_pawn_value(g, color, ind, PBA) * 2);
+        /* Declare ennemis pour la vie le pion en indice avec le pion se trouvant en coord (lig, col) sur le damier, en verifiant qu'il est bien de
+        couleur opposé et qu'il existe. Gère le pmetre Game.friendly. Si on declare ennemi un pion qui était déjà ennemi, le coup n'est pas joué
+        Suppose legal move */
+        startTurnGameManagement(g);
+        bool iw = g->is_white;
+        lienEnnemitiePmetreNGE(iw, lig, col, g->ind_move, g);
+        endTurnGameManagement(g, iw, g->ind_move, IND_CHANGE_ALLOWED, false);
+    }
 
-    // Rajoute dans le cloud
-    if (!isInCloud(g, color, ind))
-        push(g->cloud[color], ind);
-    push(g->cloud[color], newInd);
+    /*
 
-    g->lengthCloud[color]++;
 
-    // Deplace le pion de l'autre cote
-    put_pawn_value(g, color, ind, PBA, get_pawn_value(g, color, ind, PBA) * 2);
-    simplyPawnMove(g, color, ind, depl);
 
-    // Maybe the clone pawn is near a pawn of the opposite color
-    if (canStormBreaks(g, newInd, color))
-        AleatStormBreaks(g, color);
-    else if (canStormBreaksForTheOthers(g, newInd, color))
-        AleatStormBreaks(g, !color);
 
-    endTurnGameManagement(g, color, ind, IND_CHANGE_ALLOWED, false);
-}
+
+
+
+       Deplacement quantique : bi-deplacement
+
+
+
+
+
+
+    */
+
+    void biDepl(Game * g, int ind, bool color)
+    {
+        // On suppose le coup legal
+        bool depl = int_to_bool(rand() % 2);
+        // Depl le pion a droite ou a gauche et creera l'autre ghost pawn de l'autre cote
+        int dj = depl ? 1 : -1;
+
+        startTurnGameManagement(g);
+        int di = color ? 1 : -1;
+        // Creer un pion a droite ou a gauche aleatoirement
+        int newLig = get_pawn_value(g, color, ind, LIG) + di;
+        int newCol = get_pawn_value(g, color, ind, COL) + dj;
+        createPawn(g, color, newLig, newCol);
+        int newInd = get_case_damier(g, newLig, newCol).ind_pawn;
+        put_pawn_value(g, color, newInd, PBA, get_pawn_value(g, color, ind, PBA) * 2);
+
+        // Rajoute dans le cloud
+        if (!isInCloud(g, color, ind))
+            push(g->cloud[color], ind);
+        push(g->cloud[color], newInd);
+
+        g->lengthCloud[color]++;
+
+        // Deplace le pion de l'autre cote
+        put_pawn_value(g, color, ind, PBA, get_pawn_value(g, color, ind, PBA) * 2);
+        simplyPawnMove(g, color, ind, depl);
+
+        // Maybe the clone pawn is near a pawn of the opposite color
+        if (canStormBreaks(g, newInd, color))
+            AleatStormBreaks(g, color);
+        else if (canStormBreaksForTheOthers(g, newInd, color))
+            AleatStormBreaks(g, !color);
+
+        endTurnGameManagement(g, color, ind, IND_CHANGE_ALLOWED, false);
+    }

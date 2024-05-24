@@ -103,23 +103,23 @@ int extract_pmetre_from_move(Move m)
 int play_a_move(int move, int ind_pawn, Game *g, GraphicCache *cache, int nb_coups, int *l_coups, int *l_depl)
 {
     // Play a move supposed valid
-    assertAndLog(move == VOID_INDEX, "move decide dans play_a_move");
+    // assertAndLog(move == VOID_INDEX, "move decide dans play_a_move");
 
     usleep(1000 * 500);
 
     auto_put_index(g, ind_pawn);
 
-    MoveTab *t_moves = listMoves(g);
-    print_moves(t_moves);
-    Move m = extract_random_move_from_tab_move(t_moves);
-    move = extract_pmetre_from_move(m);
-    printf("choisi :\n");
-    print_move(m);
+    // MoveTab *t_moves = listMoves(g);
+    // print_moves(t_moves);
+    // Move m = extract_random_move_from_tab_move(t_moves);
+    // move = extract_pmetre_from_move(m);
+    // printf("choisi :\n");
+    // print_move(m);
     
     switch (move)
     {
     case PAWNMOVELEFT:
-        onLeftUp(g, cache, true);
+        checkPawnMove(g, cache, true, true);
         // Attention bug
         break;
 
@@ -142,7 +142,7 @@ int play_a_move(int move, int ind_pawn, Game *g, GraphicCache *cache, int nb_cou
         // // printf("-Index friend %d-", get_pawn_value(g, !g->is_white, indFriend, FRIENDLY));
         // // flush();
         // Coord coord = coord_from_ind(g, indFriend, !g->is_white);
-        checkLienAmitie(m.lig, m.col, g, cache, false);
+        // checkLienAmitie(m.lig, m.col, g, cache, false);
         break;
 
     case LIENDENNEMITIE:
@@ -151,10 +151,10 @@ int play_a_move(int move, int ind_pawn, Game *g, GraphicCache *cache, int nb_cou
         // printf("-Index enn %d-", get_pawn_value(g, !g->is_white, indFriend, ENNEMY));
         // flush();
         // Coord coord = coord_from_ind(g, indFriend, !g->is_white);
-        checkLienEnnemitie(m.lig, m.col, g, cache, false);
+        // checkLienEnnemitie(m.lig, m.col, g, cache, false);
         break;
 
-    case EATRAFLE:
+    case EATRAFLE: 
         onUpUp(g, cache);
         break;
 
@@ -164,7 +164,7 @@ int play_a_move(int move, int ind_pawn, Game *g, GraphicCache *cache, int nb_cou
         // coordi.i = l_depl[2*nb_coups];
         // coordi.j = l_depl[2*nb_coups+1];
         // printf(" -> lig: %d, col %d", coordi.i, coordi.j);
-        checkQueenDepl(g, cache, g->is_white, m.coords.pos_dame.i, m.coords.pos_dame.j, true);
+        // checkQueenDepl(g, cache, g->is_white, m.coords.pos_dame.i, m.coords.pos_dame.j, true);
         break;
 
     case PAWNMOVEBACKLEFT:

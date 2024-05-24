@@ -77,13 +77,12 @@ void flush()
     fflush(stdout);
 }
 
-void print_little_linked_list(maillon *l)
+void print_little_linked_list(int_chain *l)
 {
-    maillon *actu = l;
-    while (!is_empty(actu))
+    for (int i=0; i<l->ind_actu; i++)
     {
-        actu = actu->next;
-        printf("indice %d\n", actu->ind);
+        
+        printf("indice %d\n", l->tableau[i]);
     }
 }
 

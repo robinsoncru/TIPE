@@ -11,9 +11,9 @@ Move* listMovesMoveBack(Game* g, int* resSize){
     int nbMoves = 0;
 
     currentMove.type = pawnMoveBackType;
-    currentMove.manipulatedPawn = g->ind_move_back;
+    currentMove.manipulatedPawn = g->inds_move_back;
     for (int k = 0; k < 2; k++) {
-        if (canMoveBack(g, g->is_white, g->ind_move_back, k != 1)) {
+        if (canMoveBack(g, g->is_white, g->inds_move_back, k != 1)) {
             currentMove.left = k != 1;
             temporaryResult[nbMoves] = currentMove;
             nbMoves++;
@@ -209,28 +209,29 @@ MoveTab* listMovesFilterRafles(Move* temporaryResult, int nbMoves){
 MoveTab* listMoves(Game* g){
     Move* temporaryResult;
     int nbMoves;
-    if (g->ind_move_back != VOID_INDEX) {
-        temporaryResult = listMovesMoveBack(g, &nbMoves);
-    }
-    else {
-        temporaryResult = malloc(maxMoves(g) * sizeof(Move));
-        nbMoves = 0;
-        listMovesPromotion(g, temporaryResult, &nbMoves);
+    AssertAndLog(false, "pas correcte");
+    // if (g->inds_move_back != VOID_INDEX) {
+    //     temporaryResult = listMovesMoveBack(g, &nbMoves);
+    // }
+    // else {
+    //     temporaryResult = malloc(maxMoves(g) * sizeof(Move));
+    //     nbMoves = 0;
+    //     listMovesPromotion(g, temporaryResult, &nbMoves);
 
-        for (int k = 0; k < 2 * NB_PAWNS; k++) {
-            if (get_pawn_value(g, g->is_white, k, ALIVE)) {
-                if (get_pawn_value(g, g->is_white, k, QUEEN)) {
-                    listMovesForQueen(g, k, temporaryResult, &nbMoves);
-                }
-                else if (get_pawn_value(g, g->is_white, k, PBA) != 1) {
-                    listMovesForGhostPawns(g, k, temporaryResult, &nbMoves);
-                }
-                else {
-                    listMovesForPawn(g, k, temporaryResult, &nbMoves);
-                }
-            }
-        }
-    }
+    //     for (int k = 0; k < 2 * NB_PAWNS; k++) {
+    //         if (get_pawn_value(g, g->is_white, k, ALIVE)) {
+    //             if (get_pawn_value(g, g->is_white, k, QUEEN)) {
+    //                 listMovesForQueen(g, k, temporaryResult, &nbMoves);
+    //             }
+    //             else if (get_pawn_value(g, g->is_white, k, PBA) != 1) {
+    //                 listMovesForGhostPawns(g, k, temporaryResult, &nbMoves);
+    //             }
+    //             else {
+    //                 listMovesForPawn(g, k, temporaryResult, &nbMoves);
+    //             }
+    //         }
+    //     }
+    // }
 
     
     return listMovesFilterRafles(temporaryResult, nbMoves);

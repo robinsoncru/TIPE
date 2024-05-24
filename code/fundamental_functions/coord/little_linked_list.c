@@ -1,49 +1,53 @@
 #include "little_linked_list.h"
 
-void push(maillon *l, int k)
+void push(int_chain *l, int k)
 {
-    /* le maillon l est le maillon de tête, on l'utilise pour accéder à la structure et y ajouter le nouveau maillon */
-    maillon *m = malloc(sizeof(maillon));
-    m->ind = k;
-    m->next = l->next;
-    l->next = m;
+    /* le int_chain l est le int_chain de tête, on l'utilise pour accéder à la structure et y ajouter le nouveau int_chain */
+    assert(l->ind_actu + 1 < l->size_max);
+    l->ind_actu++;
+    l->tableau[l->ind_actu] = k;
 }
 
-bool is_empty(maillon *l)
+bool is_empty(int_chain *l)
 {
-    return (l->next == NULL);
+    return (l->ind_actu <= -1);
 }
 
-maillon *create_list()
+int_chain *create_list(int size_max)
 {
     /* Creer une liste vide */
-    maillon *l = malloc(sizeof(maillon));
-    l->ind = -1;
-    l->next = NULL;
-    return l;
+    int_chain *m = malloc(sizeof(int_chain));
+    m->ind_actu = -1;
+    m->size_max = size_max;
+    m->tableau = malloc(size_max * sizeof(int));
+    for (int i = 0; i < size_max; i++)
+    {
+        m->tableau[i] = -1;
+    }
+    return m;
 }
 
-int pop(maillon *l)
+int pop(int_chain *l)
 {
-    /* Supprime et renvoie le maillon en première position */
+    /* Supprime et renvoie le int_chain en première position */
     assert(!is_empty(l));
-    maillon *m = l->next;
-    l->next = m->next;
-    int k = m->ind;
-    free(m);
+    int k = l->tableau[l->ind_actu];
+    l->tableau[l->ind_actu] = -1;
+    l->ind_actu--;
     return k;
 }
 
-int get(maillon *l)
+int get(int_chain *l)
 {
-    /* Supprime et renvoie le maillon en première position */
+    /* renvoie le int_chain en première position */
     assert(!is_empty(l));
-    return l->next->ind;
+    return l->tableau[l->ind_actu];
 }
 
 // For the cloud chain
 
-void cpush(cloud_chain *l, tcloud k) {
+void cpush(cloud_chain *l, tcloud k)
+{
     cloud_chain *m = malloc(sizeof(cloud_chain));
     m->data = k;
     m->next = l->next;
@@ -67,7 +71,7 @@ cloud_chain *ccreate_list()
 
 tcloud cpop(cloud_chain *l)
 {
-    /* Supprime et renvoie le maillon en première position */
+    /* Supprime et renvoie le int_chain en première position */
     assert(!cis_empty(l));
     cloud_chain *m = l->next;
     l->next = m->next;
@@ -78,17 +82,20 @@ tcloud cpop(cloud_chain *l)
 
 // For all info pawns
 
-void dpush(data_chain *l, pawn_info data) {
+void dpush(data_chain *l, pawn_info data)
+{
     data_chain *m = malloc(sizeof(data_chain));
     m->data = data;
     m->next = l->next;
     l->next = m;
 }
-bool dis_empty(data_chain *l) {
+bool dis_empty(data_chain *l)
+{
     return (l->next == NULL);
 }
 
-pawn_info dpop(data_chain *l) {
+pawn_info dpop(data_chain *l)
+{
     assert(!dis_empty(l));
     data_chain *m = l->next;
     l->next = m->next;
@@ -97,23 +104,22 @@ pawn_info dpop(data_chain *l) {
     return k;
 }
 
-
-data_chain *dcreate_list() {
+data_chain *dcreate_list()
+{
     data_chain *l = malloc(sizeof(data_chain));
-    pawn_info data_set = {.relationship = {.friendId = -1, .foe = -1, .queen = false}, 
-    .coord = {.i = -1, .j = -1}};
+    pawn_info data_set = {.relationship = {.friendId = -1, .foe = -1, .queen = false},
+                          .coord = {.i = -1, .j = -1}};
     l->data = data_set;
     l->next = NULL;
     return l;
 }
 
-
 // For the other Kchain_list
 
-void pushK(Kmaillon *l, int indPawnMoved, int indPawnMovedBack, int indPawnFriendlyMoved,
+void pushK(Kint_chain *l, int indPawnMoved, int indPawnMovedBack, int indPawnFriendlyMoved,
            int indPawnEnnemyMoved, int indQueenPromoted, int indQueenMoved)
 {
-    Kmaillon *m = malloc(sizeof(Kmaillon));
+    Kint_chain *m = malloc(sizeof(Kint_chain));
     m->indices.indPawnMoved = indPawnMoved;
     m->indices.indPawnMovedBack = indPawnMovedBack;
     m->indices.indPawnEnnemyMoved = indPawnFriendlyMoved;
@@ -124,21 +130,24 @@ void pushK(Kmaillon *l, int indPawnMoved, int indPawnMovedBack, int indPawnFrien
     l->next = m;
 }
 
-bool is_emptyK(Kmaillon *l) {
-     return (l->next == NULL);
+bool is_emptyK(Kint_chain *l)
+{
+    return (l->next == NULL);
 }
 
-k_uplet popK(Kmaillon *l) {
+k_uplet popK(Kint_chain *l)
+{
     assert(!is_emptyK(l));
-    Kmaillon *m = l->next;
+    Kint_chain *m = l->next;
     l->next = m->next;
     k_uplet k = m->indices;
     free(m);
     return k;
 }
 
-Kmaillon *create_listK() {
-    Kmaillon *l = malloc(sizeof(Kmaillon));
+Kint_chain *create_listK()
+{
+    Kint_chain *l = malloc(sizeof(Kint_chain));
     l->indices.indPawnMoved = -1;
     l->indices.indPawnMovedBack = -1;
     l->indices.indPawnEnnemyMoved = -1;

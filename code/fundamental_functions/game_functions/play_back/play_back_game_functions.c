@@ -12,7 +12,7 @@ void pawnMoveNGE(Game *g, bool is_white, int ind, bool left)
     change_pawn_place(g, ind, is_white, i + di, j + dj);
     if (p.friendly != NEUTRAL_IND)
     {
-        g->ind_move_back = p.friendly;
+        g->inds_move_back = p.friendly;
         // le pion indique a partir de son indice
     }
 }
@@ -108,7 +108,7 @@ void pawnMoveBackNGE(Game *g, int ind, bool left)
 
     change_pawn_place(g, ind, is_white, i - di, j - dj);
 
-    g->ind_move_back = VOID_INDEX;
+    g->inds_move_back = VOID_INDEX;
 }
 
 void cancelMoveBack(Game *g, int ind, bool left) {
@@ -257,10 +257,10 @@ data_chain *queenDeplNGE(Game *g, int ind, bool color, queen_move_t tuple_coord)
 
     if (dis_empty(chainy))
     {
-        g->ind_move_back = get_pawn_value(g, color, ind, FRIENDLY);
+        g->inds_move_back = get_pawn_value(g, color, ind, FRIENDLY);
         // le pion indique a partir de son indice
     }
-    else g->ind_move_back = VOID_INDEX;
+    else g->inds_move_back = VOID_INDEX;
 
     return chainy;
 }

@@ -42,7 +42,7 @@ void promotion(Game *g);
     écrase le précédent */
 void lienAmitie(int lig, int col, Game *g);
 void moveBack(Game *g);
-/* Move back the pawn referred by ind_move_back to the case localised by the coord coordForMoveBack */
+/* Move back the pawn referred by inds_move_back to the case localised by the coord coordForMoveBack */
 
 /* LIEN ENNEMITIE */
 void lienEnnemitie(int lig, int col, Game *g);
