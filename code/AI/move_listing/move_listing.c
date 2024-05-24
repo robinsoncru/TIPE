@@ -145,9 +145,9 @@ void listMovesForPawn(Game* g, int selectedPawn, Move* temporaryResult, int* nbM
     .j = get_pawn_value(g, g->is_white, selectedPawn, COL)};
     listRafles(g, selectedPawn, tmpPos, temporaryResult, nbMoves);
     if (get_pawn_value(g, g->is_white, selectedPawn, FRIENDLY) == VOID_INDEX 
-    && get_pawn_value(g, g->is_white, selectedPawn, ENNEMY) == VOID_INDEX) {
-        listMovesBefriend(g, selectedPawn, temporaryResult, nbMoves);
-        listMovesEnnemy(g, selectedPawn, temporaryResult, nbMoves);
+        && get_pawn_value(g, g->is_white, selectedPawn, ENNEMY) == VOID_INDEX) {
+            listMovesBefriend(g, selectedPawn, temporaryResult, nbMoves);
+            listMovesEnnemy(g, selectedPawn, temporaryResult, nbMoves);
     }
 }
 
@@ -163,7 +163,7 @@ void listMovesRafleCount(Move* temporaryResult, int nbMoves, int* rafleCount, in
             nbRafles = 1;
             maxRafleLength = currentLength;
         }
-        else if (currentLength == maxRafleLength) {
+        if (currentLength == maxRafleLength) {
             nbRafles++;
         }
     }
@@ -195,14 +195,14 @@ MoveTab* listMovesFilterRafles(Move* temporaryResult, int nbMoves){
             res->tab = malloc(rafleCount * sizeof(Move));
             for (int k = 0; k < nbMoves; k++) {
                 currentMove = temporaryResult[k];
-                if (res->tab[k].type == rafleType && pathTreeDepth(currentMove.rafleTree) == length) {
+                if (currentMove.type == rafleType && pathTreeDepth(currentMove.rafleTree) == length) {
                     res->tab[res->size] = currentMove;
                     res->size++;
                 }
             }
-            free(temporaryResult);
             break;
     }
+    free(temporaryResult);
     return res;
 }
 

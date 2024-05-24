@@ -41,7 +41,7 @@ void listRafles(Game* g, int selectedPawn, Coord tmpPos, Move* temporaryResult, 
     pawn p = get_pawn(g, g->is_white, selectedPawn);
     int initI = p.lig, initJ = p.col;
     change_pawn_place(g, selectedPawn, g->is_white, tmpPos.i, tmpPos.j);
-    PathTree* tree = rafleTreeCalc(g, !g->is_white, selectedPawn);
+    PathTree* tree = rafleTreeCalc(g, g->is_white, selectedPawn);
 
     if (pathTreeDepth(tree) > 0) {
         Move currentMove;
