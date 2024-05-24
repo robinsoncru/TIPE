@@ -8,7 +8,7 @@ bool canMove(Game *g, bool is_white, int ind, bool left);
 bool canBePromoted(Game *g, bool is_white, int ind);
 bool diagIsFree(Game *g, Coord initPos, Coord finalPos);
 bool queenCanMove(Game *g, bool is_white, int ind, Coord finalPos);
-bool canEat(Game *g, bool color, int ind, int i, int j, int add0, int add1);
+bool canEat(Game *g, bool eatingColor, int ind, int i, int j, int add0, int add1);
 bool moveBackAvailable(Game *g);
 bool canMoveBack(Game *g, bool is_white, int ind, bool left);
 bool needPutMoveBack(Game *g);

@@ -71,14 +71,14 @@ bool queenCanMove(Game *g, bool is_white, int ind, Coord finalPos)
 }
 
 // For eatPawn and rafle calculation
-bool canEat(Game *g, bool color, int ind, int i, int j, int add0, int add1)
+bool canEat(Game *g, bool eatingColor, int ind, int i, int j, int add0, int add1)
 {
-    assert(isValidIndexInGame(g, ind, color));
+    assert(isValidIndexInGame(g, ind, eatingColor));
     assert(inGame(i, j));
     assert(inGame(i + 2 * add0, j + 2 * add1));
     return (freeCase(get_case_damier(g, i + 2 * add0, j + 2 * add1)) &&
             !freeCase(get_case_damier(g, i + add0, j + add1)) &&
-            get_case_damier(g, i + add0, j + add1).pawn_color == !int_to_bool(get_pawn_value(g, color, ind, COLOR)) &&
+            get_case_damier(g, i + add0, j + add1).pawn_color != eatingColor &&
             int_to_bool(
                 get_pawn_value(g, get_case_damier(g, i + add0, j + add1).pawn_color, get_case_damier(g, i + add0, j + add1).ind_pawn,
                                ALIVE)));
