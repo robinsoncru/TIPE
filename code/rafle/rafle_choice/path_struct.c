@@ -1,5 +1,6 @@
 #include "path_struct.h"
 #include "four_pack.h"
+#include "../../fundamental_functions/debug/debug.h"
 #include <SDL2/SDL_stdinc.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -30,16 +31,19 @@ int pathLength(Path* path){
 }
 
 Uint8 pathGet(int k, Path* path){
+    assertAndLog(k >= path->deb && k < path->fin, "index out of Path bounds");
     FourPack toGet = path->tab[k / 4];
     return fourPackGet(k % 4, toGet);
 }
 
 void pathSet(Uint8 c, int k, Path* path){
+    assertAndLog(k >= path->deb && k < path->fin, "index out of Path bounds");
     FourPack* toSet = &(path->tab[k / 4]);
     fourPackSet(c, k % 4 , toSet);
 }
 
 void pathAdd(Uint8 c, Path* path){
+    assertAndLog(path->n < path->c, "can't add to a full path");
     pathSet(c, path->fin, path);
     path->fin = (path->fin + 1) % path->c;
     path->n ++;
