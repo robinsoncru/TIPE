@@ -1,4 +1,5 @@
 #include "main.h"
+#include "fundamental_functions/game_functions/aux_game_functions/aux_functions.h"
 
 int quit(Game *g, GraphicCache *cache)
 {
@@ -18,13 +19,6 @@ void test_start_game(Game *g)
     //     put_pawn_value(g, true, i, QUEEN, 1);
     //     put_pawn_value(g, false, i, QUEEN, 1);
     // }
-
-    // for (int i = NB_PAWNS - 1; i >= NB_PAWNS / 4; i--)
-    // {
-    //     killPawnByInd(g, true, i);
-    //     killPawnByInd(g, false, i);
-    // }
-
     // for (int i = 0; i > -1; i--)
     // {
     //     killPawnByInd(g, true, i);
@@ -50,6 +44,50 @@ void test_start_game(Game *g)
     // change_pawn_place(g->allPawns[1], g->damier, 1, 4, 4);
     // change_pawn_place(g->allPawns[0], g->damier, 1, 3, 5);
     // change_pawn_place(g->allPawns[0], g->damier, 2, 1, 1);
+
+
+    //configuration en lignes noires
+    //pour tester les rafles
+    /*
+    for (int i = NB_PAWNS - 1; i >= 4; i--)
+    {
+        killPawnByInd(g, true, i);
+    }
+
+    for (int i = NB_PAWNS - 1; i >= 6; i--) {
+        killPawnByInd(g, false, i);
+    }
+
+    change_pawn_place(g, 0, true, 0, 2);
+
+    change_pawn_place(g, 0, false, 1, 1);
+    change_pawn_place(g, 1, false, 3, 1);
+    change_pawn_place(g, 2, false, 5, 1);
+    change_pawn_place(g, 3, false, 5, 3);
+    change_pawn_place(g, 4, false, 3, 3);
+    change_pawn_place(g, 5, false, 1, 3);*/
+    //fin de config
+
+    //configuration multirafles
+    change_pawn_place(g, 0, true, 0, 0);
+    change_pawn_place(g, 1, true, 0, 2);
+    change_pawn_place(g, 2, true, 0, 4);
+    change_pawn_place(g, 3, true, 0, 6);
+    change_pawn_place(g, 4, true, 2, 0);
+    change_pawn_place(g, 5, true, 2, 2);
+    change_pawn_place(g, 6, true, 2, 4);
+    change_pawn_place(g, 7, true, 2, 6);
+
+    change_pawn_place(g, 0, false, 3, 1);
+    change_pawn_place(g, 1, false, 3, 3);
+    change_pawn_place(g, 2, false, 3, 5);
+    change_pawn_place(g, 3, false, 3, 7);
+    change_pawn_place(g, 4, false, 5, 1);
+    change_pawn_place(g, 5, false, 5, 3);
+    change_pawn_place(g, 6, false, 5, 5);
+    change_pawn_place(g, 7, false, 5, 7);
+    //fin de config
+
 }
 
 int main(int argc, char *argv[])
