@@ -16,7 +16,7 @@ void loadCurrentRafle(Game* g, PathTree** cacheTree){
     }
     else {
         printf("loading current rafle tree...");
-        *cacheTree = rafleTreeCalc(g -> allPawns[g -> is_white], g -> allPawns[!g -> is_white], g -> damier, g -> ind_move);
+        *cacheTree = rafleTreeCalc(g, g->is_white, g -> ind_move);
         printf("\nrafle tree loaded");
     }
     printf("\n");

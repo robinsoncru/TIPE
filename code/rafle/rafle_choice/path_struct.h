@@ -5,6 +5,10 @@
 #include "four_pack.h"
 
 typedef struct Path {
+    //c and n are in terms
+    //of *directions* and not fourPacks
+    //eg a capacity of 4 means that tab
+    //has 1 fourPack
     unsigned int n, c;
     //n : size
     //c : capacity
