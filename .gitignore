@@ -34,5 +34,5 @@ move_listing.o
 listing_checks.o
 move_struct.o
 rafle_listing.o
-
+access_functions.o
 
