@@ -31,7 +31,7 @@ void test_start_game(Game *g)
     //     killPawnByInd(g, true, i);
     //     killPawnByInd(g, false, i);
     // }
-
+    // îjq^ri^qirnvqîqêobqîbqîbnqîbnq^fbinqîbnq^
     // change_pawn_place(g, 0, true, get_pawn_value(g, true, 0, LIG)+1, NB_CASE_LG-3);
     // change_pawn_place(g, 0, false, get_pawn_value(g, false, 0, LIG) - 1, NB_CASE_LG-3);
 
