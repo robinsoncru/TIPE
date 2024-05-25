@@ -1,11 +1,13 @@
 dames.out: main.o coord.o little_linked_list.o game_functions.o aux_functions.o debug_functions.o game_management.o \
 calculus_functions.o logic_functions.o play_back_game_functions.o affichage.o input_command.o on_input.o graphic_cache.o update.o \
 path_tree.o rafle_tree_calc.o path_tree_display.o rafle_management.o four_pack.o path_struct.o rafle_eating.o move_simulation.o \
-move_max.o move_listing.o listing_checks.o move_struct.o rafle_listing.o basic_play_function.o precondition.o access_functions.o
+move_max.o move_listing.o listing_checks.o move_struct.o rafle_listing.o basic_play_function.o precondition.o access_functions.o \
+print_moves.o
 	gcc -g -Wall -o dames.out main.o coord.o little_linked_list.o game_functions.o aux_functions.o debug_functions.o game_management.o \
 calculus_functions.o logic_functions.o play_back_game_functions.o affichage.o input_command.o on_input.o graphic_cache.o update.o \
 path_tree.o rafle_tree_calc.o path_tree_display.o rafle_management.o four_pack.o path_struct.o rafle_eating.o move_simulation.o \
 move_max.o move_listing.o listing_checks.o move_struct.o rafle_listing.o basic_play_function.o precondition.o access_functions.o \
+print_moves.o \
 $$(sdl2-config --cflags --libs) -lSDL2_ttf
 
 main.o: main.c
@@ -100,3 +102,6 @@ basic_play_function.o: graphic_interface/autoplay_random_functions/basic_play_fu
 
 precondition.o: fundamental_functions/game_functions/precondition/precondition.c
 	gcc -g -c -Wall fundamental_functions/game_functions/precondition/precondition.c
+
+print_moves.o: AI/move_listing/move_listing_debug/print_moves.c
+	gcc -g -c -Wall AI/move_listing/move_listing_debug/print_moves.c

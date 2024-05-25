@@ -35,4 +35,6 @@ listing_checks.o
 move_struct.o
 rafle_listing.o
 access_functions.o
-
+print_moves.o
+*.o
+*.out

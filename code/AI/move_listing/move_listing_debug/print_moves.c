@@ -1,4 +1,4 @@
-#include "debug_autoplay.h"
+#include "print_moves.h"
 
 void print_move(Move m)
 {
