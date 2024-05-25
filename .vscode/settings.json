@@ -1,8 +1,0 @@
-{
-    "files.associations": {
-        "stdbool.h": "c",
-        "debug_functions.h": "c",
-        "play_back_game_functions.h": "c",
-        "possible_moves.h": "c"
-    }
-}
