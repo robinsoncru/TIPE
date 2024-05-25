@@ -36,5 +36,5 @@ move_struct.o
 rafle_listing.o
 access_functions.o
 print_moves.o
+code/*.o
 *.o
-*.out
