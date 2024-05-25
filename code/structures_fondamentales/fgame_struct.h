@@ -26,8 +26,8 @@ typedef struct
 
 typedef struct
 {
-    int lig, col, friendly, ennemy;
-    // rename friendly to friendly
+    int lig, col, ennemy;
+    bool friendly;
     /* friend: Lien d'amitie avec un autre pion, -1 if no friend */
     bool alive, color, queen;
     int pba; // Appartenance au nuage de pion se traduit par pba != 1 et plus pba est grand, plus sa probabilite de presence est faible
@@ -53,6 +53,21 @@ typedef struct
     int nbFoe[2];
     int nbQueenWithoutFriend[2];
     int nbQueenWithFriend[2];
+
+    bool **liensAmitie;
+    // Matrice où 1 <=> amis et 0 sinon
+    /* Indices pions blancs 0 -> MAX_NB_PAWNS
+    C | 0 1 0 0 0 1 1 0 0 
+    e | 1 0 0 1 0 0 1 0 0
+    u | 0 1 1 0 0 0 0 0 0
+    x | ...
+      .
+      .
+    N .
+    o
+    i
+    r
+    s .*/
 
     PathTree* currentTree;
     Path* currentRafle;

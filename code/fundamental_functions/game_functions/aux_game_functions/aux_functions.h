@@ -8,7 +8,7 @@
 
 void copy_remove_pawn_from_index_to_index(Game *g, int indStart, int indArrive, bool color);
 // void pawn_default_value(pawn *pawns, int ind, bool color);
-void pawn_default_value_new(Game *g, int ind, bool color);
+void pawn_default_value(Game *g, int ind, bool color);
 /* kill the pawn and put its values as default values */
 void killPawn(Game *g, int i, int j);
 void killPawnByInd(Game *g, bool color, int ind);
@@ -40,5 +40,6 @@ void incrBothTab(int t[2]);
 void decrBothTab(int t[2]);
 
 Coord queen_valide_case(Game *g, int ind, bool color);
+
 
 #endif // AUX_FUNCTIONS

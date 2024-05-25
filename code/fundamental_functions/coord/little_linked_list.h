@@ -53,5 +53,6 @@ bool is_emptyK(Kint_chain *l);
 k_uplet popK(Kint_chain *l);
 
 Kint_chain *create_listK();
+void freeIntChain(int_chain *l);
 
 #endif

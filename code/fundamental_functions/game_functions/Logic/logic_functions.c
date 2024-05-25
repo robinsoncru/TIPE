@@ -91,7 +91,7 @@ bool canBeFriend(Game *g, int ind, bool color, Case c)
     if (freeCase(c))
         return false;
     pawn ap = get_pawn(g, !color, c.ind_pawn);
-    return c.pawn_color != p.color && ap.friendly != ind && p.friendly != c.ind_pawn && !p.queen && !ap.queen;
+    return c.pawn_color != p.color && !getFriendByInd(g, ind, c.ind_pawn, color) && !p.queen && !ap.queen;
 }
 
 bool canBeEnnemy(Game *g, int ind, bool color, Case c)
@@ -190,9 +190,4 @@ bool canStormBreaksForTheOthers(Game *g, int ind, int color)
         }
     }
     return false;
-}
-
-bool has_friend(Game *g, int ind, int color)
-{
-    return ((get_pawn_value(g, color, ind, FRIENDLY)) != VOID_INDEX);
 }

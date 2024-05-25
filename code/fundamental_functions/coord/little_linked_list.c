@@ -44,6 +44,16 @@ int get(int_chain *l)
     return l->tableau[l->ind_actu];
 }
 
+void freeIntChain(int_chain *l)
+{
+    while (!is_empty(l))
+    {
+        pop(l);
+    }
+    free(l->tableau);
+    free(l);
+}
+
 // For the cloud chain
 
 void cpush(cloud_chain *l, tcloud k)
@@ -107,7 +117,7 @@ pawn_info dpop(data_chain *l)
 data_chain *dcreate_list()
 {
     data_chain *l = malloc(sizeof(data_chain));
-    pawn_info data_set = {.relationship = {.friendId = -1, .foe = -1, .queen = false},
+    pawn_info data_set = {.relationship = {.friendsId = NULL, .foe = -1, .queen = false},
                           .coord = {.i = -1, .j = -1}};
     l->data = data_set;
     l->next = NULL;

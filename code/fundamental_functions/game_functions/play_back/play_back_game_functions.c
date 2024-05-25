@@ -2,7 +2,8 @@
 
 void pawnMoveNGE(Game *g, bool is_white, int ind, bool left)
 {
-    assertAndLog(is_empty(g->inds_move_back), "Il reste des amis dans les NGE");;
+    assertAndLog(is_empty(g->inds_move_back), "Il reste des amis dans les NGE");
+    ;
     pawn p = get_pawn(g, is_white, ind);
     int i = p.lig;
     int j = p.col;
@@ -10,10 +11,16 @@ void pawnMoveNGE(Game *g, bool is_white, int ind, bool left)
     int dj = left ? -1 : 1;
 
     change_pawn_place(g, ind, is_white, i + di, j + dj);
-    if (p.friendly != NEUTRAL_IND)
+    if (p.friendly)
     {
-        push(g->inds_move_back, p.friendly);
-        // le pion indique a partir de son indice
+        for (int i = 0; i < MAX_NB_PAWNS; i++)
+        {
+            if (isValidIndexInGame(g, i, !is_white) && getFriendByInd(g, ind, i, is_white))
+            {
+                push(g->inds_move_back, i);
+            }
+            // le pion indique a partir de son indice
+        }
     }
 }
 
@@ -50,7 +57,8 @@ void recreateCloud(Game *g, cloud_chain *l, ind_pba_t *survivor, bool iw)
 
 int promotionNGE(Game *g, int ind)
 {
-    assertAndLog(is_empty(g->inds_move_back), "Il reste des amis dans les NGE");;
+    assertAndLog(is_empty(g->inds_move_back), "Il reste des amis dans les NGE");
+    ;
     /* Promote the pawn at the ind in pmetre : do nothing, become a queen or become an ennemy pawn */
     // Return the index of the ennemy pawn created, -1 else
     bool iw = g->is_white;
@@ -99,7 +107,8 @@ void cancelPromotion(Game *g, int ind_old_friend, int ind_new_foe)
 
 ind_bool_t biDeplNGE(Game *g, bool color, int ind)
 {
-    assertAndLog(is_empty(g->inds_move_back), "Il reste des amis dans les NGE");;
+    assertAndLog(is_empty(g->inds_move_back), "Il reste des amis dans les NGE");
+    ;
     // On suppose le coup legal
     bool depl = int_to_bool(rand() % 2);
     // Depl le pion a droite ou a gauche et creera l'autre ghost pawn de l'autre cote
@@ -148,7 +157,6 @@ void cancelBidepl(Game *g, int oldInd, ind_bool_t data)
     }
 }
 
-
 data_chain *eatRafleNGE(Game *g, int indEater, bool is_white, PathTree *t, Path *r)
 {
     PathTree *workTree = t;
@@ -173,11 +181,13 @@ data_chain *eatRafleNGE(Game *g, int indEater, bool is_white, PathTree *t, Path 
         int lig_pawn_eaten = get_pawn_value(g, is_white, indEater, LIG) + di;
         int col_pawn_eaten = get_pawn_value(g, is_white, indEater, COL) + dj;
         int eatenInd = get_case_damier(g, lig_pawn_eaten, col_pawn_eaten).ind_pawn;
-        
-        pawn_info data_eaten = {.relationship = {.friendId = get_pawn_value(g, !is_white, eatenInd, FRIENDLY),
-        .foe = get_pawn_value(g, !is_white, eatenInd, ENNEMY), 
-        .queen = int_to_bool(get_pawn_value(g, !is_white, eatenInd, QUEEN))}, 
-        .coord = {.i = lig_pawn_eaten, .j = col_pawn_eaten}};
+
+        int *lamis = friendTabToListChaine(g, eatenInd, !is_white);
+
+        pawn_info data_eaten = {.relationship = {.friendsId = lamis,
+                                                 .foe = get_pawn_value(g, !is_white, eatenInd, ENNEMY),
+                                                 .queen = int_to_bool(get_pawn_value(g, !is_white, eatenInd, QUEEN))},
+                                .coord = {.i = lig_pawn_eaten, .j = col_pawn_eaten}};
 
         dpush(chainy, data_eaten);
         pawnEat(g, indEater, is_white, di, dj);
@@ -190,7 +200,8 @@ data_chain *eatRafleNGE(Game *g, int indEater, bool is_white, PathTree *t, Path 
 data_chain *rafleNGE(Game *g, int indMovePawn)
 {
     assert(g->currentTree == emptyTree);
-    assertAndLog(is_empty(g->inds_move_back), "Il reste des amis dans les NGE");;
+    assertAndLog(is_empty(g->inds_move_back), "Il reste des amis dans les NGE");
+    ;
     bool isWhite = g->is_white;
     g->currentTree = rafleTreeCalc(g, isWhite, g->ind_move);
 
@@ -203,15 +214,23 @@ data_chain *rafleNGE(Game *g, int indMovePawn)
     return chainy;
 }
 
-void cancelRafle(Game *g, int indMovedPawn, Coord init_pos, data_chain *chainy) {
+void cancelRafle(Game *g, int indMovedPawn, Coord init_pos, data_chain *chainy)
+{
     bool iw = g->is_white;
-    while (!dis_empty(chainy)) {
+    while (!dis_empty(chainy))
+    {
         pawn_info reborn_pawn = dpop(chainy);
         int i = reborn_pawn.coord.i;
         int j = reborn_pawn.coord.j;
         createPawn(g, !iw, i, j);
         int reborn_ind = get_case_damier(g, i, j).ind_pawn;
-        put_pawn_value(g, !iw, reborn_ind, FRIENDLY, reborn_pawn.relationship.friendId);
+        int *l = reborn_pawn.relationship.friendsId;
+        while (!is_empty(l))
+        {
+            putFriendByInd(g, reborn_ind, pop(l), iw, true);
+        }
+        freeIntChain(reborn_pawn.relationship.friendsId);
+        reborn_pawn.relationship.friendsId = NULL;
         put_pawn_value(g, !iw, reborn_ind, ENNEMY, reborn_pawn.relationship.foe);
         put_pawn_value(g, !iw, reborn_ind, QUEEN, bool_to_int(reborn_pawn.relationship.queen));
     }
@@ -222,11 +241,12 @@ void cancelRafle(Game *g, int indMovedPawn, Coord init_pos, data_chain *chainy) 
 
 data_chain *queenDeplNGE(Game *g, int ind, bool color, queen_move_t tuple_coord)
 {
-    assertAndLog(is_empty(g->inds_move_back), "Il reste des amis dans les NGE");;
+    assertAndLog(is_empty(g->inds_move_back), "Il reste des amis dans les NGE");
+    ;
     // Suppose que l'entree est valide
     // On a deja la position d'arrivee et le potentiel pion a manger en entree
 
-    // The queen can move on diagonals or eat pawns only by putting herself in front of the first pawn she 
+    // The queen can move on diagonals or eat pawns only by putting herself in front of the first pawn she
     // will eat, eatRafle will do the rest of the job
     // So pos_eaten_pawn is useless here
     int lig = tuple_coord.pos_dame.i;
@@ -238,7 +258,9 @@ data_chain *queenDeplNGE(Game *g, int ind, bool color, queen_move_t tuple_coord)
 
     if (dis_empty(chainy))
     {
-        push(g->inds_move_back, get_pawn_value(g, color, ind, FRIENDLY));
+        prout;
+        push(g->inds_move_back, i);
+
         // le pion indique a partir de son indice
     }
 
@@ -252,22 +274,27 @@ void cancelDeplQueen(Game *g, int ind_queen, data_chain *chainy, Coord init_coor
 
 void lienAmitiePmetreNGE(int lig, int col, int ind, bool is_white, Game *g)
 {
-    assertAndLog(is_empty(g->inds_move_back), "Il reste des amis dans les NGE");;
+    assertAndLog(is_empty(g->inds_move_back), "LienAmitiePmetreNGE : Il reste des amis à déplacer");
+    
     Case c = get_case_damier(g, lig, col);
-    assert(c.ind_pawn != VOID_INDEX && c.pawn_color == !is_white);
-    put_pawn_value(g, is_white, ind, FRIENDLY, c.ind_pawn);
-    put_pawn_value(g, c.pawn_color, c.ind_pawn, FRIENDLY, ind);
-    if (int_to_bool(get_pawn_value(g, is_white, ind, QUEEN))) {
+    assertAndLog((isValidIndexInGame(g, c.pawn_color, !is_white) && c.pawn_color == !is_white), 
+    "LienAmitieNGE : pb couleur ou index pas valide");
+    putFriendByInd(g, ind, )
+    if (int_to_bool(get_pawn_value(g, is_white, ind, QUEEN)))
+    {
         g->nbQueenWithFriend[is_white]++;
         g->nbQueenWithoutFriend[is_white]--;
     }
-    else g->nbFriendNoQueen[is_white]++;
-    
-    if (int_to_bool(get_pawn_value(g, !is_white, c.ind_pawn, QUEEN))) {
+    else
+        g->nbFriendNoQueen[is_white]++;
+
+    if (int_to_bool(get_pawn_value(g, !is_white, c.ind_pawn, QUEEN)))
+    {
         g->nbQueenWithFriend[!is_white]++;
         g->nbQueenWithoutFriend[!is_white]--;
     }
-    else g->nbFriendNoQueen[!is_white]++;
+    else
+        g->nbFriendNoQueen[!is_white]++;
 }
 
 void lienAmitieNGE(int lig, int col, Game *g, int indPawn)
@@ -277,7 +304,8 @@ void lienAmitieNGE(int lig, int col, Game *g, int indPawn)
     lienAmitiePmetreNGE(lig, col, indPawn, iw, g);
 }
 
-void cancelLienAmitie(Game *g, int indPawn, int lig, int col) {
+void cancelLienAmitie(Game *g, int indPawn, int lig, int col)
+{
     bool iw = g->is_white;
     int ennInd = get_case_damier(g, lig, col).ind_pawn;
     assert(ennInd != VOID_INDEX);
@@ -287,7 +315,8 @@ void cancelLienAmitie(Game *g, int indPawn, int lig, int col) {
 
 void lienEnnemitiePmetreNGE(bool is_white, int lig, int col, int ind, Game *g)
 {
-    assertAndLog(is_empty(g->inds_move_back), "Il reste des amis dans les NGE");;
+    assertAndLog(is_empty(g->inds_move_back), "Il reste des amis dans les NGE");
+    ;
     Case c = get_case_damier(g, lig, col);
     assert(c.ind_pawn != -1);
     put_pawn_value(g, is_white, ind, 2, c.ind_pawn);
@@ -302,7 +331,8 @@ void lienEnnemitieNGE(int lig, int col, Game *g, int indPawn)
     lienEnnemitiePmetreNGE(iw, lig, col, indPawn, g);
 }
 
-void cancelLienEnnemitie(Game *g, int indPawn, int lig, int col) {
+void cancelLienEnnemitie(Game *g, int indPawn, int lig, int col)
+{
     bool iw = g->is_white;
     int ennInd = get_case_damier(g, lig, col).ind_pawn;
     assert(ennInd != VOID_INDEX);

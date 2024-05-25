@@ -42,7 +42,7 @@ typedef struct {
 } ind_bool_t;
 
 typedef struct {
-    int friendId;
+    int *friendsId;
     int foe;
     bool queen;
 } primary_data_t;

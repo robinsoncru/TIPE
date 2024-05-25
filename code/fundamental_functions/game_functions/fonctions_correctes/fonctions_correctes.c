@@ -16,7 +16,7 @@ void put_pawn_value(Game *g, bool color, int ind, int wich_pmetre_modify, int va
         g->allPawns[color][ind].ennemy = value;
         break;
     case FRIENDLY:
-        g->allPawns[color][ind].friendly = value;
+        g->allPawns[color][ind].friendly = int_to_bool(value);
         break;
     case QUEEN:
         g->allPawns[color][ind].queen = int_to_bool(value);
@@ -103,4 +103,72 @@ void put_case_damier(Game *g, int i, int j, int whichPmetre, int valeur)
         assert(false);
         break;
     }
+}
+
+bool getFriendByInd(Game *g, int indActu, int indFriend, bool colorActu)
+{
+    assertAndLog(isValidIndexInGame(g, indActu, colorActu), "getFriendByInd indActu pas valide");
+    assertAndLog(isValidIndexInGame(g, indFriend, !colorActu), "getFriendByInd indFriend pas valide");
+
+    if (colorActu)
+    {
+        return g->liensAmitie[indFriend][indActu];
+    }
+    {
+        return g->liensAmitie[indActu][indFriend];
+    }
+}
+
+bool has_friend(Game *g, int ind, int color)
+{
+    for (int i = 0; i < MAX_NB_PAWNS; i++)
+    {
+        if (isValidIndexInGame(g, i, !color) && getFriendByInd(g, ind, i, color))
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+void putFriendByInd(Game *g, int indActu, int indFriend, bool colorActu, bool valeur)
+{
+    assertAndLog(isValidIndexInGame(g, indActu, colorActu), "putFriendByInd indActu pas valide");
+    assertAndLog(isValidIndexInGame(g, indFriend, !colorActu), "putFriendByInd indFriend pas valide");
+
+    if (colorActu)
+    {
+        g->liensAmitie[indFriend][indActu] = valeur;
+    }
+    {
+        g->liensAmitie[indActu][indFriend] = valeur;
+    }
+
+    if (valeur)
+    {
+        if (!int_to_bool(get_pawn_value(g, colorActu, indActu, FRIENDLY)))
+        {
+            put_pawn_value(g, colorActu, indActu, FRIENDLY, 1);
+        }
+        if (!int_to_bool(get_pawn_value(g, !colorActu, indFriend, FRIENDLY)))
+        {
+            put_pawn_value(g, !colorActu, indFriend, FRIENDLY, 1);
+        }
+    }
+    else
+    {
+        if (!has_friend(g, indFriend, !colorActu))
+        {
+            put_pawn_value(g, !colorActu, indFriend, FRIENDLY, 0);
+        }
+    }
+}
+
+int *friendTabToListChaine(Game *g, int ind, bool color)
+{
+    int *l = create_list(MAX_NB_PAWNS);
+    prout
+        push(l, i);
+}
+return l;
 }

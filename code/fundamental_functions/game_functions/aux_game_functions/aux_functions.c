@@ -17,6 +17,19 @@
 
 */
 
+void changeFriendByInd(Game *g, int indActuStart, int indActuArrive, int indFriend, bool colorActu)
+{
+    putFriendByInd(g, indActuStart, indFriend, colorActu, false);
+    putFriendByInd(g, indActuArrive, indFriend, colorActu, true);
+}
+
+// int *getTabFriendByInd(Game *g, int ind, bool color) {
+//     assertAndLog(isValidIndexInGame(g, ind, color), "getTabFriendByInd ind pas valide");
+//     if (color) {
+
+//     }
+// }
+
 // On peut améliorer cette fonction
 void copy_remove_pawn_from_index_to_index(Game *g, int indStart, int indArrive, bool color)
 {
@@ -30,10 +43,19 @@ void copy_remove_pawn_from_index_to_index(Game *g, int indStart, int indArrive, 
 
         // Il faut gérer les liens amicaux
         pawn p = get_pawn(g, color, indStart);
-        if (isValidIndexInGame(g, p.friendly, !color)) {
-            put_pawn_value(g, !color, p.friendly, FRIENDLY, indArrive);
+        if (p.friendly)
+        {
+            for (int indFriend = 0; indFriend < MAX_NB_PAWNS; indFriend++)
+            {
+
+                if (isValidIndexInGame(g, indFriend, !color) && getFriendByInd(g, indStart, indFriend, color))
+                {
+                    changeFriendByInd(g, indStart, indArrive, indFriend, color);
+                }
+            }
         }
-        if (isValidIndexInGame(g, p.ennemy, !color)) {
+        if (isValidIndexInGame(g, p.ennemy, !color))
+        {
             put_pawn_value(g, !color, p.ennemy, ENNEMY, indArrive);
         }
 
@@ -41,7 +63,7 @@ void copy_remove_pawn_from_index_to_index(Game *g, int indStart, int indArrive, 
         {
             put_pawn_value(g, color, indArrive, k, get_pawn_value(g, color, indStart, k));
         }
-        pawn_default_value_new(g, indStart, color);
+        pawn_default_value(g, indStart, color);
 
         // Sur le damier
         put_case_damier(g, get_pawn_value(g, color, indArrive, LIG), get_pawn_value(g, color, indArrive, COL), IND_PAWN_ON_CASE, indArrive);
@@ -49,7 +71,7 @@ void copy_remove_pawn_from_index_to_index(Game *g, int indStart, int indArrive, 
     }
 }
 
-void pawn_default_value_new(Game *g, int ind, bool color)
+void pawn_default_value(Game *g, int ind, bool color)
 {
     /* Initialize pawn with default values, identify by its index and color */
     assert(isValidIndex(ind));
@@ -58,7 +80,7 @@ void pawn_default_value_new(Game *g, int ind, bool color)
     put_pawn_value(g, color, ind, LIG, -1);
     put_pawn_value(g, color, ind, QUEEN, 0);
     put_pawn_value(g, color, ind, COLOR, int_to_bool(color));
-    put_pawn_value(g, color, ind, FRIENDLY, -1);
+    put_pawn_value(g, color, ind, FRIENDLY, 0);
     put_pawn_value(g, color, ind, ENNEMY, -1);
     put_pawn_value(g, color, ind, PBA, 1);
 }
@@ -80,7 +102,6 @@ void killPawn(Game *g, int i, int j)
         bool color = c.pawn_color;
         assert(isValidIndexInGame(g, indPawn, color));
         int indEnnemy = get_pawn_value(g, color, indPawn, ENNEMY);
-        int indAmi = get_pawn_value(g, color, indPawn, FRIENDLY);
         bool is_queen = int_to_bool(get_pawn_value(g, color, indPawn, QUEEN));
         if (indEnnemy != VOID_INDEX)
         {
@@ -88,22 +109,30 @@ void killPawn(Game *g, int i, int j)
             put_pawn_value(g, !color, indEnnemy, QUEEN, 1);
             decrBothTab(g->nbFoe);
         }
-        else if (indAmi != VOID_INDEX)
+        else
         {
-            bool opposee_is_queen = int_to_bool(get_pawn_value(g, !color, indAmi, QUEEN));
-            put_pawn_value(g, !color, indAmi, FRIENDLY, -1);
             if (is_queen)
-                g->nbQueenWithFriend[color]--;
-            else
-                g->nbFriendNoQueen[color]--;
+            {
+                g->nbQueenWithoutFriend[color]--;
+            }
+            for (int indAmi = 0; indAmi < MAX_NB_PAWNS; indAmi++)
+            {
+                if (isValidIndexInGame(g, indAmi, !color) && getFriendByInd(g, indPawn, indAmi, color))
+                {
+                    bool opposee_is_queen = int_to_bool(get_pawn_value(g, !color, indAmi, QUEEN));
+                    putFriendByInd(g, indPawn, indAmi, color, false);
+                    if (is_queen)
+                        g->nbQueenWithFriend[color]--;
+                    else
+                        g->nbFriendNoQueen[color]--;
 
-            if (opposee_is_queen)
-                g->nbQueenWithFriend[!color]--;
-            else
-                g->nbFriendNoQueen[!color]--;
+                    if (opposee_is_queen)
+                        g->nbQueenWithFriend[!color]--;
+                    else
+                        g->nbFriendNoQueen[!color]--;
+                }
+            }
         }
-        else if (is_queen)
-            g->nbQueenWithoutFriend[color]--;
         put_case_damier(g, i, j, IND_PAWN_ON_CASE, -1);
         /* Supprimer l'indice et optimiser la memoire */
         copy_remove_pawn_from_index_to_index(g, g->nb_pawns[color] - 1, indPawn, color);
@@ -124,22 +153,6 @@ void killPawnByInd(Game *g, bool color, int ind)
     assert(inGame(i, j));
     killPawn(g, i, j);
 }
-
-/*if (!freeCase(c))
-    {
-        int indPawn = c.ind_pawn;
-        if (pawns[indPawn].ennemy != -1)
-        {
-            Npawns[pawns[indPawn].ennemy].ennemy = -1;
-            Npawns[pawns[indPawn].ennemy].queen = true;
-        }
-        if (pawns[indPawn].friendly != -1)
-        {
-            Npawns[pawns[indPawn].friendly].friendly = -1;
-        }
-        pawn_default_value_new(pawns, indPawn, pawns[indPawn].color);
-        c.ind_pawn = -1;
-    }*/
 
 /* Put the pawn in a specific case (lig, col).
 Useful for queen_move and can be used by us
@@ -189,9 +202,9 @@ int nonLoggingChangeForEat(Game *g, bool color, int indEater, int i, int j, int 
 void promote(Game *g, bool is_white, int ind)
 {
     put_pawn_value(g, is_white, ind, QUEEN, 1);
-    if (has_friend(g, ind, is_white))
+    if (int_to_bool(get_pawn_value(g, is_white, ind, FRIENDLY)))
         g->nbQueenWithFriend[is_white]++;
-        // Seul les pions qui ont eu des amis peuvent devenir des reines avec amitié
+    // Seul les pions qui ont eu des amis peuvent devenir des reines avec amitié
     else
         g->nbQueenWithoutFriend[is_white]++;
     int ind_ennemy = get_pawn_value(g, is_white, ind, ENNEMY);
@@ -207,7 +220,7 @@ void createPawn(Game *g, bool color, int i, int j)
     assert(g->nb_pawns[color] < MAX_NB_PAWNS);
     int new_ind = g->nb_pawns[color];
 
-    pawn_default_value_new(g, new_ind, color);
+    pawn_default_value(g, new_ind, color);
     // // Par securite, remet par defaut les valeurs pour creer le nouveau pion
 
     put_pawn_value(g, color, new_ind, ALIVE, 1);
@@ -232,18 +245,6 @@ void simplyPawnMove(Game *g, bool is_white, int ind, bool left)
 
     change_pawn_place(g, ind, is_white, i + di, j + dj);
 }
-
-
-void freeIntChain(int_chain *l)
-{
-    while (!is_empty(l))
-    {
-        pop(l);
-    }
-    free(l->tableau);
-    free(l);
-}
-
 
 void AleatStormBreaks(Game *g, bool color)
 {
@@ -385,6 +386,13 @@ void free_game(Game *g)
     }
 
     free(g->damier);
+
+    for (int i = 0; i < MAX_NB_PAWNS; i++)
+    {
+        free(g->liensAmitie[i]);
+    }
+
+    free(g->liensAmitie);
 
     free(g->allPawns[0]);
     free(g->allPawns[1]);

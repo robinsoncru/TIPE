@@ -60,17 +60,24 @@ void cancelLazzyMoveBack(Game *g, int indMovePawnBack, bool left)
 
 void pawnMove(Game *g, bool is_white, int ind, bool left)
 {
-    assertAndLog(is_empty(g->inds_move_back), "Les amis sont toujours la");;
+    assertAndLog(is_empty(g->inds_move_back), "Les amis sont toujours la");
+    ;
     int i = get_pawn_value(g, is_white, ind, LIG);
     int j = get_pawn_value(g, is_white, ind, COL);
     int di = is_white ? 1 : -1;
     int dj = left ? -1 : 1;
 
     change_pawn_place(g, ind, is_white, i + di, j + dj);
-    if (get_pawn_value(g, is_white, ind, FRIENDLY) != NEUTRAL_IND)
+    if (int_to_bool(get_pawn_value(g, is_white, ind, FRIENDLY)))
     {
-        push(g->inds_move_back, get_pawn_value(g, is_white, ind, FRIENDLY));
-        // le pion indique a partir de son indice
+        for (int i = 0; i < MAX_NB_PAWNS; i++)
+        {
+            if (isValidIndexInGame(g, ind, is_white) && getFriendByInd(g, ind, i, is_white))
+            {
+                push(g->inds_move_back, i);
+            }
+            // le pion indique a partir de son indice
+        }
     }
     endTurnGameManagement(g, is_white, ind, IND_CHANGE_ALLOWED, false);
 }
@@ -100,7 +107,8 @@ void queenDepl(Game *g, int ind, bool color, queen_move_t tuple_coord)
     int col = tuple_coord.pos_dame.j;
     int enn_lig = tuple_coord.pos_eaten_pawn.i;
     int enn_col = tuple_coord.pos_eaten_pawn.j;
-    assertAndLog(is_empty(g->inds_move_back), "Les amis sont toujours la");;
+    assertAndLog(is_empty(g->inds_move_back), "Les amis sont toujours la");
+    ;
     change_pawn_place(g, ind, color, lig, col);
     if (enn_lig != -1 && enn_col != -1)
     {
@@ -123,11 +131,17 @@ void queenDepl(Game *g, int ind, bool color, queen_move_t tuple_coord)
         doMoveBack = !had_eaten;
     printf("pathFree called\n");
     pathFree(r);
-
-    if (get_pawn_value(g, color, ind, FRIENDLY) != NEUTRAL_IND && doMoveBack)
+    
+    if (int_to_bool(get_pawn_value(g, color, ind, FRIENDLY)) && doMoveBack)
     {
-        push(g->inds_move_back, get_pawn_value(g, color, ind, FRIENDLY));
-        // le pion indique a partir de son indice
+        for (int i = 0; i < MAX_NB_PAWNS; i++)
+        {
+            if (isValidIndexInGame(g, ind, color) && getFriendByInd(g, ind, i, color))
+            {
+                push(g->inds_move_back, i);
+            }
+            // le pion indique a partir de son indice
+        }
     }
 
     endTurnGameManagement(g, color, ind, IND_CHANGE_ALLOWED, false);
@@ -153,7 +167,8 @@ void queenDepl(Game *g, int ind, bool color, queen_move_t tuple_coord)
 
 void promotionPmetre(Game *g, bool is_white, int ind)
 {
-    assertAndLog(is_empty(g->inds_move_back), "Les amis sont toujours la");;
+    assertAndLog(is_empty(g->inds_move_back), "Les amis sont toujours la");
+    ;
     /* Promote the pawn at the ind in pmetre : do nothing, become a queen or become an ennemy pawn */
     // int choice = rand() % 3;
     int choice = 2;
@@ -215,7 +230,8 @@ void lienAmitie(int lig, int col, Game *g)
     couleur opposé et qu'il existe. Gère le pmetre Pawn.friendly. Si on lie d'amitié un pion qui était déjà ami, l'action n'a pas lieu et
     le joueur doit rejouer.
     Suppose le pion ainsi que le pion ami selectionne valides */
-    assertAndLog(is_empty(g->inds_move_back), "Les amis sont toujours la");;
+    assertAndLog(is_empty(g->inds_move_back), "Les amis sont toujours la");
+    ;
     bool iw = g->is_white;
     lienAmitiePmetreNGE(lig, col, g->ind_move, iw, g);
 
@@ -340,7 +356,8 @@ void lienEnnemitie(int lig, int col, Game *g)
     /* Declare ennemis pour la vie le pion en indice avec le pion se trouvant en coord (lig, col) sur le damier, en verifiant qu'il est bien de
     couleur opposé et qu'il existe. Gère le pmetre Game.friendly. Si on declare ennemi un pion qui était déjà ennemi, le coup n'est pas joué
     Suppose legal move */
-    assertAndLog(is_empty(g->inds_move_back), "Les amis sont toujours la");;
+    assertAndLog(is_empty(g->inds_move_back), "Les amis sont toujours la");
+    ;
     bool iw = g->is_white;
     lienEnnemitiePmetreNGE(iw, lig, col, g->ind_move, g);
     endTurnGameManagement(g, iw, g->ind_move, IND_CHANGE_ALLOWED, false);
@@ -370,7 +387,8 @@ void biDepl(Game *g, int ind, bool color)
     // Depl le pion a droite ou a gauche et creera l'autre ghost pawn de l'autre cote
     int dj = depl ? 1 : -1;
 
-    assertAndLog(is_empty(g->inds_move_back), "Les amis sont toujours la");;
+    assertAndLog(is_empty(g->inds_move_back), "Les amis sont toujours la");
+    ;
     int di = color ? 1 : -1;
     // Creer un pion a droite ou a gauche aleatoirement
     int newLig = get_pawn_value(g, color, ind, LIG) + di;

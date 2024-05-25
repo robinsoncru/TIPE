@@ -14,4 +14,10 @@ int ind_from_coord(Game *g, int lig, int col);
 void put_case_damier(Game *g, int i, int j, int whichPmetre, int valeur);
 Case get_case_damier(Game *g, int i, int j);
 
+
+void putFriendByInd(Game *g, int indActu, int indFriend, bool colorActu, bool valeur);
+bool getFriendByInd(Game *g, int indActu, int indFriend, bool colorActu);
+
+int *friendTabToListChaine(Game *g, int ind, bool color);
+
 #endif

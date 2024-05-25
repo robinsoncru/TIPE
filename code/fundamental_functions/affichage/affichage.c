@@ -151,7 +151,7 @@ void drawLosange(SDL_Renderer *render, Case c, pawn p, Game *g)
         draw_little_square(render, 20, c, blue);
     }
 
-    if (p.friendly != -1)
+    if (!p.friendly)
     {
         draw_little_square(render, 30, c, orange);
     }
@@ -261,7 +261,7 @@ void init_pawns(Game *g, bool init_is_white)
     {
         put_pawn_value(g, init_is_white, i, ALIVE, 1);
         put_pawn_value(g, init_is_white, i, QUEEN, false);
-        put_pawn_value(g, init_is_white, i, FRIENDLY, -1);
+        put_pawn_value(g, init_is_white, i, FRIENDLY, 0);
         put_pawn_value(g, init_is_white, i, ENNEMY, -1);
         put_pawn_value(g, init_is_white, i, PBA, 1);
         if (init_place % 2 == 0)
@@ -291,7 +291,7 @@ void init_pawns(Game *g, bool init_is_white)
     // Initialize the rest of pawns with default pmetre and the good color
     for (int i = NB_PAWNS; i < 2 * NB_PAWNS; i++)
     {
-        pawn_default_value_new(g, i, init_is_white);
+        pawn_default_value(g, i, init_is_white);
     }
 }
 
@@ -323,6 +323,16 @@ Game *create_game()
     for (int i = 0; i < NB_CASE; i++)
     {
         g->damier[i] = malloc(NB_CASE * sizeof(Case));
+    }
+
+    g->liensAmitie = malloc(MAX_NB_PAWNS * sizeof(bool *));
+    for (int i = 0; i < MAX_NB_PAWNS; i++)
+    {
+        g->liensAmitie[i] = malloc(MAX_NB_PAWNS * sizeof(bool));
+        for (int j = 0; j < MAX_NB_PAWNS; j++)
+        {
+            g->liensAmitie[i][j] = false;
+        }
     }
 
     g->allPawns[0] = malloc(NB_PAWNS * 2 * sizeof(pawn));
