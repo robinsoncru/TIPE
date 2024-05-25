@@ -6,7 +6,6 @@ void error()
     fflush(stdout);
 }
 
-
 void assertAndLog(bool condition, char *message)
 {
     if (!condition)
@@ -16,6 +15,16 @@ void assertAndLog(bool condition, char *message)
         printf("\n");
         assert(false);
     }
+}
+
+bool teste_frame(Game *g, bool color, int rec)
+{
+    if (rec > 0)
+    {
+        return teste_frame(g, color, rec - 1);
+    }
+    else
+        return true;
 }
 
 void flush()

@@ -11,13 +11,13 @@ Move* listMovesMoveBack(Game* g, int* resSize){
     int nbMoves = 0;
 
     currentMove.type = pawnMoveBackType;
-    currentMove.manipulatedPawn = g->inds_move_back;
+    // currentMove.manipulatedPawn = g->inds_move_back;
     for (int k = 0; k < 2; k++) {
-        if (canMoveBack(g, g->is_white, g->inds_move_back, k != 1)) {
+        // if (canMoveBack(g, g->is_white, g->inds_move_back, k != 1)) {
             currentMove.left = k != 1;
             temporaryResult[nbMoves] = currentMove;
             nbMoves++;
-        }
+        // }
     }
 
     *resSize = nbMoves;
@@ -208,7 +208,7 @@ MoveTab* listMovesFilterRafles(Move* temporaryResult, int nbMoves){
 
 MoveTab* listMoves(Game* g){
     Move* temporaryResult;
-    int nbMoves;
+    // int nbMoves;
     assertAndLog(false, "pas correcte");
     // if (g->inds_move_back != VOID_INDEX) {
     //     temporaryResult = listMovesMoveBack(g, &nbMoves);
@@ -234,5 +234,6 @@ MoveTab* listMoves(Game* g){
     // }
 
     
-    return listMovesFilterRafles(temporaryResult, nbMoves);
+    // return listMovesFilterRafles(temporaryResult, nbMoves);
+    return listMovesFilterRafles(temporaryResult, 0);
 }

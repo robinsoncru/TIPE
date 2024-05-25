@@ -163,6 +163,8 @@ void checkQueenDepl(Game *g, GraphicCache *cache, bool iw, int lig, int col, boo
     queen_move_t tuple_coord = CanMoveOrEatQueen(g, iw, lig, col, g->ind_move, !autoplay);
     int dame_lig = tuple_coord.pos_dame.i;
     int dame_col = tuple_coord.pos_dame.j;
+    // isPawnValid(g);
+    // if (g->ind_move == 3) pawnMove(g, g->is_white, g->ind_move, true);
     if (isPawnValid(g) && dame_lig != VOID_INDEX && dame_col != VOID_INDEX && int_to_bool(get_pawn_value(g, g->is_white, g->ind_move, QUEEN)))
     {
         queenDepl(g, g->ind_move, iw, tuple_coord);

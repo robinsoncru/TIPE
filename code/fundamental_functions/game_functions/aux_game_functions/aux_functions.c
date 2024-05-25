@@ -388,18 +388,19 @@ void free_game(Game *g)
 
     free(g->allPawns[0]);
     free(g->allPawns[1]);
-    free(g->allPawns);
 
-    free(g->lengthCloud);
-    free(g->nbFoe);
-    free(g->nbFriendNoQueen);
-    free(g->nbQueenWithFriend);
-    free(g->nbQueenWithoutFriend);
-    free(g->nb_pawns);
+    // free(g->allPawns);
+
+    // free(g->lengthCloud);
+    // free(g->nbFoe);
+    // free(g->nbFriendNoQueen);
+    // free(g->nbQueenWithFriend);
+    // free(g->nbQueenWithoutFriend);
+    // free(g->nb_pawns);
 
     freeIntChain(g->cloud[true]);
     freeIntChain(g->cloud[false]);
-    free(g->cloud);
+    // free(g->cloud);
 
     freeIntChain(g->inds_move_back);
     if (g->currentTree != emptyTree)

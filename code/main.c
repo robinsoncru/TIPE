@@ -16,8 +16,8 @@ void test_start_game(Game *g)
 
     for (int i = 0; i < NB_PAWNS; i++)
     {
-        put_pawn_value(g, true, i, QUEEN, 1);
-        put_pawn_value(g, false, i, QUEEN, 1);
+        promote(g, true, i);
+        promote(g, false, i);
     }
 
     for (int i = NB_PAWNS / 2; i >= 1; i--)

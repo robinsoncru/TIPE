@@ -1,38 +1,8 @@
 #ignore les executables ainsi que les fichiers de parametrage
-dames.out
-rafle/test_struct_rafle
-.vscode/launch.json
+.vscode/*
 .vscode
-.vscode/settings.json
-main.o
-coord.o
-little_linked_list.o
-game_functions.o
-aux_functions.o
-debug_functions.o
-game_management.o
-calculus_functions.o
-logic_functions.o
-play_back_game_functions.o
-interface.o
-input_command.o
-on_input.o
-graphic_cache.o
-update.o
-basic_play_function.o
-path_tree.o
-rafle_tree_calc.o
-path_tree_display.o
-rafle_management.o
-four_pack.o
-path_struct.o
-rafle_eating.o
-move_simulation.o
-dames
-move_max.o
-move_listing.o
-listing_checks.o
-move_struct.o
-rafle_listing.o
+code/*.o
+code/.vscode/*
+code/.vscode
 
 

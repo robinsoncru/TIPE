@@ -343,9 +343,6 @@ Game *create_game()
     g->currentTree = emptyTree;
     g->currentRafle = NULL;
 
-    g->coordForMoveBack.i = IND_LISTENING_MOVE_BACK;
-    g->coordForMoveBack.j = IND_LISTENING_MOVE_BACK;
-
     g->cloud[true] = create_list(MAX_NB_PAWNS);
     g->cloud[false] = create_list(MAX_NB_PAWNS);
     doubleTabInit(g->lengthCloud);

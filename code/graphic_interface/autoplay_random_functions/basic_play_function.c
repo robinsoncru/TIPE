@@ -167,11 +167,11 @@ int play_a_move(int move, int ind_pawn, Game *g, GraphicCache *cache, int nb_cou
         break;
 
     case QUEENDEPL:
-        // Coord coordi = queen_valide_case(g, g->ind_move, g->is_white);
-        Coord coordi;
+        Coord coordi = queen_valide_case(g, g->ind_move, g->is_white);
+        // Coord coordi;
 
-        coordi.i = l_depl[2 * nb_coups];
-        coordi.j = l_depl[2 * nb_coups + 1];
+        // coordi.i = l_depl[2 * nb_coups];
+        // coordi.j = l_depl[2 * nb_coups + 1];
         printf(" -> lig: %d, col %d", coordi.i, coordi.j);
         checkQueenDepl(g, cache, g->is_white, coordi.i, coordi.j, true);
 

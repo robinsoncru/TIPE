@@ -17,4 +17,6 @@ void flush();
 //Fait planter le programme en affichant un message d'erreur
 //si la condition n'est pas respectee
 void assertAndLog(bool condition, char* message);
+
+bool teste_frame(Game *g, bool color, int rec);
 #endif //DEBUG

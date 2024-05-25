@@ -47,8 +47,7 @@ typedef struct
     int_chain *inds_move_back;
     int players[2]; //the first is white, the second black, useful to be able to identify AIs
     bool is_white;
-    Coord coordForMoveBack;
-    int_chain* cloud[2];
+    int_chain *cloud[2];
     int lengthCloud[2];
     int nbFriendNoQueen[2];
     int nbFoe[2];
