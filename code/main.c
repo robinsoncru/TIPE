@@ -1,6 +1,5 @@
 #include "main.h"
 
-
 int quit(Game *g, GraphicCache *cache)
 {
     freeCache(cache);
@@ -14,10 +13,12 @@ void test_start_game(Game *g)
 {
     // très pratique pour promouvoir une dame en qq coups
 
+    Coord c = coord_from_ind(g, 0, true);
     for (int i = 0; i < NB_PAWNS; i++)
     {
-        promote(g, true, i);
-        promote(g, false, i);
+        // promote(g, true, i);
+        // promote(g, false, i);
+        lienAmitiePmetreNGE(c.i, c.j, i, false, g);
     }
 
     for (int i = NB_PAWNS / 2; i >= 1; i--)
@@ -26,12 +27,15 @@ void test_start_game(Game *g)
         killPawnByInd(g, false, i);
     }
 
+    for (int i = 0; i < NB_PAWNS / 2, i++)
+    {
+    }
+
     // for (int i = 0; i > -1; i--)
     // {
     //     killPawnByInd(g, true, i);
     //     killPawnByInd(g, false, i);
     // }
-    // îjq^ri^qirnvqîqêobqîbqîbnqîbnq^fbinqîbnq^
     // change_pawn_place(g, 0, true, get_pawn_value(g, true, 0, LIG)+1, NB_CASE_LG-3);
     // change_pawn_place(g, 0, false, get_pawn_value(g, false, 0, LIG) - 1, NB_CASE_LG-3);
 
