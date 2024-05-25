@@ -103,6 +103,9 @@ GraphicCache *initCache()
     return cache;
 }
 
+
+
+
 void freeCache(GraphicCache *cache)
 {
     // frame rate management freeing

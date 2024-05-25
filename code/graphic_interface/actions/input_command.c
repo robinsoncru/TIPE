@@ -64,7 +64,7 @@ void checkPawnMove(Game *g, GraphicCache *cache, bool left, bool autoplay)
     else
     {
         pawnMove(g, g->is_white, ind, left);
-        endTurnGraphics(g, cache);
+        //endTurnGraphics(g, cache);
     }
 }
 
@@ -80,7 +80,7 @@ void checkLienAmitie(int i, int j, Game *g, GraphicCache *cache, bool screen_swi
     if (isPawnValid(g) && canBeFriend(g, ind, iw, get_case_damier(g, i, j)))
     {
         lienAmitie(i, j, g);
-        endTurnGraphics(g, cache);
+        //endTurnGraphics(g, cache);
     }
     else
     {
@@ -88,25 +88,6 @@ void checkLienAmitie(int i, int j, Game *g, GraphicCache *cache, bool screen_swi
         {
             // C'est la machine qui joue
             assertAndLog(false, "Pion peut pas être amis ou index pas valide");
-        }
-        alert(cache, IND_PB, ERROR_TICKS);
-    }
-}
-
-void checkPawnMoveBack(Game *g, GraphicCache *cache, bool autoplay)
-{
-    int iw = g->is_white;
-    int indBack = g->inds_move_back;
-    if (isValidIndexInGame(g, indBack, iw))
-    {
-        moveBack(g);
-    }
-    else
-    {
-        if (autoplay)
-        {
-            // C'est la machine qui joue
-            assertAndLog(false, "Indice pas valide");
         }
         alert(cache, IND_PB, ERROR_TICKS);
     }
@@ -125,7 +106,7 @@ void checkLienEnnemitie(int i, int j, Game *g, GraphicCache *cache, bool screen_
     if (isPawnValid(g) && canBeEnnemy(g, ind, iw, get_case_damier(g, i, j)))
     {
         lienEnnemitie(i, j, g);
-        endTurnGraphics(g, cache);
+        //endTurnGraphics(g, cache);
     }
     else
     {
@@ -143,7 +124,7 @@ void checkPromotion(Game *g, GraphicCache *cache, bool autoplay)
     if (canPromotion(g))
     {
         promotion(g);
-        endTurnGraphics(g, cache);
+        //endTurnGraphics(g, cache);
     }
     else
     {
@@ -161,7 +142,7 @@ void checkBiDepl(Game *g, GraphicCache *cache, bool autoplay)
     if (canBiDepl(g, g->ind_move, g->is_white))
     {
         biDepl(g, g->ind_move, g->is_white);
-        endTurnGraphics(g, cache);
+        //endTurnGraphics(g, cache);
     }
     else
     {
@@ -182,10 +163,10 @@ void checkQueenDepl(Game *g, GraphicCache *cache, bool iw, int lig, int col, boo
     queen_move_t tuple_coord = CanMoveOrEatQueen(g, iw, lig, col, g->ind_move, !autoplay);
     int dame_lig = tuple_coord.pos_dame.i;
     int dame_col = tuple_coord.pos_dame.j;
-    if (isPawnValid(g) && dame_lig != VOID_INDEX && dame_col != VOID_INDEX)
+    if (isPawnValid(g) && dame_lig != VOID_INDEX && dame_col != VOID_INDEX && int_to_bool(get_pawn_value(g, g->is_white, g->ind_move, QUEEN)))
     {
         queenDepl(g, g->ind_move, iw, tuple_coord);
-        endTurnGraphics(g, cache);
+        //endTurnGraphics(g, cache);
     }
     else
     {
@@ -335,7 +316,7 @@ void onUpUp(Game *g, GraphicCache *cache)
         eatRafle(g, g->ind_move, g->is_white, g->currentTree, r);
         printf("pathFree called\n");
         pathFree(r);
-        endTurnGraphics(g, cache);
+        //endTurnGraphics(g, cache);
     }
 }
 

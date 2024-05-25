@@ -223,6 +223,7 @@ void createPawn(Game *g, bool color, int i, int j)
 
 void simplyPawnMove(Game *g, bool is_white, int ind, bool left)
 {
+    assertAndLog(isValidIndexInGame(g, ind, is_white), "simply pawn move non valid index");
     pawn p = get_pawn(g, is_white, ind);
     int i = p.lig;
     int j = p.col;
@@ -232,33 +233,17 @@ void simplyPawnMove(Game *g, bool is_white, int ind, bool left)
     change_pawn_place(g, ind, is_white, i + di, j + dj);
 }
 
-void putPawnMoveBack(Game *g, bool left)
+
+void freeIntChain(int_chain *l)
 {
-    /* Give the coord of the case where moves back a pawn when it is linked with a friend and the friend has just moved. Return (-1, -1)
-    if no case available */
-    int ind = g->inds_move_back;
-    bool is_white = g->is_white;
-    pawn p = get_pawn(g, is_white, ind);
-    int i = p.lig;
-    int j = p.col;
-
-    int di = is_white ? 1 : -1;
-    int dj = left ? -1 : 1;
-
-    g->coordForMoveBack.i = VOID_INDEX;
-    g->coordForMoveBack.j = VOID_INDEX;
-
-    if (canMoveBack(g, is_white, ind, left))
+    while (!is_empty(l))
     {
-        g->coordForMoveBack.i = i - di;
-        g->coordForMoveBack.j = j + dj;
+        pop(l);
     }
-    else if (canMoveBack(g, is_white, ind, !left))
-    {
-        g->coordForMoveBack.i = i - di;
-        g->coordForMoveBack.j = j - dj;
-    }
+    free(l->tableau);
+    free(l);
 }
+
 
 void AleatStormBreaks(Game *g, bool color)
 {
@@ -389,21 +374,34 @@ queen_move_t CanMoveOrEatQueen(Game *g, bool color, int lig, int col, int ind, b
     return res; // No case was found
 }
 
-// printf("jump sheep");
-void freeCloud(int_chain *l)
-{
-    while (!is_empty(l))
-    {
-        pop(l);
-    }
-    free(l);
-}
-
 // Memory Function
 void free_game(Game *g)
 {
-    freeCloud(g->cloud[true]);
-    freeCloud(g->cloud[false]);
+    // Free the damier
+
+    for (int i = 0; i < NB_CASE; i++)
+    {
+        free(g->damier[i]);
+    }
+
+    free(g->damier);
+
+    free(g->allPawns[0]);
+    free(g->allPawns[1]);
+    free(g->allPawns);
+
+    free(g->lengthCloud);
+    free(g->nbFoe);
+    free(g->nbFriendNoQueen);
+    free(g->nbQueenWithFriend);
+    free(g->nbQueenWithoutFriend);
+    free(g->nb_pawns);
+
+    freeIntChain(g->cloud[true]);
+    freeIntChain(g->cloud[false]);
+    free(g->cloud);
+
+    freeIntChain(g->inds_move_back);
     if (g->currentTree != emptyTree)
     {
         pathTreeFree(g->currentTree);

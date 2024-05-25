@@ -17,12 +17,6 @@
 
 */
 
-void error()
-{
-    printf("check\n");
-    fflush(stdout);
-}
-
 void print_pawn(pawn p, int ind)
 {
     printf("Ind %d Coord %d %d Ennemy %d, Friend %d Color %d Alive %d Pba %d\n", ind, p.lig, p.col, p.ennemy, p.friendly, p.color, p.alive, p.pba);
@@ -59,22 +53,6 @@ void print_damier(Case **damier, Game *g)
             }
         }
     }
-}
-
-void assertAndLog(bool condition, char *message)
-{
-    if (!condition)
-    {
-        printf("\n");
-        printf("Erreur : %s", message);
-        printf("\n");
-        assert(false);
-    }
-}
-
-void flush()
-{
-    fflush(stdout);
 }
 
 void print_little_linked_list(int_chain *l)

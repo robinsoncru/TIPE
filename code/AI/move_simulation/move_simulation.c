@@ -43,21 +43,6 @@ void promotionIA(Game *g, int indMovePawn)
     cancelPromotion(g, indMovePawn, ind_potential_foe);
 }
 
-void lazzyMoveBack(Game *g, int indMovePawnBack, bool left)
-{
-    // On considère le pire cas, si un pion s'approche d'un fantome de couleur opposée, il le considère
-    // de pba 1
-    assertAndLog(isValidIndexInGame(g, indMovePawnBack, g->is_white), "lazzyMoveBack ind non valide");
-    pawnMoveBackNGE(g, indMovePawnBack, left);
-}
-
-void cancelLazzyMoveBack(Game *g, int indMovePawnBack, bool left)
-{
-    assertAndLog(isValidIndexInGame(g, indMovePawnBack, g->is_white), "cancellazzyMoveBack ind non valide");
-
-    cancelMoveBack(g, indMovePawnBack, left);
-}
-
 void pawnMoveBackAI(Game *g, int indMovePawnBack, bool left)
 {
     // On suppose que le move back est faisable

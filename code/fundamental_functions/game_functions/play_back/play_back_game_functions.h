@@ -14,9 +14,6 @@ void pawnMoveNGE(Game *g, bool is_white, int ind, bool left);
 
 void pawnMoveCancel(Game *g, bool is_white, int ind, bool left);
 
-void pawnMoveBackNGE(Game *g, int ind, bool left);
-void cancelMoveBack(Game *g, int ind, bool left);
-
 void recreateCloud(Game *g, cloud_chain *l, ind_pba_t *survivor, bool iw);
 ind_bool_t biDeplNGE(Game *g, bool color, int ind);
 void cancelBidepl(Game *g, int oldInd, ind_bool_t data);

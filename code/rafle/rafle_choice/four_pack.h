@@ -9,7 +9,6 @@
 //les directions sont numerotee
 //du bit de pois fort au bit de poids faible
 //en partant de 0
-typedef Uint8 FourPack;
 
 Uint8 fourPackGet(int k, FourPack fp);
 void fourPackSet(Uint8 c, int k, FourPack* fp);

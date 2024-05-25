@@ -6,6 +6,7 @@ void error()
     fflush(stdout);
 }
 
+
 void assertAndLog(bool condition, char *message)
 {
     if (!condition)

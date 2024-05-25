@@ -209,7 +209,7 @@ MoveTab* listMovesFilterRafles(Move* temporaryResult, int nbMoves){
 MoveTab* listMoves(Game* g){
     Move* temporaryResult;
     int nbMoves;
-    AssertAndLog(false, "pas correcte");
+    assertAndLog(false, "pas correcte");
     // if (g->inds_move_back != VOID_INDEX) {
     //     temporaryResult = listMovesMoveBack(g, &nbMoves);
     // }

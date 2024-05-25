@@ -338,7 +338,7 @@ Game *create_game()
     init_pawns(g, false);
 
     g->ind_move = NEUTRAL_IND;
-    g->inds_move_back = create_list();
+    g->inds_move_back = create_list(MAX_NB_PAWNS);
 
     g->currentTree = emptyTree;
     g->currentRafle = NULL;
@@ -346,8 +346,8 @@ Game *create_game()
     g->coordForMoveBack.i = IND_LISTENING_MOVE_BACK;
     g->coordForMoveBack.j = IND_LISTENING_MOVE_BACK;
 
-    g->cloud[true] = create_list();
-    g->cloud[false] = create_list();
+    g->cloud[true] = create_list(MAX_NB_PAWNS);
+    g->cloud[false] = create_list(MAX_NB_PAWNS);
     doubleTabInit(g->lengthCloud);
 
     doubleTabInit(g->nbFoe);

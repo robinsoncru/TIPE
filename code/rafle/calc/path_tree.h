@@ -3,8 +3,6 @@
 
 #ifndef PATH_TREE
 #define PATH_TREE
-#define ARITE 4
-#define NO_CHILD_ERROR 5
 
 #include "../../fundamental_functions/coord/coord.h"
 #include "../../fundamental_functions/debug/debug.h"
@@ -13,9 +11,7 @@ C'est une structure reccursive qui consiste en un arbre de
 coordonnees symbolisant un ensemble de chemins sur le plateau.
 L'arbre est d'arite maximale 3 (4 en realite)*/
 
-typedef struct PathTree PathTree;
 
-extern PathTree* emptyTree;
 
 PathTree* pathTreeCreateNode(int i, int j);
     //Cree un noeud de chemin correspondant

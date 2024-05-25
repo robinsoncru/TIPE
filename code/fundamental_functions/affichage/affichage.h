@@ -18,19 +18,6 @@
 #define NUANCE_EFFECT 20
 
 
-// affichage structure
-typedef struct
-{
-    bool loaded; //text must be loaded only when it's necessary
-    bool display;
-    char* content;
-    TTF_Font *font;
-    SDL_Surface *surface;
-    SDL_Texture *texture;
-    SDL_Rect *rect;
-    SDL_Color color;
-} text;
-
 
 // Color constants
 extern SDL_Color orange;

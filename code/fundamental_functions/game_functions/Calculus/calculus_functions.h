@@ -1,7 +1,7 @@
 #ifndef CALCULUS_FUNCTIONS
 #define CALCULUS_FUNCTIONS
 
-#include "../debug/debug_functions.h"
+#include "../debug_game_functions/debug_functions.h"
 
 
 // Calculus fonctions

@@ -12,11 +12,18 @@
 
 // play functions
 
+void cancelMoveBack(Game *g, int ind, bool left);
+void pawnMoveBackNGE(Game *g, int ind, bool left);
+
+
+
+void lazzyMoveBack(Game *g, int indMovePawnBack, bool left);
+void cancelLazzyMoveBack(Game *g, int indMovePawnBack, bool left);
+
 void pawnMove(Game *g, bool is_white, int ind, bool left);
 
-// MOVE BACK FUNCTION
 
-void moveBack(Game *g);
+
 
 
 
@@ -41,8 +48,10 @@ void promotion(Game *g);
     couleur opposé et qu'il existe. Gère le pmetre Game.friend. Si on lie d'amitié un pion qui était déjà ami, le dernier lien
     écrase le précédent */
 void lienAmitie(int lig, int col, Game *g);
-void moveBack(Game *g);
-/* Move back the pawn referred by inds_move_back to the case localised by the coord coordForMoveBack */
+
+// MOVE BACK FUNCTION
+void moveBack(Game *g, bool autoplay, bool use_heuristique, float (*f)(Game *));
+/* Machine: joue à la suite les meilleurs coups en arrière */
 
 /* LIEN ENNEMITIE */
 void lienEnnemitie(int lig, int col, Game *g);

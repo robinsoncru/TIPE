@@ -2,7 +2,7 @@
 
 void pawnMoveNGE(Game *g, bool is_white, int ind, bool left)
 {
-    moveBackGameManagement(g);
+    assertAndLog(is_empty(g->inds_move_back), "Il reste des amis dans les NGE");;
     pawn p = get_pawn(g, is_white, ind);
     int i = p.lig;
     int j = p.col;
@@ -12,7 +12,7 @@ void pawnMoveNGE(Game *g, bool is_white, int ind, bool left)
     change_pawn_place(g, ind, is_white, i + di, j + dj);
     if (p.friendly != NEUTRAL_IND)
     {
-        g->inds_move_back = p.friendly;
+        push(g->inds_move_back, p.friendly);
         // le pion indique a partir de son indice
     }
 }
@@ -50,7 +50,7 @@ void recreateCloud(Game *g, cloud_chain *l, ind_pba_t *survivor, bool iw)
 
 int promotionNGE(Game *g, int ind)
 {
-    moveBackGameManagement(g);
+    assertAndLog(is_empty(g->inds_move_back), "Il reste des amis dans les NGE");;
     /* Promote the pawn at the ind in pmetre : do nothing, become a queen or become an ennemy pawn */
     // Return the index of the ennemy pawn created, -1 else
     bool iw = g->is_white;
@@ -97,28 +97,9 @@ void cancelPromotion(Game *g, int ind_old_friend, int ind_new_foe)
         put_pawn_value(g, iw, ind_old_friend, QUEEN, 0);
 }
 
-void pawnMoveBackNGE(Game *g, int ind, bool left)
-{
-    bool is_white = g->is_white;
-    pawn p = get_pawn(g, is_white, ind);
-    int i = p.lig;
-    int j = p.col;
-    int di = is_white ? 1 : -1;
-    int dj = left ? -1 : 1;
-
-    change_pawn_place(g, ind, is_white, i - di, j - dj);
-
-    g->inds_move_back = VOID_INDEX;
-}
-
-void cancelMoveBack(Game *g, int ind, bool left) {
-    bool iw = g->is_white;
-    simplyPawnMove(g, iw, ind, left);
-}
-
 ind_bool_t biDeplNGE(Game *g, bool color, int ind)
 {
-    moveBackGameManagement(g);
+    assertAndLog(is_empty(g->inds_move_back), "Il reste des amis dans les NGE");;
     // On suppose le coup legal
     bool depl = int_to_bool(rand() % 2);
     // Depl le pion a droite ou a gauche et creera l'autre ghost pawn de l'autre cote
@@ -209,7 +190,7 @@ data_chain *eatRafleNGE(Game *g, int indEater, bool is_white, PathTree *t, Path 
 data_chain *rafleNGE(Game *g, int indMovePawn)
 {
     assert(g->currentTree == emptyTree);
-    moveBackGameManagement(g);
+    assertAndLog(is_empty(g->inds_move_back), "Il reste des amis dans les NGE");;
     bool isWhite = g->is_white;
     g->currentTree = rafleTreeCalc(g, isWhite, g->ind_move);
 
@@ -241,7 +222,7 @@ void cancelRafle(Game *g, int indMovedPawn, Coord init_pos, data_chain *chainy) 
 
 data_chain *queenDeplNGE(Game *g, int ind, bool color, queen_move_t tuple_coord)
 {
-    moveBackGameManagement(g);
+    assertAndLog(is_empty(g->inds_move_back), "Il reste des amis dans les NGE");;
     // Suppose que l'entree est valide
     // On a deja la position d'arrivee et le potentiel pion a manger en entree
 
@@ -257,10 +238,9 @@ data_chain *queenDeplNGE(Game *g, int ind, bool color, queen_move_t tuple_coord)
 
     if (dis_empty(chainy))
     {
-        g->inds_move_back = get_pawn_value(g, color, ind, FRIENDLY);
+        push(g->inds_move_back, get_pawn_value(g, color, ind, FRIENDLY));
         // le pion indique a partir de son indice
     }
-    else g->inds_move_back = VOID_INDEX;
 
     return chainy;
 }
@@ -272,7 +252,7 @@ void cancelDeplQueen(Game *g, int ind_queen, data_chain *chainy, Coord init_coor
 
 void lienAmitiePmetreNGE(int lig, int col, int ind, bool is_white, Game *g)
 {
-    moveBackGameManagement(g);
+    assertAndLog(is_empty(g->inds_move_back), "Il reste des amis dans les NGE");;
     Case c = get_case_damier(g, lig, col);
     assert(c.ind_pawn != VOID_INDEX && c.pawn_color == !is_white);
     put_pawn_value(g, is_white, ind, FRIENDLY, c.ind_pawn);
@@ -307,7 +287,7 @@ void cancelLienAmitie(Game *g, int indPawn, int lig, int col) {
 
 void lienEnnemitiePmetreNGE(bool is_white, int lig, int col, int ind, Game *g)
 {
-    moveBackGameManagement(g);
+    assertAndLog(is_empty(g->inds_move_back), "Il reste des amis dans les NGE");;
     Case c = get_case_damier(g, lig, col);
     assert(c.ind_pawn != -1);
     put_pawn_value(g, is_white, ind, 2, c.ind_pawn);

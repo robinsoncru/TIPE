@@ -84,11 +84,6 @@ bool canEat(Game *g, bool color, int ind, int i, int j, int add0, int add1)
                                ALIVE)));
 }
 
-bool moveBackAvailable(Game *g)
-{
-    return g->inds_move_back > -1 && g->coordForMoveBack.i > VOID_INDEX && g->coordForMoveBack.j > VOID_INDEX;
-}
-
 bool canBeFriend(Game *g, int ind, bool color, Case c)
 {
     // Check if a pawn and the pawn on the case c can be friend
@@ -105,7 +100,7 @@ bool canBeEnnemy(Game *g, int ind, bool color, Case c)
     if (freeCase(c))
         return false;
     pawn ap = get_pawn(g, !color, c.ind_pawn);
-    return c.pawn_color != p.color && ap.ennemy != ind && p.ennemy != c.ind_pawn && !p.queen && !ap.queen;
+    return c.pawn_color != p.color && ap.ennemy == IND_NORMAL && p.ennemy == IND_NORMAL && !p.queen && !ap.queen;
 
 }
 
@@ -132,7 +127,7 @@ bool canBiDepl(Game *g, int ind, bool color)
 
 bool needPutMoveBack(Game *g)
 {
-    return g->inds_move_back > -1 && g->coordForMoveBack.i == IND_LISTENING_MOVE_BACK && g->coordForMoveBack.j == IND_LISTENING_MOVE_BACK;
+    return !is_empty(g->inds_move_back);
 }
 
 bool caseIsAccessible(Game *g, bool is_white, int i, int j)

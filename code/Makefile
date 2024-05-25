@@ -2,12 +2,12 @@ dames.out: main.o coord.o little_linked_list.o game_functions.o aux_functions.o 
 calculus_functions.o logic_functions.o play_back_game_functions.o affichage.o input_command.o on_input.o graphic_cache.o update.o \
 path_tree.o rafle_tree_calc.o path_tree_display.o rafle_management.o four_pack.o path_struct.o rafle_eating.o move_simulation.o \
 move_max.o move_listing.o listing_checks.o move_struct.o rafle_listing.o basic_play_function.o precondition.o fonctions_correctes.o \
-debug_autoplay.o
+debug_autoplay.o debug.o
 	gcc -g -Wall -o dames.out main.o coord.o little_linked_list.o game_functions.o aux_functions.o debug_functions.o game_management.o \
 calculus_functions.o logic_functions.o play_back_game_functions.o affichage.o input_command.o on_input.o graphic_cache.o update.o \
 path_tree.o rafle_tree_calc.o path_tree_display.o rafle_management.o four_pack.o path_struct.o rafle_eating.o move_simulation.o \
 move_max.o move_listing.o listing_checks.o move_struct.o rafle_listing.o basic_play_function.o precondition.o fonctions_correctes.o \
-debug_autoplay.o $$(sdl2-config --cflags --libs) -lSDL2_ttf
+debug_autoplay.o debug.o $$(sdl2-config --cflags --libs) -lSDL2_ttf
 
 main.o: main.c
 	gcc -g -c -Wall main.c
@@ -24,8 +24,8 @@ game_functions.o: fundamental_functions/game_functions/game_functions.c
 aux_functions.o: fundamental_functions/game_functions/aux_game_functions/aux_functions.c
 	gcc -g -c -Wall fundamental_functions/game_functions/aux_game_functions/aux_functions.c
 
-debug_functions.o: fundamental_functions/game_functions/debug/debug_functions.c
-	gcc -g -c -Wall fundamental_functions/game_functions/debug/debug_functions.c
+debug_functions.o: fundamental_functions/game_functions/debug_game_functions/debug_functions.c
+	gcc -g -c -Wall fundamental_functions/game_functions/debug_game_functions/debug_functions.c
 
 game_management.o: fundamental_functions/game_functions/management/game_management.c
 	gcc -g -c -Wall fundamental_functions/game_functions/management/game_management.c
@@ -104,3 +104,6 @@ precondition.o: fundamental_functions/game_functions/precondition/precondition.c
 
 debug_autoplay.o: graphic_interface/autoplay_random_functions/debug_autoplay.c
 	gcc -g -c -Wall graphic_interface/autoplay_random_functions/debug_autoplay.c
+
+debug.o: fundamental_functions/debug/debug.c
+	gcc -g -c -Wall fundamental_functions/debug/debug.c

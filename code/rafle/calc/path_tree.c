@@ -3,13 +3,6 @@
 #include <stdlib.h>
 #include <assert.h>
 
-typedef struct PathTree{
-    int depth;
-    Coord point;
-    int nbChilds;
-    struct PathTree* childs[ARITE];
-} PathTree;
-
 PathTree* emptyTree = NULL;
 
 void validIndexTest(int hDir, int vDir){
@@ -44,9 +37,11 @@ PathTree* pathTreeCreateNode(int i, int j){
     return res;
 }
 
+
+
 void pathTreeFree(PathTree* t){
     //Libere l'integralite de l'abre de chemin
-    if (t != emptyTree) {
+    if (t != NULL && t != emptyTree) {
         for (int i = 0; i < ARITE; i++) {
             pathTreeFree(t -> childs[i]);
         }
