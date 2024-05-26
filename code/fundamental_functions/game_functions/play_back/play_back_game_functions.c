@@ -11,11 +11,11 @@ void pawnMoveNGE(Game *g, bool is_white, int ind, bool left)
     int dj = left ? -1 : 1;
 
     change_pawn_place(g, ind, is_white, i + di, j + dj);
-    if (p.friendly)
+    if (p.friendly > 0)
     {
         for (int i = 0; i < MAX_NB_PAWNS; i++)
         {
-            if (isValidIndexInGame(g, i, !is_white) && getFriendByInd(g, ind, i, is_white))
+            if (isValidIndexInGame(g, i, !is_white) && getFriendByInd(g, ind, i, is_white) && alreadyInList(g->inds_move_back, i))
             {
                 push(g->inds_move_back, i);
             }
@@ -182,7 +182,7 @@ data_chain *eatRafleNGE(Game *g, int indEater, bool is_white, PathTree *t, Path 
         int col_pawn_eaten = get_pawn_value(g, is_white, indEater, COL) + dj;
         int eatenInd = get_case_damier(g, lig_pawn_eaten, col_pawn_eaten).ind_pawn;
 
-        int *lamis = friendTabToListChaine(g, eatenInd, !is_white);
+        int_chain *lamis = friendTabToListChaine(g, eatenInd, !is_white);
 
         pawn_info data_eaten = {.relationship = {.friendsId = lamis,
                                                  .foe = get_pawn_value(g, !is_white, eatenInd, ENNEMY),
@@ -224,7 +224,7 @@ void cancelRafle(Game *g, int indMovedPawn, Coord init_pos, data_chain *chainy)
         int j = reborn_pawn.coord.j;
         createPawn(g, !iw, i, j);
         int reborn_ind = get_case_damier(g, i, j).ind_pawn;
-        int *l = reborn_pawn.relationship.friendsId;
+        int_chain *l = reborn_pawn.relationship.friendsId;
         while (!is_empty(l))
         {
             putFriendByInd(g, reborn_ind, pop(l), iw, true);
@@ -258,10 +258,13 @@ data_chain *queenDeplNGE(Game *g, int ind, bool color, queen_move_t tuple_coord)
 
     if (dis_empty(chainy))
     {
-        prout;
-        push(g->inds_move_back, i);
+        for (int i = 0; i < MAX_NB_PAWNS; i++)
+        {
+            
+            push(g->inds_move_back, i);
 
-        // le pion indique a partir de son indice
+            // le pion indique a partir de son indice
+        }
     }
 
     return chainy;
@@ -275,26 +278,16 @@ void cancelDeplQueen(Game *g, int ind_queen, data_chain *chainy, Coord init_coor
 void lienAmitiePmetreNGE(int lig, int col, int ind, bool is_white, Game *g)
 {
     assertAndLog(is_empty(g->inds_move_back), "LienAmitiePmetreNGE : Il reste des amis à déplacer");
-    
-    Case c = get_case_damier(g, lig, col);
-    assertAndLog((isValidIndexInGame(g, c.pawn_color, !is_white) && c.pawn_color == !is_white), 
-    "LienAmitieNGE : pb couleur ou index pas valide");
-    putFriendByInd(g, ind, )
-    if (int_to_bool(get_pawn_value(g, is_white, ind, QUEEN)))
-    {
-        g->nbQueenWithFriend[is_white]++;
-        g->nbQueenWithoutFriend[is_white]--;
-    }
-    else
-        g->nbFriendNoQueen[is_white]++;
 
-    if (int_to_bool(get_pawn_value(g, !is_white, c.ind_pawn, QUEEN)))
-    {
-        g->nbQueenWithFriend[!is_white]++;
-        g->nbQueenWithoutFriend[!is_white]--;
-    }
-    else
-        g->nbFriendNoQueen[!is_white]++;
+    // !get_pawn_value(g, !iw, c.ind_pawn, QUEEN) && get_pawn_value(g, !iw, c.ind_pawn, ENNEMY) == VOID_INDEX
+
+    Case c = get_case_damier(g, lig, col);
+    assertAndLog((isValidIndexInGame(g, c.pawn_color, !is_white) && c.pawn_color == !is_white),
+                 "LienAmitieNGE : pb couleur ou index pas valide");
+    putFriendByInd(g, ind, c.ind_pawn, is_white, true);
+
+    g->nbFriendNoQueen[is_white]++;
+    g->nbFriendNoQueen[!is_white]++;
 }
 
 void lienAmitieNGE(int lig, int col, Game *g, int indPawn)
@@ -307,16 +300,15 @@ void lienAmitieNGE(int lig, int col, Game *g, int indPawn)
 void cancelLienAmitie(Game *g, int indPawn, int lig, int col)
 {
     bool iw = g->is_white;
-    int ennInd = get_case_damier(g, lig, col).ind_pawn;
-    assert(ennInd != VOID_INDEX);
-    put_pawn_value(g, iw, indPawn, FRIENDLY, -1);
-    put_pawn_value(g, !iw, ennInd, FRIENDLY, -1);
+    int amiInd = get_case_damier(g, lig, col).ind_pawn;
+    assert(amiInd != VOID_INDEX);
+    putFriendByInd(g, indPawn, amiInd, iw, false);
 }
 
 void lienEnnemitiePmetreNGE(bool is_white, int lig, int col, int ind, Game *g)
 {
     assertAndLog(is_empty(g->inds_move_back), "Il reste des amis dans les NGE");
-    ;
+
     Case c = get_case_damier(g, lig, col);
     assert(c.ind_pawn != -1);
     put_pawn_value(g, is_white, ind, 2, c.ind_pawn);

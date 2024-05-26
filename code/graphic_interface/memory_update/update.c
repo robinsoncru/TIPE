@@ -59,31 +59,31 @@ int update(Game *g, GraphicCache *cache, int nb_coups, int *l_coups, int *l_depl
         {
             if (g->is_white)
             {
-                // if (nb_coups % 2 == 1)
-                // {
-                //     play_a_move(PAWNMOVEBACKLEFT, random_index(g), g, cache, nb_coups, l_coups, l_depl);
-                // }
-                // else
-                // {
+                if (nb_coups % 2 == 1)
+                {
+                    nb_coups = play_a_move(PAWNMOVEBACK, random_index(g), g, cache, nb_coups, l_coups, l_depl);
+                }
+                else
+                {
 
-                //     nb_coups = play_a_move(QUEENDEPL, random_index(g), g, cache, nb_coups, l_coups, l_depl);
-                // }
-                nb_coups = play_a_move(QUEENDEPL, random_index(g), g, cache, nb_coups, l_coups, l_depl);
+                    nb_coups = play_a_move(PAWNMOVELEFT, random_index(g), g, cache, nb_coups, l_coups, l_depl);
+                }
+                // nb_coups = play_a_move(PAWNMOVELEFT, random_index(g), g, cache, nb_coups, l_coups, l_depl);
                 
-                // nb_coups = play_a_move(QUEENDEPL, plannifier_index(g, nb_coups, l_coups), g, cache, nb_coups, l_coups, l_depl);
+                // nb_coups = play_a_move(PAWNMOVELEFT, plannifier_index(g, nb_coups, l_coups), g, cache, nb_coups, l_coups, l_depl);
             }
             else
             {
-                // if (nb_coups % 2 == 1)
-                // {
-                //     play_a_move(PAWNMOVEBACKRIGHT, random_index(g), g, cache, nb_coups, l_coups, l_depl);
-                // }
-                // else
-                // {
-                //     nb_coups = play_a_move(QUEENDEPL, random_index(g), g, cache, nb_coups, l_coups, l_depl);
-                // }
-                nb_coups = play_a_move(QUEENDEPL, random_index(g), g, cache, nb_coups, l_coups, l_depl);
-                // nb_coups = play_a_move(QUEENDEPL, plannifier_index(g, nb_coups, l_coups), g, cache, nb_coups, l_coups, l_depl);
+                if (nb_coups % 2 == 1)
+                {
+                    nb_coups = play_a_move(PAWNMOVEBACK, random_index(g), g, cache, nb_coups, l_coups, l_depl);
+                }
+                else
+                {
+                    nb_coups = play_a_move(PAWNMOVELEFT, random_index(g), g, cache, nb_coups, l_coups, l_depl);
+                }
+                // nb_coups = play_a_move(PAWNMOVELEFT, random_index(g), g, cache, nb_coups, l_coups, l_depl);
+                // nb_coups = play_a_move(PAWNMOVELEFT, plannifier_index(g, nb_coups, l_coups), g, cache, nb_coups, l_coups, l_depl);
             }
 
         }

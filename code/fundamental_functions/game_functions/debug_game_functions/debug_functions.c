@@ -24,11 +24,12 @@ void print_pawn(pawn p, int ind)
 }
 
 // prints all the pawns of the same color
-void print_pawns(Game *g)
+void print_pawns(Game *g, bool color)
 {
     for (int i = 0; i < 2 * NB_PAWNS; i++)
     {
-        print_pawn(g->allPawns[g->is_white][i], i);
+        if (g->allPawns[color][i].alive)
+            print_pawn(g->allPawns[color][i], i);
     }
 }
 
@@ -46,7 +47,7 @@ void print_damier(Case **damier, Game *g)
             if (ind != -1)
             {
                 printf("Case lig %d col %d Ind Pion %d color %d In cloud %d is queen %d ind friend %d ind foe %d\n \n",
-                       p.lig, p.col, ind, c, 1 != p.pba, \
+                       p.lig, p.col, ind, c, 1 != p.pba,
                        p.queen, p.friendly, p.ennemy);
                 // print_pawn(g->allPawns[c][ind], ind);
                 // printf("---\n");
@@ -57,9 +58,9 @@ void print_damier(Case **damier, Game *g)
 
 void print_little_linked_list(int_chain *l)
 {
-    for (int i=0; i<l->ind_actu; i++)
+    for (int i = 0; i < l->ind_actu; i++)
     {
-        
+
         printf("indice %d\n", l->tableau[i]);
     }
 }
@@ -71,14 +72,17 @@ void printv(char *s)
     flush();
 }
 
-void picture_this(Game *g) {
+void picture_this(Game *g)
+{
     print_damier(g->damier, g);
     error();
     error();
 }
 
-void picture_game(Game *g, bool iw) {
+void picture_game(Game *g, bool iw)
+{
     printf("nb pawns %d\n nb queen with friend %d\n nb queen without friend %d\n nb ghost pawn %d\n \
-    nb friend no queen %d\n nb foe %d\n \n", g->nb_pawns[iw], g->nbQueenWithFriend[iw], \
-     g->nbQueenWithoutFriend[iw], g->lengthCloud[iw], g->nbFriendNoQueen[iw], g->nbFoe[iw]);
+    nb friend no queen %d\n nb foe %d\n \n",
+           g->nb_pawns[iw], g->nbQueenWithFriend[iw],
+           g->nbQueenWithoutFriend[iw], g->lengthCloud[iw], g->nbFriendNoQueen[iw], g->nbFoe[iw]);
 }

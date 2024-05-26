@@ -40,6 +40,6 @@ void incrBothTab(int t[2]);
 void decrBothTab(int t[2]);
 
 Coord queen_valide_case(Game *g, int ind, bool color);
-
+void changeFriendByInd(Game *g, int indActuStart, int indActuArrive, int indFriend, bool colorActu);
 
 #endif // AUX_FUNCTIONS

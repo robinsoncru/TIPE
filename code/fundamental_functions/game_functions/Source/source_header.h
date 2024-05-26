@@ -7,12 +7,6 @@
 
 
 
-// Game pmetre
-#define NB_CASE_LG 8
-#define NB_CASE (NB_CASE_LG * NB_CASE_LG)
-#define NB_PAWNS (NB_CASE_LG)
-#define MAX_NB_PAWNS (2 * NB_PAWNS)
-
 // represente une absence de pion
 #define NEUTRAL_IND -1
 #define VOID_INDEX (NEUTRAL_IND)
@@ -60,8 +54,7 @@
 #define PAWNMOVERIGHT 5
 #define EATRAFLE 6
 #define QUEENDEPL 7
-#define PAWNMOVEBACKLEFT 8
-#define PAWNMOVEBACKRIGHT 9
+#define PAWNMOVEBACK 8
 
 //Indexes of the players
 #define HUMAN 0

@@ -31,3 +31,26 @@ void flush()
 {
     fflush(stdout);
 }
+
+void print_liensAmitie(Game *g) {
+    printf("\n  ");
+    for (int j=0; j<MAX_NB_PAWNS; j++) {
+
+        if (j < 10) {
+            printf(" ");
+        }
+        printf("%d ", j);
+    }
+    printf("\n");
+    for (int i=0; i<MAX_NB_PAWNS; i++) {
+        printf("%d ", i);
+        if (i < 10) {
+            printf(" ");
+        }
+        for (int j=0; j<MAX_NB_PAWNS; j++) {
+            printf("%d ", g->liensAmitie[i][j]);
+        }
+        printf("\n");
+    }
+    flush();
+}

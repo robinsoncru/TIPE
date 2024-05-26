@@ -54,6 +54,16 @@ void freeIntChain(int_chain *l)
     free(l);
 }
 
+bool alreadyInList(int_chain *l, int ind) {
+    assert(l->ind_actu < l->size_max);
+    for (int i = 0; i < l->ind_actu+1; i++) {
+        if (ind == l->tableau[i]) {
+            return true;
+        }
+    }
+    return false;
+}
+
 // For the cloud chain
 
 void cpush(cloud_chain *l, tcloud k)

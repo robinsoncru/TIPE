@@ -31,9 +31,9 @@ Coord random_case_damier()
     return coord;
 }
 
-int plannifier_index_color(int nb_coups, int *l_coups, bool color)
+int plannifier_index_color(int nb_coups, int *l_depl, bool color)
 {
-    int ind = l_coups[nb_coups];
+    int ind = l_depl[nb_coups];
     printf("%d, %d - ", color, ind);
     flush();
     return ind;
@@ -67,7 +67,7 @@ int extract_pmetre_from_move(Move m)
         }
         else
         {
-            return PAWNMOVEBACKRIGHT;
+            return PAWNMOVERIGHT;
         }
         break;
 
@@ -75,14 +75,7 @@ int extract_pmetre_from_move(Move m)
         return PROMOTION;
 
     case pawnMoveBackType:
-        if (m.left)
-        {
-            return PAWNMOVEBACKLEFT;
-        }
-        else
-        {
-            return PAWNMOVEBACKRIGHT;
-        }
+        return PAWNMOVEBACK;
 
     case biDeplType:
         return BIDEPL;
@@ -142,23 +135,21 @@ int play_a_move(int move, int ind_pawn, Game *g, GraphicCache *cache, int nb_cou
         break;
 
     case LIENAMITIE:
-        // // int indFriend = plannifier_index_color(g, nb_coups, l_coups, !g->is_white);
-        // int indFriend = random_index_color(g, !g->is_white);
-        // // printf("-Index friend %d-", get_pawn_value(g, !g->is_white, indFriend, FRIENDLY));
-        // // flush();
-        // Coord coord = coord_from_ind(g, indFriend, !g->is_white);
-        // checkLienAmitie(coord.i, coord.j, g, cache, false);
-        // // checkLienAmitie(m.lig, m.col, g, cache, false);
+        // int indFriend = plannifier_index_color(nb_coups, l_depl, !g->is_white);
+        int indFriend = random_index_color(g, !g->is_white);
+        Coord coord = coord_from_ind(g, indFriend, !g->is_white);
+        checkLienAmitie(coord.i, coord.j, g, cache, false);
+        // checkLienAmitie(m.lig, m.col, g, cache, false);
         break;
 
     case LIENDENNEMITIE:
-        // int indFriend = plannifier_index_color(2 * nb_coups + 1, l_coups, !g->is_white);
-        int indFriend = random_index_color(g, !g->is_white);
-        // printf("-Index enn %d-", get_pawn_value(g, !g->is_white, indFriend, ENNEMY));
-        // flush();
-        Coord coord = coord_from_ind(g, indFriend, !g->is_white);
-        checkLienEnnemitie(coord.i, coord.j, g, cache, false);
-        // checkLienEnnemitie(m.lig, m.col, g, cache, false);
+        // // int indFriend = plannifier_index_color(2 * nb_coups + 1, l_coups, !g->is_white);
+        // int indFriend = random_index_color(g, !g->is_white);
+        // // printf("-Index enn %d-", get_pawn_value(g, !g->is_white, indFriend, ENNEMY));
+        // // flush();
+        // Coord coord = coord_from_ind(g, indFriend, !g->is_white);
+        // checkLienEnnemitie(coord.i, coord.j, g, cache, false);
+        // // checkLienEnnemitie(m.lig, m.col, g, cache, false);
 
         break;
 
@@ -178,7 +169,7 @@ int play_a_move(int move, int ind_pawn, Game *g, GraphicCache *cache, int nb_cou
         // checkQueenDepl(g, cache, g->is_white, m.coords.pos_dame.i, m.coords.pos_dame.j, true);
         break;
 
-    case PAWNMOVEBACKLEFT:
+    case PAWNMOVEBACK:
         moveBack(g, true, false, zero_fun);
         break;
 

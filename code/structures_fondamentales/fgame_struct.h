@@ -26,9 +26,9 @@ typedef struct
 
 typedef struct
 {
-    int lig, col, ennemy;
-    bool friendly;
-    /* friend: Lien d'amitie avec un autre pion, -1 if no friend */
+    int lig, col, ennemy, friendly;
+    /* ennemy : indice de l'ennemie
+    friendly : nombre d'ami */
     bool alive, color, queen;
     int pba; // Appartenance au nuage de pion se traduit par pba != 1 et plus pba est grand, plus sa probabilite de presence est faible
 } pawn;
@@ -74,5 +74,11 @@ typedef struct
 } Game;
 
 
+
+// Game pmetre
+#define NB_CASE_LG 8
+#define NB_CASE (NB_CASE_LG * NB_CASE_LG)
+#define NB_PAWNS (NB_CASE_LG)
+#define MAX_NB_PAWNS (2 * NB_PAWNS)
 
 #endif

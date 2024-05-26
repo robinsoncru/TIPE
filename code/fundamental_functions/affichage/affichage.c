@@ -151,7 +151,7 @@ void drawLosange(SDL_Renderer *render, Case c, pawn p, Game *g)
         draw_little_square(render, 20, c, blue);
     }
 
-    if (!p.friendly)
+    if (p.friendly > 0)
     {
         draw_little_square(render, 30, c, orange);
     }
@@ -335,8 +335,8 @@ Game *create_game()
         }
     }
 
-    g->allPawns[0] = malloc(NB_PAWNS * 2 * sizeof(pawn));
-    g->allPawns[1] = malloc(NB_PAWNS * 2 * sizeof(pawn));
+    g->allPawns[0] = malloc(MAX_NB_PAWNS * sizeof(pawn));
+    g->allPawns[1] = malloc(MAX_NB_PAWNS * sizeof(pawn));
 
     g->indCheck = IND_NORMAL;
     g->is_white = true;

@@ -330,7 +330,7 @@ void onPUP(Game *g, GraphicCache *cache, bool autoplay)
 
 void onJUP(Game *g, GraphicCache *cache)
 {
-    print_pawns(g);
+    print_pawns(g, g->is_white);
 }
 
 void onHUP(Game *g, GraphicCache *cache)

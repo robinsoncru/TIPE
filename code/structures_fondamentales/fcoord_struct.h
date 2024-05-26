@@ -41,8 +41,17 @@ typedef struct {
     bool b;
 } ind_bool_t;
 
+typedef struct int_chain int_chain;
+
+struct int_chain
+{
+    int *tableau;
+    int ind_actu;
+    int size_max;
+};
+
 typedef struct {
-    int *friendsId;
+    int_chain *friendsId;
     int foe;
     bool queen;
 } primary_data_t;

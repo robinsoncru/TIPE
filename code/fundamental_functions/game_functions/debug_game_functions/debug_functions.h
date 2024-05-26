@@ -7,7 +7,7 @@
 void print_damier(Case **damier, Game *g);
 
 // Affiche les caracteristiques des Pions
-void print_pawns(Game *g);
+void print_pawns(Game *g, bool color);
 void print_pawn(pawn p, int ind);
 void print_little_linked_list(int_chain *l);
 void printv(char *s);

@@ -91,7 +91,8 @@ bool canBeFriend(Game *g, int ind, bool color, Case c)
     if (freeCase(c))
         return false;
     pawn ap = get_pawn(g, !color, c.ind_pawn);
-    return c.pawn_color != p.color && !getFriendByInd(g, ind, c.ind_pawn, color) && !p.queen && !ap.queen;
+    bool already_friend = getFriendByInd(g, ind, c.ind_pawn, color);
+    return c.pawn_color != p.color && !already_friend && !p.queen && !ap.queen && p.ennemy != VOID_INDEX && ap.ennemy != VOID_INDEX;
 }
 
 bool canBeEnnemy(Game *g, int ind, bool color, Case c)

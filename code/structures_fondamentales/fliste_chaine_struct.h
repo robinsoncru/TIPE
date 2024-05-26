@@ -2,15 +2,6 @@
 #define FLISTE_CHAINE
 
 #include "fcoord_struct.h"
-
-typedef struct int_chain int_chain;
-
-struct int_chain
-{
-    int *tableau;
-    int ind_actu;
-    int size_max;
-};
 /* Liste chainée contenant les indices des pions amis à faire bouger pour le joueur actuel */
 
 

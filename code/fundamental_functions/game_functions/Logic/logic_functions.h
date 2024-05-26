@@ -24,6 +24,5 @@ bool canBiDepl(Game *g, int ind, bool color);
 bool canStormBreaks(Game *g, int ind, int color);
 bool canStormBreaksForTheOthers(Game *g, int ind, int color);
 
-bool has_friend(Game *g, int ind, int color);
 
 #endif // LOGIC_FUNCTIONS

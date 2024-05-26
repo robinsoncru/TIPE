@@ -16,7 +16,7 @@ void put_pawn_value(Game *g, bool color, int ind, int wich_pmetre_modify, int va
         g->allPawns[color][ind].ennemy = value;
         break;
     case FRIENDLY:
-        g->allPawns[color][ind].friendly = int_to_bool(value);
+        g->allPawns[color][ind].friendly = value;
         break;
     case QUEEN:
         g->allPawns[color][ind].queen = int_to_bool(value);
@@ -107,6 +107,7 @@ void put_case_damier(Game *g, int i, int j, int whichPmetre, int valeur)
 
 bool getFriendByInd(Game *g, int indActu, int indFriend, bool colorActu)
 {
+    // print_liensAmitie(g);
     assertAndLog(isValidIndexInGame(g, indActu, colorActu), "getFriendByInd indActu pas valide");
     assertAndLog(isValidIndexInGame(g, indFriend, !colorActu), "getFriendByInd indFriend pas valide");
 
@@ -114,25 +115,29 @@ bool getFriendByInd(Game *g, int indActu, int indFriend, bool colorActu)
     {
         return g->liensAmitie[indFriend][indActu];
     }
-    {
-        return g->liensAmitie[indActu][indFriend];
-    }
+    return g->liensAmitie[indActu][indFriend];
 }
+
+// bool has_friend(Game *g, int ind, int color)
+// {
+//     for (int i = 0; i < MAX_NB_PAWNS; i++)
+//     {
+//         if (isValidIndexInGame(g, i, !color) && getFriendByInd(g, ind, i, color))
+//         {
+//             return true;
+//         }
+//     }
+//     return false;
+// }
 
 bool has_friend(Game *g, int ind, int color)
 {
-    for (int i = 0; i < MAX_NB_PAWNS; i++)
-    {
-        if (isValidIndexInGame(g, i, !color) && getFriendByInd(g, ind, i, color))
-        {
-            return true;
-        }
-    }
-    return false;
+    return get_pawn_value(g, color, ind, FRIENDLY) > 0;
 }
 
 void putFriendByInd(Game *g, int indActu, int indFriend, bool colorActu, bool valeur)
 {
+    // print_liensAmitie(g);
     assertAndLog(isValidIndexInGame(g, indActu, colorActu), "putFriendByInd indActu pas valide");
     assertAndLog(isValidIndexInGame(g, indFriend, !colorActu), "putFriendByInd indFriend pas valide");
 
@@ -140,35 +145,39 @@ void putFriendByInd(Game *g, int indActu, int indFriend, bool colorActu, bool va
     {
         g->liensAmitie[indFriend][indActu] = valeur;
     }
+    else
     {
         g->liensAmitie[indActu][indFriend] = valeur;
     }
 
+    int old_friend_nb = get_pawn_value(g, colorActu, indActu, FRIENDLY);
     if (valeur)
     {
-        if (!int_to_bool(get_pawn_value(g, colorActu, indActu, FRIENDLY)))
-        {
-            put_pawn_value(g, colorActu, indActu, FRIENDLY, 1);
-        }
-        if (!int_to_bool(get_pawn_value(g, !colorActu, indFriend, FRIENDLY)))
-        {
-            put_pawn_value(g, !colorActu, indFriend, FRIENDLY, 1);
-        }
+        put_pawn_value(g, colorActu, indActu, FRIENDLY, 1 + old_friend_nb);
+
+        old_friend_nb = get_pawn_value(g, !colorActu, indFriend, FRIENDLY);
+        put_pawn_value(g, !colorActu, indFriend, FRIENDLY, 1 + old_friend_nb);
     }
     else
     {
-        if (!has_friend(g, indFriend, !colorActu))
-        {
-            put_pawn_value(g, !colorActu, indFriend, FRIENDLY, 0);
-        }
+        put_pawn_value(g, colorActu, indActu, FRIENDLY, old_friend_nb - 1);
+        old_friend_nb = get_pawn_value(g, !colorActu, indFriend, FRIENDLY);
+
+        put_pawn_value(g, !colorActu, indFriend, FRIENDLY, old_friend_nb - 1);
     }
 }
 
-int *friendTabToListChaine(Game *g, int ind, bool color)
+int_chain *friendTabToListChaine(Game *g, int ind, bool color)
 {
-    int *l = create_list(MAX_NB_PAWNS);
-    prout
-        push(l, i);
-}
-return l;
+    int nb_friend = get_pawn_value(g, color, ind, FRIENDLY);
+    assert(nb_friend > 0);
+    int_chain *l = create_list(nb_friend);
+    for (int i = 0; i < MAX_NB_PAWNS; i++)
+    {
+        if (isValidIndexInGame(g, i, !color) && getFriendByInd(g, ind, i, color))
+        {
+            push(l, i);
+        }
+    }
+    return l;
 }

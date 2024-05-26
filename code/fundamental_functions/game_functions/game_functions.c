@@ -32,7 +32,7 @@ void pawnMoveBackNGE(Game *g, int ind, bool left)
     int i = p.lig;
     int j = p.col;
     int di = is_white ? 1 : -1;
-    int dj = left ? -1 : 1;
+    int dj = left ? 1 : - 1;
 
     change_pawn_place(g, ind, is_white, i - di, j - dj);
 }
@@ -61,24 +61,23 @@ void cancelLazzyMoveBack(Game *g, int indMovePawnBack, bool left)
 void pawnMove(Game *g, bool is_white, int ind, bool left)
 {
     assertAndLog(is_empty(g->inds_move_back), "Les amis sont toujours la");
-    ;
+
     int i = get_pawn_value(g, is_white, ind, LIG);
     int j = get_pawn_value(g, is_white, ind, COL);
     int di = is_white ? 1 : -1;
     int dj = left ? -1 : 1;
 
     change_pawn_place(g, ind, is_white, i + di, j + dj);
-    if (int_to_bool(get_pawn_value(g, is_white, ind, FRIENDLY)))
+    if (has_friend(g, ind, is_white)) {
+    for (int i = 0; i < MAX_NB_PAWNS; i++)
     {
-        for (int i = 0; i < MAX_NB_PAWNS; i++)
+        if (isValidIndexInGame(g, i, !is_white) && getFriendByInd(g, ind, i, is_white) && !alreadyInList(g->inds_move_back, i))
         {
-            if (isValidIndexInGame(g, ind, is_white) && getFriendByInd(g, ind, i, is_white))
-            {
-                push(g->inds_move_back, i);
-            }
-            // le pion indique a partir de son indice
+            push(g->inds_move_back, i);
         }
-    }
+        // le pion indique a partir de son indice
+    }}
+
     endTurnGameManagement(g, is_white, ind, IND_CHANGE_ALLOWED, false);
 }
 
@@ -131,17 +130,13 @@ void queenDepl(Game *g, int ind, bool color, queen_move_t tuple_coord)
         doMoveBack = !had_eaten;
     printf("pathFree called\n");
     pathFree(r);
-    
-    if (int_to_bool(get_pawn_value(g, color, ind, FRIENDLY)) && doMoveBack)
+    for (int i = 0; i < MAX_NB_PAWNS; i++)
     {
-        for (int i = 0; i < MAX_NB_PAWNS; i++)
+        if (isValidIndexInGame(g, i, !color) && getFriendByInd(g, ind, i, color) && alreadyInList(g->inds_move_back, i))
         {
-            if (isValidIndexInGame(g, ind, color) && getFriendByInd(g, ind, i, color))
-            {
-                push(g->inds_move_back, i);
-            }
-            // le pion indique a partir de son indice
+            push(g->inds_move_back, i);
         }
+        // le pion indique a partir de son indice
     }
 
     endTurnGameManagement(g, color, ind, IND_CHANGE_ALLOWED, false);

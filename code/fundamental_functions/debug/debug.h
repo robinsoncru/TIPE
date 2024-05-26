@@ -19,4 +19,5 @@ void flush();
 void assertAndLog(bool condition, char* message);
 
 bool teste_frame(Game *g, bool color, int rec);
+void print_liensAmitie(Game *g);
 #endif //DEBUG

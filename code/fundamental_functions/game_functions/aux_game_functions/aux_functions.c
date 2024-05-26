@@ -43,7 +43,7 @@ void copy_remove_pawn_from_index_to_index(Game *g, int indStart, int indArrive, 
 
         // Il faut gérer les liens amicaux
         pawn p = get_pawn(g, color, indStart);
-        if (p.friendly)
+        if (p.friendly > 0)
         {
             for (int indFriend = 0; indFriend < MAX_NB_PAWNS; indFriend++)
             {
@@ -63,12 +63,12 @@ void copy_remove_pawn_from_index_to_index(Game *g, int indStart, int indArrive, 
         {
             put_pawn_value(g, color, indArrive, k, get_pawn_value(g, color, indStart, k));
         }
-        pawn_default_value(g, indStart, color);
 
         // Sur le damier
         put_case_damier(g, get_pawn_value(g, color, indArrive, LIG), get_pawn_value(g, color, indArrive, COL), IND_PAWN_ON_CASE, indArrive);
         put_case_damier(g, get_pawn_value(g, color, indArrive, LIG), get_pawn_value(g, color, indArrive, COL), PAWN_COLOR, bool_to_int(color));
     }
+    pawn_default_value(g, indStart, color);
 }
 
 void pawn_default_value(Game *g, int ind, bool color)
@@ -115,21 +115,24 @@ void killPawn(Game *g, int i, int j)
             {
                 g->nbQueenWithoutFriend[color]--;
             }
-            for (int indAmi = 0; indAmi < MAX_NB_PAWNS; indAmi++)
+            if (has_friend(g, indPawn, color))
             {
-                if (isValidIndexInGame(g, indAmi, !color) && getFriendByInd(g, indPawn, indAmi, color))
+                for (int indAmi = 0; indAmi < MAX_NB_PAWNS; indAmi++)
                 {
-                    bool opposee_is_queen = int_to_bool(get_pawn_value(g, !color, indAmi, QUEEN));
-                    putFriendByInd(g, indPawn, indAmi, color, false);
-                    if (is_queen)
-                        g->nbQueenWithFriend[color]--;
-                    else
-                        g->nbFriendNoQueen[color]--;
+                    if (isValidIndexInGame(g, indAmi, !color) && getFriendByInd(g, indPawn, indAmi, color))
+                    {
+                        bool opposee_is_queen = int_to_bool(get_pawn_value(g, !color, indAmi, QUEEN));
+                        putFriendByInd(g, indPawn, indAmi, color, false);
+                        if (is_queen)
+                            g->nbQueenWithFriend[color]--;
+                        else
+                            g->nbFriendNoQueen[color]--;
 
-                    if (opposee_is_queen)
-                        g->nbQueenWithFriend[!color]--;
-                    else
-                        g->nbFriendNoQueen[!color]--;
+                        if (opposee_is_queen)
+                            g->nbQueenWithFriend[!color]--;
+                        else
+                            g->nbFriendNoQueen[!color]--;
+                    }
                 }
             }
         }
@@ -202,7 +205,7 @@ int nonLoggingChangeForEat(Game *g, bool color, int indEater, int i, int j, int 
 void promote(Game *g, bool is_white, int ind)
 {
     put_pawn_value(g, is_white, ind, QUEEN, 1);
-    if (int_to_bool(get_pawn_value(g, is_white, ind, FRIENDLY)))
+    if (has_friend(g, ind, is_white))
         g->nbQueenWithFriend[is_white]++;
     // Seul les pions qui ont eu des amis peuvent devenir des reines avec amitié
     else
