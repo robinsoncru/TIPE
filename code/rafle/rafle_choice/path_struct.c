@@ -31,13 +31,13 @@ int pathLength(Path* path){
 }
 
 Uint8 pathGet(int k, Path* path){
-    assertAndLog(k >= path->deb && k < path->fin, "index out of Path bounds");
+    //assertAndLog(k >= path->deb && k < path->fin, "index out of Path bounds");
     FourPack toGet = path->tab[k / 4];
     return fourPackGet(k % 4, toGet);
 }
 
 void pathSet(Uint8 c, int k, Path* path){
-    assertAndLog(k >= path->deb && k < path->fin, "index out of Path bounds");
+    //assertAndLog(k >= path->deb && k < path->fin, "index out of Path bounds");
     FourPack* toSet = &(path->tab[k / 4]);
     fourPackSet(c, k % 4 , toSet);
 }
@@ -54,7 +54,7 @@ Path* pathCopy(Path* path){
     res->n = path->n;
     res->deb = path->deb;
     res->fin = path->fin;
-    for (int k = 0; k < path->c; k++) {
+    for (int k = res->deb; k < path->deb; k++) {
         pathSet(pathGet(k, path), k, res);
     }
     return res;

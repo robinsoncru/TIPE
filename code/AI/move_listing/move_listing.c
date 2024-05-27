@@ -53,7 +53,7 @@ void listMovesPromotion(Game* g, Move* temporaryResult, int* nbMoves){
     Move currentMove;
     currentMove.manipulatedPawn = promotionType;
 
-    for (int k = 0; k < 2 * NB_PAWNS; k++) {
+    for (int k = 0; k < g->nb_pawns[g->is_white]; k++) {
         if (isPromotable(g, k, g->is_white)) {
             currentMove.manipulatedPawn = k;
             temporaryResult[*nbMoves] = currentMove;
@@ -82,7 +82,7 @@ void listMovesEnnemy(Game* g, int selectedPawn, Move* temporaryResult, int* nbMo
     currentMove.manipulatedPawn = selectedPawn;
     currentMove.type = lienEnnemitieType;
 
-    for (int k = 0; k < 2 * NB_PAWNS; k++) {
+    for (int k = 0; k < g->nb_pawns[!g->is_white]; k++) {
         if (isEnnemiable(g, k, !g->is_white)) {
             currentMove.lig = get_pawn_value(g, !g->is_white, k, LIG);
             currentMove.col = get_pawn_value(g, !g->is_white, k, COL);
@@ -217,17 +217,15 @@ MoveTab* listMoves(Game* g){
         nbMoves = 0;
         listMovesPromotion(g, temporaryResult, &nbMoves);
 
-        for (int k = 0; k < 2 * NB_PAWNS; k++) {
-            if (get_pawn_value(g, g->is_white, k, ALIVE)) {
-                if (get_pawn_value(g, g->is_white, k, QUEEN)) {
-                    listMovesForQueen(g, k, temporaryResult, &nbMoves);
-                }
-                else if (get_pawn_value(g, g->is_white, k, PBA) != 1) {
-                    listMovesForGhostPawns(g, k, temporaryResult, &nbMoves);
-                }
-                else {
-                    listMovesForPawn(g, k, temporaryResult, &nbMoves);
-                }
+        for (int k = 0; k < g->nb_pawns[g->is_white]; k++) {
+            if (get_pawn_value(g, g->is_white, k, QUEEN)) {
+                listMovesForQueen(g, k, temporaryResult, &nbMoves);
+            }
+            else if (get_pawn_value(g, g->is_white, k, PBA) != 1) {
+                listMovesForGhostPawns(g, k, temporaryResult, &nbMoves);
+            }
+            else {
+                listMovesForPawn(g, k, temporaryResult, &nbMoves);
             }
         }
     }

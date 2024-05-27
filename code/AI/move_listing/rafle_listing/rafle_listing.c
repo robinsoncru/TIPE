@@ -13,11 +13,10 @@ void listPathsOfTrees(PathTree* rafleTree, Path* currentPath, Move currentMove, 
             *nbMoves = *nbMoves + 1;
             break;
         
-        case 1:
+        case 1://il n'y a pas de choix a faire, donc on ajoute rien a la rafle
             dirCode = pathTreeFirstChild(rafleTree);
             getDirsFromCode(dirCode, &vDir, &hDir);
             currentChild = pathTreeChild(rafleTree, hDir, vDir);
-            pathAdd(dirCode, currentPath);
             listPathsOfTrees(currentChild, currentPath, currentMove, temporaryResult, nbMoves);
             break;
         
@@ -49,7 +48,7 @@ void listRafles(Game* g, int selectedPawn, Coord tmpPos, Move* temporaryResult, 
         currentMove.manipulatedPawn = selectedPawn;
         currentMove.rafleTree = tree;
 
-        Path* currentPath = pathCreate(pathTreeDepth(tree));
+        Path* currentPath = pathCreate(pathTreeDepth(tree) + 1);
         listPathsOfTrees(tree, currentPath, currentMove, temporaryResult, nbMoves);
         pathFree(currentPath);
     }
