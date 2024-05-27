@@ -82,21 +82,21 @@ void picture_this(Game *g)
 void print_state_game(Game *g, int which_pmetre)
 {
 
-    printf("\n  ");
+    printf("\n     ");
     for (int i = 0; i < NB_CASE_LG; i++)
     {
-        printf("%d      ", i);
+        printf("%d     ", i);
     }
     printf("\n");
-    for (int i = 0; i < NB_CASE_LG; i++)
+    for (int i = NB_CASE_LG-1; i >-1; i--)
     {
-        printf("%d ", i);
+        printf("%d |", i);
         for (int j = 0; j < NB_CASE_LG; j++)
         {
             Case c = g->damier[i][j];
             if (freeCase(c))
             {
-                printf("|      |");
+                printf("     |");
             }
             else {
                 pawn p = g->allPawns[c.pawn_color][c.ind_pawn];
@@ -109,23 +109,27 @@ void print_state_game(Game *g, int which_pmetre)
 
                 case ENNEMY:
                     valeur = p.ennemy;
+                    break;
 
                 case QUEEN:
                     valeur = p.queen;
+                    break;
 
                 case PBA:
                     valeur = p.pba;
+                    break;
                 
                 default:
                     assertAndLog(false, "state_game: which pmetre non reconnu");
                     break;
                 }
 
-                printf("(%d-%d-%d)", c.pawn_color, c.ind_pawn, valeur);
+                printf("%d-%d-%d|", c.pawn_color, c.ind_pawn, valeur);
             }
         }
         printf("\n");
     }
+    flush();
 }
 
 void picture_game(Game *g, bool iw)
