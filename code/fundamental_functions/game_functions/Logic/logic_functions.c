@@ -142,7 +142,7 @@ bool canPromotion(Game *g)
 }
 
 // Seul un pion plein peut faire eclater le nuage
-bool canStormBreaks(Game *g, int ind, int color)
+bool canStormBreaks(Game *g, int ind, bool color)
 {
     if (!isInCloud(g, color, ind))
         return false;
@@ -168,7 +168,7 @@ bool canStormBreaks(Game *g, int ind, int color)
 }
 
 // Seul un pion plein peut faire eclater le nuage
-bool canStormBreaksForTheOthers(Game *g, int ind, int color)
+bool canStormBreaksForTheOthers(Game *g, int ind, bool color)
 {
 
     if (isInCloud(g, color, ind))

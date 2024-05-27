@@ -95,6 +95,8 @@ void killPawn(Game *g, int i, int j)
     // DO NOT remove a pawn from the cloud
     assert(inGame(i, j));
 
+    assert(false); // cloud
+
     Case c = get_case_damier(g, i, j);
     if (!freeCase(c))
     {
@@ -264,7 +266,7 @@ void AleatStormBreaks(Game *g, bool color)
         }
         else
         {
-            killPawn(g, get_pawn_value(g, color, ind, LIG), get_pawn_value(g, color, ind, COL));
+            killPawnByInd(g, color, ind);
         }
     }
     g->lengthCloud[color] = 0;
@@ -490,4 +492,39 @@ Coord queen_valide_case(Game *g, int ind, bool color)
     }
     assertAndLog(false, "Dame : aucune case trouve");
     return dir;
+}
+
+void change_pawn_place_coord(Game *g, int ind, bool color, Coord pos)
+{
+    change_pawn_place(g, ind, color, pos.i, pos.j);
+}
+
+void stormBreaksNGE(Game *g, bool color, cloud_chain *load, ind_pba_t *survivor, Coord pos_survivor)
+{
+    // Liste chaine et valeur du pawn survivor modifies par effet de bord
+    int_chain *l = g->cloud[color];
+    int ind = VOID_INDEX;
+
+    while (!is_empty(l))
+    {
+        ind = pop(l);
+
+        if (is_empty(l))
+        {
+            survivor->ind = ind;
+            survivor->pba = get_pawn_value(g, color, ind, PBA);
+            put_pawn_value(g, color, ind, PBA, 1);
+            break;
+        }
+        else
+        {
+            tcloud k = {.coord = {.i = get_pawn_value(g, color, ind, LIG),
+                                  .j = get_pawn_value(g, color, ind, COL)},
+                        .pba = get_pawn_value(g, color, ind, PBA)};
+            cpush(load, k);
+            killPawn(g, get_pawn_value(g, color, ind, LIG), get_pawn_value(g, color, ind, COL));
+        }
+    }
+    g->lengthCloud[color] = 0;
+    change_pawn_place_coord(g, survivor->ind, color, pos_survivor);
 }

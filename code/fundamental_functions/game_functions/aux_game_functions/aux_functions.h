@@ -25,7 +25,7 @@ void simplyPawnMove(Game *g, bool is_white, int ind, bool left);
     if no case available. The coord are given at g->coordForMoveBack */
 void putPawnMoveBack(Game *g, bool left);
 
-void stormBreaks(Game *g, bool color, int indSurvivor);
+void stormBreaksNGE(Game *g, bool color, cloud_chain *load, ind_pba_t *survivor, Coord pos_survivor);
 void AleatStormBreaks(Game *g, bool color);
 void handleCloudDuePawnMoveNGE(Game *g, int indMovedPawn, ind_pba_t *survivor, cloud_chain *l);
 void AleatStormBreaksNGE(Game *g, bool color, cloud_chain *load, ind_pba_t *survivor);
@@ -41,5 +41,5 @@ void decrBothTab(int t[2]);
 
 Coord queen_valide_case(Game *g, int ind, bool color);
 void changeFriendByInd(Game *g, int indActuStart, int indActuArrive, int indFriend, bool colorActu);
-
+void change_pawn_place_coord(Game *g, int ind, bool color, Coord pos);
 #endif // AUX_FUNCTIONS

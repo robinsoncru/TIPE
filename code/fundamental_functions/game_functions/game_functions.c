@@ -20,23 +20,6 @@
 // Elles ont toutes des effets de bord
 // et on suppose que les coups joues sont legaux
 
-// moves the indicated pawn frontward depending on the
-// indicated direction.
-// On suppose que ce coup est legal.
-// Met fin au tour pour la structure de jeu
-
-void pawnMoveBackNGE(Game *g, int ind, bool left)
-{
-    bool is_white = g->is_white;
-    pawn p = get_pawn(g, is_white, ind);
-    int i = p.lig;
-    int j = p.col;
-    int di = is_white ? 1 : -1;
-    int dj = left ? 1 : - 1;
-
-    change_pawn_place(g, ind, is_white, i - di, j - dj);
-}
-
 void cancelMoveBack(Game *g, int ind, bool left)
 {
     bool iw = g->is_white;
@@ -48,7 +31,14 @@ void lazzyMoveBack(Game *g, int indMovePawnBack, bool left)
     // On considère le pire cas, si un pion s'approche d'un fantome de couleur opposée, il le considère
     // de pba 1
     assertAndLog(isValidIndexInGame(g, indMovePawnBack, g->is_white), "lazzyMoveBack ind non valide");
-    pawnMoveBackNGE(g, indMovePawnBack, left);
+    bool is_white = g->is_white;
+    pawn p = g->allPawns[is_white][indMovePawnBack];
+    int i = p.lig;
+    int j = p.col;
+    int di = is_white ? 1 : -1;
+    int dj = left ? 1 : -1;
+
+    change_pawn_place(g, indMovePawnBack, is_white, i - di, j - dj);
 }
 
 void cancelLazzyMoveBack(Game *g, int indMovePawnBack, bool left)
@@ -68,15 +58,17 @@ void pawnMove(Game *g, bool is_white, int ind, bool left)
     int dj = left ? -1 : 1;
 
     change_pawn_place(g, ind, is_white, i + di, j + dj);
-    if (has_friend(g, ind, is_white)) {
-    for (int i = 0; i < MAX_NB_PAWNS; i++)
+    if (has_friend(g, ind, is_white))
     {
-        if (isValidIndexInGame(g, i, !is_white) && getFriendByInd(g, ind, i, is_white) && !alreadyInList(g->inds_move_back, i))
+        for (int i = 0; i < MAX_NB_PAWNS; i++)
         {
-            push(g->inds_move_back, i);
+            if (isValidIndexInGame(g, i, !is_white) && getFriendByInd(g, ind, i, is_white) && !alreadyInList(g->inds_move_back, i))
+            {
+                push(g->inds_move_back, i);
+            }
+            // le pion indique a partir de son indice
         }
-        // le pion indique a partir de son indice
-    }}
+    }
 
     endTurnGameManagement(g, is_white, ind, IND_CHANGE_ALLOWED, false);
 }
@@ -250,22 +242,18 @@ void lienAmitie(int lig, int col, Game *g)
 
 */
 
-// Functions to move back a pawn because the friend has just moved
-
-void moveBack(Game *g, bool autoplay, bool use_heuristique, float (*f)(Game *))
+// Play back and return if the pawn has moved or not
+void moveBackNGE(Game *g, bool autoplay, bool use_heuristique, float (*f)(Game *))
 {
-    /* Suppose move on the just pawn. Move back the pawn referred by inds_move_back to the case localised by the coord coordForMoveBack */
-
     bool iw = g->is_white;
     if (autoplay)
     {
-        while (!is_empty(g->inds_move_back))
+        for (int i = 0; i < taille_list(g->inds_move_back); i++)
         {
-            int ind = pop(g->inds_move_back);
+            int ind = get(g->inds_move_back, i);
             assertAndLog(isValidIndexInGame(g, ind, iw), "Pion sortie de la pile des amis non valide");
             bool recul_gauche = canMoveBack(g, iw, ind, true);
             bool recul_droite = canMoveBack(g, iw, ind, false);
-            bool move_has_been_played = true;
             if (use_heuristique)
             {
                 assertAndLog(false, "pas encore teste move Back heurist");
@@ -296,7 +284,7 @@ void moveBack(Game *g, bool autoplay, bool use_heuristique, float (*f)(Game *))
                 }
                 else
                 {
-                    move_has_been_played = false;
+                    // Rien ne se passera dans le endTurnGameManagement
                 }
             }
             else
@@ -311,19 +299,28 @@ void moveBack(Game *g, bool autoplay, bool use_heuristique, float (*f)(Game *))
                 }
                 else
                 {
-                    move_has_been_played = false;
+                    // Rien ne se passera dans le endTurnGameManagement
                 }
             }
-
-            if (move_has_been_played)
-            {
-                endTurnGameManagement(g, iw, ind, IND_CHANGE_ALLOWED, true);
-            };
         }
     }
     else
     {
         assertAndLog(false, "Fuck it human, only machines play move back");
+    }
+}
+
+// Functions to move back a pawn because the friend has just moved
+
+void moveBack(Game *g, bool autoplay, bool use_heuristique, float (*f)(Game *))
+{
+    /* Suppose move on the just pawn. Move back the pawn referred by inds_move_back to the case localised by the coord coordForMoveBack */
+    moveBackNGE(g, autoplay, use_heuristique, f);
+    int ind;
+    while (!is_empty(g->inds_move_back))
+    {
+        ind = pop(g->inds_move_back);
+        endTurnGameManagement(g, g->is_white, ind, IND_CHANGE_ALLOWED, true);
     }
 }
 

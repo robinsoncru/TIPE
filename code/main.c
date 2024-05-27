@@ -14,21 +14,32 @@ void test_start_game(Game *g)
 {
     // très pratique pour promouvoir une dame en qq coups
 
-    // Coord c1 = coord_from_ind(g, 0, true);
+    Coord c1 = coord_from_ind(g, 0, true);
     // Coord c2 = coord_from_ind(g, 1, true);
-    // for (int i = 0; i < 4; i++)
-    // {
-    //     // promote(g, true, i);
-    //     // promote(g, false, i);
-    //     lienAmitiePmetreNGE(c1.i, c1.j, i, false, g);
-    // }
-    // for (int i = 0; i > -1; i--)
-    // {
-    //     killPawnByInd(g, true, i);
-    //     killPawnByInd(g, false, i);
-    // }
+    for (int i = 0; i < 4; i++)
+    {
+        // promote(g, true, i);
+        // promote(g, false, i);
+        change_pawn_place(g, i, false, get_pawn_value(g, false, i, LIG) - 5, get_pawn_value(g, false, i, COL) + i + 9);
 
-    // change_pawn_place(g, 0, true, get_pawn_value(g, true, 0, LIG)+1, NB_CASE_LG-3);
+        lienAmitiePmetreNGE(c1.i, c1.j, i, false, g);
+    }
+    for (int i = NB_PAWNS - 1; i > 3; i--)
+    {
+        killPawnByInd(g, true, i);
+        killPawnByInd(g, false, i);
+        
+    }
+
+    killPawnByInd(g, true, 3);
+
+    for (int i = 2; i > 0; i--)
+    {
+        change_pawn_place(g, i, true, NB_CASE_LG - 4, get_pawn_value(g, true, i, COL) + i + 3);
+        biDepl(g, i, true);
+    }
+
+    change_pawn_place(g, 0, true, get_pawn_value(g, true, 0, LIG) + 1, NB_CASE_LG - 5);
     // change_pawn_place(g, 0, false, get_pawn_value(g, false, 0, LIG) - 1, NB_CASE_LG-3);
 
     // change_pawn_place(g, 1, true, get_pawn_value(g, true, 1, LIG) + 1, NB_CASE_LG-3);
@@ -48,9 +59,8 @@ void test_start_game(Game *g)
     // change_pawn_place(g->allPawns[0], g->damier, 1, 3, 5);
     // change_pawn_place(g->allPawns[0], g->damier, 2, 1, 1);
 
-
-    //configuration en lignes noires
-    //pour tester les rafles
+    // configuration en lignes noires
+    // pour tester les rafles
     /*
     for (int i = NB_PAWNS - 1; i >= 4; i--)
     {
@@ -69,33 +79,32 @@ void test_start_game(Game *g)
     change_pawn_place(g, 3, false, 5, 3);
     change_pawn_place(g, 4, false, 3, 3);
     change_pawn_place(g, 5, false, 1, 3);*/
-    //fin de config
+    // fin de config
 
-    //configuration multirafles
-    change_pawn_place(g, 0, true, 0, 0);
-    change_pawn_place(g, 1, true, 0, 2);
-    change_pawn_place(g, 2, true, 0, 4);
-    change_pawn_place(g, 3, true, 0, 6);
-    change_pawn_place(g, 4, true, 2, 0);
-    change_pawn_place(g, 5, true, 2, 2);
-    change_pawn_place(g, 6, true, 2, 4);
-    change_pawn_place(g, 7, true, 2, 6);
+    // configuration multirafles
+    // change_pawn_place(g, 0, true, 0, 0);
+    // change_pawn_place(g, 1, true, 0, 2);
+    // change_pawn_place(g, 2, true, 0, 4);
+    // change_pawn_place(g, 3, true, 0, 6);
+    // change_pawn_place(g, 4, true, 2, 0);
+    // change_pawn_place(g, 5, true, 2, 2);
+    // change_pawn_place(g, 6, true, 2, 4);
+    // change_pawn_place(g, 7, true, 2, 6);
 
-    change_pawn_place(g, 0, false, 3, 1);
-    change_pawn_place(g, 1, false, 3, 3);
-    change_pawn_place(g, 2, false, 3, 5);
-    change_pawn_place(g, 3, false, 3, 7);
-    change_pawn_place(g, 4, false, 5, 1);
-    change_pawn_place(g, 5, false, 5, 3);
-    change_pawn_place(g, 6, false, 5, 5);
-    change_pawn_place(g, 7, false, 5, 7);
-    //fin de config
+    // change_pawn_place(g, 0, false, 3, 1);
+    // change_pawn_place(g, 1, false, 3, 3);
+    // change_pawn_place(g, 2, false, 3, 5);
+    // change_pawn_place(g, 3, false, 3, 7);
+    // change_pawn_place(g, 4, false, 5, 1);
+    // change_pawn_place(g, 5, false, 5, 3);
+    // change_pawn_place(g, 6, false, 5, 5);
+    // change_pawn_place(g, 7, false, 5, 7);
+    // fin de config
 
-    print_pawns(g, true);
-    print_pawns(g, false);
-    print_liensAmitie(g);
-    print_state_game(g, QUEEN);
-
+    // print_pawns(g, true);
+    // print_pawns(g, false);
+    // print_liensAmitie(g);
+    // print_state_game(g, QUEEN);
 }
 
 int main(int argc, char *argv[])
@@ -122,7 +131,7 @@ int main(int argc, char *argv[])
 
     cache->last_time = SDL_GetTicks();
     int nb_coups = 0;
-    int l_coups[10] = {4, 4};
+    int l_coups[40] = {0, 7, 1, 7, 0, 7, 3, 7, 0, 7, 0, 7, 0, 7, 2, 7, 0, 7, 3, 7, 0, 7, 0, 7, 0, 7, 0, 7, 0,7,  1};
     int l_depl[20] = {5, 5};
 
     // Start the game

@@ -75,8 +75,24 @@ typedef struct
 
 
 
+enum moveType
+{
+    pawnMoveType,
+    promotionType,
+    pawnMoveBackType,
+    biDeplType,
+    queenDeplType,
+    rafleType,
+    lienAmitieType,
+    lienEnnemitieType
+};
+
+typedef enum moveType moveType;
+
+
+
 // Game pmetre
-#define NB_CASE_LG 8
+#define NB_CASE_LG 20
 #define NB_CASE (NB_CASE_LG * NB_CASE_LG)
 #define NB_PAWNS (NB_CASE_LG)
 #define MAX_NB_PAWNS (2 * NB_PAWNS)

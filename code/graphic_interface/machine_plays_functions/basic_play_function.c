@@ -10,11 +10,6 @@ int random_index_color(Game *g, bool color)
     return ind;
 }
 
-float zero_fun(Game *g)
-{
-    return 0.0;
-}
-
 int random_index(Game *g)
 {
     return random_index_color(g, g->is_white);
@@ -120,12 +115,10 @@ int play_a_move(int move, int ind_pawn, Game *g, GraphicCache *cache, int nb_cou
     {
     case PAWNMOVELEFT:
         checkPawnMove(g, cache, true, true);
-        // Attention bug
         break;
 
     case PAWNMOVERIGHT:
         checkPawnMove(g, cache, false, true);
-        // Attention bug
         break;
 
     case PROMOTION:

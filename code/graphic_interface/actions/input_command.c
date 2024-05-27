@@ -396,11 +396,11 @@ void onRUp(Game *g, GraphicCache *cache)
     // int dame_col = coords.pos_dame.j;
     // if (isPawnValid(g) && dame_lig != VOID_INDEX && dame_col != VOID_INDEX)
     // {
-    //     queenDeplAI(g, ind, coords);
+    //     queenDeplIssue(g, ind, coords);
     // }
     // else
     //     printv("big queen pb");
-    // // lienEnnemitieAI(g, ind, lig, col);
+    // // lienEnnemitieIssue(g, ind, lig, col);
     // picture_this(g);
 
     picture_game(g, g->is_white);

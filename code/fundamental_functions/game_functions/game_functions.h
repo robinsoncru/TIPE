@@ -13,7 +13,8 @@
 // play functions
 
 void cancelMoveBack(Game *g, int ind, bool left);
-void pawnMoveBackNGE(Game *g, int ind, bool left);
+void moveBackNGE(Game *g, bool autoplay, bool use_heuristique, float (*f)(Game *));
+
 
 
 

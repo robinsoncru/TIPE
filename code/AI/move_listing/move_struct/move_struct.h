@@ -5,17 +5,6 @@
 #include "../../../rafle/calc/path_tree.h"
 #include "../../../rafle/rafle_choice/path_struct.h"
 
-enum moveType
-{
-    pawnMoveType,
-    promotionType,
-    pawnMoveBackType,
-    biDeplType,
-    queenDeplType,
-    rafleType,
-    lienAmitieType,
-    lienEnnemitieType
-};
 
 typedef struct Move
 {

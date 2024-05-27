@@ -10,6 +10,7 @@ void push(int_chain *l, int k)
 
 bool is_empty(int_chain *l)
 {
+    assert(l->ind_actu < l->size_max);
     return (l->ind_actu <= -1);
 }
 
@@ -37,11 +38,24 @@ int pop(int_chain *l)
     return k;
 }
 
-int get(int_chain *l)
+int taille_list(int_chain *l)
 {
-    /* renvoie le int_chain en première position */
-    assert(!is_empty(l));
-    return l->tableau[l->ind_actu];
+    assert(l->ind_actu < l->size_max);
+    return l->ind_actu + 1;
+}
+
+int get(int_chain *l, int i)
+{
+    /* renvoie le int_chain en i-eme position */
+    assert(!is_empty(l) && 0 <= i && i < taille_list(l));
+    return l->tableau[i];
+}
+
+void pushi(int_chain *l, int i, int valeur)
+{
+    /* push une valeur en i-eme position */
+    assert(!is_empty(l) && 0 <= i && i < taille_list(l));
+    l->tableau[i] = valeur;
 }
 
 void freeIntChain(int_chain *l)
@@ -54,14 +68,29 @@ void freeIntChain(int_chain *l)
     free(l);
 }
 
-bool alreadyInList(int_chain *l, int ind) {
+bool alreadyInList(int_chain *l, int ind)
+{
     assert(l->ind_actu < l->size_max);
-    for (int i = 0; i < l->ind_actu+1; i++) {
-        if (ind == l->tableau[i]) {
+    for (int i = 0; i < taille_list(l); i++)
+    {
+        if (ind == get(l, i))
+        {
             return true;
         }
     }
     return false;
+}
+
+void replaceValueInList(int_chain *l, int old_value, int new_value) {
+    // La liste est supposée sans doublon. Opération linéaire en la taille de la liste
+    assert(!is_empty(l));
+    for (int i = 0; i < taille_list(l); i++)
+    {
+        if (get(l, i) == old_value) {
+            pushi(l, i, new_value);
+            break;
+        }
+    }
 }
 
 // For the cloud chain
@@ -100,6 +129,15 @@ tcloud cpop(cloud_chain *l)
     return k;
 }
 
+void cfree(cloud_chain *l)
+{
+    while (!cis_empty(l))
+    {
+        cpop(l);
+    }
+    free(l);
+}
+
 // For all info pawns
 
 void dpush(data_chain *l, pawn_info data)
@@ -132,6 +170,15 @@ data_chain *dcreate_list()
     l->data = data_set;
     l->next = NULL;
     return l;
+}
+
+void dfree(data_chain *l)
+{
+    while (!dis_empty(l))
+    {
+        dpop(l);
+    }
+    free(l);
 }
 
 // For the other Kchain_list

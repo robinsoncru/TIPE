@@ -38,25 +38,31 @@ void endTurnGameManagementSimple(Game *g, int pawn_played)
 
 void endTurnGameManagement(Game *g, bool is_white, int indMovedPawn, int indCheck, bool doMoveBack)
 {
-
-    if (indCheck != IND_BAD_CHOICE)
-    {
-
-        if (canBePromoted(g, is_white, indMovedPawn))
-        {
-            promote(g, is_white, indMovedPawn);
-        }
-        if (canStormBreaks(g, indMovedPawn, is_white))
-            AleatStormBreaks(g, is_white);
-        else if (canStormBreaksForTheOthers(g, indMovedPawn, is_white))
-            AleatStormBreaks(g, !is_white);
-    }
-    else if (canStormBreaksForTheOthers(g, indMovedPawn, !is_white))
-        AleatStormBreaks(g, is_white);
-
     if (!doMoveBack)
     {
+        if (indCheck != IND_BAD_CHOICE)
+        {
+
+            if (canBePromoted(g, is_white, indMovedPawn))
+            {
+                promote(g, is_white, indMovedPawn);
+            }
+            if (canStormBreaks(g, indMovedPawn, is_white))
+                AleatStormBreaks(g, is_white);
+            else if (canStormBreaksForTheOthers(g, indMovedPawn, is_white))
+                AleatStormBreaks(g, !is_white);
+        }
+        else if (canStormBreaksForTheOthers(g, indMovedPawn, !is_white))
+            AleatStormBreaks(g, is_white);
+
         g->is_white = !g->is_white;
+    }
+    else
+    {
+        if (canStormBreaksForTheOthers(g, indMovedPawn, is_white))
+        {
+            AleatStormBreaks(g, !is_white);
+        }
     }
     g->ind_move = NEUTRAL_IND;
     g->indCheck = indCheck;

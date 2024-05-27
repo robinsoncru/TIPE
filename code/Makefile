@@ -1,13 +1,13 @@
 dames.out: main.o coord.o little_linked_list.o game_functions.o aux_functions.o debug_functions.o game_management.o \
 calculus_functions.o logic_functions.o play_back_game_functions.o affichage.o input_command.o on_input.o graphic_cache.o update.o \
-path_tree.o rafle_tree_calc.o path_tree_display.o rafle_management.o four_pack.o path_struct.o rafle_eating.o move_simulation.o \
+path_tree.o rafle_tree_calc.o path_tree_display.o rafle_management.o four_pack.o path_struct.o rafle_eating.o \
 move_max.o move_listing.o listing_checks.o move_struct.o rafle_listing.o basic_play_function.o precondition.o access_functions.o \
-print_moves.o debug_autoplay.o debug.o
+print_moves.o debug_autoplay.o debug.o memory_move.o applyMoveAI.o applyMoveDeter.o applyMoveIssue.o
 	gcc -g -Wall -o dames.out main.o coord.o little_linked_list.o game_functions.o aux_functions.o debug_functions.o game_management.o \
 calculus_functions.o logic_functions.o play_back_game_functions.o affichage.o input_command.o on_input.o graphic_cache.o update.o \
-path_tree.o rafle_tree_calc.o path_tree_display.o rafle_management.o four_pack.o path_struct.o rafle_eating.o move_simulation.o \
+path_tree.o rafle_tree_calc.o path_tree_display.o rafle_management.o four_pack.o path_struct.o rafle_eating.o \
 move_max.o move_listing.o listing_checks.o move_struct.o rafle_listing.o basic_play_function.o precondition.o access_functions.o \
-print_moves.o debug_autoplay.o debug.o \
+print_moves.o debug_autoplay.o debug.o memory_move.o applyMoveAI.o applyMoveDeter.o applyMoveIssue.o \
 $$(sdl2-config --cflags --libs) -lSDL2_ttf
 
 main.o: main.c
@@ -79,9 +79,6 @@ path_struct.o: rafle/rafle_choice/path_struct.c
 rafle_eating.o: rafle/rafle_eating/rafle_eating.c
 	gcc -g -c -Wall rafle/rafle_eating/rafle_eating.c
 
-move_simulation.o: AI/move_simulation/move_simulation.c
-	gcc -g -c -Wall AI/move_simulation/move_simulation.c
-
 move_max.o: AI/move_listing/move_max.c
 	gcc -g -c -Wall AI/move_listing/move_max.c
 
@@ -111,3 +108,15 @@ debug.o: fundamental_functions/debug/debug.c
 
 print_moves.o: AI/move_listing/move_listing_debug/print_moves.c
 	gcc -g -c -Wall AI/move_listing/move_listing_debug/print_moves.c
+
+memory_move.o: AI/move_simulation/memory_move/memory_move.c
+	gcc -g -c -Wall AI/move_simulation/memory_move/memory_move.c
+
+applyMoveDeter.o: AI/move_simulation/applyMoveDeter.c
+	gcc -g -c -Wall AI/move_simulation/applyMoveDeter.c
+
+applyMoveIssue.o: AI/move_simulation/applyMoveIssue.c
+	gcc -g -c -Wall AI/move_simulation/applyMoveIssue.c
+
+applyMoveAI.o: AI/move_simulation/applyMoveAI.c
+	gcc -g -c -Wall AI/move_simulation/applyMoveAI.c

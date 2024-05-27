@@ -169,7 +169,7 @@ void drawLosange(SDL_Renderer *render, Case c, pawn p, Game *g)
     int_chain *l = g->inds_move_back;
     if (!is_empty(l))
     {
-        for (int i = 0; i < l->ind_actu; i++)
+        for (int i = 0; i < taille_list(l); i++)
         {
             if (c.pawn_color == g->is_white)
             {

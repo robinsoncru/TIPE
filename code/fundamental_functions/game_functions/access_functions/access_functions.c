@@ -185,3 +185,10 @@ int_chain *friendTabToListChaine(Game *g, int ind, bool color)
     }
     return l;
 }
+
+
+
+float zero_fun(Game *g)
+{
+    return 0.0;
+}

@@ -11,11 +11,17 @@ bool is_empty(int_chain *l);
 int pop(int_chain *l);
 /* Supprime et renvoie le int_chain en première position */
 
-int get(int_chain *l);
-/* Renvoie le premier int_chain */
+int get(int_chain *l, int i);
+/* Renvoie le i-eme maillon */
+
+void pushi(int_chain *l, int i, int valeur);
+
+int taille_list(int_chain *l);
 
 int_chain *create_list(int size_max);
 /* Creer une liste vide */
+
+void replaceValueInList(int_chain *l, int old_value, int new_value);
 
 void cpush(cloud_chain *l, tcloud k);
 /* le int_chain l est le int_chain de tête, on l'utilise pour accéder à la structure et y ajouter le nouveau int_chain */
@@ -31,6 +37,8 @@ tcloud cpop(cloud_chain *l);
 cloud_chain *ccreate_list();
 /* Creer une liste vide */
 
+void cfree(cloud_chain *l);
+
 void dpush(data_chain *l, pawn_info data);
 /* le int_chain l est le int_chain de tête, on l'utilise pour accéder à la structure et y ajouter le nouveau int_chain */
 
@@ -44,6 +52,8 @@ pawn_info dpop(data_chain *l);
 
 data_chain *dcreate_list();
 /* Creer une liste vide */
+
+void dfree(data_chain *l);
 
 void pushK(Kint_chain *l, int indPawnMoved, int indPawnMovedBack, int indPawnFriendlyMoved,
            int indPawnEnnemyMoved, int indQueenPromoted, int indQueenMoved);

@@ -21,4 +21,5 @@ bool getFriendByInd(Game *g, int indActu, int indFriend, bool colorActu);
 int_chain *friendTabToListChaine(Game *g, int ind, bool color);
 
 bool has_friend(Game *g, int ind, int color);
+float zero_fun(Game *g);
 #endif
