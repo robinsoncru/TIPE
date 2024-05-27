@@ -141,14 +141,18 @@ void putFriendByInd(Game *g, int indActu, int indFriend, bool colorActu, bool va
     assertAndLog(isValidIndexInGame(g, indActu, colorActu), "putFriendByInd indActu pas valide");
     assertAndLog(isValidIndexInGame(g, indFriend, !colorActu), "putFriendByInd indFriend pas valide");
 
+    int i,j;
     if (colorActu)
     {
-        g->liensAmitie[indFriend][indActu] = valeur;
+        i = indFriend;
+        j = indActu;
     }
     else
     {
-        g->liensAmitie[indActu][indFriend] = valeur;
+        i = indActu;
+        j = indFriend;
     }
+    g->liensAmitie[i][j] = valeur;
 
     int old_friend_nb = get_pawn_value(g, colorActu, indActu, FRIENDLY);
     if (valeur)
