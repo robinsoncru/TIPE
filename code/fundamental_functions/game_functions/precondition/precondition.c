@@ -32,9 +32,9 @@ bool inGame(int lig, int col)
 }
 
 // Checks if eating from position (i, j) in the (add0, add1) direction leads to an out of bounds position
-bool eatingIsOutOfBounds(int i, int j, int add0, int add1)
+bool eatingIsOutOfBounds(int i, int j, int di, int dj)
 {
-    return outOfBounds(i + 2 * add0, j + 2 * add1);
+    return outOfBounds(i + 2 * di, j + 2 * dj);
 }
 
 bool isInCloud(Game *g, bool color, int ind)

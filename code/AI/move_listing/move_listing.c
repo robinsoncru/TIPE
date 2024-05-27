@@ -61,10 +61,8 @@ void listMovesPromotion(Game *g, Move *temporaryResult, int *nbMoves)
     Move currentMove;
     currentMove.manipulatedPawn = promotionType;
 
-    for (int k = 0; k < 2 * NB_PAWNS; k++)
-    {
-        if (isPromotable(g, k, g->is_white))
-        {
+    for (int k = 0; k < g->nb_pawns[g->is_white]; k++) {
+        if (isPromotable(g, k, g->is_white)) {
             currentMove.manipulatedPawn = k;
             temporaryResult[*nbMoves] = currentMove;
             *nbMoves = *nbMoves + 1;
@@ -96,10 +94,8 @@ void listMovesEnnemy(Game *g, int selectedPawn, Move *temporaryResult, int *nbMo
     currentMove.manipulatedPawn = selectedPawn;
     currentMove.type = lienEnnemitieType;
 
-    for (int k = 0; k < 2 * NB_PAWNS; k++)
-    {
-        if (isEnnemiable(g, k, !g->is_white))
-        {
+    for (int k = 0; k < g->nb_pawns[!g->is_white]; k++) {
+        if (isEnnemiable(g, k, !g->is_white)) {
             currentMove.lig = get_pawn_value(g, !g->is_white, k, LIG);
             currentMove.col = get_pawn_value(g, !g->is_white, k, COL);
             temporaryResult[*nbMoves] = currentMove;
@@ -166,10 +162,10 @@ void listMovesForPawn(Game *g, int selectedPawn, Move *temporaryResult, int *nbM
     Coord tmpPos = {.i = get_pawn_value(g, g->is_white, selectedPawn, LIG),
                     .j = get_pawn_value(g, g->is_white, selectedPawn, COL)};
     listRafles(g, selectedPawn, tmpPos, temporaryResult, nbMoves);
-    if (get_pawn_value(g, g->is_white, selectedPawn, ENNEMY) == VOID_INDEX)
-    {
-        listMovesBefriend(g, selectedPawn, temporaryResult, nbMoves);
-        listMovesEnnemy(g, selectedPawn, temporaryResult, nbMoves);
+    if (get_pawn_value(g, g->is_white, selectedPawn, FRIENDLY) == VOID_INDEX 
+        && get_pawn_value(g, g->is_white, selectedPawn, ENNEMY) == VOID_INDEX) {
+            listMovesBefriend(g, selectedPawn, temporaryResult, nbMoves);
+            listMovesEnnemy(g, selectedPawn, temporaryResult, nbMoves);
     }
 }
 
@@ -188,8 +184,7 @@ void listMovesRafleCount(Move *temporaryResult, int nbMoves, int *rafleCount, in
             nbRafles = 1;
             maxRafleLength = currentLength;
         }
-        else if (currentLength == maxRafleLength)
-        {
+        if (currentLength == maxRafleLength) {
             nbRafles++;
         }
     }
@@ -205,66 +200,61 @@ MoveTab *listMovesFilterRafles(Move *temporaryResult, int nbMoves)
 
     MoveTab *res = malloc(sizeof(MoveTab));
     Move currentMove;
-    switch (rafleCount)
-    {
-    case 0:
-        res->size = nbMoves;
-        res->tab = malloc(nbMoves * sizeof(Move));
-        for (int k = 0; k < nbMoves; k++)
-        {
-            currentMove = temporaryResult[k];
-            currentMove.rafle = NULL;
-            currentMove.rafleTree = emptyTree;
-            res->tab[k] = currentMove;
-        }
-        break;
-
-    default:
-        res->size = 0;
-        res->tab = malloc(rafleCount * sizeof(Move));
-        for (int k = 0; k < nbMoves; k++)
-        {
-            currentMove = temporaryResult[k];
-            if (res->tab[k].type == rafleType && pathTreeDepth(currentMove.rafleTree) == length)
-            {
-                res->tab[res->size] = currentMove;
-                res->size++;
+    switch (rafleCount) {
+        case 0:
+            res->size = nbMoves;
+            res->tab = malloc(nbMoves * sizeof(Move));
+            for (int k = 0; k < nbMoves; k++) {
+                currentMove = temporaryResult[k];
+                currentMove.rafle = NULL;
+                currentMove.rafleTree = emptyTree;
+                res->tab[k] = currentMove;
             }
-        }
-        free(temporaryResult);
-        break;
+            break;
+        
+        default:
+            res->size = 0;
+            res->tab = malloc(rafleCount * sizeof(Move));
+            for (int k = 0; k < nbMoves; k++) {
+                currentMove = temporaryResult[k];
+                if (res->tab[k].type == rafleType && pathTreeDepth(currentMove.rafleTree) == length) {
+                    res->tab[res->size] = currentMove;
+                    res->size++;
+                }
+            }
+            break;
     }
+    free(temporaryResult);
     return res;
 }
 
-MoveTab *listMoves(Game *g)
-{
-    Move *temporaryResult;
-    // int nbMoves;
-    assertAndLog(false, "pas correcte");
-    // if (g->inds_move_back != VOID_INDEX) {
-    //     temporaryResult = listMovesMoveBack(g, &nbMoves);
-    // }
-    // else {
-    //     temporaryResult = malloc(maxMoves(g) * sizeof(Move));
-    //     nbMoves = 0;
-    //     listMovesPromotion(g, temporaryResult, &nbMoves);
+MoveTab* listMoves(Game* g){
+    Move* temporaryResult;
+    int nbMoves;
+    if (is_empty(g->inds_move_back)) {
+        temporaryResult = listMovesMoveBack(g, &nbMoves);
+    }
+    else {
+        temporaryResult = malloc(maxMoves(g) * sizeof(Move));
+        nbMoves = 0;
+        listMovesPromotion(g, temporaryResult, &nbMoves);
 
-    //     for (int k = 0; k < 2 * NB_PAWNS; k++) {
-    //         if (get_pawn_value(g, g->is_white, k, ALIVE)) {
-    //             if (get_pawn_value(g, g->is_white, k, QUEEN)) {
-    //                 listMovesForQueen(g, k, temporaryResult, &nbMoves);
-    //             }
-    //             else if (get_pawn_value(g, g->is_white, k, PBA) != 1) {
-    //                 listMovesForGhostPawns(g, k, temporaryResult, &nbMoves);
-    //             }
-    //             else {
-    //                 listMovesForPawn(g, k, temporaryResult, &nbMoves);
-    //             }
-    //         }
-    //     }
-    // }
+        for (int k = 0; k < g->nb_pawns[g->is_white]; k++) {
+            if (get_pawn_value(g, g->is_white, k, ALIVE)) {
+                if (get_pawn_value(g, g->is_white, k, QUEEN)) {
+                    listMovesForQueen(g, k, temporaryResult, &nbMoves);
+                }
+                else if (get_pawn_value(g, g->is_white, k, PBA) != 1) {
+                    listMovesForGhostPawns(g, k, temporaryResult, &nbMoves);
+                }
+                else {
+                    listMovesForPawn(g, k, temporaryResult, &nbMoves);
+                }
+            }
+        }
+    }
 
-    // return listMovesFilterRafles(temporaryResult, nbMoves);
+
+
     return listMovesFilterRafles(temporaryResult, 0);
 }

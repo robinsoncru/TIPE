@@ -23,7 +23,7 @@ PathTree* pathTreeCreateNode(int i, int j){
     //  \ /
     //   o
     
-    //assertAndLog(!outOfBounds(i, j), "Position inexistante");
+    assertAndLog(!outOfBounds(i, j), "Position inexistante");
     PathTree* res = malloc(sizeof(PathTree));
     res -> depth = 0;
     Coord point;
@@ -101,6 +101,8 @@ int pathTreeNBChilds(PathTree* t){
 }
 
 uint8_t pathTreeFirstChild(PathTree* t){
+    assertAndLog(t != emptyTree, "recherche d'enfant de l'arbre vide");
+    assertAndLog(t ->nbChilds > 0, "Recherche du premier enfant d'un arbre sterile (sans enfants)");
     for (uint8_t k = 0; k < ARITE; k++) {
         if (t->childs[k] != emptyTree) {
             return k;

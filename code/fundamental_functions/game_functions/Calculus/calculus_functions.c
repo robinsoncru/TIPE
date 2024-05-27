@@ -36,18 +36,15 @@ int abs(int a)
 
 bool int_to_bool(int integer)
 {
-    if (integer == 1)
-        return true;
-    else
-        return false;
+    return integer == 1;
 }
 
 int bool_to_int(bool b)
 {
-    if (b)
+    if (b){
         return 1;
-    else
-        return 0;
+    }
+    return 0;
 }
 
 int ind_from_coord(Game *g, int lig, int col) {

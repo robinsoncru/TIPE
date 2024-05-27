@@ -11,6 +11,9 @@ C'est une structure reccursive qui consiste en un arbre de
 coordonnees symbolisant un ensemble de chemins sur le plateau.
 L'arbre est d'arite maximale 3 (4 en realite)*/
 
+bool outOfBounds(int i, int j);
+
+typedef struct PathTree PathTree;
 
 
 PathTree* pathTreeCreateNode(int i, int j);
