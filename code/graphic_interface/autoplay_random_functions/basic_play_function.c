@@ -114,6 +114,8 @@ int play_a_move(int move, int ind_pawn, Game *g, GraphicCache *cache, int nb_cou
     // printf("choisi :\n");
     // print_move(m);
 
+    int indFriend;
+    Coord coord, coordi;
     switch (move)
     {
     case PAWNMOVELEFT:
@@ -136,7 +138,7 @@ int play_a_move(int move, int ind_pawn, Game *g, GraphicCache *cache, int nb_cou
 
     case LIENAMITIE:
         // int indFriend = plannifier_index_color(nb_coups, l_depl, !g->is_white);
-        int indFriend = random_index_color(g, !g->is_white);
+        indFriend = random_index_color(g, !g->is_white);
         Coord coord = coord_from_ind(g, indFriend, !g->is_white);
         checkLienAmitie(coord.i, coord.j, g, cache, false);
         // checkLienAmitie(m.lig, m.col, g, cache, false);
@@ -158,7 +160,7 @@ int play_a_move(int move, int ind_pawn, Game *g, GraphicCache *cache, int nb_cou
         break;
 
     case QUEENDEPL:
-        Coord coordi = queen_valide_case(g, g->ind_move, g->is_white);
+        coordi = queen_valide_case(g, g->ind_move, g->is_white);
         // Coord coordi;
 
         // coordi.i = l_depl[2 * nb_coups];
