@@ -13,6 +13,7 @@ void print_little_linked_list(int_chain *l);
 void printv(char *s);
 void picture_this(Game *g);
 void picture_game(Game *g, bool iw);
+void print_state_game(Game *g, int which_pmetre);
 
 
 #endif //  DEBUG_FUNCTIONS

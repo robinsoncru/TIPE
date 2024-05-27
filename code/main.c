@@ -94,6 +94,7 @@ void test_start_game(Game *g)
     print_pawns(g, true);
     print_pawns(g, false);
     print_liensAmitie(g);
+    print_state_game(g, QUEEN);
 
 }
 
