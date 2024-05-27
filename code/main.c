@@ -91,6 +91,10 @@ void test_start_game(Game *g)
     change_pawn_place(g, 7, false, 5, 7);
     //fin de config
 
+    print_pawns(g, true);
+    print_pawns(g, false);
+    print_liensAmitie(g);
+
 }
 
 int main(int argc, char *argv[])

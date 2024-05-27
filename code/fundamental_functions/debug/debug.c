@@ -48,7 +48,7 @@ void print_liensAmitie(Game *g) {
             printf(" ");
         }
         for (int j=0; j<MAX_NB_PAWNS; j++) {
-            printf("%d ", g->liensAmitie[i][j]);
+            printf("%d  ", g->liensAmitie[i][j]);
         }
         printf("\n");
     }

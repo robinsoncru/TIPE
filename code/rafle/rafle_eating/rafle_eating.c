@@ -1,6 +1,6 @@
 #include "rafle_eating.h"
 #include "../../fundamental_functions/game_functions/precondition/precondition.h"
-#include "../../fundamental_functions/game_functions/debug/debug_functions.h"
+#include "../../fundamental_functions/game_functions/debug_game_functions/debug_functions.h"
 #include <stdint.h>
 #include <stdio.h>
 
