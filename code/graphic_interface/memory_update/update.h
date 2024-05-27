@@ -3,7 +3,7 @@
 
 #include "graphic_cache.h"
 #include "../actions/on_input.h"
-#include "../autoplay_random_functions/basic_play_function.h"
+#include "../machine_plays_functions/basic_play_function.h"
 
 //called every tick.
 //updates the memory

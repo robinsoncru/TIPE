@@ -97,14 +97,14 @@ move_struct.o: AI/move_listing/move_struct/move_struct.c
 rafle_listing.o: AI/move_listing/rafle_listing/rafle_listing.c
 	gcc -g -c -Wall AI/move_listing/rafle_listing/rafle_listing.c
 
-basic_play_function.o: graphic_interface/autoplay_random_functions/basic_play_function.c
-	gcc -g -c -Wall graphic_interface/autoplay_random_functions/basic_play_function.c
+basic_play_function.o: graphic_interface/machine_plays_functions/basic_play_function.c
+	gcc -g -c -Wall graphic_interface/machine_plays_functions/basic_play_function.c
 
 precondition.o: fundamental_functions/game_functions/precondition/precondition.c
 	gcc -g -c -Wall fundamental_functions/game_functions/precondition/precondition.c
 
-debug_autoplay.o: graphic_interface/autoplay_random_functions/debug_autoplay.c
-	gcc -g -c -Wall graphic_interface/autoplay_random_functions/debug_autoplay.c
+debug_autoplay.o: graphic_interface/machine_plays_functions/debug_autoplay.c
+	gcc -g -c -Wall graphic_interface/machine_plays_functions/debug_autoplay.c
 
 debug.o: fundamental_functions/debug/debug.c
 	gcc -g -c -Wall fundamental_functions/debug/debug.c
