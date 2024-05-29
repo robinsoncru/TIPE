@@ -4,5 +4,5 @@
 code/*.o
 code/.vscode/*
 code/.vscode
-
-
+code/*.out
+code/rafle/*.out
