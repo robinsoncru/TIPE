@@ -76,12 +76,13 @@ bool canEat(Game *g, bool eatingColor, int ind, int i, int j, int add0, int add1
     assert(isValidIndexInGame(g, ind, eatingColor));
     assert(inGame(i, j));
     assert(inGame(i + 2 * add0, j + 2 * add1));
+    Case c_mange = get_case_damier(g, i + add0, j + add1);
     return (freeCase(get_case_damier(g, i + 2 * add0, j + 2 * add1)) &&
-            !freeCase(get_case_damier(g, i + add0, j + add1)) &&
+            !freeCase(c_mange) &&
             get_case_damier(g, i + add0, j + add1).pawn_color != eatingColor &&
             int_to_bool(
                 get_pawn_value(g, get_case_damier(g, i + add0, j + add1).pawn_color, get_case_damier(g, i + add0, j + add1).ind_pawn,
-                               ALIVE)));
+                               ALIVE)) && !isInCloud(g, !eatingColor, c_mange.ind_pawn));
 }
 
 bool canBeFriend(Game *g, int ind, bool color, Case c)

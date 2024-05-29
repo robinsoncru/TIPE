@@ -66,4 +66,16 @@ Kint_chain *create_listK();
 void freeIntChain(int_chain *l);
 bool alreadyInList(int_chain *l, int ind);
 
+// Coord tab, permet de stocker les positions au lieu des indices, les positions
+// sont des valeurs surs pour repérer les pions contrairement aux indices
+
+
+coord_tab_t *create_coord_tab(int size);
+bool ValidCoordTabIndex(coord_tab_t *t, int i);
+Coord ctget(coord_tab_t *t, int i);
+void ctset(coord_tab_t *t, int ind, int i, int j);
+void ctfree(coord_tab_t *t);
+Coord ctpop(coord_tab_t *t);
+void ctpush(coord_tab_t *t, int i, int j);
+bool ctis_empty(coord_tab_t *t);
 #endif

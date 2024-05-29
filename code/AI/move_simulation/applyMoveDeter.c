@@ -27,7 +27,7 @@ void initTabIssue(Game *g, int what_kind_of_creation, memory_move_t *mem)
         mem->issues = malloc(3 * sizeof(issue_t));
         for (int i = 0; i < 3; i++)
         {
-            mem->issues[i].index = i + 2;
+            mem->issues[i].choice_promotion = i + 2;
             mem->issues[i].pba = 1.0 / 3.0;
         }
 
@@ -48,24 +48,32 @@ void generateCloudDuePawnMove(Game *g, memory_move_t *mem)
 
 void lightnightStrike(Game *g, memory_move_t *mem, int index)
 {
+    // Eclate le nuage si necessaire, index décide de la position du survivant
     bool iw = g->is_white;
     if (!mem->is_deter)
     {
         assertAndLog(false, "lighnight");
-        stormBreaksNGE(g, !iw, mem->load_cloud_other, mem->survivor, mem->issues[index].pos_survivor);
+        stormBreaksNGE(g, !iw, mem->load_cloud_other, mem->issues[index].pos_survivor);
     }
 }
 
 void cancelSelectedIssue(Game *g, memory_move_t *mem)
 {
+    // On doit replacer le pion utilisé (index) à sa position dans le nuage, puis recrée le nuage avec les
+    // positions originales
     bool iw = g->is_white;
     int index_origin = mem->lenghtIssues - 1;
-    if ((index_origin - 1) != VOID_INDEX)
-        change_pawn_place_coord(g, mem->survivor->ind, !iw, mem->issues[index_origin].pos_survivor);
-
     if (!cis_empty(mem->load_cloud_other))
     {
-        recreateCloud(g, mem->load_cloud_other, mem->survivor, !iw);
+
+        assertAndLog(index_origin != VOID_INDEX, "nuage présent mais pas de survivant");
+        Coord pos_survivor = mem->issues[index_origin].pos_survivor;
+        int pbaSurvivor =  mem->issues[index_origin].pba;
+        int indNoPopPawn = ind_from_coord(g, pos_survivor.i, pos_survivor.j); 
+        /* Pion initialement conservé dans le nuage */
+        change_pawn_place_coord(g, index_origin, !iw, mem->issues[index_origin].pos_survivor);
+
+        recreateCloud(g, mem->load_cloud_other, indNoPopPawn, pbaSurvivor, !iw);
     }
 }
 
@@ -98,7 +106,7 @@ memory_move_t *promotionDeter(Game *g, int indPawn, moveType type)
 
 void cancelPromotionDeter(Game *g, memory_move_t *mem)
 {
-    cancelPromotion(g, mem->indMovePawn, mem->ind_potential_foe);
+    cancelPromotion(g, mem->indMovePawn, mem->pos_potential_foe_from_prom);
 
     freeMemMove(mem);
 }
@@ -115,8 +123,9 @@ memory_move_t *moveBackDeter(Game *g, moveType type)
     {
         mem->indMovePawn = pop(g->inds_move_back);
         generateCloudDuePawnMove(g, mem);
-        if (mem->lenghtIssues > 0) {
-            break; // Le nuage implose, il n'existe plus
+        if (mem->lenghtIssues > 0)
+        {
+            break; // Le nuage implose, il n'existe plus dès qu'un pion s'en approche trop
         }
     }
     return mem;
@@ -124,6 +133,7 @@ memory_move_t *moveBackDeter(Game *g, moveType type)
 
 memory_move_t *rafleDeter(Game *g, int indMovePawn, PathTree *rafleTree, Path *rafle, moveType type)
 {
+    assert(false);
     bool iw = g->is_white;
     memory_move_t *mem = initMemMove(indMovePawn, type);
     mem->init_coord = give_coord(g, iw, indMovePawn);
@@ -134,12 +144,12 @@ memory_move_t *rafleDeter(Game *g, int indMovePawn, PathTree *rafleTree, Path *r
     return mem;
 }
 
-memory_move_t *queenDeplDeter(Game *g, int indMovePawn, queen_move_t coords, PathTree *rafleTree, Path *rafle, moveType type)
+memory_move_t *queenDeplDeter(Game *g, int indMovePawn, Coord pos_dame, PathTree *rafleTree, Path *rafle, moveType type)
 {
     bool iw = g->is_white;
     memory_move_t *mem = initMemMove(indMovePawn, type);
     mem->init_coord = give_coord(g, iw, indMovePawn);
-    mem->chainy = queenDeplNGE(g, indMovePawn, iw, coords);
+    mem->chainy = queenDeplNGE(g, indMovePawn, iw, pos_dame);
 
     generateCloudDuePawnMove(g, mem);
     return mem;

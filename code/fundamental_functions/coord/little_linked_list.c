@@ -81,12 +81,14 @@ bool alreadyInList(int_chain *l, int ind)
     return false;
 }
 
-void replaceValueInList(int_chain *l, int old_value, int new_value) {
+void replaceValueInList(int_chain *l, int old_value, int new_value)
+{
     // La liste est supposée sans doublon. Opération linéaire en la taille de la liste
     assert(!is_empty(l));
     for (int i = 0; i < taille_list(l); i++)
     {
-        if (get(l, i) == old_value) {
+        if (get(l, i) == old_value)
+        {
             pushi(l, i, new_value);
             break;
         }
@@ -165,7 +167,7 @@ pawn_info dpop(data_chain *l)
 data_chain *dcreate_list()
 {
     data_chain *l = malloc(sizeof(data_chain));
-    pawn_info data_set = {.relationship = {.friendsId = NULL, .foe = -1, .queen = false},
+    pawn_info data_set = {.relationship = {.friendsId = NULL, .pos_foe = {.i = -1, .j = -1}, .queen = false},
                           .coord = {.i = -1, .j = -1}};
     l->data = data_set;
     l->next = NULL;
@@ -179,6 +181,67 @@ void dfree(data_chain *l)
         dpop(l);
     }
     free(l);
+}
+
+// Opération pour manipuler un tableau de coordonnées dynamique
+
+coord_tab_t *create_coord_tab(int size)
+{
+    assert(size > 0);
+    coord_tab_t *t = malloc(sizeof(coord_tab_t));
+    t->tab = malloc(size * sizeof(Coord));
+    t->sizetab = size;
+    t->index_actu = -1;
+    for (int i = 0; i < size; i++)
+    {
+        t->tab[i].i = -1;
+        t->tab[i].j = -1;
+    }
+    return t;
+}
+
+bool ValidCoordTabIndex(coord_tab_t *t, int i)
+{
+    return t->tab != NULL && t->sizetab > 0 && 0 <= i && i <= t->sizetab;
+}
+
+// ct means CoordTab
+
+Coord ctget(coord_tab_t *t, int i)
+{
+    assert(ValidCoordTabIndex(t, i));
+    return t->tab[i];
+}
+
+void ctset(coord_tab_t *t, int ind, int i, int j)
+{
+    assert(ValidCoordTabIndex(t, ind));
+    t->tab[ind].i = i;
+    t->tab[ind].j = j;
+}
+
+void ctfree(coord_tab_t *t)
+{
+    free(t->tab);
+    free(t);
+}
+
+Coord ctpop(coord_tab_t *t)
+{
+    Coord pos = ctget(t, t->index_actu);
+    ctset(t, t->index_actu, -1, -1);
+    t->index_actu--;
+    return pos;
+}
+
+void ctpush(coord_tab_t *t, int i, int j)
+{
+    t->index_actu++;
+    ctset(t, t->index_actu, i, j);
+}
+
+bool ctis_empty(coord_tab_t *t) {
+    return t->index_actu == -1;
 }
 
 // For the other Kchain_list

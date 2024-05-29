@@ -26,9 +26,9 @@ Coord random_case_damier()
     return coord;
 }
 
-int plannifier_index_color(int nb_coups, int *l_depl, bool color)
+int plannifier_index_color(int nb_coups, int *l_coups, bool color)
 {
-    int ind = l_depl[nb_coups];
+    int ind = l_coups[nb_coups];
     printf("%d, %d - ", color, ind);
     flush();
     return ind;
@@ -98,7 +98,7 @@ int play_a_move(int move, int ind_pawn, Game *g, GraphicCache *cache, int nb_cou
     // Play a move supposed valid
     // assertAndLog(move == VOID_INDEX, "move decide dans play_a_move");
 
-    // usleep(1000 * 500);
+    usleep(1000 * 500);
 
     auto_put_index(g, ind_pawn);
 
@@ -158,7 +158,7 @@ int play_a_move(int move, int ind_pawn, Game *g, GraphicCache *cache, int nb_cou
 
         // coordi.i = l_depl[2 * nb_coups];
         // coordi.j = l_depl[2 * nb_coups + 1];
-        printf(" -> lig: %d, col %d", coordi.i, coordi.j);
+        // printf(" -> lig: %d, col %d", coordi.i, coordi.j);
         checkQueenDepl(g, cache, g->is_white, coordi.i, coordi.j, true);
 
         // checkQueenDepl(g, cache, g->is_white, m.coords.pos_dame.i, m.coords.pos_dame.j, true);

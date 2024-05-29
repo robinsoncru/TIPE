@@ -141,7 +141,7 @@ void putFriendByInd(Game *g, int indActu, int indFriend, bool colorActu, bool va
     assertAndLog(isValidIndexInGame(g, indActu, colorActu), "putFriendByInd indActu pas valide");
     assertAndLog(isValidIndexInGame(g, indFriend, !colorActu), "putFriendByInd indFriend pas valide");
 
-    int i,j;
+    int i, j;
     if (colorActu)
     {
         i = indFriend;
@@ -171,24 +171,29 @@ void putFriendByInd(Game *g, int indActu, int indFriend, bool colorActu, bool va
     }
 }
 
-int_chain *friendTabToListChaine(Game *g, int ind, bool color)
+coord_tab_t *friendTabToCoordTab(Game *g, int ind, bool color)
 {
     int nb_friend = get_pawn_value(g, color, ind, FRIENDLY);
     assert(nb_friend > 0);
-    int_chain *l = create_list(nb_friend);
+    coord_tab_t *t = create_coord_tab(nb_friend);
     for (int i = 0; i < MAX_NB_PAWNS; i++)
     {
         if (isValidIndexInGame(g, i, !color) && getFriendByInd(g, ind, i, color))
         {
-            push(l, i);
+            ctpush(t, get_pawn_value(g, !color, i, LIG), get_pawn_value(g, !color, i, COL));
+            
         }
     }
-    return l;
+    return t;
 }
-
-
 
 float zero_fun(Game *g)
 {
     return 0.0;
+}
+
+Coord to_coord(int i, int j) {
+    assertAndLog(inGame(i, j), "Lig ou col pas dans jeu");
+    Coord c = {.i = i, .j=j};
+    return c;
 }

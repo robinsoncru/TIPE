@@ -30,9 +30,9 @@ void changeFriendByInd(Game *g, int indActuStart, int indActuArrive, int indFrie
 //     }
 // }
 
-// On peut améliorer cette fonction
 void copy_remove_pawn_from_index_to_index(Game *g, int indStart, int indArrive, bool color)
 {
+    // Déplace tous les pmètres du pion Start à Arrive
     assert(isValidIndexInGame(g, indStart, color));
     assert(isValidIndex(indArrive));
     if (indStart != indArrive)
@@ -62,6 +62,11 @@ void copy_remove_pawn_from_index_to_index(Game *g, int indStart, int indArrive, 
         for (int k = 1; k < 9; k++)
         {
             put_pawn_value(g, color, indArrive, k, get_pawn_value(g, color, indStart, k));
+        }
+
+        if (isInCloud(g, color, indStart))
+        {
+            replaceValueInList(g->cloud[color], indStart, indArrive);
         }
 
         // Sur le damier
@@ -94,8 +99,6 @@ void killPawn(Game *g, int i, int j)
     // printf("i, j = %d, %d\n", i, j);
     // DO NOT remove a pawn from the cloud
     assert(inGame(i, j));
-
-    assert(false); // cloud
 
     Case c = get_case_damier(g, i, j);
     if (!freeCase(c))
@@ -274,53 +277,25 @@ void AleatStormBreaks(Game *g, bool color)
     // C'est une fonction recursive car le pion foudroyer peut etre pres du nuage de la couleur opposee. On verifie donc
     // dans l'autre nuage
 
-    printf("%d %d %d %d", get_pawn_value(g, color, ind, LIG), get_pawn_value(g, color, ind, COL), ind, color);
-    flush();
+    // printf("%d %d %d %d", get_pawn_value(g, color, ind, LIG), get_pawn_value(g, color, ind, COL), ind, color);
+    // flush();
     if (ind != VOID_INDEX && canStormBreaksForTheOthers(g, ind, color))
         AleatStormBreaks(g, !color);
 }
 
-void AleatStormBreaksNGE(Game *g, bool color, cloud_chain *load, ind_pba_t *survivor)
-{
-    // Liste chaine et valeur du pawn survivor modifies par effet de bord
-    int_chain *l = g->cloud[color];
-    int ind = VOID_INDEX;
-
-    while (!is_empty(l))
-    {
-        ind = pop(l);
-
-        if (is_empty(l))
-        {
-            survivor->ind = ind;
-            survivor->pba = get_pawn_value(g, color, ind, PBA);
-            put_pawn_value(g, color, ind, PBA, 1);
-            break;
-        }
-        else
-        {
-            tcloud k = {.coord = {.i = get_pawn_value(g, color, ind, LIG),
-                                  .j = get_pawn_value(g, color, ind, COL)},
-                        .pba = get_pawn_value(g, color, ind, PBA)};
-            cpush(load, k);
-            killPawn(g, get_pawn_value(g, color, ind, LIG), get_pawn_value(g, color, ind, COL)); // Seg
-        }
-    }
-    g->lengthCloud[color] = 0;
-}
-
-void handleCloudDuePawnMoveNGE(Game *g, int indMovedPawn, ind_pba_t *survivor, cloud_chain *l)
+void handleCloudDuePawnMoveNGE(Game *g, int indMovedPawn, Coord pos_survivor, cloud_chain *l)
 {
     bool is_white = g->is_white;
     if (canStormBreaksForTheOthers(g, indMovedPawn, is_white))
     {
-        AleatStormBreaksNGE(g, !is_white, l, survivor);
+        stormBreaksNGE(g, !is_white, l, pos_survivor);
     }
 }
 
-queen_move_t CanMoveOrEatQueen(Game *g, bool color, int lig, int col, int ind, bool screen_switch)
+Coord CanMoveOrEatQueen(Game *g, bool color, int lig, int col, int ind, bool screen_switch)
 {
-    // Check if the move of the queen is possible and move the queen or eat the next pawn in her path
+    // Check if the move of the queen is possible and move the queen 
+    // If ennemy pawn is on the road, so queen will go just before it and then call Rafle, else it fails
     assertAndLog(inGame(lig, col), "Tuple queen pas dans damier");
     assertAndLog(isValidIndexInGame(g, ind, color), "Dame pas valide index");
     if (screen_switch)
@@ -348,10 +323,10 @@ queen_move_t CanMoveOrEatQueen(Game *g, bool color, int lig, int col, int ind, b
                 if (c.pawn_color == !color && inGame(new_lig, new_col) && freeCase(get_case_damier(g, new_lig, new_col)) &&
                     !isInCloud(g, !color, ind_from_coord(g, new_lig - add_lig, new_col - add_col)))
                 {
-                    queen_move_t res = {.pos_dame = {.i = new_lig, .j = new_col}, .pos_eaten_pawn = {.i = new_lig - add_lig, .j = new_col - add_col}};
-                    return res;
+                    Coord pos_dame = {.i = new_lig, .j = new_col};
+                    return pos_dame;
                 }
-                else if (c.pawn_color == color)
+                else if (c.pawn_color == color || (c.pawn_color != color && isInCloud(g, !color, c.ind_pawn)))
                 {
                     printv("jump sheep");
                     if (!screen_switch)
@@ -359,16 +334,16 @@ queen_move_t CanMoveOrEatQueen(Game *g, bool color, int lig, int col, int ind, b
                         // On est intransigeant avec la machine
                         assertAndLog(false, "");
                     }
-                    queen_move_t res = {.pos_dame = {.i = VOID_INDEX, .j = VOID_INDEX}, .pos_eaten_pawn = {.i = VOID_INDEX, .j = VOID_INDEX}};
-                    return res; // Pb: the queen jumps a pawn of her own color or a ghost pawn
+                    Coord pos_dame = {.i = VOID_INDEX, .j = VOID_INDEX};
+                    return pos_dame; // Pb: the queen jumps a pawn of her own color or a ghost pawn
                 }
             }
         }
         // Only move the pawn: nothing in her path
         if (inGame(lig, col) && freeCase(get_case_damier(g, lig, col)))
         {
-            queen_move_t res = {.pos_dame = {.i = lig, .j = col}, .pos_eaten_pawn = {.i = VOID_INDEX, .j = VOID_INDEX}};
-            return res;
+            Coord pos_dame = {.i = lig, .j = col};
+            return pos_dame;
         }
     }
     printv("Le deplacement n'est pas diagonale");
@@ -376,8 +351,8 @@ queen_move_t CanMoveOrEatQueen(Game *g, bool color, int lig, int col, int ind, b
     {
         assertAndLog(false, "");
     }
-    queen_move_t res = {.pos_dame = {.i = VOID_INDEX, .j = VOID_INDEX}, .pos_eaten_pawn = {.i = VOID_INDEX, .j = VOID_INDEX}};
-    return res; // No case was found
+    Coord pos_dame = {.i = VOID_INDEX, .j = VOID_INDEX};
+    return pos_dame; // No case was found
 }
 
 // Memory Function
@@ -475,7 +450,7 @@ Coord queen_valide_case(Game *g, int ind, bool color)
                     {
                         arr = add(dir0, mult(l, dir));
                         Case c = get_case_damier(g, arr.i, arr.j);
-                        if (!freeCase(c) && c.pawn_color == color)
+                        if (!freeCase(c) && (c.pawn_color == color || (c.pawn_color != color && isInCloud(g, !color,  c.ind_pawn))))
                         {
                             is_diag_clean = false;
                             break;
@@ -499,7 +474,7 @@ void change_pawn_place_coord(Game *g, int ind, bool color, Coord pos)
     change_pawn_place(g, ind, color, pos.i, pos.j);
 }
 
-void stormBreaksNGE(Game *g, bool color, cloud_chain *load, ind_pba_t *survivor, Coord pos_survivor)
+void stormBreaksNGE(Game *g, bool color, cloud_chain *load, Coord pos_survivor)
 {
     // Liste chaine et valeur du pawn survivor modifies par effet de bord
     int_chain *l = g->cloud[color];
@@ -511,8 +486,6 @@ void stormBreaksNGE(Game *g, bool color, cloud_chain *load, ind_pba_t *survivor,
 
         if (is_empty(l))
         {
-            survivor->ind = ind;
-            survivor->pba = get_pawn_value(g, color, ind, PBA);
             put_pawn_value(g, color, ind, PBA, 1);
             break;
         }
@@ -526,5 +499,6 @@ void stormBreaksNGE(Game *g, bool color, cloud_chain *load, ind_pba_t *survivor,
         }
     }
     g->lengthCloud[color] = 0;
-    change_pawn_place_coord(g, survivor->ind, color, pos_survivor);
+    change_pawn_place_coord(g, ind, color, pos_survivor); // Dans le cloud, tous les pions ont 
+    // la même valeur donc on prend le dernier et on le bouge à la place du survivor
 }

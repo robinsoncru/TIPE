@@ -5,7 +5,6 @@ memory_move_t *initMemMove(int indMovePawn, moveType type) {
     mem->type = type;
     mem->chainy = NULL;
     mem->load_cloud_other = ccreate_list();
-    mem->survivor = malloc(sizeof(ind_pba_t));
     mem->indMovePawn = indMovePawn;
     mem->issues = NULL;
     mem->lenghtIssues=0;
@@ -14,7 +13,8 @@ memory_move_t *initMemMove(int indMovePawn, moveType type) {
     mem->lig = -1;
     mem->full_pawn_data.b = false;
     mem->full_pawn_data.ind = VOID_INDEX;
-    mem->ind_potential_foe = VOID_INDEX;
+    mem->pos_potential_foe_from_prom.i = -1;
+    mem->pos_potential_foe_from_prom.j = -1;
     mem->init_coord.i = -1;
     mem->init_coord.j = -1;
     mem->left = false;
@@ -26,6 +26,5 @@ void freeMemMove(memory_move_t *mem) {
     if (mem->issues != NULL) free(mem->issues);
     
     cfree(mem->load_cloud_other);
-    free(mem->survivor);
     free(mem);
 }

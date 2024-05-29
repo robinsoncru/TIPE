@@ -160,14 +160,14 @@ void checkQueenDepl(Game *g, GraphicCache *cache, bool iw, int lig, int col, boo
     // Jeu plante si une machine joue un coup non valide, alors qu'on avertit
     // simplement l'utilisateur avec un message s'il fait un coup non valide et le coup est annulé
     // On distingue les deux avec autoplay
-    queen_move_t tuple_coord = CanMoveOrEatQueen(g, iw, lig, col, g->ind_move, !autoplay);
-    int dame_lig = tuple_coord.pos_dame.i;
-    int dame_col = tuple_coord.pos_dame.j;
+    Coord pos_dame = CanMoveOrEatQueen(g, iw, lig, col, g->ind_move, !autoplay);
+    int dame_lig = pos_dame.i;
+    int dame_col = pos_dame.j;
     // isPawnValid(g);
     // if (g->ind_move == 3) pawnMove(g, g->is_white, g->ind_move, true);
     if (isPawnValid(g) && dame_lig != VOID_INDEX && dame_col != VOID_INDEX && int_to_bool(get_pawn_value(g, g->is_white, g->ind_move, QUEEN)))
     {
-        queenDepl(g, g->ind_move, iw, tuple_coord);
+        queenDepl(g, g->ind_move, iw, pos_dame);
         //endTurnGraphics(g, cache);
     }
     else
@@ -391,7 +391,7 @@ void onRUp(Game *g, GraphicCache *cache)
     // int lig = y / LG_CASE;
     // int col =  x/ LG_CASE;
 
-    // queen_move_t coords = CanMoveOrEatQueen(g, iw, lig, col, g->damier, ind);
+    // Coord pos_dame = CanMoveOrEatQueen(g, iw, lig, col, g->damier, ind);
     // int dame_lig = coords.pos_dame.i;
     // int dame_col = coords.pos_dame.j;
     // if (isPawnValid(g) && dame_lig != VOID_INDEX && dame_col != VOID_INDEX)

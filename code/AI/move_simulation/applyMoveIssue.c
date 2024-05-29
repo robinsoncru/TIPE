@@ -19,7 +19,7 @@ void cancelPawnMoveDeter(Game *g, memory_move_t *mem)
 void promotionIssue(Game *g, memory_move_t *mem, int index)
 {
 
-    mem->ind_potential_foe = promotionNGE(g, mem->indMovePawn);
+    // mem->pos_potential_foe_from_prom = promotionNGE(g, mem->indMovePawn);
 }
 
 void pawnMoveBackIssue(Game *g, memory_move_t *mem, int index)

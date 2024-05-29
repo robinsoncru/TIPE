@@ -37,8 +37,7 @@ void print_move(Move m)
 
     case queenDeplType:
         printf("~>\n");
-        printf("Arrive Dame {%d, %d}\nPièce mangée {%d, %d}\n", m.coords.pos_dame.i, m.coords.pos_dame.j,
-               m.coords.pos_eaten_pawn.i, m.coords.pos_eaten_pawn.j);
+        printf("Arrive Dame {%d, %d}\n", m.pos_dame.i, m.pos_dame.j);
         break;
 
     case rafleType:

@@ -23,7 +23,7 @@ memory_move_t *applyDeter(Game *g, Move coup)
         break;
 
     case queenDeplType:
-        mem = queenDeplDeter(g, coup.manipulatedPawn, coup.coords, coup.rafleTree, coup.rafle, coup.type);
+        mem = queenDeplDeter(g, coup.manipulatedPawn, coup.pos_dame, coup.rafleTree, coup.rafle, coup.type);
         break;
 
     case rafleType:
@@ -40,7 +40,7 @@ memory_move_t *applyDeter(Game *g, Move coup)
     default:
 
         mem = NULL;
-        assertAndLog(true, "Deter : reconnait pas type move");
+        assertAndLog(false, "Deter : reconnait pas type move");
         break;
     }
 
@@ -84,7 +84,7 @@ void applyIssue(Game *g, memory_move_t *mem, int nbIssue)
         break;
 
     default:
-        assertAndLog(true, "Issue : reconnait pas type move");
+        assertAndLog(false, "Issue : reconnait pas type move");
         break;
     }
 }
@@ -131,7 +131,7 @@ void applyRecipDeter(Game *g, memory_move_t *mem)
         break;
 
     default:
-        assertAndLog(true, "reconnait pas type move");
+        assertAndLog(false, "reconnait pas type move");
         break;
     }
 }

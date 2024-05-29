@@ -66,26 +66,28 @@ int update(Game *g, GraphicCache *cache, int nb_coups, int *l_coups, int *l_depl
                 else
                 {
 
-                    nb_coups = play_a_move(PAWNMOVELEFT, 0, g, cache, nb_coups, l_coups, l_depl);
+                    nb_coups = play_a_move(QUEENDEPL, 0, g, cache, nb_coups, l_coups, l_depl);
                 }
-                // nb_coups = play_a_move(PAWNMOVELEFT, random_index(g), g, cache, nb_coups, l_coups, l_depl);
-                
-                // nb_coups = play_a_move(PAWNMOVELEFT, plannifier_index(g, nb_coups, l_coups), g, cache, nb_coups, l_coups, l_depl);
+                // nb_coups = play_a_move(QUEENDEPL, 0, g, cache, nb_coups, l_coups, l_depl);
+
+                // nb_coups = play_a_move(QUEENDEPL, plannifier_index(g, nb_coups, l_coups), g, cache, nb_coups, l_coups, l_depl);
             }
             else
             {
                 if (nb_coups % 2 == 1)
                 {
-                    nb_coups = play_a_move(PAWNMOVEBACK, plannifier_index(g, nb_coups, l_coups), g, cache, nb_coups, l_coups, l_depl);
+                    // nb_coups = play_a_move(PAWNMOVEBACK, plannifier_index(g, nb_coups, l_coups), g, cache, nb_coups, l_coups, l_depl);
+                    nb_coups = play_a_move(PAWNMOVEBACK, random_index(g), g, cache, nb_coups, l_coups, l_depl);
                 }
                 else
                 {
-                    nb_coups = play_a_move(PAWNMOVELEFT, plannifier_index(g, nb_coups, l_coups), g, cache, nb_coups, l_coups, l_depl);
+                    // nb_coups = play_a_move(QUEENDEPL, plannifier_index(g, nb_coups, l_coups), g, cache, nb_coups, l_coups, l_depl);
+                    nb_coups = play_a_move(QUEENDEPL, random_index(g), g, cache, nb_coups, l_coups, l_depl);
                 }
-                // nb_coups = play_a_move(PAWNMOVELEFT, random_index(g), g, cache, nb_coups, l_coups, l_depl);
-                // nb_coups = play_a_move(PAWNMOVELEFT, plannifier_index(g, nb_coups, l_coups), g, cache, nb_coups, l_coups, l_depl);
+                // nb_coups = play_a_move(QUEENDEPL, random_index(g), g, cache, nb_coups, l_coups, l_depl);
+                // nb_coups = play_a_move(QUEENDEPL, plannifier_index(g, nb_coups, l_coups), g, cache, nb_coups, l_coups, l_depl);
             }
-
+            // print_pawns(g, g->is_white);
         }
     }
     return nb_coups;

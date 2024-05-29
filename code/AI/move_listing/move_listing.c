@@ -133,7 +133,7 @@ void listMovesForQueen(Game *g, int selectedPawn, Move *temporaryResult, int *nb
             dir.j = possibleShifts[j];
             for (int k = 1; k < NB_CASE_LG; k++)
             {
-                currentMove.coords.pos_dame = add(pos, dir);
+                currentMove.pos_dame = add(pos, dir);
                 if (!caseIsAccessible(g, g->is_white, dir.i, dir.j))
                 {
                     break;
@@ -141,7 +141,7 @@ void listMovesForQueen(Game *g, int selectedPawn, Move *temporaryResult, int *nb
                 else
                 {
                     oldNbMoves = *nbMoves;
-                    listRafles(g, selectedPawn, currentMove.coords.pos_dame, temporaryResult, nbMoves);
+                    listRafles(g, selectedPawn, currentMove.pos_dame, temporaryResult, nbMoves);
                     if (oldNbMoves == *nbMoves)
                     { // s'il n'y a aucune rafle a jouer
                         temporaryResult[*nbMoves] = currentMove;

@@ -171,7 +171,7 @@ void drawLosange(SDL_Renderer *render, Case c, pawn p, Game *g)
     {
         for (int i = 0; i < taille_list(l); i++)
         {
-            if (c.pawn_color == g->is_white)
+            if (c.pawn_color == g->is_white && c.ind_pawn == get(l, i))
             {
                 draw_little_square(render, 30, c, silver);
             }

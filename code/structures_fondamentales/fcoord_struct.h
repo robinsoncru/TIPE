@@ -26,10 +26,10 @@ typedef struct Coord{
 } Coord;
 
 
-typedef struct {
-    Coord pos_dame;
-    Coord pos_eaten_pawn;
-} queen_move_t;
+// typedef struct {
+//     Coord pos_dame;
+//     Coord pos_eaten_pawn;
+// } queen_move_t;
 
 typedef struct {
     int ind;
@@ -50,9 +50,17 @@ struct int_chain
     int size_max;
 };
 
+
+
 typedef struct {
-    int_chain *friendsId;
-    int foe;
+    Coord *tab;
+    int sizetab;
+    int index_actu;
+} coord_tab_t;
+
+typedef struct {
+    coord_tab_t *friendsId;
+    Coord pos_foe;
     bool queen;
 } primary_data_t;
 

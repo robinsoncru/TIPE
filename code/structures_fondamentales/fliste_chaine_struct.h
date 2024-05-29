@@ -22,6 +22,7 @@ struct cloud_chain {
 typedef struct {
     primary_data_t relationship;
     Coord coord;
+    bool pawncolor;
 } pawn_info;
 
 typedef struct data_chain data_chain;

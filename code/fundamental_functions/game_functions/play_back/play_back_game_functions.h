@@ -14,13 +14,12 @@ void pawnMoveNGE(Game *g, bool is_white, int ind, bool left);
 
 void pawnMoveCancel(Game *g, bool is_white, int ind, bool left);
 
-void recreateCloud(Game *g, cloud_chain *l, ind_pba_t *survivor, bool iw);
+void recreateCloud(Game *g, cloud_chain *l, int indFromCaseSurvivor, int pbaSurvivor, bool iw);
 ind_bool_t biDeplNGE(Game *g, bool color, int ind);
 void cancelBidepl(Game *g, int oldInd, ind_bool_t data);
 int promotionNGE(Game *g, int ind);
-void cancelPromotion(Game *g, int ind_old_friend, int ind_new_foe);
+void cancelPromotion(Game *g, int indPawnBeforeProm, Coord pos_potential_foe_from_prom);
 
-data_chain *queenDeplNGE(Game *g, int ind, bool color, queen_move_t tuple_coord);
 void cancelDeplQueen(Game *g, int ind_queen, data_chain *chainy, Coord init_coord);
 
 data_chain *rafleNGE(Game *g, int indMovePawn);
@@ -33,5 +32,5 @@ void lienAmitiePmetreNGE(int lig, int col, int ind, bool is_white, Game *g);
 void lienEnnemitieNGE(int lig, int col, Game *g, int indPawn);
 void cancelLienEnnemitie(Game *g, int indPawn, int lig, int col);
 void lienEnnemitiePmetreNGE(bool is_white, int lig, int col, int ind, Game *g);
-
+data_chain *queenDeplNGE(Game *g, int ind, bool color, Coord pos_dame);
 #endif

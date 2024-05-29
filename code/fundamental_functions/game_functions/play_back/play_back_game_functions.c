@@ -35,7 +35,7 @@ void pawnMoveCancel(Game *g, bool is_white, int ind, bool left)
     change_pawn_place(g, ind, is_white, i - di, j - dj);
 }
 
-void recreateCloud(Game *g, cloud_chain *l, ind_pba_t *survivor, bool iw)
+void recreateCloud(Game *g, cloud_chain *l, int indFromCaseSurvivor, int pbaSurvivor, bool iw)
 {
 
     while (!cis_empty(l))
@@ -50,8 +50,8 @@ void recreateCloud(Game *g, cloud_chain *l, ind_pba_t *survivor, bool iw)
         g->lengthCloud[iw]++;
     }
 
-    put_pawn_value(g, iw, survivor->ind, PBA, survivor->pba);
-    push(g->cloud[iw], survivor->ind);
+    put_pawn_value(g, iw, indFromCaseSurvivor, PBA, pbaSurvivor);
+    push(g->cloud[iw], indFromCaseSurvivor);
     g->lengthCloud[iw]++;
 }
 
@@ -91,18 +91,19 @@ int promotionNGE(Game *g, int ind)
     return VOID_INDEX;
 }
 
-void cancelPromotion(Game *g, int ind_old_friend, int ind_new_foe)
+void cancelPromotion(Game *g, int indPawnBeforeProm, Coord pos_potential_foe_from_prom)
 {
     bool iw = g->is_white;
-    if (ind_new_foe != -1)
+    int i = pos_potential_foe_from_prom.i;
+    int j = pos_potential_foe_from_prom.j;
+    if (inGame(i, j))
     {
-        int i = get_pawn_value(g, iw, ind_new_foe, LIG);
-        int j = get_pawn_value(g, iw, ind_new_foe, COL);
         killPawn(g, i, j);
         createPawn(g, iw, i, j);
     }
+
     else
-        put_pawn_value(g, iw, ind_old_friend, QUEEN, 0);
+        put_pawn_value(g, iw, indPawnBeforeProm, QUEEN, 0);
 }
 
 ind_bool_t biDeplNGE(Game *g, bool color, int ind)
@@ -182,10 +183,12 @@ data_chain *eatRafleNGE(Game *g, int indEater, bool is_white, PathTree *t, Path 
         int col_pawn_eaten = get_pawn_value(g, is_white, indEater, COL) + dj;
         int eatenInd = get_case_damier(g, lig_pawn_eaten, col_pawn_eaten).ind_pawn;
 
-        int_chain *lamis = friendTabToListChaine(g, eatenInd, !is_white);
+        coord_tab_t *tamis = friendTabToCoordTab(g, eatenInd, !is_white);
 
-        pawn_info data_eaten = {.relationship = {.friendsId = lamis,
-                                                 .foe = get_pawn_value(g, !is_white, eatenInd, ENNEMY),
+        int indEnn = get_pawn_value(g, !is_white, eatenInd, ENNEMY);
+
+        pawn_info data_eaten = {.relationship = {.friendsId = tamis,
+                                                 .pos_foe = coord_from_ind(g, !is_white, indEnn),
                                                  .queen = int_to_bool(get_pawn_value(g, !is_white, eatenInd, QUEEN))},
                                 .coord = {.i = lig_pawn_eaten, .j = col_pawn_eaten}};
 
@@ -224,14 +227,17 @@ void cancelRafle(Game *g, int indMovedPawn, Coord init_pos, data_chain *chainy)
         int j = reborn_pawn.coord.j;
         createPawn(g, !iw, i, j);
         int reborn_ind = get_case_damier(g, i, j).ind_pawn;
-        int_chain *l = reborn_pawn.relationship.friendsId;
-        while (!is_empty(l))
+        coord_tab_t *t = reborn_pawn.relationship.friendsId;
+        Coord c;
+        while (!ctis_empty(t))
         {
-            putFriendByInd(g, reborn_ind, pop(l), iw, true);
+            c = ctpop(t);
+            putFriendByInd(g, reborn_ind, ind_from_coord(g, c.i, c.j), iw, true);
         }
-        freeIntChain(reborn_pawn.relationship.friendsId);
+        ctfree(reborn_pawn.relationship.friendsId);
         reborn_pawn.relationship.friendsId = NULL;
-        put_pawn_value(g, !iw, reborn_ind, ENNEMY, reborn_pawn.relationship.foe);
+        c = reborn_pawn.relationship.pos_foe;
+        put_pawn_value(g, !iw, reborn_ind, ENNEMY, ind_from_coord(g, c.i, c.j));
         put_pawn_value(g, !iw, reborn_ind, QUEEN, bool_to_int(reborn_pawn.relationship.queen));
     }
     free(chainy);
@@ -239,7 +245,7 @@ void cancelRafle(Game *g, int indMovedPawn, Coord init_pos, data_chain *chainy)
     change_pawn_place(g, indMovedPawn, iw, init_pos.i, init_pos.j);
 }
 
-data_chain *queenDeplNGE(Game *g, int ind, bool color, queen_move_t tuple_coord)
+data_chain *queenDeplNGE(Game *g, int ind, bool color, Coord pos_dame)
 {
     assertAndLog(is_empty(g->inds_move_back), "Il reste des amis dans les NGE");
     ;
@@ -249,8 +255,8 @@ data_chain *queenDeplNGE(Game *g, int ind, bool color, queen_move_t tuple_coord)
     // The queen can move on diagonals or eat pawns only by putting herself in front of the first pawn she
     // will eat, eatRafle will do the rest of the job
     // So pos_eaten_pawn is useless here
-    int lig = tuple_coord.pos_dame.i;
-    int col = tuple_coord.pos_dame.j;
+    int lig = pos_dame.i;
+    int col = pos_dame.j;
     change_pawn_place(g, ind, color, lig, col);
 
     // Gonna check if the queen can take a rafle
@@ -260,7 +266,7 @@ data_chain *queenDeplNGE(Game *g, int ind, bool color, queen_move_t tuple_coord)
     {
         for (int i = 0; i < MAX_NB_PAWNS; i++)
         {
-            
+
             push(g->inds_move_back, i);
 
             // le pion indique a partir de son indice

@@ -16,7 +16,7 @@ typedef struct Move
     // moving back
     bool left;
 
-    queen_move_t coords;
+    Coord pos_dame;
 
     // selected pawn on the other side for
     // friendship/hate creation

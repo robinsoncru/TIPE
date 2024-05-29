@@ -18,8 +18,9 @@ Case get_case_damier(Game *g, int i, int j);
 void putFriendByInd(Game *g, int indActu, int indFriend, bool colorActu, bool valeur);
 bool getFriendByInd(Game *g, int indActu, int indFriend, bool colorActu);
 
-int_chain *friendTabToListChaine(Game *g, int ind, bool color);
+coord_tab_t *friendTabToCoordTab(Game *g, int ind, bool color);
 
 bool has_friend(Game *g, int ind, int color);
 float zero_fun(Game *g);
+Coord to_coord(int i, int j);
 #endif
