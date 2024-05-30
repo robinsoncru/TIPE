@@ -41,7 +41,6 @@ void generateCloudDuePawnMove(Game *g, memory_move_t *mem)
     bool is_white = g->is_white;
     if (canStormBreaksForTheOthers(g, mem->indMovePawn, is_white))
     {
-        // AleatStormBreaksNGE(g, !is_white, l, survivor);
         initTabIssue(g, CREATE_CLOUD_TAB, mem);
     }
 }
@@ -68,8 +67,8 @@ void cancelSelectedIssue(Game *g, memory_move_t *mem)
 
         assertAndLog(index_origin != VOID_INDEX, "nuage présent mais pas de survivant");
         Coord pos_survivor = mem->issues[index_origin].pos_survivor;
-        int pbaSurvivor =  mem->issues[index_origin].pba;
-        int indNoPopPawn = ind_from_coord(g, pos_survivor.i, pos_survivor.j); 
+        int pbaSurvivor = mem->issues[index_origin].pba;
+        int indNoPopPawn = ind_from_coord(g, pos_survivor.i, pos_survivor.j);
         /* Pion initialement conservé dans le nuage */
         change_pawn_place_coord(g, index_origin, !iw, mem->issues[index_origin].pos_survivor);
 
@@ -88,7 +87,6 @@ memory_move_t *pawnMoveDeter(Game *g, int indMovePawn, bool left, moveType type)
     memory_move_t *mem = initMemMove(indMovePawn, type);
     mem->left = left;
 
-    // generateCloudDuePawnMove(g, indMovePawn, mem->survivor, mem->load_cloud_other);
     generateCloudDuePawnMove(g, mem);
 
     // endTurnGameManagementSimple(g, indMovePawn);
@@ -149,8 +147,73 @@ memory_move_t *queenDeplDeter(Game *g, int indMovePawn, Coord pos_dame, PathTree
     bool iw = g->is_white;
     memory_move_t *mem = initMemMove(indMovePawn, type);
     mem->init_coord = give_coord(g, iw, indMovePawn);
-    mem->chainy = queenDeplNGE(g, indMovePawn, iw, pos_dame);
+    mem->chainy = queenDepl(g, indMovePawn, iw, pos_dame, true);
 
-    generateCloudDuePawnMove(g, mem);
+    if (dis_empty(mem->chainy))
+    {
+        generateCloudDuePawnMove(g, mem);
+    }
     return mem;
+}
+
+
+
+void cancelPawnMoveDeter(Game *g, memory_move_t *mem)
+{
+    bool iw = g->is_white;
+
+    pawnMoveCancel(g, iw, mem->indMovePawn, mem->left);
+    freeMemMove(mem);
+}
+
+
+
+void cancelPawnMoveBackDeter(Game *g, memory_move_t *mem)
+{
+    cancelMoveBack(g, mem->indMovePawn, mem->left);
+    freeMemMove(mem);
+}
+
+
+
+void cancelBiDeplDeter(Game *g, memory_move_t *mem)
+{
+    cancelBidepl(g, mem->indMovePawn, mem->full_pawn_data);
+    freeMemMove(mem);
+}
+
+
+
+void cancelQueenDeplDeter(Game *g, memory_move_t *mem)
+{
+    
+    cancelDeplQueen(g, mem->indMovePawn, mem->chainy, mem->init_coord);
+    freeMemMove(mem);
+}
+
+
+
+void cancelRafleDeter(Game *g, memory_move_t *mem)
+{
+    
+    cancelRafle(g, mem->indMovePawn, mem->init_coord, mem->chainy);
+    freeMemMove(mem);
+}
+
+
+
+void cancelLienAmitieDeter(Game *g, memory_move_t *mem)
+{
+
+    cancelLienAmitie(g, mem->indMovePawn, mem->lig, mem->col);
+    freeMemMove(mem);
+}
+
+
+
+void cancelLienEnnemitieDeter(Game *g, memory_move_t *mem)
+{
+
+    cancelLienEnnemitie(g, mem->indMovePawn, mem->lig, mem->col);
+    freeMemMove(mem);
 }

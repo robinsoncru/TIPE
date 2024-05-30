@@ -14,35 +14,40 @@ void test_start_game(Game *g)
 {
     // très pratique pour promouvoir une dame en qq coups
 
-    Coord c1 = coord_from_ind(g, 0, true);
-    // Coord c2 = coord_from_ind(g, 1, true);
-    for (int i = 0; i < 4; i++)
-    {
-        // promote(g, true, i);
-        // promote(g, false, i);
-        change_pawn_place(g, i, false, get_pawn_value(g, false, i, LIG) - 5, get_pawn_value(g, false, i, COL) + 2*i+1);
+    // Coord c1 = coord_from_ind(g, 0, true);
+    // // Coord c2 = coord_from_ind(g, 1, true);
+    // for (int i = 0; i < 4; i++)
+    // {
+    //     // promote(g, true, i);
+    //     // promote(g, false, i);
+    //     change_pawn_place(g, i, false, get_pawn_value(g, false, i, LIG) - 5, get_pawn_value(g, false, i, COL) + 2*i+1);
 
-        lienAmitiePmetreNGE(c1.i, c1.j, i, false, g);
-        promote(g, false, i);
-    }
-    for (int i = NB_PAWNS - 1; i > 3; i--)
-    {
-        killPawnByInd(g, true, i);
-        killPawnByInd(g, false, i);
-        
-    }
+    //    lienAmitieNGE(c1.i, c1.j, i, false, g);
+    //     promote(g, false, i);
+    // }
+    // for (int i = NB_PAWNS - 1; i > 3; i--)
+    // {
+    //     killPawnByInd(g, true, i);
+    //     killPawnByInd(g, false, i);
+    // }
 
-    killPawnByInd(g, true, 3);
+    // for (int i = 0; i <= 3; i++)
+    // {
+    //     change_pawn_place(g, i, false, get_pawn_value(g, false, i, LIG) - 5, get_pawn_value(g, false, i, COL) + 2 * i + 1);
+    //     change_pawn_place(g, i, true, get_pawn_value(g, true, i, LIG) + 5, get_pawn_value(g, true, i, COL) + 2 * i + 1);
+    // }
 
-    for (int i = 2; i > 0; i--)
-    {
-        change_pawn_place(g, i, true, 4, get_pawn_value(g, true, i, COL) + 2*i + 2);
-        biDepl(g, i, true);
-    }
+    // killPawnByInd(g, true, 3);
 
-    change_pawn_place(g, 0, true, get_pawn_value(g, true, 0, LIG) + 1, NB_CASE_LG - 5);
-    promote(g, true, 0);
-    // change_pawn_place(g, 0, false, get_pawn_value(g, false, 0, LIG) - 1, NB_CASE_LG-3);
+    // for (int i = 2; i > 0; i--)
+    // {
+    //     change_pawn_place(g, i, true, 4, get_pawn_value(g, true, i, COL) + 2*i + 2);
+    //     biDepl(g, i, true);
+    // }
+
+    // change_pawn_place(g, 0, true, get_pawn_value(g, true, 0, LIG) + 1, NB_CASE_LG - 5);
+    // promote(g, true, 0);
+    // // change_pawn_place(g, 0, false, get_pawn_value(g, false, 0, LIG) - 1, NB_CASE_LG-3);
 
     // change_pawn_place(g, 1, true, get_pawn_value(g, true, 1, LIG) + 1, NB_CASE_LG-3);
     // change_pawn_place(g, 1, false, get_pawn_value(g, false, 1, LIG) - 1, NB_CASE_LG-3);

@@ -64,5 +64,5 @@ void lienEnnemitie(int lig, int col, Game *g);
 void biDepl(Game *g, int ind, bool color);
 
 /* QUEEN DEPL */
-void queenDepl(Game *g, int ind, bool color, Coord pos_dame);
+data_chain *queenDepl(Game *g, int ind, bool color, Coord pos_dame, bool isNGE);
 #endif // GAME_FUNCTIONS

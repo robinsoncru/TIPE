@@ -283,14 +283,14 @@ void AleatStormBreaks(Game *g, bool color)
         AleatStormBreaks(g, !color);
 }
 
-void handleCloudDuePawnMoveNGE(Game *g, int indMovedPawn, Coord pos_survivor, cloud_chain *l)
-{
-    bool is_white = g->is_white;
-    if (canStormBreaksForTheOthers(g, indMovedPawn, is_white))
-    {
-        stormBreaksNGE(g, !is_white, l, pos_survivor);
-    }
-}
+// void handleCloudDuePawnMoveNGE(Game *g, int indMovedPawn, Coord pos_survivor, cloud_chain *l)
+// {
+//     bool is_white = g->is_white;
+//     if (canStormBreaksForTheOthers(g, indMovedPawn, is_white))
+//     {
+//         stormBreaksNGE(g, !is_white, l, pos_survivor);
+//     }
+// }
 
 Coord CanMoveOrEatQueen(Game *g, bool color, int lig, int col, int ind, bool screen_switch)
 {

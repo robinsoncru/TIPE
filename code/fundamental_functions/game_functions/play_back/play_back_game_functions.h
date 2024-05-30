@@ -17,7 +17,7 @@ void pawnMoveCancel(Game *g, bool is_white, int ind, bool left);
 void recreateCloud(Game *g, cloud_chain *l, int indFromCaseSurvivor, int pbaSurvivor, bool iw);
 ind_bool_t biDeplNGE(Game *g, bool color, int ind);
 void cancelBidepl(Game *g, int oldInd, ind_bool_t data);
-int promotionNGE(Game *g, int ind);
+Coord promotionNGE(Game *g, bool iw, int ind, int index_choice);
 void cancelPromotion(Game *g, int indPawnBeforeProm, Coord pos_potential_foe_from_prom);
 
 void cancelDeplQueen(Game *g, int ind_queen, data_chain *chainy, Coord init_coord);
@@ -25,12 +25,9 @@ void cancelDeplQueen(Game *g, int ind_queen, data_chain *chainy, Coord init_coor
 data_chain *rafleNGE(Game *g, int indMovePawn);
 void cancelRafle(Game *g, int indMovedPawn, Coord init_pos, data_chain *chainy);
 
-void lienAmitieNGE(int lig, int col, Game *g, int indPawn);
 void cancelLienAmitie(Game *g, int indPawn, int lig, int col);
-void lienAmitiePmetreNGE(int lig, int col, int ind, bool is_white, Game *g);
+void lienAmitieNGE(int lig, int col, int ind, bool is_white, Game *g);
 
-void lienEnnemitieNGE(int lig, int col, Game *g, int indPawn);
 void cancelLienEnnemitie(Game *g, int indPawn, int lig, int col);
-void lienEnnemitiePmetreNGE(bool is_white, int lig, int col, int ind, Game *g);
-data_chain *queenDeplNGE(Game *g, int ind, bool color, Coord pos_dame);
+void lienEnnemitieNGE(bool is_white, int lig, int col, int ind, Game *g);
 #endif

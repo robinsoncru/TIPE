@@ -111,7 +111,7 @@ void applyRecipDeter(Game *g, memory_move_t *mem)
         break;
 
     case biDeplType:
-        ccancelBiDeplDeter(g, mem);
+        cancelBiDeplDeter(g, mem);
         break;
 
     case queenDeplType:

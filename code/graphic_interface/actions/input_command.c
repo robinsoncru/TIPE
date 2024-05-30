@@ -167,7 +167,7 @@ void checkQueenDepl(Game *g, GraphicCache *cache, bool iw, int lig, int col, boo
     // if (g->ind_move == 3) pawnMove(g, g->is_white, g->ind_move, true);
     if (isPawnValid(g) && dame_lig != VOID_INDEX && dame_col != VOID_INDEX && int_to_bool(get_pawn_value(g, g->is_white, g->ind_move, QUEEN)))
     {
-        queenDepl(g, g->ind_move, iw, pos_dame);
+        queenDepl(g, g->ind_move, iw, pos_dame, false);
         //endTurnGraphics(g, cache);
     }
     else

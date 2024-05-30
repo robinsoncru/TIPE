@@ -55,25 +55,36 @@ void recreateCloud(Game *g, cloud_chain *l, int indFromCaseSurvivor, int pbaSurv
     g->lengthCloud[iw]++;
 }
 
-int promotionNGE(Game *g, int ind)
+Coord promotionNGE(Game *g, bool iw, int ind, int index_choice)
 {
+
     assertAndLog(is_empty(g->inds_move_back), "Il reste des amis dans les NGE");
     ;
     /* Promote the pawn at the ind in pmetre : do nothing, become a queen or become an ennemy pawn */
     // Return the index of the ennemy pawn created, -1 else
-    bool iw = g->is_white;
-    int choice = rand() % 3;
+    int choice;
+    if (index_choice == VOID_INDEX)
+    {
+        choice = rand() % 3;
+        printf("(choix %d)", choice);
+    }
+    else
+    {
+        choice = index_choice;
+    }
+    Coord pos_final = {.i = -1, .j = IND_NOTHING_HAPPENED};
     if (choice == 1)
     {
-        put_pawn_value(g, iw, ind, QUEEN, 1);
-        printv("QUEEN");
-        return VOID_INDEX;
+        promote(g, iw, ind);
+        pos_final.j = IND_GLORY_QUEEN;
+        return pos_final;
     }
     else if (choice == 2)
     {
-        printv("BLACK");
         int i = get_pawn_value(g, iw, ind, LIG);
         int j = get_pawn_value(g, iw, ind, COL);
+
+        // printf("Quantic %d %d", i, j);
 
         // Kill the former pawn
         killPawn(g, i, j);
@@ -82,13 +93,16 @@ int promotionNGE(Game *g, int ind)
         createPawn(g, !iw, i, j);
         int indNew = get_case_damier(g, i, j).ind_pawn;
         if (canBePromoted(g, !iw, indNew))
+        {
             promote(g, !iw, indNew);
+        }
 
-        return indNew;
+        pos_final.i = i;
+        pos_final.j = j;
+        return pos_final;
     }
-    printv("NOTHING");
 
-    return VOID_INDEX;
+    return pos_final;
 }
 
 void cancelPromotion(Game *g, int indPawnBeforeProm, Coord pos_potential_foe_from_prom)
@@ -108,12 +122,13 @@ void cancelPromotion(Game *g, int indPawnBeforeProm, Coord pos_potential_foe_fro
 
 ind_bool_t biDeplNGE(Game *g, bool color, int ind)
 {
-    assertAndLog(is_empty(g->inds_move_back), "Il reste des amis dans les NGE");
-    ;
     // On suppose le coup legal
     bool depl = int_to_bool(rand() % 2);
     // Depl le pion a droite ou a gauche et creera l'autre ghost pawn de l'autre cote
     int dj = depl ? 1 : -1;
+
+    assertAndLog(is_empty(g->inds_move_back), "Les amis sont toujours la");
+
     int di = color ? 1 : -1;
     // Creer un pion a droite ou a gauche aleatoirement
     int newLig = get_pawn_value(g, color, ind, LIG) + di;
@@ -132,7 +147,7 @@ ind_bool_t biDeplNGE(Game *g, bool color, int ind)
     // Deplace le pion de l'autre cote
     put_pawn_value(g, color, ind, PBA, get_pawn_value(g, color, ind, PBA) * 2);
     simplyPawnMove(g, color, ind, depl);
-    ind_bool_t data = {.ind = newInd, .b = depl};
+    ind_bool_t data = {.b = depl, .ind = newInd};
     return data;
 }
 
@@ -245,43 +260,12 @@ void cancelRafle(Game *g, int indMovedPawn, Coord init_pos, data_chain *chainy)
     change_pawn_place(g, indMovedPawn, iw, init_pos.i, init_pos.j);
 }
 
-data_chain *queenDeplNGE(Game *g, int ind, bool color, Coord pos_dame)
-{
-    assertAndLog(is_empty(g->inds_move_back), "Il reste des amis dans les NGE");
-    ;
-    // Suppose que l'entree est valide
-    // On a deja la position d'arrivee et le potentiel pion a manger en entree
-
-    // The queen can move on diagonals or eat pawns only by putting herself in front of the first pawn she
-    // will eat, eatRafle will do the rest of the job
-    // So pos_eaten_pawn is useless here
-    int lig = pos_dame.i;
-    int col = pos_dame.j;
-    change_pawn_place(g, ind, color, lig, col);
-
-    // Gonna check if the queen can take a rafle
-    data_chain *chainy = rafleNGE(g, ind);
-
-    if (dis_empty(chainy))
-    {
-        for (int i = 0; i < MAX_NB_PAWNS; i++)
-        {
-
-            push(g->inds_move_back, i);
-
-            // le pion indique a partir de son indice
-        }
-    }
-
-    return chainy;
-}
-
 void cancelDeplQueen(Game *g, int ind_queen, data_chain *chainy, Coord init_coord)
 {
     cancelRafle(g, ind_queen, init_coord, chainy);
 }
 
-void lienAmitiePmetreNGE(int lig, int col, int ind, bool is_white, Game *g)
+void lienAmitieNGE(int lig, int col, int ind, bool is_white, Game *g)
 {
     assertAndLog(is_empty(g->inds_move_back), "LienAmitiePmetreNGE : Il reste des amis à déplacer");
 
@@ -296,13 +280,6 @@ void lienAmitiePmetreNGE(int lig, int col, int ind, bool is_white, Game *g)
     g->nbFriendNoQueen[!is_white]++;
 }
 
-void lienAmitieNGE(int lig, int col, Game *g, int indPawn)
-{
-    // On suppose le coup legal
-    bool iw = g->is_white;
-    lienAmitiePmetreNGE(lig, col, indPawn, iw, g);
-}
-
 void cancelLienAmitie(Game *g, int indPawn, int lig, int col)
 {
     bool iw = g->is_white;
@@ -311,7 +288,7 @@ void cancelLienAmitie(Game *g, int indPawn, int lig, int col)
     putFriendByInd(g, indPawn, amiInd, iw, false);
 }
 
-void lienEnnemitiePmetreNGE(bool is_white, int lig, int col, int ind, Game *g)
+void lienEnnemitieNGE(bool is_white, int lig, int col, int ind, Game *g)
 {
     assertAndLog(is_empty(g->inds_move_back), "Il reste des amis dans les NGE");
 
@@ -320,13 +297,6 @@ void lienEnnemitiePmetreNGE(bool is_white, int lig, int col, int ind, Game *g)
     put_pawn_value(g, is_white, ind, 2, c.ind_pawn);
     put_pawn_value(g, c.pawn_color, c.ind_pawn, 2, ind);
     incrBothTab(g->nbFoe);
-}
-
-void lienEnnemitieNGE(int lig, int col, Game *g, int indPawn)
-{
-    // Suppose legal move
-    bool iw = g->is_white;
-    lienEnnemitiePmetreNGE(iw, lig, col, indPawn, g);
 }
 
 void cancelLienEnnemitie(Game *g, int indPawn, int lig, int col)

@@ -93,7 +93,7 @@ bool canBeFriend(Game *g, int ind, bool color, Case c)
         return false;
     pawn ap = get_pawn(g, !color, c.ind_pawn);
     bool already_friend = getFriendByInd(g, ind, c.ind_pawn, color);
-    return c.pawn_color != p.color && !already_friend && !p.queen && !ap.queen && p.ennemy != VOID_INDEX && ap.ennemy != VOID_INDEX;
+    return c.pawn_color != p.color && !already_friend && !p.queen && !ap.queen && p.ennemy == VOID_INDEX && ap.ennemy == VOID_INDEX;
 }
 
 bool canBeEnnemy(Game *g, int ind, bool color, Case c)
@@ -102,7 +102,7 @@ bool canBeEnnemy(Game *g, int ind, bool color, Case c)
     if (freeCase(c))
         return false;
     pawn ap = get_pawn(g, !color, c.ind_pawn);
-    return c.pawn_color != p.color && ap.ennemy == IND_NORMAL && p.ennemy == IND_NORMAL && !p.queen && !ap.queen;
+    return c.pawn_color != p.color && ap.ennemy == IND_NORMAL && p.ennemy == IND_NORMAL && !p.queen && !ap.queen && p.friendly == 0 && ap.friendly == 0;
 
 }
 
@@ -139,7 +139,8 @@ bool caseIsAccessible(Game *g, bool is_white, int i, int j)
 
 bool canPromotion(Game *g)
 {
-    return isPawnValid(g) && !isInCloud(g, g->is_white, g->ind_move);
+    bool iw = g->is_white;
+    return isPawnValid(g) && !isInCloud(g, iw, g->ind_move) && !int_to_bool(get_pawn_value(g, iw, g->ind_move, QUEEN));
 }
 
 // Seul un pion plein peut faire eclater le nuage

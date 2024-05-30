@@ -99,6 +99,7 @@ void replaceValueInList(int_chain *l, int old_value, int new_value)
 
 void cpush(cloud_chain *l, tcloud k)
 {
+    assertAndLog(l != NULL, "cpush: l non initialisée");
     cloud_chain *m = malloc(sizeof(cloud_chain));
     m->data = k;
     m->next = l->next;
@@ -107,6 +108,7 @@ void cpush(cloud_chain *l, tcloud k)
 
 bool cis_empty(cloud_chain *l)
 {
+    assertAndLog(l != NULL, "cis_empty: l non initialisée");
     return (l->next == NULL);
 }
 
@@ -144,6 +146,8 @@ void cfree(cloud_chain *l)
 
 void dpush(data_chain *l, pawn_info data)
 {
+    assertAndLog(l != NULL, "dpush : data_chain non initialisée");
+
     data_chain *m = malloc(sizeof(data_chain));
     m->data = data;
     m->next = l->next;
@@ -151,11 +155,14 @@ void dpush(data_chain *l, pawn_info data)
 }
 bool dis_empty(data_chain *l)
 {
+    assertAndLog(l != NULL, "dis_empty : data_chain non initialisée");
     return (l->next == NULL);
 }
 
 pawn_info dpop(data_chain *l)
 {
+    assertAndLog(l != NULL, "dpop : data_chain non initialisée");
+
     assert(!dis_empty(l));
     data_chain *m = l->next;
     l->next = m->next;
@@ -240,7 +247,8 @@ void ctpush(coord_tab_t *t, int i, int j)
     ctset(t, t->index_actu, i, j);
 }
 
-bool ctis_empty(coord_tab_t *t) {
+bool ctis_empty(coord_tab_t *t)
+{
     return t->index_actu == -1;
 }
 
