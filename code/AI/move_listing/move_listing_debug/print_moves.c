@@ -1,4 +1,5 @@
 #include "print_moves.h"
+#include <stdio.h>
 
 void print_move(Move m)
 {
@@ -42,6 +43,7 @@ void print_move(Move m)
 
     case rafleType:
         printf("<< miam\n");
+        printf("hauteur : %d\n", m.rafleTree->depth);
         break;
 
     case lienAmitieType:
@@ -58,7 +60,7 @@ void print_move(Move m)
         assertAndLog(false, "aucun coup précalculé reconnu à afficher");
         break;
     }
-    printf("--------------\n\n");
+    printf("--------------\n");
     flush();
 }
 

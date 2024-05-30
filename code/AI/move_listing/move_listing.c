@@ -181,7 +181,7 @@ void listMovesRafleCount(Move *temporaryResult, int nbMoves, int *rafleCount, in
         currentLength = (currentMove.type == rafleType) ? pathTreeDepth(currentMove.rafleTree) : -1;
         if (currentLength > maxRafleLength)
         {
-            nbRafles = 1;
+            nbRafles = 0;
             maxRafleLength = currentLength;
         }
         if (currentLength == maxRafleLength) {
@@ -217,7 +217,7 @@ MoveTab *listMovesFilterRafles(Move *temporaryResult, int nbMoves)
             res->tab = malloc(rafleCount * sizeof(Move));
             for (int k = 0; k < nbMoves; k++) {
                 currentMove = temporaryResult[k];
-                if (res->tab[k].type == rafleType && pathTreeDepth(currentMove.rafleTree) == length) {
+                if (currentMove.type == rafleType && pathTreeDepth(currentMove.rafleTree) == length) {
                     res->tab[res->size] = currentMove;
                     res->size++;
                 }
@@ -231,7 +231,7 @@ MoveTab *listMovesFilterRafles(Move *temporaryResult, int nbMoves)
 MoveTab* listMoves(Game* g){
     Move* temporaryResult;
     int nbMoves;
-    if (is_empty(g->inds_move_back)) {
+    if (!is_empty(g->inds_move_back)) {
         temporaryResult = listMovesMoveBack(g, &nbMoves);
     }
     else {
@@ -254,7 +254,5 @@ MoveTab* listMoves(Game* g){
         }
     }
 
-
-
-    return listMovesFilterRafles(temporaryResult, 0);
+    return listMovesFilterRafles(temporaryResult, nbMoves);
 }
