@@ -195,19 +195,39 @@ int play_a_move(int move, int ind_pawn, Game *g, GraphicCache *cache, int nb_cou
         auto_put_index(g, m.manipulatedPawn);
         m.rafle = NULL;
         m.rafleTree = NULL;
-        m.type = pawnMoveType;
-        mem = applyDeter(g, m); // Tester un eclatement de nuage
-        // picture_this(g);
-        for (int j = 0; j < mem->lenghtIssues; j++)
+
+        if (g->is_white)
         {
-            applyIssue(g, mem, j);
-            print_state_game(g, PBA);
-            usleep(1000 * 100);
-            applyRecipIssue(g, mem, j);
-            // print_state_game(g, PBA);
+            m.type = pawnMoveType;
+            mem = applyDeter(g, m); // Tester un eclatement de nuage
+            // picture_this(g);
+            for (int j = 0; j < mem->lenghtIssues; j++)
+            {
+                applyIssue(g, mem, j);
+                print_state_game(g, PBA);
+                usleep(1000 * 100);
+                applyRecipIssue(g, mem, j);
+                // print_state_game(g, PBA);
+            }
+            applyRecipDeter(g, mem);
         }
-        applyRecipDeter(g, mem);
-        // }
+        else
+        {
+            m.type = pawnMoveBackType;
+            mem = applyDeter(g, m); // Tester un eclatement de nuage
+            // picture_this(g);
+            for (int j = 0; j < mem->lenghtIssues; j++)
+            {
+                applyIssue(g, mem, j);
+                print_state_game(g, FRIENDLY);
+                usleep(1000 * 100);
+                applyRecipIssue(g, mem, j);
+                // print_state_game(g, PBA);
+            }
+            applyRecipDeter(g, mem);
+        }
+
+    endTurnGameManagement(g, g->is_white, m.manipulatedPawn, IND_CHANGE_ALLOWED, false); // Parce que ce sont des NGE
     }
 
     return nb_coups + 1;

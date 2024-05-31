@@ -14,17 +14,17 @@ void test_start_game(Game *g, GraphicCache *cache)
 {
     // très pratique pour promouvoir une dame en qq coups
 
-    // Coord c1 = coord_from_ind(g, 0, true);
-    // // Coord c2 = coord_from_ind(g, 1, true);
-    // for (int i = 0; i < 4; i++)
-    // {
-    //     // promote(g, true, i);
-    //     // promote(g, false, i);
-    //     change_pawn_place(g, i, false, get_pawn_value(g, false, i, LIG) - 5, get_pawn_value(g, false, i, COL) + 2*i+1);
+    Coord c1 = coord_from_ind(g, 0, true);
+    // Coord c2 = coord_from_ind(g, 1, true);
+    for (int i = 0; i < 4; i++)
+    {
+        // promote(g, true, i);
+        // promote(g, false, i);
+        // change_pawn_place(g, i, false, get_pawn_value(g, false, i, LIG) - 5, get_pawn_value(g, false, i, COL) + 2*i+1);
 
-    //    lienAmitieNGE(c1.i, c1.j, i, false, g);
-    //     promote(g, false, i);
-    // }
+        lienAmitieNGE(c1.i, c1.j, i, false, g);
+        // promote(g, false, i);
+    }
     for (int i = NB_PAWNS - 1; i > 3; i--)
     {
         killPawnByInd(g, true, i);
@@ -39,12 +39,13 @@ void test_start_game(Game *g, GraphicCache *cache)
 
     // killPawnByInd(g, true, 3);
 
-    for (int i = 3; i >= 0; i--)
+    for (int i = 3; i > 0; i--)
     {
         // change_pawn_place(g, i, true, 4, get_pawn_value(g, true, i, COL) + 2*i + 2);
-        g->is_white = true;
-        g->ind_move = i;
-        checkBiDepl(g, cache, true);
+        // g->is_white = true;
+        // g->ind_move = i;
+        // checkBiDepl(g, cache, true);
+        killPawnByInd(g, true, i);
     }
 
     // change_pawn_place(g, 0, true, get_pawn_value(g, true, 0, LIG) + 1, NB_CASE_LG - 5);
@@ -125,7 +126,6 @@ int main(int argc, char *argv[])
     //                       {LEFT_BACK, LEFT_FORWARD},
     //                       {RIGHT_FORWARD, RIGHT_BACK},
     //                       {RIGHT_BACK, RIGHT_FORWARD}};
-
 
     // init the graphic cache
     GraphicCache *cache = initCache();

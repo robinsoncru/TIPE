@@ -71,7 +71,8 @@ void freeIntChain(int_chain *l)
 bool alreadyInList(int_chain *l, int ind)
 {
     assert(l->ind_actu < l->size_max);
-    for (int i = 0; i < taille_list(l); i++)
+    int taille_l = taille_list(l);
+    for (int i = 0; i < taille_l; i++)
     {
         if (ind == get(l, i))
         {
@@ -85,7 +86,8 @@ void replaceValueInList(int_chain *l, int old_value, int new_value)
 {
     // La liste est supposée sans doublon. Opération linéaire en la taille de la liste
     assert(!is_empty(l));
-    for (int i = 0; i < taille_list(l); i++)
+    int taille_l = taille_list(l);
+    for (int i = 0; i < taille_l; i++)
     {
         if (get(l, i) == old_value)
         {
@@ -110,7 +112,8 @@ void popi(int_chain *l, int ind)
     }
     else
     {
-        for (int i = 0; i < taille_list(l) - 1; i++)
+        int taille_l = taille_list(l);
+        for (int i = 0; i < taille_l - 1; i++)
         {
             if (get(l, i) == ind)
             {

@@ -15,7 +15,7 @@ void pawnMoveNGE(Game *g, bool is_white, int ind, bool left)
     {
         for (int i = 0; i < MAX_NB_PAWNS; i++)
         {
-            if (isValidIndexInGame(g, i, !is_white) && getFriendByInd(g, ind, i, is_white) && alreadyInList(g->inds_move_back, i))
+            if (isValidIndexInGame(g, i, !is_white) && getFriendByInd(g, ind, i, is_white) && !alreadyInList(g->inds_move_back, i))
             {
                 push(g->inds_move_back, i);
             }

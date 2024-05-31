@@ -12,7 +12,9 @@ void initTabIssue(Game *g, int what_kind_of_creation, memory_move_t *mem)
         mem->issues = malloc(mem->lenghtIssues * sizeof(issue_t));
 
         int_chain *l = g->cloud[color];
-        for (int i = 0; i < taille_list(l); i++)
+        int taille_l =  taille_list(l); // En pratique, taille_list est recalculé à chaque fois dans la 
+        // boucle for, d'où le fait de nommer cette variable
+        for (int i = 0; i < taille_l; i++)
         {
             int ind = get(l, i);
             float pba_inv = get_pawn_value(g, color, ind, PBA);
@@ -89,18 +91,20 @@ void cancelPromotionDeter(Game *g, memory_move_t *mem)
 
 memory_move_t *moveBackDeter(Game *g, moveType type)
 {
-    // On suppose que le move back est faisable
-    moveBackNGE(g, true, false, zero_fun);
-    // la fonction ci dessus remet g->ind_move_back a VOID_INDEX
+
 
     memory_move_t *mem = initMemMove(VOID_INDEX, type);
-    // Desecrate
-    for (int i = 0; i < taille_list(g->inds_move_back); i++)
+    // On suppose que le move back est faisable
+    moveBackNGE(g, true, false, zero_fun, mem);
+    int tailleAmis = taille_list(g->inds_move_back);
+    for (int i = 0; i < tailleAmis; i++)
     {
         mem->indMovePawn = pop(g->inds_move_back);
         generateCloudDuePawnMove(g, mem);
-        if (mem->lenghtIssues > 0)
+        if (mem->lenghtIssues > 1)
         {
+            /* Si on a plus de deux issues, c'est qu'on est passé de 1 à pls >= 2 et donc qu'on a un éclatement
+            de nuage à gerer, car il y a forcément au moins plus de 2 pions fantomes */
             break; // Le nuage implose, il n'existe plus dès qu'un pion s'en approche trop
         }
     }
@@ -147,7 +151,7 @@ void cancelPawnMoveDeter(Game *g, memory_move_t *mem)
 
 void cancelPawnMoveBackDeter(Game *g, memory_move_t *mem)
 {
-    cancelMoveBack(g, mem->indMovePawn, mem->left);
+    cancelAllMoveBack(g, mem->indMovePawn, mem);
     freeMemMove(mem);
 }
 

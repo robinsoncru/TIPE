@@ -35,6 +35,8 @@ struct memory_move_t
     int lenghtIssues;
     int had_become_a_queen; // Enregistre une éventuelle promotion de la dame, il est aussi
     // utilisé pour une promotion d'un pion devenu de la couleur opposé juste après une promotion
+    int_chain *move_back_left_or_right; 
+    /* Enregistre les déplacements gauche ou droite des pions qui reculent, à opti avec une bool_chain */
 };
 
 #endif

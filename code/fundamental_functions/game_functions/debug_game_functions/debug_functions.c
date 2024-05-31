@@ -58,7 +58,8 @@ void print_damier(Case **damier, Game *g)
 
 void print_little_linked_list(int_chain *l)
 {
-    for (int i = 0; i < taille_list(l); i++)
+    int taille_l = taille_list(l);
+    for (int i = 0; i < taille_l; i++)
     {
 
         printf("indice %d\n", l->tableau[i]);

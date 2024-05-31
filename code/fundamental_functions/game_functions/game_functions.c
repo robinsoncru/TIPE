@@ -20,6 +20,15 @@
 // Elles ont toutes des effets de bord
 // et on suppose que les coups joues sont legaux
 
+void cancelAllMoveBack(Game *g, int ind, memory_move_t *mem)
+{
+    bool iw = g->is_white;
+    while (!is_empty(mem->move_back_left_or_right)) // Enregistrer les pions qui recule par leurs coordonnées
+    {
+        simplyPawnMove(g, iw, ind, pop(mem->move_back_left_or_right));
+    }
+}
+
 void cancelMoveBack(Game *g, int ind, bool left)
 {
     bool iw = g->is_white;
@@ -285,12 +294,14 @@ void lienAmitie(int lig, int col, Game *g)
 */
 
 // Play back and return if the pawn has moved or not
-void moveBackNGE(Game *g, bool autoplay, bool use_heuristique, float (*f)(Game *))
+void moveBackNGE(Game *g, bool autoplay, bool use_heuristique, float (*f)(Game *), memory_move_t *mem)
 {
+    // mem vaut NULL lors du jeu avec effet graphique
     bool iw = g->is_white;
     if (autoplay)
     {
-        for (int i = 0; i < taille_list(g->inds_move_back); i++)
+        int taille_l = taille_list(g->inds_move_back);
+        for (int i = 0; i < taille_l; i++)
         {
             int ind = get(g->inds_move_back, i);
             assertAndLog(isValidIndexInGame(g, ind, iw), "Pion sortie de la pile des amis non valide");
@@ -314,19 +325,40 @@ void moveBackNGE(Game *g, bool autoplay, bool use_heuristique, float (*f)(Game *
                     {
                         cancelLazzyMoveBack(g, ind, false);
                         lazzyMoveBack(g, ind, true);
+                        if (mem != NULL)
+                        {
+                            push(mem->move_back_left_or_right, 1);
+                        }
+                        return;
+                    }
+                    if (mem != NULL)
+                    {
+                        push(mem->move_back_left_or_right, 0);
                     }
                 }
                 else if (recul_gauche)
                 {
                     lazzyMoveBack(g, ind, true);
+                    if (mem != NULL)
+                    {
+                        push(mem->move_back_left_or_right, 1);
+                    }
                 }
                 else if (recul_droite)
                 {
                     lazzyMoveBack(g, ind, false);
+                    if (mem != NULL)
+                    {
+                        push(mem->move_back_left_or_right, 0);
+                    }
                 }
                 else
                 {
                     // Rien ne se passera dans le endTurnGameManagement
+                    if (mem != NULL)
+                    {
+                        push(mem->move_back_left_or_right, -1); // -1 signifie que le pion ne bouge pas
+                    }
                 }
             }
             else
@@ -334,14 +366,26 @@ void moveBackNGE(Game *g, bool autoplay, bool use_heuristique, float (*f)(Game *
                 if (recul_gauche)
                 {
                     lazzyMoveBack(g, ind, true);
+                    if (mem != NULL)
+                    {
+                        push(mem->move_back_left_or_right, 1);
+                    }
                 }
                 else if (recul_droite)
                 {
                     lazzyMoveBack(g, ind, false);
+                    if (mem != NULL)
+                    {
+                        push(mem->move_back_left_or_right, 0);
+                    }
                 }
                 else
                 {
                     // Rien ne se passera dans le endTurnGameManagement
+                    if (mem != NULL)
+                    {
+                        push(mem->move_back_left_or_right, -1);
+                    }
                 }
             }
         }
@@ -357,7 +401,7 @@ void moveBackNGE(Game *g, bool autoplay, bool use_heuristique, float (*f)(Game *
 void moveBack(Game *g, bool autoplay, bool use_heuristique, float (*f)(Game *))
 {
     /* Suppose move on the just pawn. Move back the pawn referred by inds_move_back to the case localised by the coord coordForMoveBack */
-    moveBackNGE(g, autoplay, use_heuristique, f);
+    moveBackNGE(g, autoplay, use_heuristique, f, NULL);
     int ind;
     while (!is_empty(g->inds_move_back))
     {
