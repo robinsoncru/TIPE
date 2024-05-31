@@ -25,7 +25,7 @@ void simplyPawnMove(Game *g, bool is_white, int ind, bool left);
     if no case available. The coord are given at g->coordForMoveBack */
 void putPawnMoveBack(Game *g, bool left);
 
-void stormBreaksNGE(Game *g, bool color, cloud_chain *load, Coord pos_survivor);
+void stormBreaksNGE(Game *g, bool color, int index, memory_move_t *mem);
 void AleatStormBreaks(Game *g, bool color);
 void handleCloudDuePawnMoveNGE(Game *g, int indMovedPawn, Coord pos_survivor, cloud_chain *l);
 Coord CanMoveOrEatQueen(Game *g, bool color, int lig, int col, int ind, bool screen_switch);

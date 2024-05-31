@@ -35,4 +35,5 @@ void checkLienEnnemitie(int i, int j, Game *g, GraphicCache *cache, bool screen_
 void checkQueenDepl(Game *g, GraphicCache *cache, bool iw, int lig, int col, bool autoplay);
 void checkPawnMove(Game *g, GraphicCache *cache, bool left, bool autoplay);
 void checkPawnMoveBack(Game *g, GraphicCache *cache, bool autoplay);
+void checkBiDepl(Game *g, GraphicCache *cache, bool autoplay);
 #endif //INPUT_COMMAND

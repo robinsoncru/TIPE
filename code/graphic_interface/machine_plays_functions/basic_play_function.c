@@ -125,7 +125,7 @@ int play_a_move(int move, int ind_pawn, Game *g, GraphicCache *cache, int nb_cou
 
         case PROMOTION:
             onPUP(g, cache, true);
-            print_state_game(g, QUEEN);
+            print_state_game(g, PBA);
             break;
 
         case BIDEPL:
@@ -201,11 +201,12 @@ int play_a_move(int move, int ind_pawn, Game *g, GraphicCache *cache, int nb_cou
         for (int j = 0; j < mem->lenghtIssues; j++)
         {
             applyIssue(g, mem, j);
-            print_state_game(g, QUEEN);
-            applyRecipIssue(g, mem);
+            print_state_game(g, PBA);
+            usleep(1000 * 100);
+            applyRecipIssue(g, mem, j);
+            // print_state_game(g, PBA);
         }
         applyRecipDeter(g, mem);
-        print_state_game(g, QUEEN);
         // }
     }
 

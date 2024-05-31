@@ -5,7 +5,7 @@
 
 memory_move_t *applyDeter(Game *g, Move coup);
 void applyIssue(Game *g, memory_move_t *mem, int nbIssue);
-void applyRecipIssue(Game *g, memory_move_t *mem);
+void applyRecipIssue(Game *g, memory_move_t *mem, int index);
 void applyRecipDeter(Game *g, memory_move_t *mem);
 
 #endif

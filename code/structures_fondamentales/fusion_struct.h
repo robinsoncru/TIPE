@@ -5,6 +5,7 @@
 #include "fgame_struct.h"
 #include "fgraphic_struct.h"
 #include "fliste_chaine_struct.h"
+#include "fmemory.h"
 #include "fpath_struct.h"
 
 #endif

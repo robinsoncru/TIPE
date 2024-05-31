@@ -140,6 +140,7 @@ void drawLosange(SDL_Renderer *render, Case c, pawn p, Game *g)
     {
 
         SDL_SetRenderDrawColor(render, white.r, white.g, white.b, white.a);
+        // SDL_SetRenderDrawColor(render, green.r, green.g, green.b, green.a);
         SDL_RenderDrawLine(render, vertices[0].position.x, vertices[0].position.y, vertices[1].position.x, vertices[1].position.y);
         SDL_RenderDrawLine(render, vertices[1].position.x, vertices[1].position.y, vertices[2].position.x, vertices[2].position.y);
         SDL_RenderDrawLine(render, vertices[2].position.x, vertices[2].position.y, vertices[5].position.x, vertices[5].position.y);

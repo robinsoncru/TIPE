@@ -16,7 +16,7 @@ void initTabIssue(Game *g, int what_kind_of_creation, memory_move_t *mem)
         {
             int ind = get(l, i);
             float pba_inv = get_pawn_value(g, color, ind, PBA);
-            mem->issues[i].pba = 1.0 / pba_inv;
+            mem->issues[i].pba = pba_inv;
             mem->issues[i].pos_survivor = give_coord(g, color, ind);
         }
         break;
@@ -28,7 +28,7 @@ void initTabIssue(Game *g, int what_kind_of_creation, memory_move_t *mem)
         for (int i = 0; i < 3; i++)
         {
             mem->issues[i].choice_promotion = i + 2;
-            mem->issues[i].pba = 1.0 / 3.0;
+            mem->issues[i].pba = 3;
         }
 
         break;
@@ -51,8 +51,7 @@ void lightnightStrike(Game *g, memory_move_t *mem, int index)
     bool iw = g->is_white;
     if (!mem->is_deter)
     {
-        assertAndLog(false, "lighnight");
-        stormBreaksNGE(g, !iw, mem->load_cloud_other, mem->issues[index].pos_survivor);
+        stormBreaksNGE(g, !iw, index, mem);
     }
 }
 

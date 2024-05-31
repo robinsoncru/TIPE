@@ -14,7 +14,10 @@ int pop(int_chain *l);
 int get(int_chain *l, int i);
 /* Renvoie le i-eme maillon */
 
-void pushi(int_chain *l, int i, int valeur);
+void seti(int_chain *l, int i, int valeur);
+
+void popi(int_chain *l, int ind);
+
 
 int taille_list(int_chain *l);
 

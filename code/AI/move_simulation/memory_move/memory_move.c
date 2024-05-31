@@ -19,6 +19,7 @@ memory_move_t *initMemMove(int indMovePawn, moveType type) {
     mem->init_coord.j = -1;
     mem->left = false;
     mem->had_become_a_queen = false;
+    mem->survivor_pba = -1;
     return mem;
 }
 

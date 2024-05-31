@@ -89,9 +89,9 @@ void applyIssue(Game *g, memory_move_t *mem, int nbIssue)
     }
 }
 
-void applyRecipIssue(Game *g, memory_move_t *mem)
+void applyRecipIssue(Game *g, memory_move_t *mem, int index)
 {
-    cancelSelectedIssue(g, mem);
+    cancelSelectedIssue(g, mem, index);
 }
 
 void applyRecipDeter(Game *g, memory_move_t *mem)

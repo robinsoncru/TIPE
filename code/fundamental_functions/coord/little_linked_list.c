@@ -51,7 +51,7 @@ int get(int_chain *l, int i)
     return l->tableau[i];
 }
 
-void pushi(int_chain *l, int i, int valeur)
+void seti(int_chain *l, int i, int valeur)
 {
     /* push une valeur en i-eme position */
     assert(!is_empty(l) && 0 <= i && i < taille_list(l));
@@ -89,9 +89,43 @@ void replaceValueInList(int_chain *l, int old_value, int new_value)
     {
         if (get(l, i) == old_value)
         {
-            pushi(l, i, new_value);
+            seti(l, i, new_value);
             break;
         }
+    }
+}
+
+void popi(int_chain *l, int ind)
+{
+    print_int_chain(l);
+    // Supprime un ind de la liste chainé et le renvoie, et diminue en conséquence sa taille
+    assert(l->ind_actu < l->size_max);
+    bool find = false;
+    
+    if (get(l, l->ind_actu) == ind)
+    { // Si c'est le dernier elm
+
+        pop(l);
+        find = true;
+    }
+    else
+    {
+        for (int i = 0; i < taille_list(l) - 1; i++)
+        {
+            if (get(l, i) == ind)
+            {
+                find = true;
+            }
+            if (find)
+            {
+                seti(l, i, get(l, i + 1));
+            }
+        }
+        pop(l);
+    }
+    if (!find)
+    {
+        assertAndLog(false, "popi :  Elm a supprime dans int_chain pas trouvé");
     }
 }
 

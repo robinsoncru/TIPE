@@ -38,6 +38,9 @@ void pawnMoveCancel(Game *g, bool is_white, int ind, bool left)
 void recreateCloud(Game *g, cloud_chain *l, int indFromCaseSurvivor, int pbaSurvivor, bool iw)
 {
 
+    put_pawn_value(g, iw, indFromCaseSurvivor, PBA, pbaSurvivor);
+    push(g->cloud[iw], indFromCaseSurvivor); // Pion dernier sortie remie en premier (file)
+
     while (!cis_empty(l))
     {
         tcloud data = cpop(l);
@@ -50,8 +53,6 @@ void recreateCloud(Game *g, cloud_chain *l, int indFromCaseSurvivor, int pbaSurv
         g->lengthCloud[iw]++;
     }
 
-    put_pawn_value(g, iw, indFromCaseSurvivor, PBA, pbaSurvivor);
-    push(g->cloud[iw], indFromCaseSurvivor);
     g->lengthCloud[iw]++;
 }
 
@@ -135,7 +136,10 @@ ind_bool_t biDeplNGE(Game *g, bool color, int ind)
 
     // Rajoute dans le cloud
     if (!isInCloud(g, color, ind))
+    {
         push(g->cloud[color], ind);
+        g->lengthCloud[color]++;
+    }
     push(g->cloud[color], newInd);
 
     g->lengthCloud[color]++;

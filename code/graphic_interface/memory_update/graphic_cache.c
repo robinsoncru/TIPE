@@ -17,11 +17,11 @@ GraphicCache *initCache()
     // j'ai choisi d'utiliser une cle predefinie pour initialiser
     // l'aleatoire, ca permet d'avoir des resultats reproductibles
     // utiles pour les tests des regles quantiques
-    // srand(RNG_INIT_NBR);
     // J'ai besoin d'aleatoire car j'ai 15 fois le meme nombre consecutivement, met en comment si tu t'en sers pas stp
     int seed = time(NULL);
     printf("Seed %d\n", seed);
     srand(seed);
+    // srand(1717153779);
 
     // init cache
     GraphicCache *cache = malloc(sizeof(GraphicCache));
@@ -105,9 +105,6 @@ GraphicCache *initCache()
     return cache;
 }
 
-
-
-
 void freeCache(GraphicCache *cache)
 {
     // frame rate management freeing
@@ -156,7 +153,8 @@ void freeCache(GraphicCache *cache)
 void display(Game *g, GraphicCache *cache)
 {
     display_damier(cache->draw, g);
-    if (cache->display_tree) {
+    if (cache->display_tree)
+    {
         pathTreeDisplay(cache->draw, g->damier, g->currentTree);
     }
     if (cache->txtMessage->display)

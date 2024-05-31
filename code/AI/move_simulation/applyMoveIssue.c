@@ -80,22 +80,27 @@ void lienEnnemitieIssue(Game *g, int indPawn, int lig, int col, memory_move_t *m
 
 
 
-void cancelSelectedIssue(Game *g, memory_move_t *mem)
+void cancelSelectedIssue(Game *g, memory_move_t *mem, int index)
 {
     // On doit replacer le pion utilisé (index) à sa position dans le nuage, puis recrée le nuage avec les
     // positions originales
     bool iw = g->is_white;
-    int index_origin = mem->lenghtIssues - 1;
+    int index_origin = 0; // C'est le premier pion dans la liste (pile), à l'indice 0 qui est déplacé
     if (!cis_empty(mem->load_cloud_other))
     {
 
         assertAndLog(index_origin != VOID_INDEX, "nuage présent mais pas de survivant");
-        Coord pos_survivor = mem->issues[index_origin].pos_survivor;
+        Coord pos_survivor0 = mem->issues[index_origin].pos_survivor; // Position d'origine
+        Coord pos_survivor = mem->issues[index].pos_survivor; // Position où il a été déplacé
+        // print_isssue(mem->issues, mem->lenghtIssues);
         int pbaSurvivor = mem->issues[index_origin].pba;
         int indNoPopPawn = ind_from_coord(g, pos_survivor.i, pos_survivor.j);
+        assertAndLog(indNoPopPawn != VOID_INDEX, "Cancel selected Issue : Le pion non supprime est indice pas valide");
         /* Pion initialement conservé dans le nuage */
-        change_pawn_place_coord(g, index_origin, !iw, mem->issues[index_origin].pos_survivor);
+        change_pawn_place_coord(g, indNoPopPawn, !iw, pos_survivor0);
 
         recreateCloud(g, mem->load_cloud_other, indNoPopPawn, pbaSurvivor, !iw);
+
+        // print_int_chain(g->cloud[!iw]);
     }
 }
