@@ -2,6 +2,7 @@
 #define FPATH
 
 
+#include "fcoord_struct.h"
 #define ARITE 4
 #define NO_CHILD_ERROR 5
 

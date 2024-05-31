@@ -1,4 +1,5 @@
 #include "input_command.h"
+#include <stdio.h>
 
 /*
 
@@ -393,4 +394,20 @@ void onRUp(Game *g, GraphicCache *cache)
     //     }
     //     applyRecipDeter(g, mem);
     // }
+    // else
+    //     printv("big queen pb");
+    // // lienEnnemitieIssue(g, ind, lig, col);
+    // picture_this(g);
+
+    int majoration, actualNbCoups;
+    majoration = maxMoves(g);
+    picture_game(g, g->is_white);
+    printf("majoration pour la memoire : %d", majoration);
+    MoveTab *moveTab = listMoves(g);
+    actualNbCoups = moveTab->size;
+    printf("\nnombre de coups : %d\n", moveTab->size);
+    printf("utilite memoire : %f\n", ((float) actualNbCoups) / ((float) majoration));
+    print_moves(moveTab);
+    moveTabFree(moveTab);
+    flush();
 }
