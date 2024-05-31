@@ -4,6 +4,7 @@
 #include "../../../fundamental_functions/coord/coord.h"
 #include "../../../rafle/calc/path_tree.h"
 #include "../../../rafle/rafle_choice/path_struct.h"
+#include "../move_back_listing/backwardMoveTab_struct.h"
 
 
 typedef struct Move
@@ -15,6 +16,11 @@ typedef struct Move
     // is made to the left, used in moving and
     // moving back
     bool left;
+
+    //in case of a move back move,
+    //list of (ind, bool) couples that indicate
+    //which
+    backwardMoveTab_t* backwardPawnMoves;
 
     Coord pos_dame;
 
