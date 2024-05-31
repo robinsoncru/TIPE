@@ -19,7 +19,9 @@ GraphicCache *initCache()
     // utiles pour les tests des regles quantiques
     // srand(RNG_INIT_NBR);
     // J'ai besoin d'aleatoire car j'ai 15 fois le meme nombre consecutivement, met en comment si tu t'en sers pas stp
-    srand(time(NULL));
+    int seed = time(NULL);
+    printf("Seed %d\n", seed);
+    srand(seed);
 
     // init cache
     GraphicCache *cache = malloc(sizeof(GraphicCache));

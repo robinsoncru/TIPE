@@ -56,26 +56,6 @@ void lightnightStrike(Game *g, memory_move_t *mem, int index)
     }
 }
 
-void cancelSelectedIssue(Game *g, memory_move_t *mem)
-{
-    // On doit replacer le pion utilisé (index) à sa position dans le nuage, puis recrée le nuage avec les
-    // positions originales
-    bool iw = g->is_white;
-    int index_origin = mem->lenghtIssues - 1;
-    if (!cis_empty(mem->load_cloud_other))
-    {
-
-        assertAndLog(index_origin != VOID_INDEX, "nuage présent mais pas de survivant");
-        Coord pos_survivor = mem->issues[index_origin].pos_survivor;
-        int pbaSurvivor = mem->issues[index_origin].pba;
-        int indNoPopPawn = ind_from_coord(g, pos_survivor.i, pos_survivor.j);
-        /* Pion initialement conservé dans le nuage */
-        change_pawn_place_coord(g, index_origin, !iw, mem->issues[index_origin].pos_survivor);
-
-        recreateCloud(g, mem->load_cloud_other, indNoPopPawn, pbaSurvivor, !iw);
-    }
-}
-
 memory_move_t *pawnMoveDeter(Game *g, int indMovePawn, bool left, moveType type)
 {
     // Test pawn move remove, on suppose qu'on peut jouer, et qu'on a deja une fonction pour faire jouer l'ami en arrière
@@ -89,7 +69,6 @@ memory_move_t *pawnMoveDeter(Game *g, int indMovePawn, bool left, moveType type)
 
     generateCloudDuePawnMove(g, mem);
 
-    // endTurnGameManagementSimple(g, indMovePawn);
 
     return mem;
 }
@@ -131,7 +110,6 @@ memory_move_t *moveBackDeter(Game *g, moveType type)
 
 memory_move_t *rafleDeter(Game *g, int indMovePawn, PathTree *rafleTree, Path *rafle, moveType type)
 {
-    assert(false);
     bool iw = g->is_white;
     memory_move_t *mem = initMemMove(indMovePawn, type);
     mem->init_coord = give_coord(g, iw, indMovePawn);

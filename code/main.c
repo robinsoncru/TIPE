@@ -25,23 +25,23 @@ void test_start_game(Game *g)
     //    lienAmitieNGE(c1.i, c1.j, i, false, g);
     //     promote(g, false, i);
     // }
-    // for (int i = NB_PAWNS - 1; i > 3; i--)
-    // {
-    //     killPawnByInd(g, true, i);
-    //     killPawnByInd(g, false, i);
-    // }
+    for (int i = NB_PAWNS - 1; i > 3; i--)
+    {
+        killPawnByInd(g, true, i);
+        killPawnByInd(g, false, i);
+    }
 
-    // for (int i = 0; i <= 3; i++)
-    // {
-    //     change_pawn_place(g, i, false, get_pawn_value(g, false, i, LIG) - 5, get_pawn_value(g, false, i, COL) + 2 * i + 1);
-    //     change_pawn_place(g, i, true, get_pawn_value(g, true, i, LIG) + 5, get_pawn_value(g, true, i, COL) + 2 * i + 1);
-    // }
+    for (int i = 0; i <= 3; i++)
+    {
+        change_pawn_place(g, i, false, get_pawn_value(g, false, i, LIG) - 3, get_pawn_value(g, false, i, COL) + 2 * i + 1);
+        change_pawn_place(g, i, true, get_pawn_value(g, true, i, LIG) + 3, get_pawn_value(g, true, i, COL) + 2 * i + 1);
+    }
 
     // killPawnByInd(g, true, 3);
 
-    // for (int i = 2; i > 0; i--)
+    // for (int i = 3; i >= 0; i--)
     // {
-    //     change_pawn_place(g, i, true, 4, get_pawn_value(g, true, i, COL) + 2*i + 2);
+    //     // change_pawn_place(g, i, true, 4, get_pawn_value(g, true, i, COL) + 2*i + 2);
     //     biDepl(g, i, true);
     // }
 
@@ -109,9 +109,9 @@ void test_start_game(Game *g)
     // fin de config
 
     // print_pawns(g, true);
-    print_pawns(g, false);
+    // print_pawns(g, false);
     // print_liensAmitie(g);
-    // print_state_game(g, QUEEN);
+    print_state_game(g, QUEEN);
 }
 
 int main(int argc, char *argv[])
@@ -160,7 +160,7 @@ int main(int argc, char *argv[])
             SDL_RenderPresent(cache->draw);
 
             // update the data in the cache
-            nb_coups = update(g, cache, nb_coups, l_coups, l_depl);
+            nb_coups = update(g, cache, nb_coups, l_coups, l_depl, true);
         }
     }
     return quit(g, cache);

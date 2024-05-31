@@ -7,7 +7,7 @@ memory_move_t *initMemMove(int indMovePawn, moveType type) {
     mem->load_cloud_other = ccreate_list();
     mem->indMovePawn = indMovePawn;
     mem->issues = NULL;
-    mem->lenghtIssues=0;
+    mem->lenghtIssues=1;
     mem->is_deter = true;
     mem->col = -1;
     mem->lig = -1;
@@ -18,6 +18,7 @@ memory_move_t *initMemMove(int indMovePawn, moveType type) {
     mem->init_coord.i = -1;
     mem->init_coord.j = -1;
     mem->left = false;
+    mem->had_become_a_queen = false;
     return mem;
 }
 

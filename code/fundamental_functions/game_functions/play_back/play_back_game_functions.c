@@ -59,13 +59,13 @@ Coord promotionNGE(Game *g, bool iw, int ind, int index_choice)
 {
 
     assertAndLog(is_empty(g->inds_move_back), "Il reste des amis dans les NGE");
-    ;
     /* Promote the pawn at the ind in pmetre : do nothing, become a queen or become an ennemy pawn */
     // Return the index of the ennemy pawn created, -1 else
     int choice;
     if (index_choice == VOID_INDEX)
     {
-        choice = rand() % 3;
+        // choice = rand() % 3;
+        choice = 2;
         printf("(choix %d)", choice);
     }
     else
@@ -91,11 +91,7 @@ Coord promotionNGE(Game *g, bool iw, int ind, int index_choice)
 
         // Give birth to the ennemy pawn
         createPawn(g, !iw, i, j);
-        int indNew = get_case_damier(g, i, j).ind_pawn;
-        if (canBePromoted(g, !iw, indNew))
-        {
-            promote(g, !iw, indNew);
-        }
+        // On verifie s'il eclate un nuage ou devient reine dans les GameManagements
 
         pos_final.i = i;
         pos_final.j = j;
@@ -219,8 +215,9 @@ data_chain *rafleNGE(Game *g, int indMovePawn)
 {
     assert(g->currentTree == emptyTree);
     assertAndLog(is_empty(g->inds_move_back), "Il reste des amis dans les NGE");
-    ;
     bool isWhite = g->is_white;
+    assert(isValidIndexInGame(g, indMovePawn, isWhite));
+
     g->currentTree = rafleTreeCalc(g, isWhite, g->ind_move);
 
     printf("lazyRafle called\n");

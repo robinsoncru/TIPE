@@ -19,7 +19,6 @@
 #define IND_NOTHING_HAPPENED 2
 #define IND_BAD_CHOICE 3
 #define IND_GLORY_QUEEN 4
-#define IND_NO_MOVE_BACK 5
 
 // directions
 #define LEFT_BACK 0

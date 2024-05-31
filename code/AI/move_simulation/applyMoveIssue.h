@@ -23,4 +23,7 @@ void cancelRafleDeter(Game *g, memory_move_t *mem);
 void cancelLienAmitieDeter(Game *g, memory_move_t *mem);
 void cancelLienEnnemitieDeter(Game *g, memory_move_t *mem);
 
+void cancelSelectedIssue(Game *g, memory_move_t *mem);
+
+
 #endif

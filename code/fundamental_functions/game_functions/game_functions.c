@@ -260,9 +260,9 @@ void lienAmitie(int lig, int col, Game *g)
     le joueur doit rejouer.
     Suppose le pion ainsi que le pion ami selectionne valides */
     assertAndLog(is_empty(g->inds_move_back), "Les amis sont toujours la");
-    ;
+
     bool iw = g->is_white;
-   lienAmitieNGE(lig, col, g->ind_move, iw, g);
+    lienAmitieNGE(lig, col, g->ind_move, iw, g);
 
     endTurnGameManagement(g, iw, g->ind_move, IND_CHANGE_ALLOWED, false);
 }
@@ -391,9 +391,9 @@ void lienEnnemitie(int lig, int col, Game *g)
     couleur opposé et qu'il existe. Gère le pmetre Game.friendly. Si on declare ennemi un pion qui était déjà ennemi, le coup n'est pas joué
     Suppose legal move */
     assertAndLog(is_empty(g->inds_move_back), "Les amis sont toujours la");
-    ;
+
     bool iw = g->is_white;
-   lienEnnemitieNGE(iw, lig, col, g->ind_move, g);
+    lienEnnemitieNGE(iw, lig, col, g->ind_move, g);
     endTurnGameManagement(g, iw, g->ind_move, IND_CHANGE_ALLOWED, false);
 }
 

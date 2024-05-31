@@ -7,5 +7,5 @@
 
 //called every tick.
 //updates the memory
-int update(Game *g, GraphicCache *cache, int nb_coups, int *l_coups, int *l_depl);
+int update(Game *g, GraphicCache *cache, int nb_coups, int *l_coups, int *l_depl, bool isNGE);
 #endif //UPDATE

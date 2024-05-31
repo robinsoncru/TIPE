@@ -148,7 +148,7 @@ void drawLosange(SDL_Renderer *render, Case c, pawn p, Game *g)
 
     if (p.queen)
     {
-        draw_little_square(render, 20, c, blue);
+        draw_little_square(render, 30, c, blue);
     }
 
     if (p.friendly > 0)
