@@ -1,26 +1,66 @@
 #include "move_listing.h"
 #include "listing_checks/listing_checks.h"
+#include "move_back_listing/backwardMoveTab_interface.h"
+#include "move_back_listing/backwardMoveTab_struct.h"
 #include "move_max.h"
 #include "move_struct/move_struct.h"
 #include "rafle_listing/rafle_listing.h"
+#include "../../fundamental_functions/game_functions/access_functions/access_functions.h"
+#include "../../fundamental_functions/game_functions/Logic/logic_functions.h"
 #include <stdlib.h>
+
+void listMovesMoveBackAux(Game* g, int* nbMoves, Move* temporaryResult,
+    Move currentMove, backwardMoveTab_t* backTab, int i){
+    //entree : backTab a contient les indices du groupe d'amis
+    //dans un ordre arbitraire
+    if (i == backTab->n) {
+        currentMove.backwardPawnMoves = backwardMoveTabCopy(backTab);
+        temporaryResult[*nbMoves] = currentMove;
+        *nbMoves = *nbMoves + 1;
+    }
+    else {
+        int manipulatedPawn = backwardMoveTabGetIndMovedPawn(backTab, i);
+        pawn initialState = get_pawn(g, g->is_white, manipulatedPawn);
+        bool canMoveBackRight, canMoveBackLeft;
+        canMoveBackLeft = caseIsAccessible(g, g->is_white, 
+            initialState.lig + 1, initialState.col - 1);
+        canMoveBackRight = caseIsAccessible(g, g->is_white,
+            initialState.lig + 1, initialState.col + 1);
+        if (canMoveBackLeft) {
+            change_pawn_place(g, manipulatedPawn, g->is_white,
+                initialState.lig + 1, initialState.col - 1);
+            backwardMoveTabSetDir(backTab, i, LEFT);
+            listMovesMoveBackAux(g, nbMoves, temporaryResult,
+                currentMove, backTab, i + 1);
+        }
+        if (canMoveBackRight) {
+            change_pawn_place(g, manipulatedPawn, g->is_white,
+                initialState.lig + 1, initialState.col + 1);
+            backwardMoveTabSetDir(backTab, i, RIGHT);
+            listMovesMoveBackAux(g, nbMoves, temporaryResult,
+                currentMove, backTab, i + 1);
+        }
+        if (!canMoveBackLeft && !canMoveBackRight) {
+            backwardMoveTabSetDir(backTab, i, NO_MOVE);
+            listMovesMoveBackAux(g, nbMoves, temporaryResult,
+                currentMove, backTab, i + 1);
+        }
+    }
+}
 
 Move *listMovesMoveBack(Game *g, int *resSize)
 {
     Move *temporaryResult = malloc(2 * sizeof(Move));
     Move currentMove;
     int nbMoves = 0;
-
     currentMove.type = pawnMoveBackType;
-    // currentMove.manipulatedPawn = g->inds_move_back;
-    for (int k = 0; k < 2; k++)
-    {
-        // if (canMoveBack(g, g->is_white, g->inds_move_back, k != 1)) {
-        currentMove.left = k != 1;
-        temporaryResult[nbMoves] = currentMove;
-        nbMoves++;
-        // }
+    int nbPawns = taille_list(g->inds_move_back);
+    backwardMoveTab_t* backTab = backwardMoveTabCreate(nbPawns);
+    for (int i = 0; i < nbPawns; i++) {
+        backwardMoveTabSetIndMovedPawn(backTab, i, get(g->inds_move_back, i));
     }
+    listMovesMoveBackAux(g, &nbMoves, temporaryResult,
+        currentMove, backTab, 0);
 
     *resSize = nbMoves;
     return temporaryResult;
