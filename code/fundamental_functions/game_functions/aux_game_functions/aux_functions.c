@@ -19,6 +19,7 @@
 
 void changeFriendByInd(Game *g, int indActuStart, int indActuArrive, int indFriend, bool colorActu)
 {
+    assertAndLog(indActuStart != indActuArrive, "changeFriendByInd : ind de départ = arrivé");
     putFriendByInd(g, indActuStart, indFriend, colorActu, false);
     putFriendByInd(g, indActuArrive, indFriend, colorActu, true);
 }
@@ -333,7 +334,7 @@ Coord CanMoveOrEatQueen(Game *g, bool color, int lig, int col, int ind, bool scr
                 int new_col = add_col + pcol + add_col * i;
                 // Check if the queen can go here
                 if (c.pawn_color == !color && inGame(new_lig, new_col) && freeCase(get_case_damier(g, new_lig, new_col)) &&
-                    !isInCloud(g, !color, ind_from_coord(g, new_lig - add_lig, new_col - add_col)))
+                    !isInCloud(g, !color, ind_from_lig_col(g, new_lig - add_lig, new_col - add_col)))
                 {
                     Coord pos_dame = {.i = new_lig, .j = new_col};
                     return pos_dame;
@@ -515,4 +516,26 @@ void stormBreaksNGE(Game *g, bool color, int index, memory_move_t *mem)
     g->lengthCloud[color] = 0;
     change_pawn_place_coord(g, ind, color, pos_survivor); // Dans le cloud, tous les pions ont
     // la même valeur donc on prend le dernier et on le bouge à la place du survivor
+}
+
+void initFriendsWhichMoveBack(memory_move_t *mem, int taille)
+{
+    // Initialise le tableau des amis qu'on enregistre
+    assertAndLog(mem->friends_which_move_back == NULL, "initFriendsWhichMoveBack le tableau est deja rempli");
+    mem->friends_which_move_back = malloc(taille * sizeof(Coord));
+    for (int i = 0; i < taille; i++)
+    {
+        mem->friends_which_move_back[i].i = -1;
+        mem->friends_which_move_back[i].j = -1;
+    }
+}
+
+void cleanMemMoveBack(memory_move_t *mem)
+{
+    assertAndLog(mem->friends_which_move_back != NULL && mem->move_back_left_or_right != NULL, "cleanMemMoveBack : structures vides");
+    free(mem->friends_which_move_back);
+    assertAndLog(is_empty(mem->move_back_left_or_right), "cleanMemMoveBack: ils restent des gauches droites");
+    freeIntChain(mem->move_back_left_or_right);
+    mem->move_back_left_or_right = NULL;
+    mem->friends_which_move_back = NULL;
 }

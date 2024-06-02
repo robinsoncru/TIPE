@@ -15,7 +15,7 @@ void promotionIssue(Game *g, memory_move_t *mem, int index)
     if (pos.i != -1)
     {
         assert(pos.j != -1);
-        int indNew = ind_from_coord(g, pos.i, pos.j);
+        int indNew = ind_from_coord(g, pos);
         mem->had_become_a_queen = endTurnGameManagementNGE(g, indNew, IND_BAD_CHOICE, false);
     }
     else
@@ -62,23 +62,17 @@ void rafleIssue(Game *g, memory_move_t *mem, int index)
 
 void lienAmitieIssue(Game *g, int indPawn, int lig, int col, memory_move_t *mem)
 {
-
-    mem->lig = lig;
-    mem->col = col;
     lienAmitieNGE(lig, col, indPawn, g->is_white, g);
     endTurnGameManagementNGE(g, mem->indMovePawn, IND_CHANGE_ALLOWED, false);
 }
 
 void lienEnnemitieIssue(Game *g, int indPawn, int lig, int col, memory_move_t *mem)
 {
-
-    mem->lig = lig;
-    mem->col = col;
+    assertAndLog(isPawnValid(g) && canBeEnnemy(g, indPawn, g->is_white, get_case_damier(g, lig, col)),
+                 "lienEnnemitieIssue : peut pas etre ennemi");
     lienEnnemitieNGE(g->is_white, lig, col, indPawn, g);
     endTurnGameManagementNGE(g, mem->indMovePawn, IND_CHANGE_ALLOWED, false);
 }
-
-
 
 void cancelSelectedIssue(Game *g, memory_move_t *mem, int index)
 {
@@ -91,10 +85,10 @@ void cancelSelectedIssue(Game *g, memory_move_t *mem, int index)
 
         assertAndLog(index_origin != VOID_INDEX, "nuage présent mais pas de survivant");
         Coord pos_survivor0 = mem->issues[index_origin].pos_survivor; // Position d'origine
-        Coord pos_survivor = mem->issues[index].pos_survivor; // Position où il a été déplacé
+        Coord pos_survivor = mem->issues[index].pos_survivor;         // Position où il a été déplacé
         // print_isssue(mem->issues, mem->lenghtIssues);
         int pbaSurvivor = mem->issues[index_origin].pba;
-        int indNoPopPawn = ind_from_coord(g, pos_survivor.i, pos_survivor.j);
+        int indNoPopPawn = ind_from_coord(g, pos_survivor);
         assertAndLog(indNoPopPawn != VOID_INDEX, "Cancel selected Issue : Le pion non supprime est indice pas valide");
         /* Pion initialement conservé dans le nuage */
         change_pawn_place_coord(g, indNoPopPawn, !iw, pos_survivor0);

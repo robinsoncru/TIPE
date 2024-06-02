@@ -24,7 +24,6 @@ void endTurnGraphics(Game *g, GraphicCache *cache)
     // the turn changing will be donne at the end of the
     // change timer from a graphic point of view
     alert(cache, g->indCheck, CHANGE_TICKS);
-    // printf("%s turn\n", g->is_white ? "white" : "black");
 }
 
 /*

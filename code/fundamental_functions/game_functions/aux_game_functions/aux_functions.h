@@ -40,4 +40,6 @@ void decrBothTab(int t[2]);
 Coord queen_valide_case(Game *g, int ind, bool color);
 void changeFriendByInd(Game *g, int indActuStart, int indActuArrive, int indFriend, bool colorActu);
 void change_pawn_place_coord(Game *g, int ind, bool color, Coord pos);
+void initFriendsWhichMoveBack(memory_move_t *mem, int taille);
+void cleanMemMoveBack(memory_move_t *mem);
 #endif // AUX_FUNCTIONS

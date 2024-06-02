@@ -58,12 +58,16 @@ void seti(int_chain *l, int i, int valeur)
     l->tableau[i] = valeur;
 }
 
-void freeIntChain(int_chain *l)
-{
+void emptyIntChain(int_chain *l) {
     while (!is_empty(l))
     {
         pop(l);
     }
+}
+
+void freeIntChain(int_chain *l)
+{
+    emptyIntChain(l);
     free(l->tableau);
     free(l);
 }

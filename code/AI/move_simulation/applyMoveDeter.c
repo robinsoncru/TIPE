@@ -12,7 +12,7 @@ void initTabIssue(Game *g, int what_kind_of_creation, memory_move_t *mem)
         mem->issues = malloc(mem->lenghtIssues * sizeof(issue_t));
 
         int_chain *l = g->cloud[color];
-        int taille_l =  taille_list(l); // En pratique, taille_list est recalculé à chaque fois dans la 
+        int taille_l = taille_list(l); // En pratique, taille_list est recalculé à chaque fois dans la
         // boucle for, d'où le fait de nommer cette variable
         for (int i = 0; i < taille_l; i++)
         {
@@ -70,7 +70,6 @@ memory_move_t *pawnMoveDeter(Game *g, int indMovePawn, bool left, moveType type)
 
     generateCloudDuePawnMove(g, mem);
 
-
     return mem;
 }
 
@@ -92,7 +91,6 @@ void cancelPromotionDeter(Game *g, memory_move_t *mem)
 memory_move_t *moveBackDeter(Game *g, moveType type)
 {
 
-
     memory_move_t *mem = initMemMove(VOID_INDEX, type);
     // On suppose que le move back est faisable
     moveBackNGE(g, true, false, zero_fun, mem);
@@ -108,6 +106,9 @@ memory_move_t *moveBackDeter(Game *g, moveType type)
             break; // Le nuage implose, il n'existe plus dès qu'un pion s'en approche trop
         }
     }
+
+    emptyIntChain(g->inds_move_back); // On supprime les amis g->inds_move_back qui est enregistré
+
     return mem;
 }
 
@@ -137,8 +138,6 @@ memory_move_t *queenDeplDeter(Game *g, int indMovePawn, Coord pos_dame, PathTree
     return mem;
 }
 
-
-
 void cancelPawnMoveDeter(Game *g, memory_move_t *mem)
 {
     bool iw = g->is_white;
@@ -147,15 +146,11 @@ void cancelPawnMoveDeter(Game *g, memory_move_t *mem)
     freeMemMove(mem);
 }
 
-
-
 void cancelPawnMoveBackDeter(Game *g, memory_move_t *mem)
 {
-    cancelAllMoveBack(g, mem->indMovePawn, mem);
+    cancelAllMoveBack(g, mem);
     freeMemMove(mem);
 }
-
-
 
 void cancelBiDeplDeter(Game *g, memory_move_t *mem)
 {
@@ -163,25 +158,19 @@ void cancelBiDeplDeter(Game *g, memory_move_t *mem)
     freeMemMove(mem);
 }
 
-
-
 void cancelQueenDeplDeter(Game *g, memory_move_t *mem)
 {
-    
+
     cancelDeplQueen(g, mem->indMovePawn, mem->chainy, mem->init_coord);
     freeMemMove(mem);
 }
 
-
-
 void cancelRafleDeter(Game *g, memory_move_t *mem)
 {
-    
+
     cancelRafle(g, mem->indMovePawn, mem->init_coord, mem->chainy);
     freeMemMove(mem);
 }
-
-
 
 void cancelLienAmitieDeter(Game *g, memory_move_t *mem)
 {
@@ -189,8 +178,6 @@ void cancelLienAmitieDeter(Game *g, memory_move_t *mem)
     cancelLienAmitie(g, mem->indMovePawn, mem->lig, mem->col);
     freeMemMove(mem);
 }
-
-
 
 void cancelLienEnnemitieDeter(Game *g, memory_move_t *mem)
 {

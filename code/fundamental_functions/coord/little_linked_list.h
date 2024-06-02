@@ -67,6 +67,7 @@ k_uplet popK(Kint_chain *l);
 
 Kint_chain *create_listK();
 void freeIntChain(int_chain *l);
+void emptyIntChain(int_chain *l);
 bool alreadyInList(int_chain *l, int ind);
 
 // Coord tab, permet de stocker les positions au lieu des indices, les positions

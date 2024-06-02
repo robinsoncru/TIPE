@@ -86,20 +86,33 @@ void print_state_game(Game *g, int which_pmetre)
     printf("\n     ");
     for (int i = 0; i < NB_CASE_LG; i++)
     {
+        // La matrice est mieux affiché
+        if (i < 10) 
+        {
+            printf(" ");
+        }
         printf("%d     ", i);
     }
     printf("\n");
-    for (int i = NB_CASE_LG-1; i >-1; i--)
+    for (int i = NB_CASE_LG - 1; i > -1; i--)
     {
-        printf("%d |", i);
+        if (i < 10)
+        {
+            printf("%d  |", i);
+        }
+        else
+        {
+            printf("%d |", i);
+        }
         for (int j = 0; j < NB_CASE_LG; j++)
         {
             Case c = g->damier[i][j];
             if (freeCase(c))
             {
-                printf("     |");
+                printf("      |");
             }
-            else {
+            else
+            {
                 pawn p = g->allPawns[c.pawn_color][c.ind_pawn];
                 int valeur;
                 switch (which_pmetre)
@@ -119,13 +132,19 @@ void print_state_game(Game *g, int which_pmetre)
                 case PBA:
                     valeur = p.pba;
                     break;
-                
+
                 default:
                     assertAndLog(false, "state_game: which pmetre non reconnu");
                     break;
                 }
-
-                printf("%d-%d-%d|", c.pawn_color, c.ind_pawn, valeur);
+                if (c.ind_pawn < 10)
+                {
+                    printf("%d- %d-%d|", c.pawn_color, c.ind_pawn, valeur);
+                }
+                else
+                {
+                    printf("%d-%d-%d|", c.pawn_color, c.ind_pawn, valeur);
+                }
             }
         }
         printf("\n");

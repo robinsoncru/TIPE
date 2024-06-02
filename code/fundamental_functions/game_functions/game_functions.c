@@ -20,13 +20,23 @@
 // Elles ont toutes des effets de bord
 // et on suppose que les coups joues sont legaux
 
-void cancelAllMoveBack(Game *g, int ind, memory_move_t *mem)
+void cancelAllMoveBack(Game *g, memory_move_t *mem)
 {
+    assertAndLog(mem->friends_which_move_back != NULL && !is_empty(mem->move_back_left_or_right), "cancelAllMoveBack : structures vides");
     bool iw = g->is_white;
-    while (!is_empty(mem->move_back_left_or_right)) // Enregistrer les pions qui recule par leurs coordonnées
+    int ind = -1;
+    int taille = taille_list(mem->move_back_left_or_right);
+    for (int i = taille - 1; i > -1; i--) // C'est important pour sortir de la pile
     {
-        simplyPawnMove(g, iw, ind, pop(mem->move_back_left_or_right));
+
+        ind = ind_from_coord(g, mem->friends_which_move_back[i]);
+        int left = pop(mem->move_back_left_or_right);
+        if (left != -1)
+        {
+            simplyPawnMove(g, iw, ind, !int_to_bool(left));
+        }
     }
+    cleanMemMoveBack(mem);
 }
 
 void cancelMoveBack(Game *g, int ind, bool left)
@@ -226,7 +236,7 @@ void promotion(Game *g)
     if (pos.i != -1)
     {
         assert(pos.j != -1);
-        int indNew = ind_from_coord(g, pos.i, pos.j);
+        int indNew = ind_from_coord(g, pos);
         endTurnGameManagement(g, g->is_white, indNew, IND_BAD_CHOICE, false);
     }
     else
@@ -301,6 +311,11 @@ void moveBackNGE(Game *g, bool autoplay, bool use_heuristique, float (*f)(Game *
     if (autoplay)
     {
         int taille_l = taille_list(g->inds_move_back);
+        if (mem != NULL)
+        {
+            mem->move_back_left_or_right = create_list(taille_l);
+            initFriendsWhichMoveBack(mem, taille_l);
+        }
         for (int i = 0; i < taille_l; i++)
         {
             int ind = get(g->inds_move_back, i);
@@ -387,6 +402,14 @@ void moveBackNGE(Game *g, bool autoplay, bool use_heuristique, float (*f)(Game *
                         push(mem->move_back_left_or_right, -1);
                     }
                 }
+            }
+
+            if (mem != NULL)
+            {
+                int lig = get_pawn_value(g, iw, i, LIG);
+                int col = get_pawn_value(g, iw, i, COL);
+                mem->friends_which_move_back[i].i = lig;
+                mem->friends_which_move_back[i].j = col;
             }
         }
     }

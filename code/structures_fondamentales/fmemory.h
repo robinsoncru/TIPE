@@ -31,7 +31,9 @@ struct memory_move_t
     bool left;
     int lig;
     int col;
-    issue_t *issues; // Indices acceptés car on applique immédiatement les issues
+    issue_t *issues; // Stocke les positions des pions du cloud
+    Coord *friends_which_move_back; // Stocke les positions des pions qui doivent reculer puis réavancer 
+    // lorsqu'on annule le coup, sa taille est contenu dans move_back_left_or_right
     int lenghtIssues;
     int had_become_a_queen; // Enregistre une éventuelle promotion de la dame, il est aussi
     // utilisé pour une promotion d'un pion devenu de la couleur opposé juste après une promotion

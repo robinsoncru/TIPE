@@ -248,12 +248,12 @@ void cancelRafle(Game *g, int indMovedPawn, Coord init_pos, data_chain *chainy)
         while (!ctis_empty(t))
         {
             c = ctpop(t);
-            putFriendByInd(g, reborn_ind, ind_from_coord(g, c.i, c.j), iw, true);
+            putFriendByInd(g, reborn_ind, ind_from_coord(g, c), iw, true);
         }
         ctfree(reborn_pawn.relationship.friendsId);
         reborn_pawn.relationship.friendsId = NULL;
         c = reborn_pawn.relationship.pos_foe;
-        put_pawn_value(g, !iw, reborn_ind, ENNEMY, ind_from_coord(g, c.i, c.j));
+        put_pawn_value(g, !iw, reborn_ind, ENNEMY, ind_from_coord(g, c));
         put_pawn_value(g, !iw, reborn_ind, QUEEN, bool_to_int(reborn_pawn.relationship.queen));
     }
     free(chainy);
@@ -273,8 +273,10 @@ void lienAmitieNGE(int lig, int col, int ind, bool is_white, Game *g)
     // !get_pawn_value(g, !iw, c.ind_pawn, QUEEN) && get_pawn_value(g, !iw, c.ind_pawn, ENNEMY) == VOID_INDEX
 
     Case c = get_case_damier(g, lig, col);
-    assertAndLog((isValidIndexInGame(g, c.pawn_color, !is_white) && c.pawn_color == !is_white),
+    assertAndLog((c.pawn_color == !is_white && isValidIndexInGame(g, c.pawn_color, !is_white)),
                  "LienAmitieNGE : pb couleur ou index pas valide");
+
+    assertAndLog(!getFriendByInd(g, ind, c.ind_pawn, is_white), "lienAmitieNGE: ils sont deja amis");
     putFriendByInd(g, ind, c.ind_pawn, is_white, true);
 
     g->nbFriendNoQueen[is_white]++;

@@ -47,10 +47,15 @@ int bool_to_int(bool b)
     return 0;
 }
 
-int ind_from_coord(Game *g, int lig, int col) {
+int ind_from_lig_col(Game *g, int lig, int col) {
     // Give the ind from the coord in the damier
     assert(inGame(lig, col));
     return g->damier[lig][col].ind_pawn;
+}
+
+int ind_from_coord(Game *g, Coord pos) {
+    // Give the ind from the coord in the damier
+    return ind_from_lig_col(g, pos.i, pos.j);
 }
 
 Coord coord_from_ind(Game *g, int ind, bool color) {

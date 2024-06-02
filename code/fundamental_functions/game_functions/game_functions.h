@@ -14,8 +14,7 @@
 
 void cancelMoveBack(Game *g, int ind, bool left);
 void moveBackNGE(Game *g, bool autoplay, bool use_heuristique, float (*f)(Game *), memory_move_t *mem);
-void cancelAllMoveBack(Game *g, int ind, memory_move_t *mem);
-
+void cancelAllMoveBack(Game *g, memory_move_t *mem);
 
 void lazzyMoveBack(Game *g, int indMovePawnBack, bool left);
 void cancelLazzyMoveBack(Game *g, int indMovePawnBack, bool left);

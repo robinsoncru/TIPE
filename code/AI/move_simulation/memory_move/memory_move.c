@@ -22,6 +22,7 @@ memory_move_t *initMemMove(int indMovePawn, moveType type)
     mem->had_become_a_queen = false;
     mem->survivor_pba = -1;
     mem->move_back_left_or_right = NULL;
+    mem->friends_which_move_back = NULL;
     return mem;
 }
 
@@ -32,6 +33,7 @@ void freeMemMove(memory_move_t *mem)
         free(mem->issues);
     if (mem->move_back_left_or_right != NULL)
         free(mem->move_back_left_or_right);
+    if (mem->friends_which_move_back != NULL) free(mem->friends_which_move_back);
     cfree(mem->load_cloud_other);
     free(mem);
 }
