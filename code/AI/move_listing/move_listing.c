@@ -40,6 +40,8 @@ void listMovesMoveBackAux(Game* g, int* nbMoves, Move* temporaryResult,
             listMovesMoveBackAux(g, nbMoves, temporaryResult,
                 currentMove, backTab, i + 1);
         }
+        change_pawn_place(g, manipulatedPawn, g->is_white,
+                initialState.lig, initialState.col);
         if (!canMoveBackLeft && !canMoveBackRight) {
             backwardMoveTabSetDir(backTab, i, NO_MOVE);
             listMovesMoveBackAux(g, nbMoves, temporaryResult,
