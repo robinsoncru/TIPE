@@ -27,26 +27,27 @@ void test_start_game(Game *g, GraphicCache *cache)
     }
     for (int i = NB_PAWNS - 1; i > 3; i--)
     {
-        // killPawnByInd(g, true, i);
-        // killPawnByInd(g, false, i);
+        killPawnByInd(g, true, i);
+        killPawnByInd(g, false, i);
     }
 
     for (int i = 0; i <= 3; i++)
     {
-        // change_pawn_place(g, i, false, get_pawn_value(g, false, i, LIG) - 5, get_pawn_value(g, false, i, COL) + 2 * i + 1);
-        // change_pawn_place(g, i, true, get_pawn_value(g, true, i, LIG) + 7, get_pawn_value(g, true, i, COL) + 2 * i + 1);
+        // change_pawn_place(g, i, false, get_pawn_value(g, false, i, LIG) - 4, get_pawn_value(g, false, i, COL) + 2 * i + 2);
+        change_pawn_place(g, i, true, get_pawn_value(g, true, i, LIG) + 7, get_pawn_value(g, true, i, COL) + 2 * i + 1);
     }
-
     // killPawnByInd(g, true, 3);
 
     for (int i = 3; i > 0; i--)
     {
-        // change_pawn_place(g, i, true, 11, get_pawn_value(g, true, i, COL));
-        // g->ind_move = i;
+        change_pawn_place(g, i, true, 11, get_pawn_value(g, true, i, COL));
+        g->ind_move = i;
         // // killPawnByInd(g, true, i);
-        // checkBiDepl(g, cache, true);
-        // g->is_white = true;
+        checkBiDepl(g, cache, true);
+        g->is_white = true;
     }
+
+    change_pawn_place(g, 0, true, 11, 5);
 
     // change_pawn_place(g, 0, true, get_pawn_value(g, true, 0, LIG) + 1, NB_CASE_LG - 5);
     // promote(g, true, 0);
@@ -114,7 +115,7 @@ void test_start_game(Game *g, GraphicCache *cache)
     // print_pawns(g, true);
     // print_pawns(g, false);
     // print_liensAmitie(g);
-    print_state_game(g, FRIENDLY);
+    print_state_game(g, PBA);
 }
 
 int main(int argc, char *argv[])

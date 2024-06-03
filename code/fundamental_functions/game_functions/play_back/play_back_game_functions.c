@@ -56,12 +56,15 @@ void recreateCloud(Game *g, cloud_chain *l, int indFromCaseSurvivor, int pbaSurv
     g->lengthCloud[iw]++;
 }
 
-Coord promotionNGE(Game *g, bool iw, int ind, int index_choice)
+Coord promotionNGE(Game *g, int index_choice)
 {
-
+    bool iw = g->is_white;
     assertAndLog(is_empty(g->inds_move_back), "Il reste des amis dans les NGE");
     /* Promote the pawn at the ind in pmetre : do nothing, become a queen or become an ennemy pawn */
     // Return the index of the ennemy pawn created, -1 else
+    assertAndLog(canPromotion(g), "Le pion ind_move ne peut pas etre mis en promotion");
+    
+    int ind =g->ind_move;
     int choice;
     if (index_choice == VOID_INDEX)
     {

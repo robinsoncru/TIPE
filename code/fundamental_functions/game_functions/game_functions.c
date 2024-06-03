@@ -232,7 +232,7 @@ data_chain *queenDepl(Game *g, int ind, bool color, Coord pos_dame, bool isNGE)
 
 void promotion(Game *g)
 {
-    Coord pos = promotionNGE(g, g->is_white, g->ind_move, VOID_INDEX);
+    Coord pos = promotionNGE(g, VOID_INDEX);
     if (pos.i != -1)
     {
         assert(pos.j != -1);

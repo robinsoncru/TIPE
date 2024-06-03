@@ -25,9 +25,7 @@ Regles du jeu:
 On ne peut lier d'amitie que deux amis au max, sinon le coup n'est pas joué
 De même pour ennemie
 
-Note: J'ai (Victor G) du supprimer le répertoire main car l'option debug ne permet pas de sortir d'un dossier (comme fundamental functions) pour rentrer dans le main
-J'ai (Victor G) reporté un bug très bizarre, je passe le pointeur Game *g à une fonction dont l'attribut currentTree est à null à une fonction et dans le corps de la
-fonction, currentTree devient invalid adress, bug résolu en copiant-collant la fonction
+Note:
 
 Conseils de code:
 - Executer toujours le compile.sh dans le dossier ou est le main sinon les inclusions des autres fichiers font planter les fonctions du module SDL_ttf (TTF_OpenFont)
@@ -55,15 +53,13 @@ GUIDE D'UTILISATION:
 
 
 BUG REPORT:
-au niveau des rafles: apparition d'un nv pion ou segfault
 
 
 Todo list :
 - Implementer l'IA:
--- Victor G: donner une majo du jeu à chaque trait en temps constant: idée mettre à jour le nb de dame: avec commentaire
+-- Victor G: debug NGE functions
 
--- Victor D: aspect theorique de la gestion aléatoire
--- Lister les coups possibles (canMove, canMoveQueen, ...) avec un indice donné lorsque la machine à le trait, dans une liste chainé: Victor D
+-- Victor D: debug listage de coup move arrière
 
 
 - Etape 1 : (du 18/01/2024 9h au 01/02/2024 14h)

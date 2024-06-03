@@ -10,7 +10,7 @@ void pawnMoveIssue(Game *g, memory_move_t *mem, int index)
 void promotionIssue(Game *g, memory_move_t *mem, int index)
 {
 
-    mem->pos_potential_foe_from_prom = promotionNGE(g, g->is_white, mem->indMovePawn, index);
+    mem->pos_potential_foe_from_prom = promotionNGE(g, index);
     Coord pos = mem->pos_potential_foe_from_prom;
     if (pos.i != -1)
     {
