@@ -1,26 +1,68 @@
 #include "move_listing.h"
 #include "listing_checks/listing_checks.h"
+#include "move_back_listing/backwardMoveTab_interface.h"
+#include "move_back_listing/backwardMoveTab_struct.h"
 #include "move_max.h"
 #include "move_struct/move_struct.h"
 #include "rafle_listing/rafle_listing.h"
+#include "../../fundamental_functions/game_functions/access_functions/access_functions.h"
+#include "../../fundamental_functions/game_functions/Logic/logic_functions.h"
 #include <stdlib.h>
+
+void listMovesMoveBackAux(Game* g, int* nbMoves, Move* temporaryResult,
+    Move currentMove, backwardMoveTab_t* backTab, int i){
+    //entree : backTab a contient les indices du groupe d'amis
+    //dans un ordre arbitraire
+    if (i == backTab->n) {
+        currentMove.backwardPawnMoves = backwardMoveTabCopy(backTab);
+        temporaryResult[*nbMoves] = currentMove;
+        *nbMoves = *nbMoves + 1;
+    }
+    else {
+        int manipulatedPawn = backwardMoveTabGetIndMovedPawn(backTab, i);
+        pawn initialState = get_pawn(g, g->is_white, manipulatedPawn);
+        bool canMoveBackRight, canMoveBackLeft;
+        canMoveBackLeft = caseIsAccessible(g, g->is_white, 
+            initialState.lig + 1, initialState.col - 1);
+        canMoveBackRight = caseIsAccessible(g, g->is_white,
+            initialState.lig + 1, initialState.col + 1);
+        if (canMoveBackLeft) {
+            change_pawn_place(g, manipulatedPawn, g->is_white,
+                initialState.lig + 1, initialState.col - 1);
+            backwardMoveTabSetDir(backTab, i, LEFT);
+            listMovesMoveBackAux(g, nbMoves, temporaryResult,
+                currentMove, backTab, i + 1);
+        }
+        if (canMoveBackRight) {
+            change_pawn_place(g, manipulatedPawn, g->is_white,
+                initialState.lig + 1, initialState.col + 1);
+            backwardMoveTabSetDir(backTab, i, RIGHT);
+            listMovesMoveBackAux(g, nbMoves, temporaryResult,
+                currentMove, backTab, i + 1);
+        }
+        change_pawn_place(g, manipulatedPawn, g->is_white,
+                initialState.lig, initialState.col);
+        if (!canMoveBackLeft && !canMoveBackRight) {
+            backwardMoveTabSetDir(backTab, i, NO_MOVE);
+            listMovesMoveBackAux(g, nbMoves, temporaryResult,
+                currentMove, backTab, i + 1);
+        }
+    }
+}
 
 Move *listMovesMoveBack(Game *g, int *resSize)
 {
     Move *temporaryResult = malloc(2 * sizeof(Move));
     Move currentMove;
     int nbMoves = 0;
-
     currentMove.type = pawnMoveBackType;
-    // currentMove.manipulatedPawn = g->inds_move_back;
-    for (int k = 0; k < 2; k++)
-    {
-        // if (canMoveBack(g, g->is_white, g->inds_move_back, k != 1)) {
-        currentMove.left = k != 1;
-        temporaryResult[nbMoves] = currentMove;
-        nbMoves++;
-        // }
+    int nbPawns = taille_list(g->inds_move_back);
+    backwardMoveTab_t* backTab = backwardMoveTabCreate(nbPawns);
+    for (int i = 0; i < nbPawns; i++) {
+        backwardMoveTabSetIndMovedPawn(backTab, i, get(g->inds_move_back, i));
     }
+    listMovesMoveBackAux(g, &nbMoves, temporaryResult,
+        currentMove, backTab, 0);
 
     *resSize = nbMoves;
     return temporaryResult;
@@ -116,7 +158,7 @@ void listMovesForQueen(Game *g, int selectedPawn, Move *temporaryResult, int *nb
     listMovesBefriend(g, selectedPawn, temporaryResult, nbMoves);
 
     pawn p = get_pawn(g, g->is_white, selectedPawn);
-    Coord pos = {p.lig, p.col};
+    Coord pos = {.i = p.lig, .j = p.col};
     // possible cases where to move for a queen
     Move currentMove;
     currentMove.manipulatedPawn = selectedPawn;
@@ -134,22 +176,19 @@ void listMovesForQueen(Game *g, int selectedPawn, Move *temporaryResult, int *nb
             for (int k = 1; k < NB_CASE_LG; k++)
             {
                 currentMove.pos_dame = add(pos, dir);
-                if (!caseIsAccessible(g, g->is_white, dir.i, dir.j))
+                if (!caseIsAccessible(g, g->is_white, currentMove.pos_dame.i, currentMove.pos_dame.j))
                 {
                     break;
                 }
-                else
-                {
-                    oldNbMoves = *nbMoves;
-                    listRafles(g, selectedPawn, currentMove.pos_dame, temporaryResult, nbMoves);
-                    if (oldNbMoves == *nbMoves)
-                    { // s'il n'y a aucune rafle a jouer
-                        temporaryResult[*nbMoves] = currentMove;
-                        *nbMoves = *nbMoves + 1;
-                    }
-                    dir.i += possibleShifts[i];
-                    dir.j += possibleShifts[j];
+                oldNbMoves = *nbMoves;
+                listRafles(g, selectedPawn, currentMove.pos_dame, temporaryResult, nbMoves);
+                if (oldNbMoves == *nbMoves)
+                { // s'il n'y a aucune rafle a jouer
+                    temporaryResult[*nbMoves] = currentMove;
+                    *nbMoves = *nbMoves + 1;
                 }
+                dir.i += possibleShifts[i];
+                dir.j += possibleShifts[j];
             }
         }
     }
