@@ -198,7 +198,7 @@ int play_a_move(int move, int ind_pawn, Game *g, GraphicCache *cache, int nb_cou
         // m.lig = cmanpawn.i;
         if (g->is_white)
         {
-            Coord cma = {.i = 11, .j = 5};
+            Coord cma = {.i = 11, .j = 11};
             m.manipulatedPawn = ind_from_coord(g, cma);
         }
         else

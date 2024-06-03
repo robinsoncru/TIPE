@@ -64,7 +64,7 @@ void checkPawnMove(Game *g, GraphicCache *cache, bool left, bool autoplay)
     else
     {
         pawnMove(g, g->is_white, ind, left);
-        // endTurnGraphics(g, cache);
+        endTurnGraphics(g, cache);
     }
 }
 
@@ -80,7 +80,7 @@ void checkLienAmitie(int i, int j, Game *g, GraphicCache *cache, bool screen_swi
     if (isPawnValid(g) && canBeFriend(g, ind, iw, get_case_damier(g, i, j)))
     {
         lienAmitie(i, j, g);
-        // endTurnGraphics(g, cache);
+        endTurnGraphics(g, cache);
     }
     else
     {
@@ -106,7 +106,7 @@ void checkLienEnnemitie(int i, int j, Game *g, GraphicCache *cache, bool screen_
     if (isPawnValid(g) && canBeEnnemy(g, ind, iw, get_case_damier(g, i, j)))
     {
         lienEnnemitie(i, j, g);
-        // endTurnGraphics(g, cache);
+        endTurnGraphics(g, cache);
     }
     else
     {
@@ -124,7 +124,7 @@ void checkPromotion(Game *g, GraphicCache *cache, bool autoplay)
     if (canPromotion(g))
     {
         promotion(g);
-        // endTurnGraphics(g, cache);
+        endTurnGraphics(g, cache);
     }
     else
     {
@@ -142,7 +142,7 @@ void checkBiDepl(Game *g, GraphicCache *cache, bool autoplay)
     if (canBiDepl(g, g->ind_move, g->is_white))
     {
         biDepl(g, g->ind_move, g->is_white);
-        // endTurnGraphics(g, cache);
+        endTurnGraphics(g, cache);
     }
     else
     {
@@ -168,7 +168,7 @@ void checkQueenDepl(Game *g, GraphicCache *cache, bool iw, int lig, int col, boo
     if (isPawnValid(g) && dame_lig != VOID_INDEX && dame_col != VOID_INDEX && int_to_bool(get_pawn_value(g, g->is_white, g->ind_move, QUEEN)))
     {
         queenDepl(g, g->ind_move, iw, pos_dame, false);
-        // endTurnGraphics(g, cache);
+        endTurnGraphics(g, cache);
     }
     else
     {
@@ -259,14 +259,14 @@ void onLeftUp(Game *g, GraphicCache *cache, bool autoplay)
     //     putPawnMoveBack(g, true);
     // }
 
-    // /* Si on doit d'abord deplacer vers l'arriere un de nos pion, on met a jour les coordonnees de
-    //  deplacement arriere puis on verifie si elles son possibles. Si c'est le cas, on deplace en arriere
-    //  sinon on deplace un pion en avant (la disjonction de cas est correct) */
+    /* Si on doit d'abord deplacer vers l'arriere un de nos pion, on met a jour les coordonnees de
+     deplacement arriere puis on verifie si elles son possibles. Si c'est le cas, on deplace en arriere
+     sinon on deplace un pion en avant (la disjonction de cas est correct) */
     // if (moveBackAvailable(g))
     //     checkPawnMoveBack(g, cache, autoplay);
     // // Don't need to update the cache, just the game
     // else
-    //     checkPawnMove(g, cache, true, autoplay);
+    checkPawnMove(g, cache, true, autoplay);
 }
 
 void onRightUp(Game *g, GraphicCache *cache, bool autoplay)
@@ -286,7 +286,7 @@ void onRightUp(Game *g, GraphicCache *cache, bool autoplay)
     //     checkPawnMoveBack(g, cache, autoplay);
     // // same
     // else
-    //     checkPawnMove(g, cache, false, autoplay);
+    checkPawnMove(g, cache, false, autoplay);
 }
 
 void onEscapeUp(Game *g, GraphicCache *cache)
@@ -318,7 +318,7 @@ void onUpUp(Game *g, GraphicCache *cache)
         eatRafle(g, g->ind_move, g->is_white, g->currentTree, r);
         printf("pathFree called\n");
         pathFree(r);
-        // endTurnGraphics(g, cache);
+        endTurnGraphics(g, cache);
     }
 }
 
@@ -405,8 +405,22 @@ void onRUp(Game *g, GraphicCache *cache)
     MoveTab *moveTab = listMoves(g);
     actualNbCoups = moveTab->size;
     printf("\nnombre de coups : %d\n", moveTab->size);
-    printf("utilite memoire : %f\n", ((float) actualNbCoups) / ((float) majoration));
+    printf("utilite memoire : %f\n", ((float)actualNbCoups) / ((float)majoration));
     print_moves(moveTab);
     moveTabFree(moveTab);
     flush();
+}
+
+void onWUp(Game *g, GraphicCache *cache)
+{
+g->is_white = !g->is_white;
+    g->ind_move = NEUTRAL_IND;
+    g->indCheck = IND_CHANGE_ALLOWED;
+    if (g->currentTree != emptyTree)
+    {
+        PathTree *m = g->currentTree;
+        g->currentTree = NULL;
+        pathTreeFree(m);
+    }    
+    endTurnGraphics(g, cache);
 }

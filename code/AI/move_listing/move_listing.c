@@ -9,60 +9,69 @@
 #include "../../fundamental_functions/game_functions/Logic/logic_functions.h"
 #include <stdlib.h>
 
-void listMovesMoveBackAux(Game* g, int* nbMoves, Move* temporaryResult,
-    Move currentMove, backwardMoveTab_t* backTab, int i){
-    //entree : backTab a contient les indices du groupe d'amis
-    //dans un ordre arbitraire
-    if (i == backTab->n) {
+void listMovesMoveBackAux(Game *g, int *nbMoves, Move *temporaryResult,
+                          Move currentMove, backwardMoveTab_t *backTab, int i)
+{
+    // entree : backTab a contient les indices du groupe d'amis
+    // dans un ordre arbitraire
+    if (i == backTab->n)
+    {
         currentMove.backwardPawnMoves = backwardMoveTabCopy(backTab);
         temporaryResult[*nbMoves] = currentMove;
         *nbMoves = *nbMoves + 1;
     }
-    else {
+    else
+    {
         int manipulatedPawn = backwardMoveTabGetIndMovedPawn(backTab, i);
         pawn initialState = get_pawn(g, g->is_white, manipulatedPawn);
         bool canMoveBackRight, canMoveBackLeft;
-        canMoveBackLeft = caseIsAccessible(g, g->is_white, 
-            initialState.lig + 1, initialState.col - 1);
+        int addLine = g->is_white ? -1 : 1;
+        canMoveBackLeft = caseIsAccessible(g, g->is_white,
+                                           initialState.lig + addLine, initialState.col - 1);
         canMoveBackRight = caseIsAccessible(g, g->is_white,
-            initialState.lig + 1, initialState.col + 1);
-        if (canMoveBackLeft) {
+                                            initialState.lig + addLine, initialState.col + 1);
+        if (canMoveBackLeft)
+        {
             change_pawn_place(g, manipulatedPawn, g->is_white,
-                initialState.lig + 1, initialState.col - 1);
+                              initialState.lig + addLine, initialState.col - 1);
             backwardMoveTabSetDir(backTab, i, LEFT);
             listMovesMoveBackAux(g, nbMoves, temporaryResult,
-                currentMove, backTab, i + 1);
+                                 currentMove, backTab, i + 1);
         }
-        if (canMoveBackRight) {
+        if (canMoveBackRight)
+        {
             change_pawn_place(g, manipulatedPawn, g->is_white,
-                initialState.lig + 1, initialState.col + 1);
+                              initialState.lig + addLine, initialState.col + 1);
             backwardMoveTabSetDir(backTab, i, RIGHT);
             listMovesMoveBackAux(g, nbMoves, temporaryResult,
-                currentMove, backTab, i + 1);
+                                 currentMove, backTab, i + 1);
         }
         change_pawn_place(g, manipulatedPawn, g->is_white,
-                initialState.lig, initialState.col);
-        if (!canMoveBackLeft && !canMoveBackRight) {
+                          initialState.lig, initialState.col);
+        if (!canMoveBackLeft && !canMoveBackRight)
+        {
             backwardMoveTabSetDir(backTab, i, NO_MOVE);
             listMovesMoveBackAux(g, nbMoves, temporaryResult,
-                currentMove, backTab, i + 1);
+                                 currentMove, backTab, i + 1);
         }
     }
 }
 
 Move *listMovesMoveBack(Game *g, int *resSize)
 {
-    Move *temporaryResult = malloc(2 * sizeof(Move));
     Move currentMove;
     int nbMoves = 0;
     currentMove.type = pawnMoveBackType;
     int nbPawns = taille_list(g->inds_move_back);
-    backwardMoveTab_t* backTab = backwardMoveTabCreate(nbPawns);
-    for (int i = 0; i < nbPawns; i++) {
+    Move *temporaryResult = malloc(quickPow(2, nbPawns) * sizeof(Move));
+
+    backwardMoveTab_t *backTab = backwardMoveTabCreate(nbPawns);
+    for (int i = 0; i < nbPawns; i++)
+    {
         backwardMoveTabSetIndMovedPawn(backTab, i, get(g->inds_move_back, i));
     }
     listMovesMoveBackAux(g, &nbMoves, temporaryResult,
-        currentMove, backTab, 0);
+                         currentMove, backTab, 0);
 
     *resSize = nbMoves;
     return temporaryResult;
@@ -103,8 +112,10 @@ void listMovesPromotion(Game *g, Move *temporaryResult, int *nbMoves)
     Move currentMove;
     currentMove.manipulatedPawn = promotionType;
 
-    for (int k = 0; k < g->nb_pawns[g->is_white]; k++) {
-        if (isPromotable(g, k, g->is_white)) {
+    for (int k = 0; k < g->nb_pawns[g->is_white]; k++)
+    {
+        if (isPromotable(g, k, g->is_white))
+        {
             currentMove.manipulatedPawn = k;
             temporaryResult[*nbMoves] = currentMove;
             *nbMoves = *nbMoves + 1;
@@ -136,8 +147,10 @@ void listMovesEnnemy(Game *g, int selectedPawn, Move *temporaryResult, int *nbMo
     currentMove.manipulatedPawn = selectedPawn;
     currentMove.type = lienEnnemitieType;
 
-    for (int k = 0; k < g->nb_pawns[!g->is_white]; k++) {
-        if (isEnnemiable(g, k, !g->is_white)) {
+    for (int k = 0; k < g->nb_pawns[!g->is_white]; k++)
+    {
+        if (isEnnemiable(g, k, !g->is_white))
+        {
             currentMove.lig = get_pawn_value(g, !g->is_white, k, LIG);
             currentMove.col = get_pawn_value(g, !g->is_white, k, COL);
             temporaryResult[*nbMoves] = currentMove;
@@ -201,10 +214,10 @@ void listMovesForPawn(Game *g, int selectedPawn, Move *temporaryResult, int *nbM
     Coord tmpPos = {.i = get_pawn_value(g, g->is_white, selectedPawn, LIG),
                     .j = get_pawn_value(g, g->is_white, selectedPawn, COL)};
     listRafles(g, selectedPawn, tmpPos, temporaryResult, nbMoves);
-    if (get_pawn_value(g, g->is_white, selectedPawn, FRIENDLY) == VOID_INDEX 
-        && get_pawn_value(g, g->is_white, selectedPawn, ENNEMY) == VOID_INDEX) {
-            listMovesBefriend(g, selectedPawn, temporaryResult, nbMoves);
-            listMovesEnnemy(g, selectedPawn, temporaryResult, nbMoves);
+    if (get_pawn_value(g, g->is_white, selectedPawn, FRIENDLY) == VOID_INDEX && get_pawn_value(g, g->is_white, selectedPawn, ENNEMY) == VOID_INDEX)
+    {
+        listMovesBefriend(g, selectedPawn, temporaryResult, nbMoves);
+        listMovesEnnemy(g, selectedPawn, temporaryResult, nbMoves);
     }
 }
 
@@ -223,7 +236,8 @@ void listMovesRafleCount(Move *temporaryResult, int nbMoves, int *rafleCount, in
             nbRafles = 0;
             maxRafleLength = currentLength;
         }
-        if (currentLength == maxRafleLength) {
+        if (currentLength == maxRafleLength)
+        {
             nbRafles++;
         }
     }
@@ -239,54 +253,66 @@ MoveTab *listMovesFilterRafles(Move *temporaryResult, int nbMoves)
 
     MoveTab *res = malloc(sizeof(MoveTab));
     Move currentMove;
-    switch (rafleCount) {
-        case 0:
-            res->size = nbMoves;
-            res->tab = malloc(nbMoves * sizeof(Move));
-            for (int k = 0; k < nbMoves; k++) {
-                currentMove = temporaryResult[k];
-                currentMove.rafle = NULL;
-                currentMove.rafleTree = emptyTree;
-                res->tab[k] = currentMove;
+    switch (rafleCount)
+    {
+    case 0:
+        res->size = nbMoves;
+        res->tab = malloc(nbMoves * sizeof(Move));
+        for (int k = 0; k < nbMoves; k++)
+        {
+            currentMove = temporaryResult[k];
+            currentMove.rafle = NULL;
+            currentMove.rafleTree = emptyTree;
+            res->tab[k] = currentMove;
+        }
+        break;
+
+    default:
+        res->size = 0;
+        res->tab = malloc(rafleCount * sizeof(Move));
+        for (int k = 0; k < nbMoves; k++)
+        {
+            currentMove = temporaryResult[k];
+            if (currentMove.type == rafleType && pathTreeDepth(currentMove.rafleTree) == length)
+            {
+                res->tab[res->size] = currentMove;
+                res->size++;
             }
-            break;
-        
-        default:
-            res->size = 0;
-            res->tab = malloc(rafleCount * sizeof(Move));
-            for (int k = 0; k < nbMoves; k++) {
-                currentMove = temporaryResult[k];
-                if (currentMove.type == rafleType && pathTreeDepth(currentMove.rafleTree) == length) {
-                    res->tab[res->size] = currentMove;
-                    res->size++;
-                }
-            }
-            break;
+        }
+        break;
     }
     free(temporaryResult);
     return res;
 }
 
-MoveTab* listMoves(Game* g){
-    Move* temporaryResult;
+MoveTab *listMoves(Game *g)
+{
+    Move *temporaryResult;
     int nbMoves;
-    if (!is_empty(g->inds_move_back)) {
+    if (!is_empty(g->inds_move_back))
+    {
         temporaryResult = listMovesMoveBack(g, &nbMoves);
     }
-    else {
+    else
+    {
         temporaryResult = malloc(maxMoves(g) * sizeof(Move));
         nbMoves = 0;
         listMovesPromotion(g, temporaryResult, &nbMoves);
 
-        for (int k = 0; k < g->nb_pawns[g->is_white]; k++) {
-            if (get_pawn_value(g, g->is_white, k, ALIVE)) {
-                if (get_pawn_value(g, g->is_white, k, QUEEN)) {
+        for (int k = 0; k < g->nb_pawns[g->is_white]; k++)
+        {
+            if (get_pawn_value(g, g->is_white, k, ALIVE))
+            {
+                if (get_pawn_value(g, g->is_white, k, QUEEN))
+                {
                     listMovesForQueen(g, k, temporaryResult, &nbMoves);
                 }
-                else if (get_pawn_value(g, g->is_white, k, PBA) != 1) {
+                else if (get_pawn_value(g, g->is_white, k, PBA) != 1)
+                {
                     listMovesForGhostPawns(g, k, temporaryResult, &nbMoves);
                 }
-                else {
+                else
+                {
                     listMovesForPawn(g, k, temporaryResult, &nbMoves);
                 }
             }

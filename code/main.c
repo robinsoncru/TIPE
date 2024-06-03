@@ -30,6 +30,8 @@ void test_start_game(Game *g, GraphicCache *cache)
         killPawnByInd(g, true, i);
         killPawnByInd(g, false, i);
     }
+    // change_pawn_place(g, 0, false, 1, 3);
+    // change_pawn_place(g, 0, true, NB_CASE_LG-3, 3);
 
     for (int i = 0; i <= 3; i++)
     {
@@ -47,49 +49,39 @@ void test_start_game(Game *g, GraphicCache *cache)
         g->is_white = true;
     }
 
-    change_pawn_place(g, 0, true, 11, 5);
 
-    // change_pawn_place(g, 0, true, get_pawn_value(g, true, 0, LIG) + 1, NB_CASE_LG - 5);
-    // promote(g, true, 0);
-    // // change_pawn_place(g, 0, false, get_pawn_value(g, false, 0, LIG) - 1, NB_CASE_LG-3);
+    change_pawn_place(g, 0, true, get_pawn_value(g, true, 0, LIG) + 4, NB_CASE_LG - 5);
+    // change_pawn_place(g, 0, false, get_pawn_value(g, false, 0, LIG) - 1, NB_CASE_LG-3);
 
     // change_pawn_place(g, 1, true, get_pawn_value(g, true, 1, LIG) + 1, NB_CASE_LG-3);
     // change_pawn_place(g, 1, false, get_pawn_value(g, false, 1, LIG) - 1, NB_CASE_LG-3);
 
-    // // Configuration triangle
-    // change_pawn_place(g->allPawns[1], g->damier, 0, 6, 6);
-    // change_pawn_place(g->allPawns[0], g->damier, 2, 5, 5);
-    // change_pawn_place(g->allPawns[0], g->damier, 0, 5, 3);
-    // // change_pawn_place(g->allPawns[0], g->damier, 1, 3, 5);
-    // change_pawn_place(g->allPawns[0], g->damier, 1, 3, 3);
-    // change_pawn_place(g->allPawns[0], g->damier, 0, 3, 1);
 
-    // Configuration move back + cloud
-    // change_pawn_place(g->allPawns[1], g->damier, 0, 6, 6);
-    // change_pawn_place(g->allPawns[1], g->damier, 1, 4, 4);
-    // change_pawn_place(g->allPawns[0], g->damier, 1, 3, 5);
-    // change_pawn_place(g->allPawns[0], g->damier, 2, 1, 1);
 
     // configuration en lignes noires
     // pour tester les rafles
-    /*
-    for (int i = NB_PAWNS - 1; i >= 4; i--)
-    {
-        killPawnByInd(g, true, i);
-    }
+    
+    // for (int i = NB_PAWNS - 1; i >= 1; i--)
+    // {
+    //     killPawnByInd(g, true, i);
+    // }
 
-    for (int i = NB_PAWNS - 1; i >= 6; i--) {
-        killPawnByInd(g, false, i);
-    }
+    // for (int i = NB_PAWNS - 1; i >= 6; i--) {
+    //     killPawnByInd(g, false, i);
+    // }
 
-    change_pawn_place(g, 0, true, 0, 2);
 
-    change_pawn_place(g, 0, false, 1, 1);
-    change_pawn_place(g, 1, false, 3, 1);
-    change_pawn_place(g, 2, false, 5, 1);
-    change_pawn_place(g, 3, false, 5, 3);
-    change_pawn_place(g, 4, false, 3, 3);
-    change_pawn_place(g, 5, false, 1, 3);*/
+    // change_pawn_place(g, 0, true, 0, 2);
+
+    // change_pawn_place(g, 0, false, 1, 1);
+    // change_pawn_place(g, 1, false, 3, 1);
+    // change_pawn_place(g, 2, false, 5, 1);
+    // change_pawn_place(g, 3, false, 5, 3);
+    // change_pawn_place(g, 4, false, 3, 3);
+    // change_pawn_place(g, 5, false, 1, 3);
+
+    // change_pawn_place(g, 0, true, 7, 7);
+    // promote(g, true, 0);
     // fin de config
 
     // configuration multirafles
@@ -111,6 +103,28 @@ void test_start_game(Game *g, GraphicCache *cache)
     // change_pawn_place(g, 6, false, 5, 5);
     // change_pawn_place(g, 7, false, 5, 7);
     // fin de config
+
+    // Config photo diapo
+    // int endBlanc =3;
+    // int endNoir=3;
+    // for (int i = NB_PAWNS - 1; i >= endBlanc; i--)
+    // {
+    //     killPawnByInd(g, true, i);
+    // }
+
+    // for (int i = NB_PAWNS - 1; i >= endNoir; i--) {
+    //     killPawnByInd(g, false, i);
+    // }
+
+    // change_pawn_place(g, 0, true, 3, 1);
+    // change_pawn_place(g, 1, true, 2, 2);
+    // change_pawn_place(g, 2, true, 1, 5);
+
+    // change_pawn_place(g, 0, false, 5, 5);
+    // change_pawn_place(g, 1, false, 4, 6);
+    // change_pawn_place(g, 2, false, 5, 7);
+    // change_pawn_place(g, 3, false, 3, 5);
+    // change_pawn_place(g, 4, false, 4, 4);
 
     // print_pawns(g, true);
     // print_pawns(g, false);

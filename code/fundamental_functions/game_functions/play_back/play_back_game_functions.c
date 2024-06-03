@@ -68,8 +68,7 @@ Coord promotionNGE(Game *g, int index_choice)
     int choice;
     if (index_choice == VOID_INDEX)
     {
-        // choice = rand() % 3;
-        choice = 2;
+        choice = rand() % 3;
         printf("(choix %d)", choice);
     }
     else

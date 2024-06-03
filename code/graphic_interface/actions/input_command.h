@@ -21,6 +21,8 @@ void onHUP(Game *g, GraphicCache *cache);
 void onBUP(Game *g, GraphicCache *cache, bool autoplay);
 void onLUP(Game *g);
 void onAUP(GraphicCache *cache);
+void onWUp(Game *g, GraphicCache *cache);
+
 
 //void onAUp(Game* g, GraphicCache* cache);
 //void onZUp(Game* g, GraphicCache* cache);
