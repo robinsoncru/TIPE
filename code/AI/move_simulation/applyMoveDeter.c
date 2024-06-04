@@ -1,25 +1,27 @@
 #include "applyMoveDeter.h"
 
-void initTabIssue(Game *g, int what_kind_of_creation, memory_move_t *mem)
+void initTabIssueColor(Game *g, int what_kind_of_creation, memory_move_t *mem, bool color)
 {
     // Appeler pour les fonctions non déterministe
-    bool color = !g->is_white;
-
+    // La couleur appelée est celle de l'adversaire
+    int_chain *l = NULL;
+    int taille_l;
     switch (what_kind_of_creation)
     {
     case CREATE_CLOUD_TAB:
         mem->lenghtIssues = g->lengthCloud[color];
         mem->issues = malloc(mem->lenghtIssues * sizeof(issue_t));
 
-        int_chain *l = g->cloud[color];
-        int taille_l = taille_list(l); // En pratique, taille_list est recalculé à chaque fois dans la
+        l = g->cloud[color];
+        taille_l = taille_list(l); // En pratique, taille_list est recalculé à chaque fois dans la
         // boucle for, d'où le fait de nommer cette variable
         for (int i = 0; i < taille_l; i++)
         {
             int ind = get(l, i);
-            float pba_inv = get_pawn_value(g, color, ind, PBA);
-            mem->issues[i].pba = pba_inv;
+            int pba_inv = get_pawn_value(g, color, ind, PBA);
+            mem->issues[i].pba = pba_inv; // La proba est celle d'un pion fantome
             mem->issues[i].pos_survivor = give_coord(g, color, ind);
+            mem->issues[i].pba_promotion = -1;
         }
         break;
 
@@ -27,15 +29,42 @@ void initTabIssue(Game *g, int what_kind_of_creation, memory_move_t *mem)
 
         mem->lenghtIssues = 3;
         mem->issues = malloc(3 * sizeof(issue_t));
+        Coord c_init = {.i = -1, .j = -1};
         for (int i = 0; i < 3; i++)
         {
-            mem->issues[i].choice_promotion = i + 2;
-            mem->issues[i].pba = 3;
+            mem->issues[i].pba_promotion = 3;
+            mem->issues[i].pba = -1;
+            mem->issues[i].pos_survivor = c_init;
         }
 
         break;
+
+    case CREATE_CLOUD_PROM_TAB:
+        assertAndLog(mem->lenghtIssues == 3, "initTabIssue : Il n'y pas de promotion");
+
+        l = g->cloud[color];
+        taille_l = taille_list(l);
+        mem->lenghtIssues += (taille_l - 1);
+        // On joue directement une config du nuage lors après l'initialisation
+        mem->issues = malloc(mem->lenghtIssues * sizeof(issue_t));
+        // Les trois premières cases du tableau sont laissées vides
+        for (int i = 2; i < taille_l - 1; i++)
+        {
+            int ind = get(l, i);
+            int pba_inv = get_pawn_value(g, color, ind, PBA);
+            mem->issues[i].pba = pba_inv;
+            mem->issues[i].pos_survivor = give_coord(g, color, ind);
+            mem->issues[i].pba_promotion = 3;
+        }
+        mem->prom_need_break_cloud = true;
+        break;
     }
     mem->is_deter = false;
+}
+
+void initTabIssue(Game *g, int what_kind_of_creation, memory_move_t *mem)
+{
+    initTabIssueColor(g, what_kind_of_creation, mem, !g->is_white);
 }
 
 void generateCloudDuePawnMove(Game *g, memory_move_t *mem)
@@ -51,9 +80,15 @@ void lightnightStrike(Game *g, memory_move_t *mem, int index)
 {
     // Eclate le nuage si necessaire, index décide de la position du survivant
     bool iw = g->is_white;
+    lightnightStrikeColor(g, mem, index, !iw);
+}
+
+void lightnightStrikeColor(Game *g, memory_move_t *mem, int index, bool color)
+{
+    // Eclate le nuage si necessaire, index décide de la position du survivant
     if (!mem->is_deter)
     {
-        stormBreaksNGE(g, !iw, index, mem);
+        stormBreaksNGE(g, color, index, mem);
     }
 }
 

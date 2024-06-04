@@ -23,6 +23,7 @@ memory_move_t *initMemMove(int indMovePawn, moveType type)
     mem->survivor_pba = -1;
     mem->move_back_left_or_right = NULL;
     mem->friends_which_move_back = NULL;
+    mem->prom_need_break_cloud = false;
     return mem;
 }
 

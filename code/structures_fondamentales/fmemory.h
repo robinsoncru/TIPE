@@ -9,7 +9,7 @@ typedef struct
 {
     int pba; // On stocke le dénominateur
     Coord pos_survivor;
-    int choice_promotion;
+    int pba_promotion;
 } issue_t;
 
 typedef struct memory_move_t memory_move_t;
@@ -38,6 +38,7 @@ struct memory_move_t
     int had_become_a_queen; // Enregistre une éventuelle promotion de la dame, il est aussi
     // utilisé pour une promotion d'un pion devenu de la couleur opposé juste après une promotion
     int_chain *move_back_left_or_right; 
+    bool prom_need_break_cloud;
     /* Enregistre les déplacements gauche ou droite des pions qui reculent, à opti avec une bool_chain */
 };
 
