@@ -50,7 +50,7 @@ void test_start_game(Game *g, GraphicCache *cache)
     }
 
 
-    change_pawn_place(g, 0, true, get_pawn_value(g, true, 0, LIG) + 4, NB_CASE_LG - 5);
+    change_pawn_place(g, 0, true, get_pawn_value(g, true, 0, LIG) + 2, NB_CASE_LG - 7);
     // change_pawn_place(g, 0, false, get_pawn_value(g, false, 0, LIG) - 1, NB_CASE_LG-3);
 
     // change_pawn_place(g, 1, true, get_pawn_value(g, true, 1, LIG) + 1, NB_CASE_LG-3);

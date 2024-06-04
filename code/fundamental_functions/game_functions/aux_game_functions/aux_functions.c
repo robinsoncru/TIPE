@@ -490,7 +490,7 @@ void change_pawn_place_coord(Game *g, int ind, bool color, Coord pos)
 void stormBreaksNGE(Game *g, bool color, int index, memory_move_t *mem)
 {
     // Liste chaine et valeur du pawn survivor modifies par effet de bord
-    cloud_chain *load = mem->load_cloud_other;
+    cloud_chain *load = mem->load_cloud;
     Coord pos_survivor = mem->issues[index].pos_survivor;
     int_chain *l = g->cloud[color];
     int ind = VOID_INDEX;

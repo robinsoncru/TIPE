@@ -14,6 +14,7 @@ void printv(char *s);
 void picture_this(Game *g);
 void picture_game(Game *g, bool iw);
 void print_state_game(Game *g, int which_pmetre);
+void print_cloud_chain(cloud_chain *l);
 
 
 #endif //  DEBUG_FUNCTIONS

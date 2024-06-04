@@ -198,7 +198,7 @@ int play_a_move(int move, int ind_pawn, Game *g, GraphicCache *cache, int nb_cou
         // m.lig = cmanpawn.i;
         if (g->is_white)
         {
-            Coord cma = {.i = 11, .j = 11};
+            Coord cma = {.i = 9, .j = 9};
             m.manipulatedPawn = ind_from_coord(g, cma);
         }
         else
@@ -217,7 +217,7 @@ int play_a_move(int move, int ind_pawn, Game *g, GraphicCache *cache, int nb_cou
         for (int j = 0; j < mem->lenghtIssues; j++)
         {
             applyIssue(g, mem, j);
-            print_state_game(g, PBA);
+            print_state_game(g, QUEEN);
             usleep(1000 * 100);
             applyRecipIssue(g, mem, j);
             // print_state_game(g, PBA);

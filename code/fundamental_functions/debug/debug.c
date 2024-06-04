@@ -65,7 +65,7 @@ void print_int_chain(int_chain *l) {
 
 void print_isssue(issue_t *t, int lgth) {
     for (int i=0; i<lgth; i++) {
-        printf("Ind %d : (pba %d) (i %d) (j %d)", i, t[i].pba, t[i].pos_survivor.i, t[i].pos_survivor.j);
+        printf("Ind %d : (pba %d) (i %d) (j %d) (pba_prom %d)\n", i, t[i].pba, t[i].pos_survivor.i, t[i].pos_survivor.j, t[i].pba_promotion);
     }
     flush();
 }

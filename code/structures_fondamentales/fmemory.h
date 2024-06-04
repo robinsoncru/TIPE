@@ -19,7 +19,7 @@ struct memory_move_t
     // Les pions sont enregistrés par leurs coordonnées qui sont un moyen sur de les repérer
     bool is_deter;
     moveType type;
-    cloud_chain *load_cloud_other; // Cette structure est valide
+    cloud_chain *load_cloud; // Cette structure est valide
     int survivor_pba;              /* On ne garde que la proba du survivor qu'on enregistre lors de l'eclatement du
                  nuage */
     Coord pos_potential_foe_from_prom;

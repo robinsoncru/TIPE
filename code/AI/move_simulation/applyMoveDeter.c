@@ -6,6 +6,8 @@ void initTabIssueColor(Game *g, int what_kind_of_creation, memory_move_t *mem, b
     // La couleur appelée est celle de l'adversaire
     int_chain *l = NULL;
     int taille_l;
+
+    Coord c_init = {.i = -1, .j = -1};
     switch (what_kind_of_creation)
     {
     case CREATE_CLOUD_TAB:
@@ -29,7 +31,6 @@ void initTabIssueColor(Game *g, int what_kind_of_creation, memory_move_t *mem, b
 
         mem->lenghtIssues = 3;
         mem->issues = malloc(3 * sizeof(issue_t));
-        Coord c_init = {.i = -1, .j = -1};
         for (int i = 0; i < 3; i++)
         {
             mem->issues[i].pba_promotion = 3;
@@ -40,17 +41,24 @@ void initTabIssueColor(Game *g, int what_kind_of_creation, memory_move_t *mem, b
         break;
 
     case CREATE_CLOUD_PROM_TAB:
-        assertAndLog(mem->lenghtIssues == 3, "initTabIssue : Il n'y pas de promotion");
+        assertAndLog(mem->lenghtIssues == 3 && mem->issues != NULL, "initTabIssue : Il n'y pas de promotion");
 
         l = g->cloud[color];
         taille_l = taille_list(l);
         mem->lenghtIssues += (taille_l - 1);
         // On joue directement une config du nuage lors après l'initialisation
+        free(mem->issues);
         mem->issues = malloc(mem->lenghtIssues * sizeof(issue_t));
         // Les trois premières cases du tableau sont laissées vides
-        for (int i = 2; i < taille_l - 1; i++)
+        for (int i = 0; i < 2; i++)
         {
-            int ind = get(l, i);
+            mem->issues[i].pba_promotion = 3;
+            mem->issues[i].pba = -1;
+            mem->issues[i].pos_survivor = c_init;
+        }
+        for (int i = 2; i < mem->lenghtIssues; i++)
+        {
+            int ind = get(l, i-2);
             int pba_inv = get_pawn_value(g, color, ind, PBA);
             mem->issues[i].pba = pba_inv;
             mem->issues[i].pos_survivor = give_coord(g, color, ind);
@@ -59,6 +67,9 @@ void initTabIssueColor(Game *g, int what_kind_of_creation, memory_move_t *mem, b
         mem->prom_need_break_cloud = true;
         break;
     }
+
+    printf("init mem");
+    print_isssue(mem->issues, mem->lenghtIssues);
     mem->is_deter = false;
 }
 

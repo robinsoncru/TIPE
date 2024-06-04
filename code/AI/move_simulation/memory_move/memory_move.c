@@ -5,7 +5,7 @@ memory_move_t *initMemMove(int indMovePawn, moveType type)
     memory_move_t *mem = malloc(sizeof(memory_move_t));
     mem->type = type;
     mem->chainy = NULL;
-    mem->load_cloud_other = ccreate_list();
+    mem->load_cloud = ccreate_list();
     mem->indMovePawn = indMovePawn;
     mem->issues = NULL;
     mem->lenghtIssues = 1;
@@ -35,6 +35,6 @@ void freeMemMove(memory_move_t *mem)
     if (mem->move_back_left_or_right != NULL)
         free(mem->move_back_left_or_right);
     if (mem->friends_which_move_back != NULL) free(mem->friends_which_move_back);
-    cfree(mem->load_cloud_other);
+    cfree(mem->load_cloud);
     free(mem);
 }

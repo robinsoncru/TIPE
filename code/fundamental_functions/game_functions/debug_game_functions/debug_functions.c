@@ -159,3 +159,11 @@ void picture_game(Game *g, bool iw)
            g->nb_pawns[iw], g->nbQueenWithFriend[iw],
            g->nbQueenWithoutFriend[iw], g->lengthCloud[iw], g->nbFriendNoQueen[iw], g->nbFoe[iw]);
 }
+
+void print_cloud_chain(cloud_chain *l) {
+    while(!cis_empty(l)) {
+        l=l->next;
+        tcloud data = l->data;
+        printf("pba %d coord %d %d\n", data.pba, data.coord.i, data.coord.j);
+    }
+}

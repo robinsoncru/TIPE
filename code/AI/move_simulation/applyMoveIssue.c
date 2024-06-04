@@ -9,8 +9,10 @@ void pawnMoveIssue(Game *g, memory_move_t *mem, int index)
 
 void promotionIssue(Game *g, memory_move_t *mem, int index)
 {
-
-    mem->pos_potential_foe_from_prom = promotionNGE(g, index);
+    if (!mem->prom_need_break_cloud)
+    {
+        mem->pos_potential_foe_from_prom = promotionNGE(g, index);
+    }
     Coord pos = mem->pos_potential_foe_from_prom;
     bool iw = g->is_white;
     if (pos.i != -1)
@@ -92,6 +94,10 @@ void cancelSelectedIssue(Game *g, memory_move_t *mem, int index)
     // On doit replacer le pion utilisé (index) à sa position dans le nuage, puis recrée le nuage avec les
     // positions originales
     bool iw = g->is_white;
+    if (mem->prom_need_break_cloud)
+    {
+        iw = !iw;
+    }
     int index_origin;
     if (mem->prom_need_break_cloud)
     {
@@ -101,7 +107,7 @@ void cancelSelectedIssue(Game *g, memory_move_t *mem, int index)
     {
         index_origin = 0;
     } // C'est le premier pion dans la liste (pile), à l'indice 0 qui est déplacé
-    if (!cis_empty(mem->load_cloud_other))
+    if (!cis_empty(mem->load_cloud))
     {
 
         assertAndLog(index_origin != VOID_INDEX, "nuage présent mais pas de survivant");
@@ -113,7 +119,7 @@ void cancelSelectedIssue(Game *g, memory_move_t *mem, int index)
         /* Pion initialement conservé dans le nuage */
         change_pawn_place_coord(g, indNoPopPawn, !iw, pos_survivor0);
 
-        recreateCloud(g, mem->load_cloud_other, indNoPopPawn, pbaSurvivor, !iw);
+        recreateCloud(g, mem->load_cloud, indNoPopPawn, pbaSurvivor, !iw);
 
         // print_int_chain(g->cloud[!iw]);
     }
