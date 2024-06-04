@@ -20,6 +20,7 @@ void print_move(Move m)
 
     case promotionType:
         printf("Prom\n");
+        break;
 
     case pawnMoveBackType:
         if (m.left)
