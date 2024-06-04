@@ -12,7 +12,6 @@ void initTabIssue(Game *g, int what_kind_of_creation, memory_move_t *mem);
 void generateCloudDuePawnMove(Game *g, memory_move_t *mem);
 
 void lightnightStrike(Game *g, memory_move_t *mem, int index);
-void cancelSelectedIssue(Game *g, memory_move_t *mem);
 void cancelPromotionDeter(Game *g, memory_move_t *mem);
 
 memory_move_t *pawnMoveDeter(Game *g, int indMovePawn, bool left, moveType type);

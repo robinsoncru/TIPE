@@ -140,6 +140,7 @@ void drawLosange(SDL_Renderer *render, Case c, pawn p, Game *g)
     {
 
         SDL_SetRenderDrawColor(render, white.r, white.g, white.b, white.a);
+        // SDL_SetRenderDrawColor(render, green.r, green.g, green.b, green.a);
         SDL_RenderDrawLine(render, vertices[0].position.x, vertices[0].position.y, vertices[1].position.x, vertices[1].position.y);
         SDL_RenderDrawLine(render, vertices[1].position.x, vertices[1].position.y, vertices[2].position.x, vertices[2].position.y);
         SDL_RenderDrawLine(render, vertices[2].position.x, vertices[2].position.y, vertices[5].position.x, vertices[5].position.y);
@@ -148,7 +149,7 @@ void drawLosange(SDL_Renderer *render, Case c, pawn p, Game *g)
 
     if (p.queen)
     {
-        draw_little_square(render, 20, c, blue);
+        draw_little_square(render, 30, c, blue);
     }
 
     if (p.friendly > 0)
@@ -169,7 +170,8 @@ void drawLosange(SDL_Renderer *render, Case c, pawn p, Game *g)
     int_chain *l = g->inds_move_back;
     if (!is_empty(l))
     {
-        for (int i = 0; i < taille_list(l); i++)
+        int taille_l = taille_list(l);
+        for (int i = 0; i < taille_l; i++)
         {
             if (c.pawn_color == g->is_white && c.ind_pawn == get(l, i))
             {

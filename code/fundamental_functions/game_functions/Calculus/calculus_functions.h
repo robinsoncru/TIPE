@@ -11,7 +11,8 @@ bool int_to_bool(int integer);
 int bool_to_int(bool b);
 
 Coord coord_from_ind(Game *g, int ind, bool color);
-int ind_from_coord(Game *g, int lig, int col);
+int ind_from_lig_col(Game *g, int lig, int col);
+int ind_from_coord(Game *g, Coord pos);
 
 int quickPow(int a, int n);
 

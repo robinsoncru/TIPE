@@ -20,6 +20,25 @@
 // Elles ont toutes des effets de bord
 // et on suppose que les coups joues sont legaux
 
+void cancelAllMoveBack(Game *g, memory_move_t *mem)
+{
+    assertAndLog(mem->friends_which_move_back != NULL && !is_empty(mem->move_back_left_or_right), "cancelAllMoveBack : structures vides");
+    bool iw = g->is_white;
+    int ind = -1;
+    int taille = taille_list(mem->move_back_left_or_right);
+    for (int i = taille - 1; i > -1; i--) // C'est important pour sortir de la pile
+    {
+
+        ind = ind_from_coord(g, mem->friends_which_move_back[i]);
+        int left = pop(mem->move_back_left_or_right);
+        if (left != -1)
+        {
+            simplyPawnMove(g, iw, ind, !int_to_bool(left));
+        }
+    }
+    cleanMemMoveBack(mem);
+}
+
 void cancelMoveBack(Game *g, int ind, bool left)
 {
     bool iw = g->is_white;
@@ -90,7 +109,6 @@ void pawnMove(Game *g, bool is_white, int ind, bool left)
 
 */
 
-
 // void queenDeplHuman(Game *g, int ind, bool color, queen_move_t tuple_coord)
 // {
 //     // Suppose que l'entree est valide
@@ -100,7 +118,7 @@ void pawnMove(Game *g, bool is_white, int ind, bool left)
 //     int enn_lig = tuple_coord.pos_eaten_pawn.i;
 //     int enn_col = tuple_coord.pos_eaten_pawn.j;
 //     assertAndLog(is_empty(g->inds_move_back), "Les amis sont toujours la");
-    
+
 //     change_pawn_place(g, ind, color, lig, col);
 //     if (enn_lig != -1 && enn_col != -1)
 //     {
@@ -139,31 +157,42 @@ void pawnMove(Game *g, bool is_white, int ind, bool left)
 //     // Do a move back only if the queen didn't eat
 // }
 
-
-void queenDepl(Game *g, int ind, bool color, Coord pos_dame)
+data_chain *queenDepl(Game *g, int ind, bool color, Coord pos_dame, bool isNGE)
 {
+    /* Selon qu'on souhaite des effets graphiques ou pas, on appelle rafleNGE ou rafle
+    et on applique endTurnGameManagement */
     // Suppose que l'entree est valide
     bool doMoveBack = true;
     int lig = pos_dame.i;
     int col = pos_dame.j;
     assertAndLog(is_empty(g->inds_move_back), "Les amis sont toujours la");
-    
+
     change_pawn_place(g, ind, color, lig, col);
 
     // Gonna check if the queen can take a rafle
 
     assert(g->currentTree == emptyTree);
     bool isWhite = g->is_white;
-    g->currentTree = rafleTreeCalc(g, isWhite, g->ind_move);
+    data_chain *chainy = NULL;
 
-    printf("lazyRafle called\n");
-    Path *r = lazyRafle(g->currentTree);
-    printf("eatRafle called\n");
-    bool had_eaten = eatRafleNGM(g, g->ind_move, g->is_white, g->currentTree, r);
-    if (doMoveBack)
+    if (isNGE)
+    {
+        chainy = rafleNGE(g, ind);
+        if (!dis_empty(chainy))
+        {
+            doMoveBack = false;
+        }
+    }
+    else
+    {
+        g->currentTree = rafleTreeCalc(g, isWhite, g->ind_move);
+
+        Path *r = lazyRafle(g->currentTree);
+        bool had_eaten = eatRafleNGM(g, g->ind_move, g->is_white, g->currentTree, r);
         doMoveBack = !had_eaten;
-    printf("pathFree called\n");
-    pathFree(r);
+        pathFree(r);
+    }
+
     if (doMoveBack)
     {
         for (int i = 0; i < MAX_NB_PAWNS; i++)
@@ -176,8 +205,12 @@ void queenDepl(Game *g, int ind, bool color, Coord pos_dame)
         }
     }
 
-    endTurnGameManagement(g, color, ind, IND_CHANGE_ALLOWED, false);
-    // Do a move back only if the queen didn't eat
+    if (!isNGE)
+    {
+        endTurnGameManagement(g, color, ind, IND_CHANGE_ALLOWED, false);
+        // Do a move back only if the queen didn't eat
+    }
+    return chainy;
 }
 
 /*
@@ -197,44 +230,27 @@ void queenDepl(Game *g, int ind, bool color, Coord pos_dame)
 
 */
 
-void promotionPmetre(Game *g, bool is_white, int ind)
-{
-    assertAndLog(is_empty(g->inds_move_back), "Les amis sont toujours la");
-    ;
-    /* Promote the pawn at the ind in pmetre : do nothing, become a queen or become an ennemy pawn */
-    // int choice = rand() % 3;
-    int choice = 2;
-    if (choice == 1)
-    {
-        promote(g, is_white, ind);
-        endTurnGameManagement(g, is_white, ind, IND_GLORY_QUEEN, false);
-        return;
-    }
-    else if (choice == 2)
-    {
-        int i = get_pawn_value(g, is_white, ind, LIG);
-        int j = get_pawn_value(g, is_white, ind, COL);
-
-        // printf("Quantic %d %d", i, j);
-
-        // Kill the former pawn
-        killPawn(g, i, j);
-
-        // Give birth to the ennemy pawn
-        createPawn(g, !is_white, i, j);
-        int indNew = get_case_damier(g, i, j).ind_pawn;
-        if (canBePromoted(g, !is_white, indNew))
-            promote(g, !is_white, indNew);
-
-        endTurnGameManagement(g, is_white, indNew, IND_BAD_CHOICE, false);
-        return;
-    }
-    endTurnGameManagement(g, is_white, ind, IND_NOTHING_HAPPENED, false);
-}
-
 void promotion(Game *g)
 {
-    promotionPmetre(g, g->is_white, g->ind_move);
+    Coord pos = promotionNGE(g, g->is_white, g->ind_move, VOID_INDEX);
+    if (pos.i != -1)
+    {
+        assert(pos.j != -1);
+        int indNew = ind_from_coord(g, pos);
+        endTurnGameManagement(g, g->is_white, indNew, IND_BAD_CHOICE, false);
+    }
+    else
+    {
+        if (pos.j == IND_GLORY_QUEEN)
+        {
+            endTurnGameManagement(g, g->is_white, g->ind_move, IND_GLORY_QUEEN, false);
+        }
+        else
+        {
+            assert(pos.j == IND_NOTHING_HAPPENED);
+            endTurnGameManagement(g, g->is_white, g->ind_move, IND_NOTHING_HAPPENED, false);
+        }
+    }
 }
 
 /*
@@ -263,9 +279,9 @@ void lienAmitie(int lig, int col, Game *g)
     le joueur doit rejouer.
     Suppose le pion ainsi que le pion ami selectionne valides */
     assertAndLog(is_empty(g->inds_move_back), "Les amis sont toujours la");
-    ;
+
     bool iw = g->is_white;
-    lienAmitiePmetreNGE(lig, col, g->ind_move, iw, g);
+    lienAmitieNGE(lig, col, g->ind_move, iw, g);
 
     endTurnGameManagement(g, iw, g->ind_move, IND_CHANGE_ALLOWED, false);
 }
@@ -288,12 +304,19 @@ void lienAmitie(int lig, int col, Game *g)
 */
 
 // Play back and return if the pawn has moved or not
-void moveBackNGE(Game *g, bool autoplay, bool use_heuristique, float (*f)(Game *))
+void moveBackNGE(Game *g, bool autoplay, bool use_heuristique, float (*f)(Game *), memory_move_t *mem)
 {
+    // mem vaut NULL lors du jeu avec effet graphique
     bool iw = g->is_white;
     if (autoplay)
     {
-        for (int i = 0; i < taille_list(g->inds_move_back); i++)
+        int taille_l = taille_list(g->inds_move_back);
+        if (mem != NULL)
+        {
+            mem->move_back_left_or_right = create_list(taille_l);
+            initFriendsWhichMoveBack(mem, taille_l);
+        }
+        for (int i = 0; i < taille_l; i++)
         {
             int ind = get(g->inds_move_back, i);
             assertAndLog(isValidIndexInGame(g, ind, iw), "Pion sortie de la pile des amis non valide");
@@ -317,19 +340,40 @@ void moveBackNGE(Game *g, bool autoplay, bool use_heuristique, float (*f)(Game *
                     {
                         cancelLazzyMoveBack(g, ind, false);
                         lazzyMoveBack(g, ind, true);
+                        if (mem != NULL)
+                        {
+                            push(mem->move_back_left_or_right, 1);
+                        }
+                        return;
+                    }
+                    if (mem != NULL)
+                    {
+                        push(mem->move_back_left_or_right, 0);
                     }
                 }
                 else if (recul_gauche)
                 {
                     lazzyMoveBack(g, ind, true);
+                    if (mem != NULL)
+                    {
+                        push(mem->move_back_left_or_right, 1);
+                    }
                 }
                 else if (recul_droite)
                 {
                     lazzyMoveBack(g, ind, false);
+                    if (mem != NULL)
+                    {
+                        push(mem->move_back_left_or_right, 0);
+                    }
                 }
                 else
                 {
                     // Rien ne se passera dans le endTurnGameManagement
+                    if (mem != NULL)
+                    {
+                        push(mem->move_back_left_or_right, -1); // -1 signifie que le pion ne bouge pas
+                    }
                 }
             }
             else
@@ -337,15 +381,35 @@ void moveBackNGE(Game *g, bool autoplay, bool use_heuristique, float (*f)(Game *
                 if (recul_gauche)
                 {
                     lazzyMoveBack(g, ind, true);
+                    if (mem != NULL)
+                    {
+                        push(mem->move_back_left_or_right, 1);
+                    }
                 }
                 else if (recul_droite)
                 {
                     lazzyMoveBack(g, ind, false);
+                    if (mem != NULL)
+                    {
+                        push(mem->move_back_left_or_right, 0);
+                    }
                 }
                 else
                 {
                     // Rien ne se passera dans le endTurnGameManagement
+                    if (mem != NULL)
+                    {
+                        push(mem->move_back_left_or_right, -1);
+                    }
                 }
+            }
+
+            if (mem != NULL)
+            {
+                int lig = get_pawn_value(g, iw, i, LIG);
+                int col = get_pawn_value(g, iw, i, COL);
+                mem->friends_which_move_back[i].i = lig;
+                mem->friends_which_move_back[i].j = col;
             }
         }
     }
@@ -360,7 +424,7 @@ void moveBackNGE(Game *g, bool autoplay, bool use_heuristique, float (*f)(Game *
 void moveBack(Game *g, bool autoplay, bool use_heuristique, float (*f)(Game *))
 {
     /* Suppose move on the just pawn. Move back the pawn referred by inds_move_back to the case localised by the coord coordForMoveBack */
-    moveBackNGE(g, autoplay, use_heuristique, f);
+    moveBackNGE(g, autoplay, use_heuristique, f, NULL);
     int ind;
     while (!is_empty(g->inds_move_back))
     {
@@ -394,9 +458,9 @@ void lienEnnemitie(int lig, int col, Game *g)
     couleur opposé et qu'il existe. Gère le pmetre Game.friendly. Si on declare ennemi un pion qui était déjà ennemi, le coup n'est pas joué
     Suppose legal move */
     assertAndLog(is_empty(g->inds_move_back), "Les amis sont toujours la");
-    ;
+
     bool iw = g->is_white;
-    lienEnnemitiePmetreNGE(iw, lig, col, g->ind_move, g);
+    lienEnnemitieNGE(iw, lig, col, g->ind_move, g);
     endTurnGameManagement(g, iw, g->ind_move, IND_CHANGE_ALLOWED, false);
 }
 
@@ -419,32 +483,8 @@ void lienEnnemitie(int lig, int col, Game *g)
 
 void biDepl(Game *g, int ind, bool color)
 {
-    // On suppose le coup legal
-    bool depl = int_to_bool(rand() % 2);
-    // Depl le pion a droite ou a gauche et creera l'autre ghost pawn de l'autre cote
-    int dj = depl ? 1 : -1;
-
-    assertAndLog(is_empty(g->inds_move_back), "Les amis sont toujours la");
-    ;
-    int di = color ? 1 : -1;
-    // Creer un pion a droite ou a gauche aleatoirement
-    int newLig = get_pawn_value(g, color, ind, LIG) + di;
-    int newCol = get_pawn_value(g, color, ind, COL) + dj;
-    createPawn(g, color, newLig, newCol);
-    int newInd = get_case_damier(g, newLig, newCol).ind_pawn;
-    put_pawn_value(g, color, newInd, PBA, get_pawn_value(g, color, ind, PBA) * 2);
-
-    // Rajoute dans le cloud
-    if (!isInCloud(g, color, ind))
-        push(g->cloud[color], ind);
-    push(g->cloud[color], newInd);
-
-    g->lengthCloud[color]++;
-
-    // Deplace le pion de l'autre cote
-    put_pawn_value(g, color, ind, PBA, get_pawn_value(g, color, ind, PBA) * 2);
-    simplyPawnMove(g, color, ind, depl);
-
+    ind_bool_t data = biDeplNGE(g, color, ind);
+    int newInd = data.ind;
     // Maybe the clone pawn is near a pawn of the opposite color
     if (canStormBreaks(g, newInd, color))
         AleatStormBreaks(g, color);

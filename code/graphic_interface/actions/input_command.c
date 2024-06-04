@@ -24,7 +24,6 @@ void endTurnGraphics(Game *g, GraphicCache *cache)
     // the turn changing will be donne at the end of the
     // change timer from a graphic point of view
     alert(cache, g->indCheck, CHANGE_TICKS);
-    // printf("%s turn\n", g->is_white ? "white" : "black");
 }
 
 /*
@@ -65,7 +64,7 @@ void checkPawnMove(Game *g, GraphicCache *cache, bool left, bool autoplay)
     else
     {
         pawnMove(g, g->is_white, ind, left);
-        //endTurnGraphics(g, cache);
+        // endTurnGraphics(g, cache);
     }
 }
 
@@ -81,7 +80,7 @@ void checkLienAmitie(int i, int j, Game *g, GraphicCache *cache, bool screen_swi
     if (isPawnValid(g) && canBeFriend(g, ind, iw, get_case_damier(g, i, j)))
     {
         lienAmitie(i, j, g);
-        //endTurnGraphics(g, cache);
+        // endTurnGraphics(g, cache);
     }
     else
     {
@@ -107,7 +106,7 @@ void checkLienEnnemitie(int i, int j, Game *g, GraphicCache *cache, bool screen_
     if (isPawnValid(g) && canBeEnnemy(g, ind, iw, get_case_damier(g, i, j)))
     {
         lienEnnemitie(i, j, g);
-        //endTurnGraphics(g, cache);
+        // endTurnGraphics(g, cache);
     }
     else
     {
@@ -125,7 +124,7 @@ void checkPromotion(Game *g, GraphicCache *cache, bool autoplay)
     if (canPromotion(g))
     {
         promotion(g);
-        //endTurnGraphics(g, cache);
+        // endTurnGraphics(g, cache);
     }
     else
     {
@@ -143,7 +142,7 @@ void checkBiDepl(Game *g, GraphicCache *cache, bool autoplay)
     if (canBiDepl(g, g->ind_move, g->is_white))
     {
         biDepl(g, g->ind_move, g->is_white);
-        //endTurnGraphics(g, cache);
+        // endTurnGraphics(g, cache);
     }
     else
     {
@@ -168,8 +167,8 @@ void checkQueenDepl(Game *g, GraphicCache *cache, bool iw, int lig, int col, boo
     // if (g->ind_move == 3) pawnMove(g, g->is_white, g->ind_move, true);
     if (isPawnValid(g) && dame_lig != VOID_INDEX && dame_col != VOID_INDEX && int_to_bool(get_pawn_value(g, g->is_white, g->ind_move, QUEEN)))
     {
-        queenDepl(g, g->ind_move, iw, pos_dame);
-        //endTurnGraphics(g, cache);
+        queenDepl(g, g->ind_move, iw, pos_dame, false);
+        // endTurnGraphics(g, cache);
     }
     else
     {
@@ -319,7 +318,7 @@ void onUpUp(Game *g, GraphicCache *cache)
         eatRafle(g, g->ind_move, g->is_white, g->currentTree, r);
         printf("pathFree called\n");
         pathFree(r);
-        //endTurnGraphics(g, cache);
+        // endTurnGraphics(g, cache);
     }
 }
 
@@ -380,24 +379,19 @@ void onKUp(Game *g, GraphicCache *cache)
 
 void onRUp(Game *g, GraphicCache *cache)
 {
-    // picture_this(g);
-    // // Teste for the queen
 
-    // bool iw = g->is_white;
-    // int ind = g->ind_move;
-    // SDL_Event event = cache->event;
-
-    // int x = event.button.x;
-    // int y = event.button.y;
-    // int lig = y / LG_CASE;
-    // int col =  x/ LG_CASE;
-
-    // Coord pos_dame = CanMoveOrEatQueen(g, iw, lig, col, g->damier, ind);
-    // int dame_lig = coords.pos_dame.i;
-    // int dame_col = coords.pos_dame.j;
-    // if (isPawnValid(g) && dame_lig != VOID_INDEX && dame_col != VOID_INDEX)
+    // MoveTab *coups = listMoves(g);
+    // memory_move_t *mem;
+    // for (int i = 0; i < coups->size; i++)
     // {
-    //     queenDeplIssue(g, ind, coords);
+    //     mem = applyDeter(g, coups->tab[i]);
+    //     picture_this(g);
+    //     for (int j = 0; j < mem->lenghtIssues; j++)
+    //     {
+    //         applyMove(g, mem, j);
+    //         applyRecipMove(g, mem);
+    //     }
+    //     applyRecipDeter(g, mem);
     // }
     // else
     //     printv("big queen pb");

@@ -54,3 +54,18 @@ void print_liensAmitie(Game *g) {
     }
     flush();
 }
+
+void print_int_chain(int_chain *l) {
+    assert(l->ind_actu < l->size_max);
+    for (int i =0; i<l->ind_actu+1; i++) {
+        printf("-> %d", l->tableau[i]);
+    }
+    flush();
+}
+
+void print_isssue(issue_t *t, int lgth) {
+    for (int i=0; i<lgth; i++) {
+        printf("Ind %d : (pba %d) (i %d) (j %d)", i, t[i].pba, t[i].pos_survivor.i, t[i].pos_survivor.j);
+    }
+    flush();
+}

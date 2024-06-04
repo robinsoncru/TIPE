@@ -51,19 +51,23 @@ int get(int_chain *l, int i)
     return l->tableau[i];
 }
 
-void pushi(int_chain *l, int i, int valeur)
+void seti(int_chain *l, int i, int valeur)
 {
     /* push une valeur en i-eme position */
     assert(!is_empty(l) && 0 <= i && i < taille_list(l));
     l->tableau[i] = valeur;
 }
 
-void freeIntChain(int_chain *l)
-{
+void emptyIntChain(int_chain *l) {
     while (!is_empty(l))
     {
         pop(l);
     }
+}
+
+void freeIntChain(int_chain *l)
+{
+    emptyIntChain(l);
     free(l->tableau);
     free(l);
 }
@@ -71,7 +75,8 @@ void freeIntChain(int_chain *l)
 bool alreadyInList(int_chain *l, int ind)
 {
     assert(l->ind_actu < l->size_max);
-    for (int i = 0; i < taille_list(l); i++)
+    int taille_l = taille_list(l);
+    for (int i = 0; i < taille_l; i++)
     {
         if (ind == get(l, i))
         {
@@ -85,13 +90,49 @@ void replaceValueInList(int_chain *l, int old_value, int new_value)
 {
     // La liste est supposée sans doublon. Opération linéaire en la taille de la liste
     assert(!is_empty(l));
-    for (int i = 0; i < taille_list(l); i++)
+    int taille_l = taille_list(l);
+    for (int i = 0; i < taille_l; i++)
     {
         if (get(l, i) == old_value)
         {
-            pushi(l, i, new_value);
+            seti(l, i, new_value);
             break;
         }
+    }
+}
+
+void popi(int_chain *l, int ind)
+{
+    print_int_chain(l);
+    // Supprime un ind de la liste chainé et le renvoie, et diminue en conséquence sa taille
+    assert(l->ind_actu < l->size_max);
+    bool find = false;
+    
+    if (get(l, l->ind_actu) == ind)
+    { // Si c'est le dernier elm
+
+        pop(l);
+        find = true;
+    }
+    else
+    {
+        int taille_l = taille_list(l);
+        for (int i = 0; i < taille_l - 1; i++)
+        {
+            if (get(l, i) == ind)
+            {
+                find = true;
+            }
+            if (find)
+            {
+                seti(l, i, get(l, i + 1));
+            }
+        }
+        pop(l);
+    }
+    if (!find)
+    {
+        assertAndLog(false, "popi :  Elm a supprime dans int_chain pas trouvé");
     }
 }
 
@@ -99,6 +140,7 @@ void replaceValueInList(int_chain *l, int old_value, int new_value)
 
 void cpush(cloud_chain *l, tcloud k)
 {
+    assertAndLog(l != NULL, "cpush: l non initialisée");
     cloud_chain *m = malloc(sizeof(cloud_chain));
     m->data = k;
     m->next = l->next;
@@ -107,6 +149,7 @@ void cpush(cloud_chain *l, tcloud k)
 
 bool cis_empty(cloud_chain *l)
 {
+    assertAndLog(l != NULL, "cis_empty: l non initialisée");
     return (l->next == NULL);
 }
 
@@ -144,6 +187,8 @@ void cfree(cloud_chain *l)
 
 void dpush(data_chain *l, pawn_info data)
 {
+    assertAndLog(l != NULL, "dpush : data_chain non initialisée");
+
     data_chain *m = malloc(sizeof(data_chain));
     m->data = data;
     m->next = l->next;
@@ -151,11 +196,14 @@ void dpush(data_chain *l, pawn_info data)
 }
 bool dis_empty(data_chain *l)
 {
+    assertAndLog(l != NULL, "dis_empty : data_chain non initialisée");
     return (l->next == NULL);
 }
 
 pawn_info dpop(data_chain *l)
 {
+    assertAndLog(l != NULL, "dpop : data_chain non initialisée");
+
     assert(!dis_empty(l));
     data_chain *m = l->next;
     l->next = m->next;
@@ -240,7 +288,8 @@ void ctpush(coord_tab_t *t, int i, int j)
     ctset(t, t->index_actu, i, j);
 }
 
-bool ctis_empty(coord_tab_t *t) {
+bool ctis_empty(coord_tab_t *t)
+{
     return t->index_actu == -1;
 }
 

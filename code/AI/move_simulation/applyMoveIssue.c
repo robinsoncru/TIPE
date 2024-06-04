@@ -2,103 +2,99 @@
 
 void pawnMoveIssue(Game *g, memory_move_t *mem, int index)
 {
-    // Test pawn move remove, on suppose qu'on peut jouer, et qu'on a deja une fonction pour faire jouer l'ami en arrière
-    // If the index != -1, this mean there are ghost pawns killed
-
+    // Seule issues possibles différentes: le nuage
     lightnightStrike(g, mem, index);
-}
-
-void cancelPawnMoveDeter(Game *g, memory_move_t *mem)
-{
-    bool iw = g->is_white;
-
-    pawnMoveCancel(g, iw, mem->indMovePawn, mem->left);
-    freeMemMove(mem);
+    mem->had_become_a_queen = endTurnGameManagementNGE(g, mem->indMovePawn, IND_CHANGE_ALLOWED, false);
 }
 
 void promotionIssue(Game *g, memory_move_t *mem, int index)
 {
 
-    // mem->pos_potential_foe_from_prom = promotionNGE(g, mem->indMovePawn);
+    mem->pos_potential_foe_from_prom = promotionNGE(g, g->is_white, mem->indMovePawn, index);
+    Coord pos = mem->pos_potential_foe_from_prom;
+    if (pos.i != -1)
+    {
+        assert(pos.j != -1);
+        int indNew = ind_from_coord(g, pos);
+        mem->had_become_a_queen = endTurnGameManagementNGE(g, indNew, IND_BAD_CHOICE, false);
+    }
+    else
+    {
+        if (pos.j == IND_GLORY_QUEEN)
+        {
+            mem->had_become_a_queen = endTurnGameManagementNGE(g, mem->indMovePawn, IND_GLORY_QUEEN, false);
+        }
+        else
+        {
+            assert(pos.j == IND_NOTHING_HAPPENED);
+            mem->had_become_a_queen = endTurnGameManagementNGE(g, mem->indMovePawn, IND_NOTHING_HAPPENED, false);
+        }
+    }
 }
 
 void pawnMoveBackIssue(Game *g, memory_move_t *mem, int index)
 {
     lightnightStrike(g, mem, index);
-}
-
-void cancelPawnMoveBackDeter(Game *g, memory_move_t *mem)
-{
-    cancelMoveBack(g, mem->indMovePawn, mem->left);
-    freeMemMove(mem);
+    endTurnGameManagementNGE(g, mem->indMovePawn, IND_CHANGE_ALLOWED, true);
 }
 
 void biDeplIssue(Game *g, int indMovePawn, memory_move_t *mem)
 {
     mem->full_pawn_data = biDeplNGE(g, g->is_white, indMovePawn);
-}
 
-void ccancelBiDeplDeter(Game *g, memory_move_t *mem)
-{
-    cancelBidepl(g, mem->indMovePawn, mem->full_pawn_data);
-    freeMemMove(mem);
+    endTurnGameManagementNGE(g, mem->indMovePawn, IND_CHANGE_ALLOWED, false);
 }
 
 void queenDeplIssue(Game *g, memory_move_t *mem, int index)
 {
     lightnightStrike(g, mem, index);
-}
 
-void cancelQueenDeplDeter(Game *g, memory_move_t *mem)
-{
-    
-    cancelDeplQueen(g, mem->indMovePawn, mem->chainy, mem->init_coord);
-    freeMemMove(mem);
+    endTurnGameManagementNGE(g, mem->indMovePawn, IND_CHANGE_ALLOWED, false);
 }
 
 void rafleIssue(Game *g, memory_move_t *mem, int index)
 {
 
     lightnightStrike(g, mem, index);
-}
 
-void cancelRafleDeter(Game *g, memory_move_t *mem)
-{
-    
-    cancelRafle(g, mem->indMovePawn, mem->init_coord, mem->chainy);
-    freeMemMove(mem);
+    mem->had_become_a_queen = endTurnGameManagementNGE(g, mem->indMovePawn, IND_CHANGE_ALLOWED, false);
 }
 
 void lienAmitieIssue(Game *g, int indPawn, int lig, int col, memory_move_t *mem)
 {
-    if (g->is_white)
-        lig = NB_CASE_LG - lig - 1;
-
-    mem->lig = lig;
-    mem->col = col;
-    lienAmitieNGE(lig, col, g, indPawn);
-}
-
-void cancelLienAmitieDeter(Game *g, memory_move_t *mem)
-{
-
-    cancelLienAmitie(g, mem->indMovePawn, mem->lig, mem->col);
-    freeMemMove(mem);
+    lienAmitieNGE(lig, col, indPawn, g->is_white, g);
+    endTurnGameManagementNGE(g, mem->indMovePawn, IND_CHANGE_ALLOWED, false);
 }
 
 void lienEnnemitieIssue(Game *g, int indPawn, int lig, int col, memory_move_t *mem)
 {
-    if (g->is_white)
-        lig = NB_CASE_LG - lig - 1;
-
-    mem->lig = lig;
-    mem->col = col;
-    lienEnnemitieNGE(lig, col, g, indPawn);
+    assertAndLog(isPawnValid(g) && canBeEnnemy(g, indPawn, g->is_white, get_case_damier(g, lig, col)),
+                 "lienEnnemitieIssue : peut pas etre ennemi");
+    lienEnnemitieNGE(g->is_white, lig, col, indPawn, g);
+    endTurnGameManagementNGE(g, mem->indMovePawn, IND_CHANGE_ALLOWED, false);
 }
 
-void cancelLienEnnemitieDeter(Game *g, memory_move_t *mem)
+void cancelSelectedIssue(Game *g, memory_move_t *mem, int index)
 {
+    // On doit replacer le pion utilisé (index) à sa position dans le nuage, puis recrée le nuage avec les
+    // positions originales
+    bool iw = g->is_white;
+    int index_origin = 0; // C'est le premier pion dans la liste (pile), à l'indice 0 qui est déplacé
+    if (!cis_empty(mem->load_cloud_other))
+    {
 
-    cancelLienEnnemitie(g, mem->indMovePawn, mem->lig, mem->col);
-    freeMemMove(mem);
+        assertAndLog(index_origin != VOID_INDEX, "nuage présent mais pas de survivant");
+        Coord pos_survivor0 = mem->issues[index_origin].pos_survivor; // Position d'origine
+        Coord pos_survivor = mem->issues[index].pos_survivor;         // Position où il a été déplacé
+        // print_isssue(mem->issues, mem->lenghtIssues);
+        int pbaSurvivor = mem->issues[index_origin].pba;
+        int indNoPopPawn = ind_from_coord(g, pos_survivor);
+        assertAndLog(indNoPopPawn != VOID_INDEX, "Cancel selected Issue : Le pion non supprime est indice pas valide");
+        /* Pion initialement conservé dans le nuage */
+        change_pawn_place_coord(g, indNoPopPawn, !iw, pos_survivor0);
+
+        recreateCloud(g, mem->load_cloud_other, indNoPopPawn, pbaSurvivor, !iw);
+
+        // print_int_chain(g->cloud[!iw]);
+    }
 }

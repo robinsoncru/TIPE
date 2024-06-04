@@ -3,6 +3,6 @@
 
 #include "../aux_game_functions/aux_functions.h"
 
-void endTurnGameManagementSimple(Game *g, int pawn_played);
+bool endTurnGameManagementNGE(Game *g, int indMovedPawn, int indCheck, bool doMoveBack);
 void endTurnGameManagement(Game *g, bool is_white, int indMovedPawn, int indCheck, bool doMoveBack);
 #endif // GAME_MANAGEMENT

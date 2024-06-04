@@ -13,10 +13,8 @@
 // play functions
 
 void cancelMoveBack(Game *g, int ind, bool left);
-void moveBackNGE(Game *g, bool autoplay, bool use_heuristique, float (*f)(Game *));
-
-
-
+void moveBackNGE(Game *g, bool autoplay, bool use_heuristique, float (*f)(Game *), memory_move_t *mem);
+void cancelAllMoveBack(Game *g, memory_move_t *mem);
 
 void lazzyMoveBack(Game *g, int indMovePawnBack, bool left);
 void cancelLazzyMoveBack(Game *g, int indMovePawnBack, bool left);
@@ -64,5 +62,5 @@ void lienEnnemitie(int lig, int col, Game *g);
 void biDepl(Game *g, int ind, bool color);
 
 /* QUEEN DEPL */
-void queenDepl(Game *g, int ind, bool color, Coord pos_dame);
+data_chain *queenDepl(Game *g, int ind, bool color, Coord pos_dame, bool isNGE);
 #endif // GAME_FUNCTIONS

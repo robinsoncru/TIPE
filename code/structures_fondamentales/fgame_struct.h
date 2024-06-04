@@ -92,7 +92,7 @@ typedef enum moveType moveType;
 
 
 // Game pmetre
-#define NB_CASE_LG 20
+#define NB_CASE_LG 16
 #define NB_CASE (NB_CASE_LG * NB_CASE_LG)
 #define NB_PAWNS (NB_CASE_LG)
 #define MAX_NB_PAWNS (2 * NB_PAWNS)

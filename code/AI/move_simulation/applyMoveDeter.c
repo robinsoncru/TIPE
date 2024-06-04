@@ -12,11 +12,13 @@ void initTabIssue(Game *g, int what_kind_of_creation, memory_move_t *mem)
         mem->issues = malloc(mem->lenghtIssues * sizeof(issue_t));
 
         int_chain *l = g->cloud[color];
-        for (int i = 0; i < taille_list(l); i++)
+        int taille_l = taille_list(l); // En pratique, taille_list est recalculé à chaque fois dans la
+        // boucle for, d'où le fait de nommer cette variable
+        for (int i = 0; i < taille_l; i++)
         {
             int ind = get(l, i);
             float pba_inv = get_pawn_value(g, color, ind, PBA);
-            mem->issues[i].pba = 1.0 / pba_inv;
+            mem->issues[i].pba = pba_inv;
             mem->issues[i].pos_survivor = give_coord(g, color, ind);
         }
         break;
@@ -28,7 +30,7 @@ void initTabIssue(Game *g, int what_kind_of_creation, memory_move_t *mem)
         for (int i = 0; i < 3; i++)
         {
             mem->issues[i].choice_promotion = i + 2;
-            mem->issues[i].pba = 1.0 / 3.0;
+            mem->issues[i].pba = 3;
         }
 
         break;
@@ -41,7 +43,6 @@ void generateCloudDuePawnMove(Game *g, memory_move_t *mem)
     bool is_white = g->is_white;
     if (canStormBreaksForTheOthers(g, mem->indMovePawn, is_white))
     {
-        // AleatStormBreaksNGE(g, !is_white, l, survivor);
         initTabIssue(g, CREATE_CLOUD_TAB, mem);
     }
 }
@@ -52,28 +53,7 @@ void lightnightStrike(Game *g, memory_move_t *mem, int index)
     bool iw = g->is_white;
     if (!mem->is_deter)
     {
-        assertAndLog(false, "lighnight");
-        stormBreaksNGE(g, !iw, mem->load_cloud_other, mem->issues[index].pos_survivor);
-    }
-}
-
-void cancelSelectedIssue(Game *g, memory_move_t *mem)
-{
-    // On doit replacer le pion utilisé (index) à sa position dans le nuage, puis recrée le nuage avec les
-    // positions originales
-    bool iw = g->is_white;
-    int index_origin = mem->lenghtIssues - 1;
-    if (!cis_empty(mem->load_cloud_other))
-    {
-
-        assertAndLog(index_origin != VOID_INDEX, "nuage présent mais pas de survivant");
-        Coord pos_survivor = mem->issues[index_origin].pos_survivor;
-        int pbaSurvivor =  mem->issues[index_origin].pba;
-        int indNoPopPawn = ind_from_coord(g, pos_survivor.i, pos_survivor.j); 
-        /* Pion initialement conservé dans le nuage */
-        change_pawn_place_coord(g, index_origin, !iw, mem->issues[index_origin].pos_survivor);
-
-        recreateCloud(g, mem->load_cloud_other, indNoPopPawn, pbaSurvivor, !iw);
+        stormBreaksNGE(g, !iw, index, mem);
     }
 }
 
@@ -88,10 +68,7 @@ memory_move_t *pawnMoveDeter(Game *g, int indMovePawn, bool left, moveType type)
     memory_move_t *mem = initMemMove(indMovePawn, type);
     mem->left = left;
 
-    // generateCloudDuePawnMove(g, indMovePawn, mem->survivor, mem->load_cloud_other);
     generateCloudDuePawnMove(g, mem);
-
-    // endTurnGameManagementSimple(g, indMovePawn);
 
     return mem;
 }
@@ -113,27 +90,30 @@ void cancelPromotionDeter(Game *g, memory_move_t *mem)
 
 memory_move_t *moveBackDeter(Game *g, moveType type)
 {
-    // On suppose que le move back est faisable
-    moveBackNGE(g, true, false, zero_fun);
-    // la fonction ci dessus remet g->ind_move_back a VOID_INDEX
 
     memory_move_t *mem = initMemMove(VOID_INDEX, type);
-    // Desecrate
-    for (int i = 0; i < taille_list(g->inds_move_back); i++)
+    // On suppose que le move back est faisable
+    moveBackNGE(g, true, false, zero_fun, mem);
+    int tailleAmis = taille_list(g->inds_move_back);
+    for (int i = 0; i < tailleAmis; i++)
     {
         mem->indMovePawn = pop(g->inds_move_back);
         generateCloudDuePawnMove(g, mem);
-        if (mem->lenghtIssues > 0)
+        if (mem->lenghtIssues > 1)
         {
+            /* Si on a plus de deux issues, c'est qu'on est passé de 1 à pls >= 2 et donc qu'on a un éclatement
+            de nuage à gerer, car il y a forcément au moins plus de 2 pions fantomes */
             break; // Le nuage implose, il n'existe plus dès qu'un pion s'en approche trop
         }
     }
+
+    emptyIntChain(g->inds_move_back); // On supprime les amis g->inds_move_back qui est enregistré
+
     return mem;
 }
 
 memory_move_t *rafleDeter(Game *g, int indMovePawn, PathTree *rafleTree, Path *rafle, moveType type)
 {
-    assert(false);
     bool iw = g->is_white;
     memory_move_t *mem = initMemMove(indMovePawn, type);
     mem->init_coord = give_coord(g, iw, indMovePawn);
@@ -149,8 +129,59 @@ memory_move_t *queenDeplDeter(Game *g, int indMovePawn, Coord pos_dame, PathTree
     bool iw = g->is_white;
     memory_move_t *mem = initMemMove(indMovePawn, type);
     mem->init_coord = give_coord(g, iw, indMovePawn);
-    mem->chainy = queenDeplNGE(g, indMovePawn, iw, pos_dame);
+    mem->chainy = queenDepl(g, indMovePawn, iw, pos_dame, true);
 
-    generateCloudDuePawnMove(g, mem);
+    if (dis_empty(mem->chainy))
+    {
+        generateCloudDuePawnMove(g, mem);
+    }
     return mem;
+}
+
+void cancelPawnMoveDeter(Game *g, memory_move_t *mem)
+{
+    bool iw = g->is_white;
+
+    pawnMoveCancel(g, iw, mem->indMovePawn, mem->left);
+    freeMemMove(mem);
+}
+
+void cancelPawnMoveBackDeter(Game *g, memory_move_t *mem)
+{
+    cancelAllMoveBack(g, mem);
+    freeMemMove(mem);
+}
+
+void cancelBiDeplDeter(Game *g, memory_move_t *mem)
+{
+    cancelBidepl(g, mem->indMovePawn, mem->full_pawn_data);
+    freeMemMove(mem);
+}
+
+void cancelQueenDeplDeter(Game *g, memory_move_t *mem)
+{
+
+    cancelDeplQueen(g, mem->indMovePawn, mem->chainy, mem->init_coord);
+    freeMemMove(mem);
+}
+
+void cancelRafleDeter(Game *g, memory_move_t *mem)
+{
+
+    cancelRafle(g, mem->indMovePawn, mem->init_coord, mem->chainy);
+    freeMemMove(mem);
+}
+
+void cancelLienAmitieDeter(Game *g, memory_move_t *mem)
+{
+
+    cancelLienAmitie(g, mem->indMovePawn, mem->lig, mem->col);
+    freeMemMove(mem);
+}
+
+void cancelLienEnnemitieDeter(Game *g, memory_move_t *mem)
+{
+
+    cancelLienEnnemitie(g, mem->indMovePawn, mem->lig, mem->col);
+    freeMemMove(mem);
 }

@@ -93,12 +93,12 @@ int extract_pmetre_from_move(Move m)
     }
 }
 
-int play_a_move(int move, int ind_pawn, Game *g, GraphicCache *cache, int nb_coups, int *l_coups, int *l_depl)
+int play_a_move(int move, int ind_pawn, Game *g, GraphicCache *cache, int nb_coups, int *l_coups, int *l_depl, bool isNGE)
 {
     // Play a move supposed valid
     // assertAndLog(move == VOID_INDEX, "move decide dans play_a_move");
 
-    usleep(1000 * 500);
+    usleep(1000 * 100);
 
     auto_put_index(g, ind_pawn);
 
@@ -108,76 +108,118 @@ int play_a_move(int move, int ind_pawn, Game *g, GraphicCache *cache, int nb_cou
     // move = extract_pmetre_from_move(m);
     // printf("choisi :\n");
     // print_move(m);
-
     int indFriend;
     Coord coord, coordi;
-    switch (move)
+    if (!isNGE)
     {
-    case PAWNMOVELEFT:
-        checkPawnMove(g, cache, true, true);
-        break;
+        switch (move)
+        {
+        case PAWNMOVELEFT:
+            checkPawnMove(g, cache, true, true);
 
-    case PAWNMOVERIGHT:
-        checkPawnMove(g, cache, false, true);
-        break;
+            break;
 
-    case PROMOTION:
-        onPUP(g, cache, true);
-        break;
+        case PAWNMOVERIGHT:
+            checkPawnMove(g, cache, false, true);
+            break;
 
-    case BIDEPL:
-        onBUP(g, cache, true);
-        break;
+        case PROMOTION:
+            onPUP(g, cache, true);
+            print_state_game(g, PBA);
+            break;
 
-    case LIENAMITIE:
-        // int indFriend = plannifier_index_color(nb_coups, l_depl, !g->is_white);
+        case BIDEPL:
+            onBUP(g, cache, true);
+            break;
+
+        case LIENAMITIE:
+            // indFriend = plannifier_index_color(nb_coups, l_depl, !g->is_white);
+            // indFriend = random_index_color(g, !g->is_white);
+            // coord = coord_from_ind(g, indFriend, !g->is_white);
+            // checkLienAmitie(coord.i, coord.j, g, cache, false);
+            // checkLienAmitie(m.lig, m.col, g, cache, false);
+            break;
+
+        case LIENDENNEMITIE:
+            // // indFriend = plannifier_index_color(2 * nb_coups + 1, l_coups, !g->is_white);
+            indFriend = random_index_color(g, !g->is_white);
+            // printf("-Index enn %d-", get_pawn_value(g, !g->is_white, indFriend, ENNEMY));
+            // flush();
+            Coord coord = coord_from_ind(g, indFriend, !g->is_white);
+            checkLienEnnemitie(coord.i, coord.j, g, cache, false);
+            // // checkLienEnnemitie(m.lig, m.col, g, cache, false);
+
+            break;
+
+        case EATRAFLE:
+            onUpUp(g, cache);
+            break;
+
+        case QUEENDEPL:
+            coordi = queen_valide_case(g, g->ind_move, g->is_white);
+            // Coord coordi;
+
+            // coordi.i = l_depl[2 * nb_coups];
+            // coordi.j = l_depl[2 * nb_coups + 1];
+            // printf(" -> lig: %d, col %d", coordi.i, coordi.j);
+            checkQueenDepl(g, cache, g->is_white, coordi.i, coordi.j, true);
+
+            // checkQueenDepl(g, cache, g->is_white, m.coords.pos_dame.i, m.coords.pos_dame.j, true);
+            break;
+
+        case PAWNMOVEBACK:
+            moveBack(g, true, false, zero_fun);
+            break;
+
+        default:
+            assertAndLog(true, "No play choice");
+            break;
+        }
+
+        // // Petit compteur pour gerer la vitesse d'execution
+        // int timer = 0;
+        // while (timer < 100*MAX_TICKS) {
+        //     printf(" ");
+        //     timer++;
+        // }
+    }
+    else
+    {
+        // MoveTab *coups = listMoves(g);
+        memory_move_t *mem;
+        // for (int i = 0; i < coups->size; i++)
+        // {
+        Move m;
+        m.left = false;
+        printv("ind select");
+        m.manipulatedPawn = random_index(g);
+        auto_put_index(g, m.manipulatedPawn);
+        m.rafle = NULL;
+        m.rafleTree = NULL;
+        printv("ind friend");
         indFriend = random_index_color(g, !g->is_white);
-        coord = coord_from_ind(g, indFriend, !g->is_white);
-        checkLienAmitie(coord.i, coord.j, g, cache, false);
-        // checkLienAmitie(m.lig, m.col, g, cache, false);
-        break;
+        Coord cmanpawn = coord_from_ind(g, indFriend, !g->is_white);
 
-    case LIENDENNEMITIE:
-        // // int indFriend = plannifier_index_color(2 * nb_coups + 1, l_coups, !g->is_white);
-        // int indFriend = random_index_color(g, !g->is_white);
-        // // printf("-Index enn %d-", get_pawn_value(g, !g->is_white, indFriend, ENNEMY));
-        // // flush();
-        // Coord coord = coord_from_ind(g, indFriend, !g->is_white);
-        // checkLienEnnemitie(coord.i, coord.j, g, cache, false);
-        // // checkLienEnnemitie(m.lig, m.col, g, cache, false);
+        m.col = cmanpawn.j;
+        m.lig = cmanpawn.i;
 
-        break;
+    
+            m.type = promotionType;
+            mem = applyDeter(g, m); // Tester un eclatement de nuage
+            // picture_this(g);
+            for (int j = 0; j < mem->lenghtIssues; j++)
+            {
+                applyIssue(g, mem, j);
+                print_state_game(g, QUEEN);
+                usleep(1000 * 100);
+                applyRecipIssue(g, mem, j);
+                // print_state_game(g, PBA);
+            }
+            applyRecipDeter(g, mem);
+        
 
-    case EATRAFLE:
-        onUpUp(g, cache);
-        break;
-
-    case QUEENDEPL:
-        coordi = queen_valide_case(g, g->ind_move, g->is_white);
-        // Coord coordi;
-
-        // coordi.i = l_depl[2 * nb_coups];
-        // coordi.j = l_depl[2 * nb_coups + 1];
-        // printf(" -> lig: %d, col %d", coordi.i, coordi.j);
-        checkQueenDepl(g, cache, g->is_white, coordi.i, coordi.j, true);
-
-        // checkQueenDepl(g, cache, g->is_white, m.coords.pos_dame.i, m.coords.pos_dame.j, true);
-        break;
-
-    case PAWNMOVEBACK:
-        moveBack(g, true, false, zero_fun);
-        break;
-
-    default:
-        assertAndLog(true, "No play choice");
-        break;
+        endTurnGameManagement(g, g->is_white, m.manipulatedPawn, IND_CHANGE_ALLOWED, false); // Parce que ce sont des NGE
     }
 
-    // // Petit compteur pour gerer la vitesse d'execution
-    // int timer = 0;
-    // while (timer < 100*MAX_TICKS) {
-    //     printf(" ");
-    //     timer++;
-    // }
     return nb_coups + 1;
 }

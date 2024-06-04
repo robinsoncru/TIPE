@@ -11,13 +11,10 @@ typedef struct {
     int pba;
 } tcloud;
 
-typedef struct cloud_chain cloud_chain;
-
-struct cloud_chain {
+typedef struct cloud_chain {
     tcloud data;
-    cloud_chain *next;
-};
-
+    struct cloud_chain *next;
+} cloud_chain;
 
 typedef struct {
     primary_data_t relationship;

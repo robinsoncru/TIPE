@@ -14,7 +14,10 @@ int pop(int_chain *l);
 int get(int_chain *l, int i);
 /* Renvoie le i-eme maillon */
 
-void pushi(int_chain *l, int i, int valeur);
+void seti(int_chain *l, int i, int valeur);
+
+void popi(int_chain *l, int ind);
+
 
 int taille_list(int_chain *l);
 
@@ -64,6 +67,7 @@ k_uplet popK(Kint_chain *l);
 
 Kint_chain *create_listK();
 void freeIntChain(int_chain *l);
+void emptyIntChain(int_chain *l);
 bool alreadyInList(int_chain *l, int ind);
 
 // Coord tab, permet de stocker les positions au lieu des indices, les positions

@@ -10,7 +10,7 @@ int quit(Game *g, GraphicCache *cache)
     return cache->statut;
 }
 
-void test_start_game(Game *g)
+void test_start_game(Game *g, GraphicCache *cache)
 {
     // très pratique pour promouvoir une dame en qq coups
 
@@ -20,29 +20,37 @@ void test_start_game(Game *g)
     {
         // promote(g, true, i);
         // promote(g, false, i);
-        change_pawn_place(g, i, false, get_pawn_value(g, false, i, LIG) - 5, get_pawn_value(g, false, i, COL) + 2*i+1);
+        // change_pawn_place(g, i, false, get_pawn_value(g, false, i, LIG) - 5, get_pawn_value(g, false, i, COL) + 2*i+1);
 
-        lienAmitiePmetreNGE(c1.i, c1.j, i, false, g);
-        promote(g, false, i);
+        // lienAmitieNGE(c1.i, c1.j, i, false, g);
+        // promote(g, false, i);
     }
     for (int i = NB_PAWNS - 1; i > 3; i--)
     {
-        killPawnByInd(g, true, i);
-        killPawnByInd(g, false, i);
-        
+        // killPawnByInd(g, true, i);
+        // killPawnByInd(g, false, i);
     }
 
-    killPawnByInd(g, true, 3);
-
-    for (int i = 2; i > 0; i--)
+    for (int i = 0; i <= 3; i++)
     {
-        change_pawn_place(g, i, true, 4, get_pawn_value(g, true, i, COL) + 2*i + 2);
-        biDepl(g, i, true);
+        // change_pawn_place(g, i, false, get_pawn_value(g, false, i, LIG) - 5, get_pawn_value(g, false, i, COL) + 2 * i + 1);
+        // change_pawn_place(g, i, true, get_pawn_value(g, true, i, LIG) + 7, get_pawn_value(g, true, i, COL) + 2 * i + 1);
     }
 
-    change_pawn_place(g, 0, true, get_pawn_value(g, true, 0, LIG) + 1, NB_CASE_LG - 5);
-    promote(g, true, 0);
-    // change_pawn_place(g, 0, false, get_pawn_value(g, false, 0, LIG) - 1, NB_CASE_LG-3);
+    // killPawnByInd(g, true, 3);
+
+    for (int i = 3; i > 0; i--)
+    {
+        // change_pawn_place(g, i, true, 11, get_pawn_value(g, true, i, COL));
+        // g->ind_move = i;
+        // // killPawnByInd(g, true, i);
+        // checkBiDepl(g, cache, true);
+        // g->is_white = true;
+    }
+
+    // change_pawn_place(g, 0, true, get_pawn_value(g, true, 0, LIG) + 1, NB_CASE_LG - 5);
+    // promote(g, true, 0);
+    // // change_pawn_place(g, 0, false, get_pawn_value(g, false, 0, LIG) - 1, NB_CASE_LG-3);
 
     // change_pawn_place(g, 1, true, get_pawn_value(g, true, 1, LIG) + 1, NB_CASE_LG-3);
     // change_pawn_place(g, 1, false, get_pawn_value(g, false, 1, LIG) - 1, NB_CASE_LG-3);
@@ -104,9 +112,9 @@ void test_start_game(Game *g)
     // fin de config
 
     // print_pawns(g, true);
-    print_pawns(g, false);
+    // print_pawns(g, false);
     // print_liensAmitie(g);
-    // print_state_game(g, QUEEN);
+    print_state_game(g, FRIENDLY);
 }
 
 int main(int argc, char *argv[])
@@ -119,10 +127,9 @@ int main(int argc, char *argv[])
     //                       {RIGHT_FORWARD, RIGHT_BACK},
     //                       {RIGHT_BACK, RIGHT_FORWARD}};
 
-    test_start_game(g);
-
     // init the graphic cache
     GraphicCache *cache = initCache();
+    test_start_game(g, cache);
 
     // end debug
 
@@ -155,7 +162,7 @@ int main(int argc, char *argv[])
             SDL_RenderPresent(cache->draw);
 
             // update the data in the cache
-            nb_coups = update(g, cache, nb_coups, l_coups, l_depl);
+            nb_coups = update(g, cache, nb_coups, l_coups, l_depl, true);
         }
     }
     return quit(g, cache);
