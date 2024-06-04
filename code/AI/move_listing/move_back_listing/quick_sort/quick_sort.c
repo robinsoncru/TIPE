@@ -1,4 +1,5 @@
 #include "quick_sort.h"
+#include <stdio.h>
 
 void exchange(backwardMoveTab_t* t, int i, int j){
     backwardMove_t tmp = t->tab[i];
@@ -43,20 +44,25 @@ void triDrapeauNeerlandais(Game* g, backwardMoveTab_t* t, int pivot, int deb, in
     // V    V   V     V   V
     //[ -1 | 0 | ??? | 1 ]
 
-    int i = deb, k = fin;
+    int i = deb, j = deb, k = fin;
     backwardMove_t valPivot = t->tab[pivot];
 
-    for (int j = deb; j < k; j++) {
+    while (j < k) {
         switch (compare(g, valPivot, t->tab[j])) {
-            case -1:
-                exchange(t, i, j);
-                i++;
-                break;
-            
-            case 1:
-                exchange(t, k - 1, j);
-                k--;
-                break;
+        case -1:
+            exchange(t, i, j);
+            i++;
+            j++;
+            break;
+        
+        case 1:
+            exchange(t, k - 1, j);
+            k--;
+            break;
+
+        default:
+            j++;
+            break;
         }
     }
 
