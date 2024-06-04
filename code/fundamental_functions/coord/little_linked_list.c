@@ -58,7 +58,8 @@ void seti(int_chain *l, int i, int valeur)
     l->tableau[i] = valeur;
 }
 
-void emptyIntChain(int_chain *l) {
+void emptyIntChain(int_chain *l)
+{
     while (!is_empty(l))
     {
         pop(l);
@@ -107,7 +108,7 @@ void popi(int_chain *l, int ind)
     // Supprime un ind de la liste chainé et le renvoie, et diminue en conséquence sa taille
     assert(l->ind_actu < l->size_max);
     bool find = false;
-    
+
     if (get(l, l->ind_actu) == ind)
     { // Si c'est le dernier elm
 
@@ -250,6 +251,8 @@ coord_tab_t *create_coord_tab(int size)
 
 bool ValidCoordTabIndex(coord_tab_t *t, int i)
 {
+
+    assertAndLog(t != NULL, "validcoordtabindex : null");
     return t->tab != NULL && t->sizetab > 0 && 0 <= i && i <= t->sizetab;
 }
 
@@ -270,8 +273,11 @@ void ctset(coord_tab_t *t, int ind, int i, int j)
 
 void ctfree(coord_tab_t *t)
 {
-    free(t->tab);
-    free(t);
+    if (t != NULL)
+    {
+        free(t->tab);
+        free(t);
+    }
 }
 
 Coord ctpop(coord_tab_t *t)
@@ -284,12 +290,14 @@ Coord ctpop(coord_tab_t *t)
 
 void ctpush(coord_tab_t *t, int i, int j)
 {
+    assertAndLog(t != NULL, "cpush : null");
     t->index_actu++;
     ctset(t, t->index_actu, i, j);
 }
 
 bool ctis_empty(coord_tab_t *t)
 {
+    assertAndLog(t != NULL, "ctis_empty : null");
     return t->index_actu == -1;
 }
 

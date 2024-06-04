@@ -23,4 +23,5 @@ coord_tab_t *friendTabToCoordTab(Game *g, int ind, bool color);
 bool has_friend(Game *g, int ind, int color);
 float zero_fun(Game *g);
 Coord to_coord(int i, int j);
+Coord coord_init();
 #endif

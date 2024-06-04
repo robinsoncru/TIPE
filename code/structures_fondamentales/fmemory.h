@@ -23,11 +23,10 @@ struct memory_move_t
     int survivor_pba;              /* On ne garde que la proba du survivor qu'on enregistre lors de l'eclatement du
                  nuage */
     Coord pos_potential_foe_from_prom;
-    ind_bool_t full_pawn_data;
-    Coord init_coord;
+    coord_bool_t ghost_pawn_created_bidepl;
+    Coord init_coord_dame_rafle; // Enregistre la position d'origine lors d'une rafle ou d'une dame déplacé
     data_chain *chainy;
     int indMovePawn;
-    bool colorIndPawn;
     bool left;
     int lig;
     int col;
@@ -39,6 +38,8 @@ struct memory_move_t
     // utilisé pour une promotion d'un pion devenu de la couleur opposé juste après une promotion
     int_chain *move_back_left_or_right; 
     bool prom_need_break_cloud;
+    bool is_white; // Couleur du jeu durant le tour
+    Coord coordMovePawn; // On enregistre les coordonnées du pion plutot que son indice qui change
     /* Enregistre les déplacements gauche ou droite des pions qui reculent, à opti avec une bool_chain */
 };
 

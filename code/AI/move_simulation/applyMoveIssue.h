@@ -9,7 +9,7 @@ void pawnMoveBackIssue(Game *g, memory_move_t *mem, int index);
 void rafleIssue(Game *g, memory_move_t *mem, int index);
 void queenDeplIssue(Game *g, memory_move_t *mem, int index);
 
-void biDeplIssue(Game *g, int indMovePawn, memory_move_t *mem);
+void biDeplIssue(Game *g, int index, memory_move_t *mem);
 void lienAmitieIssue(Game *g, int indPawn, int lig, int col, memory_move_t *mem);
 void lienEnnemitieIssue(Game *g, int indPawn, int lig, int col, memory_move_t *mem);
 

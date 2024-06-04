@@ -14,49 +14,71 @@ void test_start_game(Game *g, GraphicCache *cache)
 {
     // très pratique pour promouvoir une dame en qq coups
 
-    Coord c1 = coord_from_ind(g, 0, true);
-    // Coord c2 = coord_from_ind(g, 1, true);
-    for (int i = 0; i < 4; i++)
-    {
-        // promote(g, true, i);
-        // promote(g, false, i);
-        // change_pawn_place(g, i, false, get_pawn_value(g, false, i, LIG) - 5, get_pawn_value(g, false, i, COL) + 2*i+1);
+    // Coord c1 = coord_from_ind(g, 0, true);
+    // // Coord c2 = coord_from_ind(g, 1, true);
+    // for (int i = 0; i < 4; i++)
+    // {
+    //     // promote(g, true, i);
+    //     // promote(g, false, i);
+    //     // change_pawn_place(g, i, false, get_pawn_value(g, false, i, LIG) - 5, get_pawn_value(g, false, i, COL) + 2*i+1);
 
-        // lienAmitieNGE(c1.i, c1.j, i, false, g);
-        // promote(g, false, i);
-    }
-    for (int i = NB_PAWNS - 1; i > 3; i--)
-    {
-        killPawnByInd(g, true, i);
-        killPawnByInd(g, false, i);
-    }
-    // change_pawn_place(g, 0, false, 1, 3);
-    // change_pawn_place(g, 0, true, NB_CASE_LG-3, 3);
+    //     // lienAmitieNGE(c1.i, c1.j, i, false, g);
+    //     // promote(g, false, i);
+    // }
+    // for (int i = NB_PAWNS - 1; i > 3; i--)
+    // {
+    //     killPawnByInd(g, true, i);
+    //     killPawnByInd(g, false, i);
+    // }
+    // // change_pawn_place(g, 0, false, 1, 3);
+    // // change_pawn_place(g, 0, true, NB_CASE_LG-3, 3);
 
-    for (int i = 0; i <= 3; i++)
-    {
-        // change_pawn_place(g, i, false, get_pawn_value(g, false, i, LIG) - 4, get_pawn_value(g, false, i, COL) + 2 * i + 2);
-        change_pawn_place(g, i, true, get_pawn_value(g, true, i, LIG) + 7, get_pawn_value(g, true, i, COL) + 2 * i + 1);
-    }
-    // killPawnByInd(g, true, 3);
+    // for (int i = 0; i <= 3; i++)
+    // {
+    //     // change_pawn_place(g, i, false, get_pawn_value(g, false, i, LIG) - 4, get_pawn_value(g, false, i, COL) + 2 * i + 2);
+    //     change_pawn_place(g, i, true, get_pawn_value(g, true, i, LIG) + 11, get_pawn_value(g, true, i, COL) + 2 * i + 1);
+    // }
+    // // killPawnByInd(g, true, 3);
 
-    for (int i = 3; i > 0; i--)
-    {
-        change_pawn_place(g, i, true, 11, get_pawn_value(g, true, i, COL));
-        g->ind_move = i;
-        // // killPawnByInd(g, true, i);
-        checkBiDepl(g, cache, true);
-        g->is_white = true;
-    }
+    // for (int i = 3; i > 0; i--)
+    // {
+    //     change_pawn_place(g, i, true, 12, get_pawn_value(g, true, i, COL)-1);
+    //     g->ind_move = i;
+    //     // // killPawnByInd(g, true, i);
+    //     checkBiDepl(g, cache, true);
+    //     g->is_white = true;
+    // }
 
 
-    change_pawn_place(g, 0, true, get_pawn_value(g, true, 0, LIG) + 2, NB_CASE_LG - 7);
+    // change_pawn_place(g, 0, true, get_pawn_value(g, true, 0, LIG), NB_CASE_LG - 7);
     // change_pawn_place(g, 0, false, get_pawn_value(g, false, 0, LIG) - 1, NB_CASE_LG-3);
 
     // change_pawn_place(g, 1, true, get_pawn_value(g, true, 1, LIG) + 1, NB_CASE_LG-3);
     // change_pawn_place(g, 1, false, get_pawn_value(g, false, 1, LIG) - 1, NB_CASE_LG-3);
 
 
+    // Config photo diapo
+    int endBlanc =4;
+    int endNoir=NB_PAWNS;
+    for (int i = NB_PAWNS - 1; i >= endBlanc; i--)
+    {
+        killPawnByInd(g, true, i);
+    }
+
+    for (int i = NB_PAWNS - 1; i >= endNoir; i--) {
+        killPawnByInd(g, false, i);
+    }
+
+    // change_pawn_place(g, 0, true, 3, 1);
+    // change_pawn_place(g, 1, true, 2, 2);
+    // change_pawn_place(g, 2, true, 1, 5);
+
+    // change_pawn_place(g, 0, false, 5, 5);
+    // change_pawn_place(g, 1, false, 4, 6);
+    // change_pawn_place(g, 2, false, 5, 7);
+    // change_pawn_place(g, 3, false, 3, 5);
+    // change_pawn_place(g, 4, false, 4, 4);
+    // fin config
 
     // configuration en lignes noires
     // pour tester les rafles
@@ -104,27 +126,23 @@ void test_start_game(Game *g, GraphicCache *cache)
     // change_pawn_place(g, 7, false, 5, 7);
     // fin de config
 
-    // Config photo diapo
-    // int endBlanc =3;
-    // int endNoir=3;
-    // for (int i = NB_PAWNS - 1; i >= endBlanc; i--)
-    // {
-    //     killPawnByInd(g, true, i);
-    // }
+    // config multirafle damier 16
 
-    // for (int i = NB_PAWNS - 1; i >= endNoir; i--) {
-    //     killPawnByInd(g, false, i);
-    // }
+    change_pawn_place(g, 0, true, 2, 0);
+    change_pawn_place(g, 1, true, 2, 2);
+    change_pawn_place(g, 2, true, 2, 4);
+    change_pawn_place(g, 3, true, 2, 6);
 
-    // change_pawn_place(g, 0, true, 3, 1);
-    // change_pawn_place(g, 1, true, 2, 2);
-    // change_pawn_place(g, 2, true, 1, 5);
+    change_pawn_place(g, 0, false, 3, 1);
+    change_pawn_place(g, 1, false, 3, 3);
+    change_pawn_place(g, 2, false, 3, 5);
+    change_pawn_place(g, 3, false, 3, 7);
+    change_pawn_place(g, 4, false, 5, 1);
+    change_pawn_place(g, 5, false, 5, 3);
+    change_pawn_place(g, 6, false, 5, 5);
+    change_pawn_place(g, 7, false, 5, 7);
+    // fin config
 
-    // change_pawn_place(g, 0, false, 5, 5);
-    // change_pawn_place(g, 1, false, 4, 6);
-    // change_pawn_place(g, 2, false, 5, 7);
-    // change_pawn_place(g, 3, false, 3, 5);
-    // change_pawn_place(g, 4, false, 4, 4);
 
     // print_pawns(g, true);
     // print_pawns(g, false);

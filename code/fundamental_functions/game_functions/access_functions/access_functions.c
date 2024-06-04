@@ -197,3 +197,8 @@ Coord to_coord(int i, int j) {
     Coord c = {.i = i, .j=j};
     return c;
 }
+
+Coord coord_init() {
+    Coord c = {.i=-1, .j=-1};
+    return c;
+}

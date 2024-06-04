@@ -21,7 +21,7 @@ GraphicCache *initCache()
     int seed = time(NULL);
     printf("Seed %d\n", seed);
     srand(seed);
-    // srand(1717241690);
+    // srand(1717516482);
 
     // init cache
     GraphicCache *cache = malloc(sizeof(GraphicCache));

@@ -23,7 +23,7 @@
 void cancelAllMoveBack(Game *g, memory_move_t *mem)
 {
     assertAndLog(mem->friends_which_move_back != NULL && !is_empty(mem->move_back_left_or_right), "cancelAllMoveBack : structures vides");
-    bool iw = g->is_white;
+    bool iw = mem->is_white;
     int ind = -1;
     int taille = taille_list(mem->move_back_left_or_right);
     for (int i = taille - 1; i > -1; i--) // C'est important pour sortir de la pile
@@ -483,8 +483,8 @@ void lienEnnemitie(int lig, int col, Game *g)
 
 void biDepl(Game *g, int ind, bool color)
 {
-    ind_bool_t data = biDeplNGE(g, color, ind);
-    int newInd = data.ind;
+    coord_bool_t data = biDeplNGE(g, color, ind);
+    int newInd = ind_from_coord(g, data.c);
     // Maybe the clone pawn is near a pawn of the opposite color
     if (canStormBreaks(g, newInd, color))
         AleatStormBreaks(g, color);

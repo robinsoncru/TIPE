@@ -4,7 +4,8 @@ void pawnMoveIssue(Game *g, memory_move_t *mem, int index)
 {
     // Seule issues possibles différentes: le nuage
     lightnightStrike(g, mem, index);
-    mem->had_become_a_queen = endTurnGameManagementNGE(g, mem->indMovePawn, IND_CHANGE_ALLOWED, false);
+    int ind = ind_from_coord(g, mem->coordMovePawn);
+    mem->had_become_a_queen = endTurnGameManagementNGE(g, ind, IND_CHANGE_ALLOWED, false);
 }
 
 void promotionIssue(Game *g, memory_move_t *mem, int index)
@@ -14,7 +15,9 @@ void promotionIssue(Game *g, memory_move_t *mem, int index)
         mem->pos_potential_foe_from_prom = promotionNGE(g, index);
     }
     Coord pos = mem->pos_potential_foe_from_prom;
-    bool iw = g->is_white;
+    int ind = ind_from_coord(g, mem->coordMovePawn);
+
+    bool iw = mem->is_white;
     if (pos.i != -1)
     {
         assert(pos.j != -1);
@@ -36,12 +39,12 @@ void promotionIssue(Game *g, memory_move_t *mem, int index)
     {
         if (pos.j == IND_GLORY_QUEEN)
         {
-            mem->had_become_a_queen = endTurnGameManagementNGE(g, mem->indMovePawn, IND_GLORY_QUEEN, false);
+            mem->had_become_a_queen = endTurnGameManagementNGE(g, ind, IND_GLORY_QUEEN, false);
         }
         else
         {
             assert(pos.j == IND_NOTHING_HAPPENED);
-            mem->had_become_a_queen = endTurnGameManagementNGE(g, mem->indMovePawn, IND_NOTHING_HAPPENED, false);
+            mem->had_become_a_queen = endTurnGameManagementNGE(g, ind, IND_NOTHING_HAPPENED, false);
         }
     }
 }
@@ -49,52 +52,66 @@ void promotionIssue(Game *g, memory_move_t *mem, int index)
 void pawnMoveBackIssue(Game *g, memory_move_t *mem, int index)
 {
     lightnightStrike(g, mem, index);
-    endTurnGameManagementNGE(g, mem->indMovePawn, IND_CHANGE_ALLOWED, true);
+    int ind = ind_from_coord(g, mem->coordMovePawn);
+
+    endTurnGameManagementNGE(g, ind, IND_CHANGE_ALLOWED, true);
 }
 
-void biDeplIssue(Game *g, int indMovePawn, memory_move_t *mem)
+void biDeplIssue(Game *g, int index, memory_move_t *mem)
 {
-    mem->full_pawn_data = biDeplNGE(g, g->is_white, indMovePawn);
-    assert(false);
+    lightnightStrikeColor(g, mem, index, mem->is_white);
+    int ind;
+    if (!mem->is_deter)
+    {
+        ind = ind_from_coord(g, mem->issues[index].pos_survivor);
+    }
+    else
+    {
+        ind = ind_from_coord(g, mem->coordMovePawn);
+    } // rien dans nuage
 
-    endTurnGameManagementNGE(g, mem->indMovePawn, IND_CHANGE_ALLOWED, false);
+    endTurnGameManagementNGE(g, ind, IND_CHANGE_ALLOWED, false);
 }
 
 void queenDeplIssue(Game *g, memory_move_t *mem, int index)
 {
     lightnightStrike(g, mem, index);
+    int ind = ind_from_coord(g, mem->coordMovePawn);
 
-    endTurnGameManagementNGE(g, mem->indMovePawn, IND_CHANGE_ALLOWED, false);
+    endTurnGameManagementNGE(g, ind, IND_CHANGE_ALLOWED, false);
 }
 
 void rafleIssue(Game *g, memory_move_t *mem, int index)
 {
 
     lightnightStrike(g, mem, index);
+    int ind = ind_from_coord(g, mem->coordMovePawn);
 
-    mem->had_become_a_queen = endTurnGameManagementNGE(g, mem->indMovePawn, IND_CHANGE_ALLOWED, false);
+    mem->had_become_a_queen = endTurnGameManagementNGE(g, ind, IND_CHANGE_ALLOWED, false);
 }
 
 void lienAmitieIssue(Game *g, int indPawn, int lig, int col, memory_move_t *mem)
 {
-    lienAmitieNGE(lig, col, indPawn, g->is_white, g);
-    endTurnGameManagementNGE(g, mem->indMovePawn, IND_CHANGE_ALLOWED, false);
+    int ind = ind_from_coord(g, mem->coordMovePawn);
+
+    lienAmitieNGE(lig, col, indPawn, mem->is_white, g);
+    endTurnGameManagementNGE(g, ind, IND_CHANGE_ALLOWED, false);
 }
 
 void lienEnnemitieIssue(Game *g, int indPawn, int lig, int col, memory_move_t *mem)
 {
-    assertAndLog(isPawnValid(g) && canBeEnnemy(g, indPawn, g->is_white, get_case_damier(g, lig, col)),
-                 "lienEnnemitieIssue : peut pas etre ennemi");
-    lienEnnemitieNGE(g->is_white, lig, col, indPawn, g);
-    endTurnGameManagementNGE(g, mem->indMovePawn, IND_CHANGE_ALLOWED, false);
+    int ind = ind_from_coord(g, mem->coordMovePawn);
+
+    lienEnnemitieNGE(mem->is_white, lig, col, indPawn, g);
+    endTurnGameManagementNGE(g, ind, IND_CHANGE_ALLOWED, false);
 }
 
 void cancelSelectedIssue(Game *g, memory_move_t *mem, int index)
 {
     // On doit replacer le pion utilisé (index) à sa position dans le nuage, puis recrée le nuage avec les
     // positions originales
-    bool iw = g->is_white;
-    if (mem->prom_need_break_cloud)
+    bool iw = mem->is_white;
+    if (mem->prom_need_break_cloud || mem->type == biDeplType) // C'est le nuage de la couleur actuelle qui doit éclater
     {
         iw = !iw;
     }

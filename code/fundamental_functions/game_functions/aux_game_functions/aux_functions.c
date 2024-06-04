@@ -120,7 +120,7 @@ void killPawn(Game *g, int i, int j)
 {
     // printf("i, j = %d, %d\n", i, j);
     // DO NOT remove a pawn from the cloud
-    assert(inGame(i, j));
+    assertAndLog(inGame(i, j), "kill pawn pion hors jeu");
 
     Case c = get_case_damier(g, i, j);
     if (!freeCase(c))
@@ -417,9 +417,9 @@ void free_game(Game *g)
 
 Coord give_coord(Game *g, bool iw, int ind)
 {
-    Coord init_coord = {.i = get_pawn_value(g, iw, ind, LIG),
+    Coord init_coord_dame_rafle = {.i = get_pawn_value(g, iw, ind, LIG),
                         .j = get_pawn_value(g, iw, ind, COL)};
-    return init_coord;
+    return init_coord_dame_rafle;
 }
 
 void doubleTabInit(int t[2])

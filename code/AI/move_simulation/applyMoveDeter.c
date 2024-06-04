@@ -58,7 +58,7 @@ void initTabIssueColor(Game *g, int what_kind_of_creation, memory_move_t *mem, b
         }
         for (int i = 2; i < mem->lenghtIssues; i++)
         {
-            int ind = get(l, i-2);
+            int ind = get(l, i - 2);
             int pba_inv = get_pawn_value(g, color, ind, PBA);
             mem->issues[i].pba = pba_inv;
             mem->issues[i].pos_survivor = give_coord(g, color, ind);
@@ -127,13 +127,6 @@ memory_move_t *promotionDeter(Game *g, int indPawn, moveType type)
     return mem;
 }
 
-void cancelPromotionDeter(Game *g, memory_move_t *mem)
-{
-    cancelPromotion(g, mem->indMovePawn, mem->pos_potential_foe_from_prom);
-
-    freeMemMove(mem);
-}
-
 memory_move_t *moveBackDeter(Game *g, moveType type)
 {
 
@@ -162,7 +155,7 @@ memory_move_t *rafleDeter(Game *g, int indMovePawn, PathTree *rafleTree, Path *r
 {
     bool iw = g->is_white;
     memory_move_t *mem = initMemMove(indMovePawn, type);
-    mem->init_coord = give_coord(g, iw, indMovePawn);
+    mem->init_coord_dame_rafle = give_coord(g, iw, indMovePawn);
     mem->chainy = rafleNGE(g, indMovePawn);
 
     generateCloudDuePawnMove(g, mem);
@@ -174,7 +167,7 @@ memory_move_t *queenDeplDeter(Game *g, int indMovePawn, Coord pos_dame, PathTree
 {
     bool iw = g->is_white;
     memory_move_t *mem = initMemMove(indMovePawn, type);
-    mem->init_coord = give_coord(g, iw, indMovePawn);
+    mem->init_coord_dame_rafle = give_coord(g, iw, indMovePawn);
     mem->chainy = queenDepl(g, indMovePawn, iw, pos_dame, true);
 
     if (dis_empty(mem->chainy))
@@ -184,11 +177,36 @@ memory_move_t *queenDeplDeter(Game *g, int indMovePawn, Coord pos_dame, PathTree
     return mem;
 }
 
+memory_move_t *biDeplDeter(Game *g, int indMovePawn, moveType type)
+{
+    memory_move_t *mem = initMemMove(indMovePawn, type);
+
+    assertAndLog(canBiDepl(g, indMovePawn, g->is_white), "biDeplDeter : on ne peut pas BiDepl");
+    mem->ghost_pawn_created_bidepl = biDeplNGE(g, g->is_white, indMovePawn);
+
+    // Le pion en avançant peut tuer le nuage
+    if (canStormBreaks(g, indMovePawn, g->is_white)) {
+        initTabIssueColor(g, CREATE_CLOUD_TAB, mem, g->is_white);
+    }
+    return mem;
+}
+
+
+
+void cancelPromotionDeter(Game *g, memory_move_t *mem)
+{
+    int ind = ind_from_coord(g, mem->coordMovePawn);
+    cancelPromotion(g, ind, mem->pos_potential_foe_from_prom, mem->is_white);
+
+    freeMemMove(mem);
+}
+
 void cancelPawnMoveDeter(Game *g, memory_move_t *mem)
 {
-    bool iw = g->is_white;
+    bool iw = mem->is_white;
 
-    pawnMoveCancel(g, iw, mem->indMovePawn, mem->left);
+    int ind = ind_from_coord(g, mem->coordMovePawn);
+    pawnMoveCancel(g, iw, ind, mem->left);
     freeMemMove(mem);
 }
 
@@ -200,34 +218,39 @@ void cancelPawnMoveBackDeter(Game *g, memory_move_t *mem)
 
 void cancelBiDeplDeter(Game *g, memory_move_t *mem)
 {
-    cancelBidepl(g, mem->indMovePawn, mem->full_pawn_data);
+    int ind = ind_from_coord(g, mem->coordMovePawn);
+    cancelBidepl(g, ind, mem->ghost_pawn_created_bidepl, mem->is_white);
     freeMemMove(mem);
 }
 
 void cancelQueenDeplDeter(Game *g, memory_move_t *mem)
 {
 
-    cancelDeplQueen(g, mem->indMovePawn, mem->chainy, mem->init_coord);
+    int ind = ind_from_coord(g, mem->coordMovePawn);
+    cancelDeplQueen(g, ind, mem->chainy, mem->init_coord_dame_rafle, mem->is_white);
     freeMemMove(mem);
 }
 
 void cancelRafleDeter(Game *g, memory_move_t *mem)
 {
 
-    cancelRafle(g, mem->indMovePawn, mem->init_coord, mem->chainy);
+    int ind = ind_from_coord(g, mem->coordMovePawn);
+    cancelRafle(g, ind, mem->init_coord_dame_rafle, mem->chainy, mem->is_white);
     freeMemMove(mem);
 }
 
 void cancelLienAmitieDeter(Game *g, memory_move_t *mem)
 {
 
-    cancelLienAmitie(g, mem->indMovePawn, mem->lig, mem->col);
+    int ind = ind_from_coord(g, mem->coordMovePawn);
+    cancelLienAmitie(g, ind, mem->lig, mem->col, mem->is_white);
     freeMemMove(mem);
 }
 
 void cancelLienEnnemitieDeter(Game *g, memory_move_t *mem)
 {
 
-    cancelLienEnnemitie(g, mem->indMovePawn, mem->lig, mem->col);
+    int ind = ind_from_coord(g, mem->coordMovePawn);
+    cancelLienEnnemitie(g, ind, mem->lig, mem->col, mem->is_white);
     freeMemMove(mem);
 }
