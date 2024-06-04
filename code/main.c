@@ -1,5 +1,6 @@
 #include "main.h"
 #include "fundamental_functions/game_functions/aux_game_functions/aux_functions.h"
+#include "test_config/test_config.h"
 
 int quit(Game *g, GraphicCache *cache)
 {
@@ -14,7 +15,7 @@ void test_start_game(Game *g, GraphicCache *cache)
 {
     // très pratique pour promouvoir une dame en qq coups
 
-    Coord c1 = coord_from_ind(g, 0, true);
+    // Coord c1 = coord_from_ind(g, 0, true);
     // Coord c2 = coord_from_ind(g, 1, true);
     for (int i = 0; i < 4; i++)
     {
@@ -144,7 +145,8 @@ int main(int argc, char *argv[])
 
     // init the graphic cache
     GraphicCache *cache = initCache();
-    test_start_game(g, cache);
+    //test_start_game(g, cache);
+    moveBackListingTest(g, cache);
 
     // end debug
 

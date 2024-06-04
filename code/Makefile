@@ -4,7 +4,7 @@ affichage.o input_command.o on_input.o graphic_cache.o update.o path_tree.o rafl
 path_tree_display.o rafle_management.o four_pack.o path_struct.o rafle_eating.o move_max.o move_listing.o \
 listing_checks.o move_struct.o rafle_listing.o basic_play_function.o precondition.o debug_autoplay.o debug.o \
 print_moves.o memory_move.o applyMoveAI.o applyMoveDeter.o applyMoveIssue.o backwardMoveTab_interface.o \
-quick_sort.o
+quick_sort.o test_config.o
 	gcc -g -Wall -o dames.out *.o \
 $$(sdl2-config --cflags --libs) -lSDL2_ttf
 
@@ -124,3 +124,6 @@ backwardMoveTab_interface.o: AI/move_listing/move_back_listing/backwardMoveTab_i
 
 quick_sort.o: AI/move_listing/move_back_listing/quick_sort/quick_sort.c
 	gcc -g -c -Wall AI/move_listing/move_back_listing/quick_sort/quick_sort.c
+
+test_config.o: test_config/test_config.c
+	gcc -g -c -Wall test_config/test_config.c
