@@ -6,7 +6,7 @@
 
 typedef struct alphaBetaArg {
     int depth;
-    float (*heurstique)(Game*);
+    AI ai;
     Game* g;
     float alpha, beta;
 } alphaBetaArg;

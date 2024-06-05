@@ -8,13 +8,13 @@ void exchange(MoveTab* t, int i, int j){
     t->tab[j] = tmp;
 }
 
-int compare(Game* g, float (*h)(Game*), Move a, Move b){
+int compare(Game* g, AI ai, Move a, Move b){
     //returns :
     //-1 if score(a) > score(b)
     //0 if score(a) == score(b)
     //1 if score(a) < score(b)
-    float scoreA = esperanceHeuristique(h, g, a);
-    float scoreB = esperanceHeuristique(h, g, b);
+    float scoreA = esperanceHeuristique(ai, g, a);
+    float scoreB = esperanceHeuristique(ai, g, b);
     if (scoreA > scoreB) {
         return -1;
     }
@@ -24,7 +24,7 @@ int compare(Game* g, float (*h)(Game*), Move a, Move b){
     return 0;
 }
 
-void triDrapeauNeerlandais(Game* g, float (*h)(Game*), MoveTab* t, int pivot, int deb, int fin,
+void triDrapeauNeerlandais(Game* g, MoveTab* t, AI ai, int pivot, int deb, int fin,
                             int* iReturn, int* kReturn){
     //invariant de boucle :
     //deb        i       j     k        fin
@@ -40,7 +40,7 @@ void triDrapeauNeerlandais(Game* g, float (*h)(Game*), MoveTab* t, int pivot, in
     Move valPivot = t->tab[pivot];
 
     while (j < k) {
-        switch (compare(g, h, valPivot, t->tab[j])) {
+        switch (compare(g, ai, valPivot, t->tab[j])) {
         case -1:
             exchange(t, i, j);
             i++;
@@ -62,7 +62,7 @@ void triDrapeauNeerlandais(Game* g, float (*h)(Game*), MoveTab* t, int pivot, in
     *kReturn = k;
 }
 
-void quickSortAux(Game* g, float (*h)(Game*), MoveTab* t, int deb, int fin){
+void quickSortAux(Game* g, MoveTab* t, AI ai, int deb, int fin){
     //trie reccurssivement la partie de tableau :
     //      deb   fin
     //       V     V
@@ -70,13 +70,13 @@ void quickSortAux(Game* g, float (*h)(Game*), MoveTab* t, int deb, int fin){
     if (deb < fin) {
         int pivot = (rand() % (fin - deb)) + deb;
         int i, k;
-        triDrapeauNeerlandais(g, h, t, pivot, deb, fin, &i, &k);
+        triDrapeauNeerlandais(g, t, ai, pivot, deb, fin, &i, &k);
         //on a :
         //deb        i       k        fin
         // V         V       V         V
         //[ < pivot | pivot | > pivot ]
-        quickSortAux(g, h, t, deb, i);
-        quickSortAux(g, h, t, k, fin);
+        quickSortAux(g, t, ai, deb, i);
+        quickSortAux(g, t, ai, k, fin);
     }
 }
 
@@ -87,7 +87,7 @@ void shuffle(MoveTab* t){
     }
 }
 
-void moveTabQuickSort(Game* g, MoveTab* t, float (*h)(Game*)){
+void moveTabQuickSort(Game* g, MoveTab* t, AI ai){
     shuffle(t);
-    quickSortAux(g, h, t, 0, t->size);
+    quickSortAux(g, t, ai, 0, t->size);
 }

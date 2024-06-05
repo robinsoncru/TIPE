@@ -29,7 +29,8 @@ float esperanceAlphaBetaPrunning(float (*f)(alphaBetaArg), alphaBetaArg alphaBet
     return S;
 }
 
-float esperanceHeuristique(float (*h)(Game*), Game* g, Move move){
+float esperanceHeuristique(AI ai, Game* g, Move move){
+    float perspective = g->is_white ? 1 : -1;
     memory_move_t* mem = applyDeter(g, move);
 
     float S = 0;
@@ -40,7 +41,7 @@ float esperanceHeuristique(float (*h)(Game*), Game* g, Move move){
     for (int i = 0; i < nbOutcomes; i++) {
         applyIssue(g, mem, i);
         currentProba = getProba(outcomeTab[i]);
-        S += currentProba * h(g);
+        S += currentProba * ai.ecrasement(perspective * ai.analyse(g));
         applyRecipIssue(g, mem, i);
     }
 
