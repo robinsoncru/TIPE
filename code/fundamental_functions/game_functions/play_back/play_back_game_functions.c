@@ -125,6 +125,7 @@ coord_bool_t biDeplNGE(Game *g, bool color, int ind)
     int dj = depl ? 1 : -1;
 
     assertAndLog(is_empty(g->inds_move_back), "Les amis sont toujours la");
+    assertAndLog(canMove(g, color, ind, true) && canMove(g, color, ind, false), "Pion peut pas être déplacé");
 
     int di = color ? 1 : -1;
     // Creer un pion a droite ou a gauche aleatoirement
@@ -226,7 +227,6 @@ data_chain *eatRafleNGE(Game *g, int indEater, bool is_white, PathTree *t, Path 
         pawnEat(g, indEater, is_white, di, dj);
         workTree = pathTreeChild(workTree, dj, di);
     }
-    assertAndLog(!dis_empty(chainy), "eatrafleNGE : Rien a manger");
     // Parcours chainy à la recherche de coord (-2, -2)
     Coord pos_final_eater = coord_from_ind(g, indEater, is_white);
     dfilterCoordIndSpecial(chainy, pos_final_eater);
@@ -241,16 +241,13 @@ data_chain *rafleNGE(Game *g, int indMovePawn)
     assert(isValidIndexInGame(g, indMovePawn, isWhite));
 
     g->currentTree = rafleTreeCalc(g, isWhite, g->ind_move);
-    // if (g->currentRafle == emptyTree)
-    // {
-    //     return NULL; // rien a manger
-    // }
+    assertAndLog(g->currentTree != emptyTree, "Pb calc rafle");
 
-    printf("lazyRafle called\n");
+    // printf("lazyRafle called\n");
     Path *r = lazyRafle(g->currentTree);
-    printf("eatRafle called\n");
+    // printf("eatRafle called\n");
     data_chain *chainy = eatRafleNGE(g, g->ind_move, isWhite, g->currentTree, r);
-    printf("pathFree called\n");
+    // printf("pathFree called\n");
     pathFree(r);
     return chainy;
 }
@@ -301,7 +298,7 @@ void lienAmitieNGE(int lig, int col, int ind, bool is_white, Game *g)
     assertAndLog(!get_pawn_value(g, !is_white, c.ind_pawn, QUEEN) && get_pawn_value(g, !is_white, c.ind_pawn, ENNEMY) == VOID_INDEX,
                  "LienamitieNGE pas possible c'est dame ou a ami");
 
-    assertAndLog((c.pawn_color == !is_white && isValidIndexInGame(g, c.pawn_color, !is_white)),
+    assertAndLog((c.pawn_color == !is_white && isValidIndexInGame(g, c.ind_pawn, !is_white)),
                  "LienAmitieNGE : pb couleur ou index pas valide");
 
     assertAndLog(!getFriendByInd(g, ind, c.ind_pawn, is_white), "lienAmitieNGE: ils sont deja amis");

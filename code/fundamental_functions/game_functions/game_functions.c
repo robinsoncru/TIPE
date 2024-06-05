@@ -179,8 +179,7 @@ data_chain *queenDepl(Game *g, int ind, bool color, Coord pos_dame, bool isNGE)
     {
         // if (canEat(g, color, ind, lig, col, ))
         chainy = rafleNGE(g, ind);
-        if (chainy == NULL)
-        {
+        if (!dis_empty(chainy)) {
             doMoveBack = false;
         }
     }
@@ -194,7 +193,7 @@ data_chain *queenDepl(Game *g, int ind, bool color, Coord pos_dame, bool isNGE)
         pathFree(r);
     }
 
-    if (doMoveBack)
+    if (doMoveBack && has_friend(g, ind, color))
     {
         for (int i = 0; i < MAX_NB_PAWNS; i++)
         {

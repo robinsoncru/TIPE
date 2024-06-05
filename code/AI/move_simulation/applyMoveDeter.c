@@ -68,8 +68,8 @@ void initTabIssueColor(Game *g, int what_kind_of_creation, memory_move_t *mem, b
         break;
     }
 
-    printf("init mem");
-    print_isssue(mem->issues, mem->lenghtIssues);
+    // printf("init mem\n");
+    // print_issue(mem->issues, mem->lenghtIssues);
     mem->is_deter = false;
 }
 
@@ -170,10 +170,9 @@ memory_move_t *queenDeplDeter(Game *g, int indMovePawn, Coord pos_dame, PathTree
     mem->init_coord_dame_rafle = give_coord(g, iw, indMovePawn);
     mem->chainy = queenDepl(g, indMovePawn, iw, pos_dame, true);
 
-    if (dis_empty(mem->chainy))
-    {
-        generateCloudDuePawnMove(g, mem);
-    }
+    
+    generateCloudDuePawnMove(g, mem);
+    
     return mem;
 }
 

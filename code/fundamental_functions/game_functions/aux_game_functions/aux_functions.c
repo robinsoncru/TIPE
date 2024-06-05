@@ -187,11 +187,18 @@ to go faster for checks : place pawns where we want */
 
 void change_pawn_place(Game *g, int ind, bool color, int lig, int col)
 {
-    put_case_damier(g, get_pawn_value(g, color, ind, LIG), get_pawn_value(g, color, ind, COL), IND_PAWN_ON_CASE, -1);
-    put_pawn_value(g, color, ind, LIG, lig);
-    put_pawn_value(g, color, ind, COL, col);
-    put_case_damier(g, lig, col, IND_PAWN_ON_CASE, ind);
-    put_case_damier(g, lig, col, PAWN_COLOR, color);
+    Case c = get_case_damier(g, lig, col);
+    int lig_depart = get_pawn_value(g, color, ind, LIG);
+    int col_depart = get_pawn_value(g, color, ind, COL);
+    if (lig_depart != lig || col_depart != col)
+    {
+        assertAndLog(freeCase(c), "change pawn move : Qqn sur la case deja");
+        put_case_damier(g, lig_depart, col_depart, IND_PAWN_ON_CASE, -1);
+        put_pawn_value(g, color, ind, LIG, lig);
+        put_pawn_value(g, color, ind, COL, col);
+        put_case_damier(g, lig, col, IND_PAWN_ON_CASE, ind);
+        put_case_damier(g, lig, col, PAWN_COLOR, color);
+    }
 }
 
 /* May be useful later */

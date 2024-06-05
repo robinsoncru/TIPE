@@ -15,13 +15,30 @@ void test_start_game(Game *g, GraphicCache *cache)
 {
     // très pratique pour promouvoir une dame en qq coups
 
+    // config multirafle damier 16 2
+
+    // change_pawn_place(g, 0, true, 2, 0);
+    // change_pawn_place(g, 1, true, 2, 2);
+    // change_pawn_place(g, 2, true, 2, 4);
+    // change_pawn_place(g, 3, true, 2, 6);
+
+    // change_pawn_place(g, 0, false, 3, 1);
+    // change_pawn_place(g, 1, false, 3, 3);
+    // change_pawn_place(g, 2, false, 3, 5);
+    // change_pawn_place(g, 3, false, 3, 7);
+    // change_pawn_place(g, 4, false, 5, 1);
+    // change_pawn_place(g, 5, false, 5, 3);
+    // change_pawn_place(g, 6, false, 5, 5);
+    // change_pawn_place(g, 7, false, 5, 7);
+    // fin config
+
     // Coord c1 = coord_from_ind(g, 0, true);
     // Coord c2 = coord_from_ind(g, 1, true);
     // for (int i = 0; i < 4; i++)
     // {
-        // promote(g, true, i);
-        // promote(g, false, i);
-        // change_pawn_place(g, i, false, get_pawn_value(g, false, i, LIG) - 5, get_pawn_value(g, false, i, COL) + 2*i+1);
+    // promote(g, true, i);
+    // promote(g, false, i);
+    // change_pawn_place(g, i, false, get_pawn_value(g, false, i, LIG) - 5, get_pawn_value(g, false, i, COL) + 2*i+1);
 
     //     // lienAmitieNGE(c1.i, c1.j, i, false, g);
     //     // promote(g, false, i);
@@ -57,22 +74,72 @@ void test_start_game(Game *g, GraphicCache *cache)
     // change_pawn_place(g, 1, false, get_pawn_value(g, false, 1, LIG) - 1, NB_CASE_LG-3);
 
     // Config photo diapo
-    int endBlanc = 4;
-    int endNoir = NB_PAWNS;
-    for (int i = NB_PAWNS - 1; i >= endBlanc; i--)
-    {
-        killPawnByInd(g, true, i);
-    }
+    // int endBlanc = 1;
+    // int endNoir = 1;
+    // for (int i = NB_PAWNS - 1; i >= endBlanc; i--)
+    // {
+    //     killPawnByInd(g, true, i);
+    // }
 
-    for (int i = NB_PAWNS - 1; i >= endNoir; i--)
-    {
-        killPawnByInd(g, false, i);
-    }
+    // for (int i = NB_PAWNS - 1; i >= endNoir; i--)
+    // {
+    //     killPawnByInd(g, false, i);
+    // }
 
-    for (int i=0; i<8; i++) {
-        change_pawn_place(g, i, false, get_pawn_value(g, false, i, LIG)+4, get_pawn_value(g, false, i, COL)+4);
-    }
+    // // for (int i=0; i<4; i++) {
+    // //     change_pawn_place(g, i, true, get_pawn_value(g, true, i, LIG), get_pawn_value(g, true, i, COL));
+    // // }
 
+    // change_pawn_place(g, 0, false, 6, 8);
+    // change_pawn_place(g, 0, true, 2, 8);
+    // biDepl(g, 0, true);
+
+    // biDepl(g, 0, true);
+    // biDepl(g, 1, true);
+    // biDepl(g, 2, true);
+    // biDepl(g, 3, true);
+    // biDepl(g, 4, true);
+    // biDepl(g, 5, true);
+
+
+
+    // // change_pawn_place(g, 1, true, 7, 9);
+    // // change_pawn_place(g, 2, true, 5, 11);
+    // change_pawn_place(g, 3, true, 2, 4);
+
+    // change_pawn_place(g, 0, false, 2, 6);
+    // change_pawn_place(g, 1, false, 3, 7);
+    // change_pawn_place(g, 2, false, 4, 6);
+    // change_pawn_place(g, 3, false, 3, 5);
+
+    // change_pawn_place(g, 3, false, 3, 11);
+
+    // for (int i=0; i<8; i++) {
+    //     change_pawn_place(g, i, false, get_pawn_value(g, false, i, LIG)+4, get_pawn_value(g, false, i, COL)+8);
+    // }
+
+    // killPawnByInd(g, false, 0);
+    // killPawnByInd(g, false, 4);
+    // killPawnByInd(g, false, 6);
+    //     killPawnByInd(g, false, 1);
+
+    // strat miam
+    // change_pawn_place(g, 0, true, 8, 10);
+    // change_pawn_place(g, 1, true, 7, 9);
+    // change_pawn_place(g, 2, true, 5, 11);
+    // change_pawn_place(g, 3, true, 3, 11);
+
+    // change_pawn_place(g, 8, false, 2, 0);
+
+    // strat border
+    // change_pawn_place(g, 0, true, 12, 2);
+    // change_pawn_place(g, 1, true, 5, 3);
+    // // change_pawn_place(g, 2, true, 5, 11);
+    // // change_pawn_place(g, 3, true, 3, 11);
+
+    // change_pawn_place(g, 2, false, 8, 6);
+    // change_pawn_place(g, 5, false, 6, 10);
+    // change_pawn_place(g, 3, false, 14, 6);
     // sous config Nuage apres rafle
 
     // biDepl(g, 9, false);
@@ -101,26 +168,37 @@ void test_start_game(Game *g, GraphicCache *cache)
     // configuration en lignes noires
     // pour tester les rafles
 
-    // for (int i = NB_PAWNS - 1; i >= 1; i--)
-    // {
-    //     killPawnByInd(g, true, i);
+    for (int i = NB_PAWNS - 1; i >= 1; i--)
+    {
+        killPawnByInd(g, true, i);
+    }
+
+    for (int i = NB_PAWNS - 1; i >= 16; i--) {
+        killPawnByInd(g, false, i);
+    }
+
+    change_pawn_place(g, 0, true, 0, 2);
+
+    change_pawn_place(g, 0, false, 1, 1);
+    change_pawn_place(g, 1, false, 3, 1);
+    change_pawn_place(g, 2, false, 5, 1);
+    change_pawn_place(g, 3, false, 5, 3);
+    change_pawn_place(g, 4, false, 3, 3);
+    change_pawn_place(g, 5, false, 1, 3);
+
+    biDeplNGE(g, false, 9);
+    biDeplNGE(g, false, 11);
+    biDeplNGE(g, false, 13);
+
+    change_pawn_place(g, 9, false, 3, 5);
+
+    change_pawn_place(g, 0, true, 7, 7);
+
+    // for (int i = 15; i >= 0; i--) {
+    //     lienAmitieNGE(7, 7, i, false, g);
     // }
 
-    // for (int i = NB_PAWNS - 1; i >= 16; i--) {
-    //     killPawnByInd(g, false, i);
-    // }
-
-    // change_pawn_place(g, 0, true, 0, 2);
-
-    // change_pawn_place(g, 0, false, 1, 1);
-    // change_pawn_place(g, 1, false, 3, 1);
-    // change_pawn_place(g, 2, false, 5, 1);
-    // change_pawn_place(g, 3, false, 5, 3);
-    // change_pawn_place(g, 4, false, 3, 3);
-    // change_pawn_place(g, 5, false, 1, 3);
-
-    // change_pawn_place(g, 0, true, 7, 7);
-    // promote(g, true, 0);
+    promote(g, true, 0);
     // fin de config
 
     // configuration multirafles damier 16
@@ -142,13 +220,13 @@ void test_start_game(Game *g, GraphicCache *cache)
     // change_pawn_place(g, 6, false, 5, 5);
     // change_pawn_place(g, 7, false, 5, 7);
 
-    for (int i =8; i<12; i++) {
-        change_pawn_place(g, i, false, 7, get_pawn_value(g, false, i, COL)+1);
-    }
+    // for (int i =8; i<12; i++) {
+    //     change_pawn_place(g, i, false, 7, get_pawn_value(g, false, i, COL)+1);
+    // }
 
-    for (int i=12; i<16; i++) {
-        change_pawn_place(g, i, false, 9, get_pawn_value(g, false, i, COL)-7);
-    }
+    // for (int i=12; i<16; i++) {
+    //     change_pawn_place(g, i, false, 9, get_pawn_value(g, false, i, COL)-7);
+    // }
 
     // killPawnByInd(g, false, 14);
     //     killPawnByInd(g, false, 13);
@@ -158,23 +236,6 @@ void test_start_game(Game *g, GraphicCache *cache)
     // killPawnByInd(g, false, 9);
 
     // fin de config
- 
-    // config multirafle damier 16 2
-
-    change_pawn_place(g, 0, true, 2, 0);
-    change_pawn_place(g, 1, true, 2, 2);
-    change_pawn_place(g, 2, true, 2, 4);
-    change_pawn_place(g, 3, true, 2, 6);
-
-    change_pawn_place(g, 0, false, 3, 1);
-    change_pawn_place(g, 1, false, 3, 3);
-    change_pawn_place(g, 2, false, 3, 5);
-    change_pawn_place(g, 3, false, 3, 7);
-    change_pawn_place(g, 4, false, 5, 1);
-    change_pawn_place(g, 5, false, 5, 3);
-    change_pawn_place(g, 6, false, 5, 5);
-    change_pawn_place(g, 7, false, 5, 7);
-    // fin config
 
     // sous config enn apres rafle
     // lienEnnemitieNGE(false, 2, 0, 5, g);
@@ -193,7 +254,7 @@ void test_start_game(Game *g, GraphicCache *cache)
     // print_pawns(g, true);
     // print_pawns(g, false);
     // print_liensAmitie(g);
-    print_state_game(g, ENNEMY);
+    print_state_game(g, PBA);
     // print_liensAmitie(g);
 }
 
@@ -209,7 +270,7 @@ int main(int argc, char *argv[])
 
     // init the graphic cache
     GraphicCache *cache = initCache();
-    //test_start_game(g, cache);
+    // test_start_game(g, cache);
     moveBackListingTest(g, cache);
 
     // end debug

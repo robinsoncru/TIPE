@@ -118,18 +118,6 @@ bool getFriendByInd(Game *g, int indActu, int indFriend, bool colorActu)
     return g->liensAmitie[indActu][indFriend];
 }
 
-// bool has_friend(Game *g, int ind, int color)
-// {
-//     for (int i = 0; i < MAX_NB_PAWNS; i++)
-//     {
-//         if (isValidIndexInGame(g, i, !color) && getFriendByInd(g, ind, i, color))
-//         {
-//             return true;
-//         }
-//     }
-//     return false;
-// }
-
 bool has_friend(Game *g, int ind, int color)
 {
     return get_pawn_value(g, color, ind, FRIENDLY) > 0;
