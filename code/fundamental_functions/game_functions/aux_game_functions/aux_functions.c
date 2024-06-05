@@ -52,12 +52,6 @@ void copy_remove_pawn_from_index_to_index(Game *g, int indStart, int indArrive, 
         }
     }
 
-    // On supprime ind arrivé du nuage s'il en faisait parti
-    // if (isInCloud(g, color, indArrive))
-    // {
-    //     popi(g->cloud[color], indArrive);
-    // }
-
     if (indStart != indArrive)
     {
         int lig = get_pawn_value(g, color, indStart, LIG);
@@ -84,7 +78,10 @@ void copy_remove_pawn_from_index_to_index(Game *g, int indStart, int indArrive, 
 
         for (int k = 1; k < 9; k++)
         {
-            put_pawn_value(g, color, indArrive, k, get_pawn_value(g, color, indStart, k));
+            if (k != FRIENDLY)
+            {
+                put_pawn_value(g, color, indArrive, k, get_pawn_value(g, color, indStart, k));
+            }
         }
         if (isInCloud(g, color, indStart))
         {
@@ -120,7 +117,7 @@ void killPawn(Game *g, int i, int j)
 {
     // printf("i, j = %d, %d\n", i, j);
     // DO NOT remove a pawn from the cloud
-    assert(inGame(i, j));
+    assertAndLog(inGame(i, j), "kill pawn pion hors jeu");
 
     Case c = get_case_damier(g, i, j);
     if (!freeCase(c))
@@ -417,9 +414,9 @@ void free_game(Game *g)
 
 Coord give_coord(Game *g, bool iw, int ind)
 {
-    Coord init_coord = {.i = get_pawn_value(g, iw, ind, LIG),
-                        .j = get_pawn_value(g, iw, ind, COL)};
-    return init_coord;
+    Coord init_coord_dame_rafle = {.i = get_pawn_value(g, iw, ind, LIG),
+                                   .j = get_pawn_value(g, iw, ind, COL)};
+    return init_coord_dame_rafle;
 }
 
 void doubleTabInit(int t[2])
@@ -490,7 +487,7 @@ void change_pawn_place_coord(Game *g, int ind, bool color, Coord pos)
 void stormBreaksNGE(Game *g, bool color, int index, memory_move_t *mem)
 {
     // Liste chaine et valeur du pawn survivor modifies par effet de bord
-    cloud_chain *load = mem->load_cloud_other;
+    cloud_chain *load = mem->load_cloud;
     Coord pos_survivor = mem->issues[index].pos_survivor;
     int_chain *l = g->cloud[color];
     int ind = VOID_INDEX;

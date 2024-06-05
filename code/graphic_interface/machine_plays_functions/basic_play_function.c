@@ -192,31 +192,43 @@ int play_a_move(int move, int ind_pawn, Game *g, GraphicCache *cache, int nb_cou
         Move m;
         m.left = false;
         printv("ind select");
-        m.manipulatedPawn = random_index(g);
-        auto_put_index(g, m.manipulatedPawn);
-        m.rafle = NULL;
-        m.rafleTree = NULL;
-        printv("ind friend");
-        indFriend = random_index_color(g, !g->is_white);
-        Coord cmanpawn = coord_from_ind(g, indFriend, !g->is_white);
+        // Coord cmanpawn = coord_from_ind(g, indFriend, !g->is_white);
 
-        m.col = cmanpawn.j;
-        m.lig = cmanpawn.i;
+        // m.col = cmanpawn.j;
+        // m.lig = cmanpawn.i;
+        if (g->is_white)
+        {
+            // Coord cma = {.i = 9, .j = 9};
+            m.manipulatedPawn = 0;
+            // }
+            // else
+            // {
+            //     m.manipulatedPawn = random_index(g);
+            // }
+            auto_put_index(g, m.manipulatedPawn);
+            m.rafle = NULL;
+            m.rafleTree = NULL;
+            // printv("ind friend");
+            // indFriend = random_index_color(g, !g->is_white);
 
-    
-            m.type = promotionType;
+            m.type = queenDeplType;
+            m.pos_dame.i = 14;
+            m.pos_dame.j = 14;
             mem = applyDeter(g, m); // Tester un eclatement de nuage
             // picture_this(g);
             for (int j = 0; j < mem->lenghtIssues; j++)
             {
                 applyIssue(g, mem, j);
-                print_state_game(g, QUEEN);
+                print_state_game(g, ENNEMY);
                 usleep(1000 * 100);
                 applyRecipIssue(g, mem, j);
                 // print_state_game(g, PBA);
             }
             applyRecipDeter(g, mem);
-        
+            print_state_game(g, ENNEMY);
+            // print_liensAmitie(g);
+
+        }
 
         endTurnGameManagement(g, g->is_white, m.manipulatedPawn, IND_CHANGE_ALLOWED, false); // Parce que ce sont des NGE
     }

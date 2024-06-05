@@ -22,4 +22,5 @@ bool teste_frame(Game *g, bool color, int rec);
 void print_liensAmitie(Game *g);
 void print_int_chain(int_chain *l);
 void print_isssue(issue_t *t, int lgth);
+void print_tab_coord(Coord *t, int lgth);
 #endif //DEBUG

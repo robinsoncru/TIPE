@@ -1,25 +1,29 @@
 #include "applyMoveDeter.h"
 
-void initTabIssue(Game *g, int what_kind_of_creation, memory_move_t *mem)
+void initTabIssueColor(Game *g, int what_kind_of_creation, memory_move_t *mem, bool color)
 {
     // Appeler pour les fonctions non déterministe
-    bool color = !g->is_white;
+    // La couleur appelée est celle de l'adversaire
+    int_chain *l = NULL;
+    int taille_l;
 
+    Coord c_init = {.i = -1, .j = -1};
     switch (what_kind_of_creation)
     {
     case CREATE_CLOUD_TAB:
         mem->lenghtIssues = g->lengthCloud[color];
         mem->issues = malloc(mem->lenghtIssues * sizeof(issue_t));
 
-        int_chain *l = g->cloud[color];
-        int taille_l = taille_list(l); // En pratique, taille_list est recalculé à chaque fois dans la
+        l = g->cloud[color];
+        taille_l = taille_list(l); // En pratique, taille_list est recalculé à chaque fois dans la
         // boucle for, d'où le fait de nommer cette variable
         for (int i = 0; i < taille_l; i++)
         {
             int ind = get(l, i);
-            float pba_inv = get_pawn_value(g, color, ind, PBA);
-            mem->issues[i].pba = pba_inv;
+            int pba_inv = get_pawn_value(g, color, ind, PBA);
+            mem->issues[i].pba = pba_inv; // La proba est celle d'un pion fantome
             mem->issues[i].pos_survivor = give_coord(g, color, ind);
+            mem->issues[i].pba_promotion = -1;
         }
         break;
 
@@ -29,13 +33,49 @@ void initTabIssue(Game *g, int what_kind_of_creation, memory_move_t *mem)
         mem->issues = malloc(3 * sizeof(issue_t));
         for (int i = 0; i < 3; i++)
         {
-            mem->issues[i].choice_promotion = i + 2;
-            mem->issues[i].pba = 3;
+            mem->issues[i].pba_promotion = 3;
+            mem->issues[i].pba = -1;
+            mem->issues[i].pos_survivor = c_init;
         }
 
         break;
+
+    case CREATE_CLOUD_PROM_TAB:
+        assertAndLog(mem->lenghtIssues == 3 && mem->issues != NULL, "initTabIssue : Il n'y pas de promotion");
+
+        l = g->cloud[color];
+        taille_l = taille_list(l);
+        mem->lenghtIssues += (taille_l - 1);
+        // On joue directement une config du nuage lors après l'initialisation
+        free(mem->issues);
+        mem->issues = malloc(mem->lenghtIssues * sizeof(issue_t));
+        // Les trois premières cases du tableau sont laissées vides
+        for (int i = 0; i < 2; i++)
+        {
+            mem->issues[i].pba_promotion = 3;
+            mem->issues[i].pba = -1;
+            mem->issues[i].pos_survivor = c_init;
+        }
+        for (int i = 2; i < mem->lenghtIssues; i++)
+        {
+            int ind = get(l, i - 2);
+            int pba_inv = get_pawn_value(g, color, ind, PBA);
+            mem->issues[i].pba = pba_inv;
+            mem->issues[i].pos_survivor = give_coord(g, color, ind);
+            mem->issues[i].pba_promotion = 3;
+        }
+        mem->prom_need_break_cloud = true;
+        break;
     }
+
+    printf("init mem");
+    print_isssue(mem->issues, mem->lenghtIssues);
     mem->is_deter = false;
+}
+
+void initTabIssue(Game *g, int what_kind_of_creation, memory_move_t *mem)
+{
+    initTabIssueColor(g, what_kind_of_creation, mem, !g->is_white);
 }
 
 void generateCloudDuePawnMove(Game *g, memory_move_t *mem)
@@ -51,9 +91,15 @@ void lightnightStrike(Game *g, memory_move_t *mem, int index)
 {
     // Eclate le nuage si necessaire, index décide de la position du survivant
     bool iw = g->is_white;
+    lightnightStrikeColor(g, mem, index, !iw);
+}
+
+void lightnightStrikeColor(Game *g, memory_move_t *mem, int index, bool color)
+{
+    // Eclate le nuage si necessaire, index décide de la position du survivant
     if (!mem->is_deter)
     {
-        stormBreaksNGE(g, !iw, index, mem);
+        stormBreaksNGE(g, color, index, mem);
     }
 }
 
@@ -79,13 +125,6 @@ memory_move_t *promotionDeter(Game *g, int indPawn, moveType type)
     memory_move_t *mem = initMemMove(indPawn, type);
     initTabIssue(g, CREATE_PROM_TAB, mem);
     return mem;
-}
-
-void cancelPromotionDeter(Game *g, memory_move_t *mem)
-{
-    cancelPromotion(g, mem->indMovePawn, mem->pos_potential_foe_from_prom);
-
-    freeMemMove(mem);
 }
 
 memory_move_t *moveBackDeter(Game *g, moveType type)
@@ -116,9 +155,9 @@ memory_move_t *rafleDeter(Game *g, int indMovePawn, PathTree *rafleTree, Path *r
 {
     bool iw = g->is_white;
     memory_move_t *mem = initMemMove(indMovePawn, type);
-    mem->init_coord = give_coord(g, iw, indMovePawn);
+    mem->init_coord_dame_rafle = give_coord(g, iw, indMovePawn);
     mem->chainy = rafleNGE(g, indMovePawn);
-
+    assertAndLog(mem->chainy != NULL && !dis_empty(mem->chainy), "rafle Deter aucune rafle");
     generateCloudDuePawnMove(g, mem);
 
     return mem;
@@ -128,7 +167,7 @@ memory_move_t *queenDeplDeter(Game *g, int indMovePawn, Coord pos_dame, PathTree
 {
     bool iw = g->is_white;
     memory_move_t *mem = initMemMove(indMovePawn, type);
-    mem->init_coord = give_coord(g, iw, indMovePawn);
+    mem->init_coord_dame_rafle = give_coord(g, iw, indMovePawn);
     mem->chainy = queenDepl(g, indMovePawn, iw, pos_dame, true);
 
     if (dis_empty(mem->chainy))
@@ -138,11 +177,36 @@ memory_move_t *queenDeplDeter(Game *g, int indMovePawn, Coord pos_dame, PathTree
     return mem;
 }
 
+memory_move_t *biDeplDeter(Game *g, int indMovePawn, moveType type)
+{
+    memory_move_t *mem = initMemMove(indMovePawn, type);
+
+    assertAndLog(canBiDepl(g, indMovePawn, g->is_white), "biDeplDeter : on ne peut pas BiDepl");
+    mem->ghost_pawn_created_bidepl = biDeplNGE(g, g->is_white, indMovePawn);
+
+    // Le pion en avançant peut tuer le nuage
+    if (canStormBreaks(g, indMovePawn, g->is_white)) {
+        initTabIssueColor(g, CREATE_CLOUD_TAB, mem, g->is_white);
+    }
+    return mem;
+}
+
+
+
+void cancelPromotionDeter(Game *g, memory_move_t *mem)
+{
+    int ind = ind_from_coord(g, mem->coordMovePawn);
+    cancelPromotion(g, ind, mem->pos_potential_foe_from_prom, mem->is_white);
+
+    freeMemMove(mem);
+}
+
 void cancelPawnMoveDeter(Game *g, memory_move_t *mem)
 {
-    bool iw = g->is_white;
+    bool iw = mem->is_white;
 
-    pawnMoveCancel(g, iw, mem->indMovePawn, mem->left);
+    int ind = ind_from_coord(g, mem->coordMovePawn);
+    pawnMoveCancel(g, iw, ind, mem->left);
     freeMemMove(mem);
 }
 
@@ -154,34 +218,39 @@ void cancelPawnMoveBackDeter(Game *g, memory_move_t *mem)
 
 void cancelBiDeplDeter(Game *g, memory_move_t *mem)
 {
-    cancelBidepl(g, mem->indMovePawn, mem->full_pawn_data);
+    int ind = ind_from_coord(g, mem->coordMovePawn);
+    cancelBidepl(g, ind, mem->ghost_pawn_created_bidepl, mem->is_white);
     freeMemMove(mem);
 }
 
 void cancelQueenDeplDeter(Game *g, memory_move_t *mem)
 {
 
-    cancelDeplQueen(g, mem->indMovePawn, mem->chainy, mem->init_coord);
+    int ind = ind_from_coord(g, mem->coordMovePawn);
+    cancelDeplQueen(g, ind, mem->chainy, mem->init_coord_dame_rafle, mem->is_white);
     freeMemMove(mem);
 }
 
 void cancelRafleDeter(Game *g, memory_move_t *mem)
 {
 
-    cancelRafle(g, mem->indMovePawn, mem->init_coord, mem->chainy);
+    int ind = ind_from_coord(g, mem->coordMovePawn);
+    cancelRafle(g, ind, mem->init_coord_dame_rafle, mem->chainy, mem->is_white);
     freeMemMove(mem);
 }
 
 void cancelLienAmitieDeter(Game *g, memory_move_t *mem)
 {
 
-    cancelLienAmitie(g, mem->indMovePawn, mem->lig, mem->col);
+    int ind = ind_from_coord(g, mem->coordMovePawn);
+    cancelLienAmitie(g, ind, mem->lig, mem->col, mem->is_white);
     freeMemMove(mem);
 }
 
 void cancelLienEnnemitieDeter(Game *g, memory_move_t *mem)
 {
 
-    cancelLienEnnemitie(g, mem->indMovePawn, mem->lig, mem->col);
+    int ind = ind_from_coord(g, mem->coordMovePawn);
+    cancelLienEnnemitie(g, ind, mem->lig, mem->col, mem->is_white);
     freeMemMove(mem);
 }

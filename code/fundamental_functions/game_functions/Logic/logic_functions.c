@@ -35,8 +35,8 @@ bool canBePromoted(Game *g, bool is_white, int ind)
     pawn p = get_pawn(g, is_white, ind);
     int border = is_white ? (NB_CASE_LG - 1) : 0;
     bool isOnBorder = p.lig == border;
-    bool ennemyIsDead = p.ennemy != NEUTRAL_IND && !int_to_bool(get_pawn_value(g, !is_white, p.ennemy, ALIVE));
-    return !p.queen && (isOnBorder || ennemyIsDead) && p.pba == 1;
+    // Si l'ennemie meurt, il place directement son ennemie en reine dans killPawn
+    return !p.queen && isOnBorder && p.pba == 1;
 }
 
 // On suppose que les coordonnees sont bien sur la meme diagonale

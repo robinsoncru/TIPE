@@ -87,7 +87,7 @@ void print_state_game(Game *g, int which_pmetre)
     for (int i = 0; i < NB_CASE_LG; i++)
     {
         // La matrice est mieux affiché
-        if (i < 10) 
+        if (i < 10)
         {
             printf(" ");
         }
@@ -139,7 +139,14 @@ void print_state_game(Game *g, int which_pmetre)
                 }
                 if (c.ind_pawn < 10)
                 {
-                    printf("%d- %d-%d|", c.pawn_color, c.ind_pawn, valeur);
+                    if (valeur != VOID_INDEX)
+                    {
+                        printf("%d- %d-%d|", c.pawn_color, c.ind_pawn, valeur);
+                    }
+                    else
+                    {
+                        printf("%d-%d-%d|", c.pawn_color, c.ind_pawn, valeur);
+                    }
                 }
                 else
                 {
@@ -158,4 +165,32 @@ void picture_game(Game *g, bool iw)
     nb friend no queen %d\n nb foe %d\n \n",
            g->nb_pawns[iw], g->nbQueenWithFriend[iw],
            g->nbQueenWithoutFriend[iw], g->lengthCloud[iw], g->nbFriendNoQueen[iw], g->nbFoe[iw]);
+}
+
+void print_cloud_chain(cloud_chain *l)
+{
+    while (!cis_empty(l))
+    {
+        l = l->next;
+        tcloud data = l->data;
+        printf("pba %d coord %d %d\n", data.pba, data.coord.i, data.coord.j);
+    }
+}
+
+void print_data_chain(data_chain *l)
+{
+    assert(l != NULL);
+    while (!dis_empty(l))
+    {
+        l = l->next;
+        printf("coul %d (i %d) (j %d) Enn (i %d) (j %d)\n", l->data.pawncolor, l->data.coord.i, 
+        l->data.coord.j, l->data.relationship.pos_foe.i, l->data.relationship.pos_foe.j);
+        coord_tab_t *t = l->data.relationship.friendsId;
+        if (t != NULL)
+        {
+            print_tab_coord(t->tab, t->sizetab);
+        }
+        printf("\n");
+    }
+    flush();
 }

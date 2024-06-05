@@ -28,7 +28,11 @@ void onInput(Game *g, GraphicCache *cache, SDL_Event event)
             onRMBDown(g, cache);
             // onRUp(g, cache);
         }
-        else {printf("ni gauche ni droite"); assert(false);}
+        else
+        {
+            printf("ni gauche ni droite");
+            assert(false);
+        }
         break;
 
     case SDL_KEYUP:
@@ -45,7 +49,7 @@ void onInput(Game *g, GraphicCache *cache, SDL_Event event)
             break;
 
         case SDLK_UP:
-            //test des rafles
+            // test des rafles
             onUpUp(g, cache);
             break;
 
@@ -84,10 +88,9 @@ void onInput(Game *g, GraphicCache *cache, SDL_Event event)
             onAUP(cache);
             break;
 
-        
         case SDLK_z:
             onZUp(g, cache);
-            //affiche l'arbre de rafle
+            // affiche l'arbre de rafle
             break;
         case SDLK_k:
             onKUp(g, cache);
@@ -98,11 +101,15 @@ void onInput(Game *g, GraphicCache *cache, SDL_Event event)
 
             break;
 
+        case SDLK_w:
+            onWUp(g, cache);
+            break;
+
         default:
             printv("Aucune touche reconnue");
             assert(false);
         }
-    break;
+        break;
 
     default:
         break;

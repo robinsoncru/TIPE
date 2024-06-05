@@ -171,8 +171,12 @@ void putFriendByInd(Game *g, int indActu, int indFriend, bool colorActu, bool va
     }
 }
 
-coord_tab_t *friendTabToCoordTab(Game *g, int ind, bool color)
+coord_tab_t *friendTabToCoordTab(Game *g, int ind, bool color, int indSpecial)
 {
+    // L'indice spécial est un indice de pion où ses coordonnées peuvent changer au cours d'une rafle donc
+    // lorsqu'on appel cette fonction dans eatPawn, on remplace ses coordonnées caducs pour (-2, -2) puis
+    // on filtre les coordonnées pour mettre sa dernière position : très gourmand en calculs mais plus simple
+    // que de parcourir l'arbre de rafle pour la position finale. Mettre VOID_INDEX si on veut pas de ça
     int nb_friend = get_pawn_value(g, color, ind, FRIENDLY);
     assert(nb_friend > 0);
     coord_tab_t *t = create_coord_tab(nb_friend);
@@ -180,8 +184,14 @@ coord_tab_t *friendTabToCoordTab(Game *g, int ind, bool color)
     {
         if (isValidIndexInGame(g, i, !color) && getFriendByInd(g, ind, i, color))
         {
-            ctpush(t, get_pawn_value(g, !color, i, LIG), get_pawn_value(g, !color, i, COL));
-            
+            if (i == indSpecial)
+            {
+                ctpush(t, -2, -2);
+            }
+            else
+            {
+                ctpush(t, get_pawn_value(g, !color, i, LIG), get_pawn_value(g, !color, i, COL));
+            }
         }
     }
     return t;
@@ -192,8 +202,15 @@ float zero_fun(Game *g)
     return 0.0;
 }
 
-Coord to_coord(int i, int j) {
+Coord to_coord(int i, int j)
+{
     assertAndLog(inGame(i, j), "Lig ou col pas dans jeu");
-    Coord c = {.i = i, .j=j};
+    Coord c = {.i = i, .j = j};
+    return c;
+}
+
+Coord coord_init()
+{
+    Coord c = {.i = -1, .j = -1};
     return c;
 }

@@ -37,9 +37,9 @@ typedef struct {
 } ind_pba_t;
 
 typedef struct {
-    int ind;
+    Coord c;
     bool b;
-} ind_bool_t;
+} coord_bool_t;
 
 typedef struct int_chain int_chain;
 

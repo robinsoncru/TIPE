@@ -19,7 +19,7 @@ memory_move_t *applyDeter(Game *g, Move coup)
         break;
 
     case biDeplType:
-        mem = initMemMove(coup.manipulatedPawn, coup.type);
+        mem = biDeplDeter(g, coup.manipulatedPawn, coup.type);
         break;
 
     case queenDeplType:
@@ -43,7 +43,11 @@ memory_move_t *applyDeter(Game *g, Move coup)
         assertAndLog(false, "Deter : reconnait pas type move");
         break;
     }
+    mem->is_white = g->is_white;
+    mem->coordMovePawn = coord_from_ind(g, mem->indMovePawn, mem->is_white);
+    mem->indMovePawn = -1; // Sécurité pour être sur de ne pas se baser sur l'indice
 
+    print_data_chain(mem->chainy);
     return mem;
 }
 
