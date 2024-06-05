@@ -4,6 +4,9 @@ memory_move_t *applyDeter(Game *g, Move coup)
 {
     // passer les pointeurs pour legereté
     memory_move_t *mem;
+    auto_put_index(g, coup.manipulatedPawn);
+    // On utilise parfois g dans les fonctions Deter
+
     switch (coup.type)
     {
     case pawnMoveType:
@@ -15,7 +18,7 @@ memory_move_t *applyDeter(Game *g, Move coup)
         break;
 
     case pawnMoveBackType:
-        mem = moveBackDeter(g, coup.type);
+        mem = moveBackDeter(g, coup.type, coup.backwardPawnMoves);
         break;
 
     case biDeplType:
@@ -47,6 +50,7 @@ memory_move_t *applyDeter(Game *g, Move coup)
     mem->coordMovePawn = coord_from_ind(g, mem->indMovePawn, mem->is_white);
     mem->indMovePawn = -1; // Sécurité pour être sur de ne pas se baser sur l'indice
 
+    moveFree(coup);
     // print_data_chain(mem->chainy);
     return mem;
 }

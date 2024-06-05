@@ -74,21 +74,23 @@ void test_start_game(Game *g, GraphicCache *cache)
     // change_pawn_place(g, 1, false, get_pawn_value(g, false, 1, LIG) - 1, NB_CASE_LG-3);
 
     // Config photo diapo
-    // int endBlanc = 1;
-    // int endNoir = 1;
-    // for (int i = NB_PAWNS - 1; i >= endBlanc; i--)
-    // {
-    //     killPawnByInd(g, true, i);
-    // }
+    int endBlanc = 4;
+    int endNoir = 4;
+    for (int i = NB_PAWNS - 1; i >= endBlanc; i--)
+    {
+        killPawnByInd(g, true, i);
+    }
 
-    // for (int i = NB_PAWNS - 1; i >= endNoir; i--)
-    // {
-    //     killPawnByInd(g, false, i);
-    // }
+    for (int i = NB_PAWNS - 1; i >= endNoir; i--)
+    {
+        killPawnByInd(g, false, i);
+    }
 
-    // // for (int i=0; i<4; i++) {
-    // //     change_pawn_place(g, i, true, get_pawn_value(g, true, i, LIG), get_pawn_value(g, true, i, COL));
-    // // }
+    for (int i=0; i<4; i++) {
+        change_pawn_place(g, i, true, get_pawn_value(g, true, i, LIG)+2, get_pawn_value(g, true, i, COL));
+        change_pawn_place(g, i, false, get_pawn_value(g, false, i, LIG)-2, get_pawn_value(g, false, i, COL));
+        lienAmitieNGE(2, 0, i, false, g);
+    }
 
     // change_pawn_place(g, 0, false, 6, 8);
     // change_pawn_place(g, 0, true, 2, 8);
@@ -168,37 +170,37 @@ void test_start_game(Game *g, GraphicCache *cache)
     // configuration en lignes noires
     // pour tester les rafles
 
-    for (int i = NB_PAWNS - 1; i >= 1; i--)
-    {
-        killPawnByInd(g, true, i);
-    }
-
-    for (int i = NB_PAWNS - 1; i >= 16; i--) {
-        killPawnByInd(g, false, i);
-    }
-
-    change_pawn_place(g, 0, true, 0, 2);
-
-    change_pawn_place(g, 0, false, 1, 1);
-    change_pawn_place(g, 1, false, 3, 1);
-    change_pawn_place(g, 2, false, 5, 1);
-    change_pawn_place(g, 3, false, 5, 3);
-    change_pawn_place(g, 4, false, 3, 3);
-    change_pawn_place(g, 5, false, 1, 3);
-
-    biDeplNGE(g, false, 9);
-    biDeplNGE(g, false, 11);
-    biDeplNGE(g, false, 13);
-
-    change_pawn_place(g, 9, false, 3, 5);
-
-    change_pawn_place(g, 0, true, 7, 7);
-
-    // for (int i = 15; i >= 0; i--) {
-    //     lienAmitieNGE(7, 7, i, false, g);
+    // for (int i = NB_PAWNS - 1; i >= 1; i--)
+    // {
+    //     killPawnByInd(g, true, i);
     // }
 
-    promote(g, true, 0);
+    // for (int i = NB_PAWNS - 1; i >= 16; i--) {
+    //     killPawnByInd(g, false, i);
+    // }
+
+    // change_pawn_place(g, 0, true, 0, 2);
+
+    // change_pawn_place(g, 0, false, 1, 1);
+    // change_pawn_place(g, 1, false, 3, 1);
+    // change_pawn_place(g, 2, false, 5, 1);
+    // change_pawn_place(g, 3, false, 5, 3);
+    // change_pawn_place(g, 4, false, 3, 3);
+    // change_pawn_place(g, 5, false, 1, 3);
+
+    // biDeplNGE(g, false, 9);
+    // biDeplNGE(g, false, 11);
+    // biDeplNGE(g, false, 13);
+
+    // change_pawn_place(g, 9, false, 3, 5);
+
+    // change_pawn_place(g, 0, true, 7, 7);
+
+    // // for (int i = 15; i >= 0; i--) {
+    // //     lienAmitieNGE(7, 7, i, false, g);
+    // // }
+
+    // promote(g, true, 0);
     // fin de config
 
     // configuration multirafles damier 16
@@ -251,6 +253,10 @@ void test_start_game(Game *g, GraphicCache *cache)
 
     // fin ss config
 
+    // Config move back
+
+
+
     // print_pawns(g, true);
     // print_pawns(g, false);
     // print_liensAmitie(g);
@@ -270,8 +276,8 @@ int main(int argc, char *argv[])
 
     // init the graphic cache
     GraphicCache *cache = initCache();
-    // test_start_game(g, cache);
-    moveBackListingTest(g, cache);
+    test_start_game(g, cache);
+    // moveBackListingTest(g, cache);
 
     // end debug
 

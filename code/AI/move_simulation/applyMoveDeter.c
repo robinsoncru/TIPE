@@ -127,10 +127,10 @@ memory_move_t *promotionDeter(Game *g, int indPawn, moveType type)
     return mem;
 }
 
-memory_move_t *moveBackDeter(Game *g, moveType type)
+memory_move_t *moveBackDeter(Game *g, moveType type, backwardMoveTab_t *t_backs)
 {
-
     memory_move_t *mem = initMemMove(VOID_INDEX, type);
+    extractFriendsFromMove(mem, t_backs);
     // On suppose que le move back est faisable
     moveBackNGE(g, true, false, zero_fun, mem);
     int tailleAmis = taille_list(g->inds_move_back);
@@ -145,8 +145,9 @@ memory_move_t *moveBackDeter(Game *g, moveType type)
             break; // Le nuage implose, il n'existe plus dès qu'un pion s'en approche trop
         }
     }
-
-    emptyIntChain(g->inds_move_back); // On supprime les amis g->inds_move_back qui est enregistré
+    // mem->inds_move_back est caduc, on le libère
+    freeIntChain(mem->inds_move_back);
+    mem->inds_move_back = NULL;
 
     return mem;
 }
@@ -170,9 +171,8 @@ memory_move_t *queenDeplDeter(Game *g, int indMovePawn, Coord pos_dame, PathTree
     mem->init_coord_dame_rafle = give_coord(g, iw, indMovePawn);
     mem->chainy = queenDepl(g, indMovePawn, iw, pos_dame, true);
 
-    
     generateCloudDuePawnMove(g, mem);
-    
+
     return mem;
 }
 
@@ -184,13 +184,12 @@ memory_move_t *biDeplDeter(Game *g, int indMovePawn, moveType type)
     mem->ghost_pawn_created_bidepl = biDeplNGE(g, g->is_white, indMovePawn);
 
     // Le pion en avançant peut tuer le nuage
-    if (canStormBreaks(g, indMovePawn, g->is_white)) {
+    if (canStormBreaks(g, indMovePawn, g->is_white))
+    {
         initTabIssueColor(g, CREATE_CLOUD_TAB, mem, g->is_white);
     }
     return mem;
 }
-
-
 
 void cancelPromotionDeter(Game *g, memory_move_t *mem)
 {

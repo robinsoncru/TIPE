@@ -31,9 +31,10 @@ void cancelAllMoveBack(Game *g, memory_move_t *mem)
 
         ind = ind_from_coord(g, mem->friends_which_move_back[i]);
         int left = pop(mem->move_back_left_or_right);
-        if (left != -1)
+        if (left != NO_MOVE)
         {
-            simplyPawnMove(g, iw, ind, !int_to_bool(left));
+            bool turn_left = left == LEFT ? true : false;
+            simplyPawnMove(g, iw, ind, !turn_left); // Sens opposé
         }
     }
     cleanMemMoveBack(mem);
@@ -154,7 +155,7 @@ void pawnMove(Game *g, bool is_white, int ind, bool left)
 //     }
 
 //     endTurnGameManagement(g, color, ind, IND_CHANGE_ALLOWED, false);
-//     // Do a move back only if the queen didn't eat
+//     // Do a move back only if the queen didn'l eat
 // }
 
 data_chain *queenDepl(Game *g, int ind, bool color, Coord pos_dame, bool isNGE)
@@ -179,7 +180,8 @@ data_chain *queenDepl(Game *g, int ind, bool color, Coord pos_dame, bool isNGE)
     {
         // if (canEat(g, color, ind, lig, col, ))
         chainy = rafleNGE(g, ind);
-        if (!dis_empty(chainy)) {
+        if (!dis_empty(chainy))
+        {
             doMoveBack = false;
         }
     }
@@ -208,7 +210,7 @@ data_chain *queenDepl(Game *g, int ind, bool color, Coord pos_dame, bool isNGE)
     if (!isNGE)
     {
         endTurnGameManagement(g, color, ind, IND_CHANGE_ALLOWED, false);
-        // Do a move back only if the queen didn't eat
+        // Do a move back only if the queen didn'l eat
     }
     return chainy;
 }
@@ -310,104 +312,95 @@ void moveBackNGE(Game *g, bool autoplay, bool use_heuristique, float (*f)(Game *
     bool iw = g->is_white;
     if (autoplay)
     {
-        int taille_l = taille_list(g->inds_move_back);
-        if (mem != NULL)
+        int_chain *l;
+        int taille_l;
+        bool isNGE = mem != NULL;
+        if (isNGE)
         {
-            mem->move_back_left_or_right = create_list(taille_l);
+            l = mem->inds_move_back;
+            taille_l = taille_list(l);
             initFriendsWhichMoveBack(mem, taille_l);
+        }
+        else
+        {
+            l = g->inds_move_back;
+            taille_l = taille_list(l);
         }
         for (int i = 0; i < taille_l; i++)
         {
-            int ind = get(g->inds_move_back, i);
+            int ind = get(l, i);
             assertAndLog(isValidIndexInGame(g, ind, iw), "Pion sortie de la pile des amis non valide");
-            bool recul_gauche = canMoveBack(g, iw, ind, true);
-            bool recul_droite = canMoveBack(g, iw, ind, false);
-            if (use_heuristique)
-            {
-                assertAndLog(false, "pas encore teste move Back heurist");
 
-                float eval_gauche = 0;
-                float eval_droite = 0;
-                if (recul_droite && recul_gauche)
+            if (!isNGE)
+            { // On joue sur le moment et on évalue avec une heuristique ou non le meilleur coup possible
+                bool recul_gauche = canMoveBack(g, iw, ind, true);
+                bool recul_droite = canMoveBack(g, iw, ind, false);
+                if (use_heuristique)
                 {
-                    lazzyMoveBack(g, ind, true);
-                    eval_gauche = f(g);
-                    cancelLazzyMoveBack(g, ind, true);
+                    assertAndLog(false, "pas encore teste move Back heurist");
 
-                    lazzyMoveBack(g, ind, false);
-                    eval_droite = f(g);
-                    if (eval_droite <= eval_gauche)
+                    float eval_gauche = 0;
+                    float eval_droite = 0;
+                    if (recul_droite && recul_gauche)
                     {
-                        cancelLazzyMoveBack(g, ind, false);
                         lazzyMoveBack(g, ind, true);
-                        if (mem != NULL)
+                        eval_gauche = f(g);
+                        cancelLazzyMoveBack(g, ind, true);
+
+                        lazzyMoveBack(g, ind, false);
+                        eval_droite = f(g);
+                        if (eval_droite <= eval_gauche)
                         {
-                            push(mem->move_back_left_or_right, 1);
+                            cancelLazzyMoveBack(g, ind, false);
+                            lazzyMoveBack(g, ind, true);
                         }
-                        return;
                     }
-                    if (mem != NULL)
+                    else if (recul_gauche)
                     {
-                        push(mem->move_back_left_or_right, 0);
+                        lazzyMoveBack(g, ind, true);
                     }
-                }
-                else if (recul_gauche)
-                {
-                    lazzyMoveBack(g, ind, true);
-                    if (mem != NULL)
+                    else if (recul_droite)
                     {
-                        push(mem->move_back_left_or_right, 1);
+                        lazzyMoveBack(g, ind, false);
                     }
-                }
-                else if (recul_droite)
-                {
-                    lazzyMoveBack(g, ind, false);
-                    if (mem != NULL)
-                    {
-                        push(mem->move_back_left_or_right, 0);
-                    }
+                    // Sinon rien ne se passe
                 }
                 else
                 {
-                    // Rien ne se passera dans le endTurnGameManagement
-                    if (mem != NULL)
+                    if (recul_gauche)
                     {
-                        push(mem->move_back_left_or_right, -1); // -1 signifie que le pion ne bouge pas
+                        lazzyMoveBack(g, ind, true);
                     }
+                    else if (recul_droite)
+                    {
+                        lazzyMoveBack(g, ind, false);
+                    }
+                    // Sinon rien ne se passe
                 }
             }
             else
             {
-                if (recul_gauche)
+                switch (mem->move_back_left_or_right->tableau[i])
                 {
+                case LEFT:
                     lazzyMoveBack(g, ind, true);
-                    if (mem != NULL)
-                    {
-                        push(mem->move_back_left_or_right, 1);
-                    }
-                }
-                else if (recul_droite)
-                {
-                    lazzyMoveBack(g, ind, false);
-                    if (mem != NULL)
-                    {
-                        push(mem->move_back_left_or_right, 0);
-                    }
-                }
-                else
-                {
-                    // Rien ne se passera dans le endTurnGameManagement
-                    if (mem != NULL)
-                    {
-                        push(mem->move_back_left_or_right, -1);
-                    }
-                }
-            }
+                    break;
 
-            if (mem != NULL)
-            {
-                int lig = get_pawn_value(g, iw, i, LIG);
-                int col = get_pawn_value(g, iw, i, COL);
+                case RIGHT:
+                    lazzyMoveBack(g, ind, false);
+                    break;
+
+                case NO_MOVE:
+                    break;
+
+                default:
+                    assertAndLog(false, "moveBackNGE move_back_left_or_right pas correspondant");
+                    break;
+                }
+
+                // on enregistre le coord du pion qui recule
+                int lig = get_pawn_value(g, iw, ind, LIG);
+                int col = get_pawn_value(g, iw, ind, COL);
                 mem->friends_which_move_back[i].i = lig;
                 mem->friends_which_move_back[i].j = col;
             }

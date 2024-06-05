@@ -1,8 +1,7 @@
 #ifndef backwardMoveTab_INTERFACE
 #define backwardMoveTab_INTERFACE
 
-#include "backwardMoveTab_struct.h"
-#include "../../../structures_fondamentales/fgame_struct.h"
+#include "../../../structures_fondamentales/fusion_struct.h"
 #include <stdbool.h>
 
 backwardMoveTab_t* backwardMoveTabCreate(int c);

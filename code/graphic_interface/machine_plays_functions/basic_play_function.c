@@ -39,11 +39,6 @@ int plannifier_index(Game *g, int nb_coups, int *l_coups)
     return plannifier_index_color(nb_coups, l_coups, g->is_white);
 }
 
-void auto_put_index(Game *g, int indPawnPlayed)
-{
-    g->ind_move = indPawnPlayed;
-}
-
 Move extract_random_move_from_tab_move(MoveTab *t)
 {
     assert(t->size > 0);
@@ -100,8 +95,6 @@ int play_a_move(int move, int ind_pawn, Game *g, GraphicCache *cache, int nb_cou
 
     usleep(1000 * 100);
 
-    auto_put_index(g, ind_pawn);
-
     // MoveTab *t_moves = listMoves(g);
     // print_moves(t_moves);
     // Move m = extract_random_move_from_tab_move(t_moves);
@@ -112,6 +105,8 @@ int play_a_move(int move, int ind_pawn, Game *g, GraphicCache *cache, int nb_cou
     Coord coord, coordi;
     if (!isNGE)
     {
+
+        auto_put_index(g, ind_pawn);
         switch (move)
         {
         case PAWNMOVELEFT:
@@ -186,47 +181,33 @@ int play_a_move(int move, int ind_pawn, Game *g, GraphicCache *cache, int nb_cou
     {
         // MoveTab *coups = listMoves(g);
         memory_move_t *mem;
-        // for (int i = 0; i < coups->size; i++)
-        // {
-        Move m;
-        m.left = false;
         printv("ind select");
-        // Coord cmanpawn = coord_from_ind(g, indFriend, !g->is_white);
 
-        // m.col = cmanpawn.j;
-        // m.lig = cmanpawn.i;
-        if (g->is_white)
+        Move m;
+        if (!g->is_white)
         {
+            MoveTab *t = listMoves(g);
+            print_moves(t);
             // Coord cma = {.i = 9, .j = 9};
-            m.manipulatedPawn = 0;
             // }
             // else
             // {
             //     m.manipulatedPawn = random_index(g);
             // }
-            auto_put_index(g, m.manipulatedPawn);
-            m.rafle = NULL;
-            m.rafleTree = NULL;
-            // printv("ind friend");
-            // indFriend = random_index_color(g, !g->is_white);
-
-            m.type = queenDeplType;
-            m.pos_dame.i = 4;
-            m.pos_dame.j = 4;
+            m = t->tab[0];
             mem = applyDeter(g, m); // Tester un eclatement de nuage
             // picture_this(g);
             for (int j = 0; j < mem->lenghtIssues; j++)
             {
                 applyIssue(g, mem, j);
-                // print_state_game(g, PBA);
+                print_state_game(g, PBA);
                 usleep(1000 * 100);
                 applyRecipIssue(g, mem, j);
-                // print_state_game(g, PBA);
+                print_state_game(g, PBA);
             }
             applyRecipDeter(g, mem);
-            // print_state_game(g, PBA);
+            print_state_game(g, PBA);
             // print_liensAmitie(g);
-
         }
 
         endTurnGameManagement(g, g->is_white, m.manipulatedPawn, IND_CHANGE_ALLOWED, false); // Parce que ce sont des NGE

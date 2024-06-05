@@ -42,4 +42,5 @@ void changeFriendByInd(Game *g, int indActuStart, int indActuArrive, int indFrie
 void change_pawn_place_coord(Game *g, int ind, bool color, Coord pos);
 void initFriendsWhichMoveBack(memory_move_t *mem, int taille);
 void cleanMemMoveBack(memory_move_t *mem);
+void auto_put_index(Game *g, int indPawnPlayed);
 #endif // AUX_FUNCTIONS

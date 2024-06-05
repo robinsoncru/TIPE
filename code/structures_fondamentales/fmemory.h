@@ -41,6 +41,7 @@ struct memory_move_t
     bool is_white; // Couleur du jeu durant le tour
     Coord coordMovePawn; // On enregistre les coordonnées du pion plutot que son indice qui change
     /* Enregistre les déplacements gauche ou droite des pions qui reculent, à opti avec une bool_chain */
+    int_chain *inds_move_back;
 };
 
 #endif

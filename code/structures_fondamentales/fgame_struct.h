@@ -97,4 +97,9 @@ typedef enum moveType moveType;
 #define NB_PAWNS (NB_CASE_LG)
 #define MAX_NB_PAWNS (2 * NB_PAWNS)
 
+
+#define LEFT -1
+#define RIGHT 1
+#define NO_MOVE 0
+
 #endif

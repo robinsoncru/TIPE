@@ -3,10 +3,6 @@
 
 #include <stdbool.h>
 
-#define LEFT -1
-#define RIGHT 1
-#define NO_MOVE 0
-
 typedef struct backwardMove_t {
     int indMovedPawn;
     int dir;

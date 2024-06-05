@@ -1,5 +1,4 @@
 #include "backwardMoveTab_interface.h"
-#include "backwardMoveTab_struct.h"
 #include "../../../fundamental_functions/game_functions/access_functions/access_functions.h"
 #include <stdio.h>
 #include <stdlib.h>

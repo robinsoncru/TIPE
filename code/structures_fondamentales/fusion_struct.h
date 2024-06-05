@@ -7,5 +7,6 @@
 #include "fliste_chaine_struct.h"
 #include "fmemory.h"
 #include "fpath_struct.h"
+#include "backwardMoveTab_struct.h"
 
 #endif
