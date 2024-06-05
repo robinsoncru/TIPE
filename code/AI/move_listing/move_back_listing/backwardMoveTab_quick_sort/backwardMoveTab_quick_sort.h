@@ -1,5 +1,5 @@
-#ifndef QUICK_SORT
-#define QUICK_SORT
+#ifndef BACKWARDMOVETAB_QUICK_SORT
+#define BACKWARDMOVETAB_QUICK_SORT
 
 #include <stdlib.h>
 #include "../backwardMoveTab_interface.h"
