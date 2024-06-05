@@ -1,5 +1,6 @@
 #include "main.h"
 #include "fundamental_functions/game_functions/aux_game_functions/aux_functions.h"
+#include "test_config/test_config.h"
 
 int quit(Game *g, GraphicCache *cache)
 {
@@ -15,12 +16,12 @@ void test_start_game(Game *g, GraphicCache *cache)
     // très pratique pour promouvoir une dame en qq coups
 
     // Coord c1 = coord_from_ind(g, 0, true);
-    // // Coord c2 = coord_from_ind(g, 1, true);
+    // Coord c2 = coord_from_ind(g, 1, true);
     // for (int i = 0; i < 4; i++)
     // {
-    //     // promote(g, true, i);
-    //     // promote(g, false, i);
-    //     // change_pawn_place(g, i, false, get_pawn_value(g, false, i, LIG) - 5, get_pawn_value(g, false, i, COL) + 2*i+1);
+        // promote(g, true, i);
+        // promote(g, false, i);
+        // change_pawn_place(g, i, false, get_pawn_value(g, false, i, LIG) - 5, get_pawn_value(g, false, i, COL) + 2*i+1);
 
     //     // lienAmitieNGE(c1.i, c1.j, i, false, g);
     //     // promote(g, false, i);
@@ -208,7 +209,8 @@ int main(int argc, char *argv[])
 
     // init the graphic cache
     GraphicCache *cache = initCache();
-    test_start_game(g, cache);
+    //test_start_game(g, cache);
+    moveBackListingTest(g, cache);
 
     // end debug
 

@@ -1,4 +1,5 @@
 #include "print_moves.h"
+#include "../move_back_listing/backwardMoveTab_interface.h"
 #include <stdio.h>
 
 void print_move(Move m)
@@ -20,16 +21,10 @@ void print_move(Move m)
 
     case promotionType:
         printf("Prom\n");
+        break;
 
     case pawnMoveBackType:
-        if (m.left)
-        {
-            printf("v <-\n");
-        }
-        else
-        {
-            printf("v ->\n");
-        }
+        backwardMoveTabPrint(m.backwardPawnMoves);
         break;
 
     case biDeplType:
