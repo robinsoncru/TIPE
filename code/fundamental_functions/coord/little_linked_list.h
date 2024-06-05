@@ -82,4 +82,7 @@ void ctfree(coord_tab_t *t);
 Coord ctpop(coord_tab_t *t);
 void ctpush(coord_tab_t *t, int i, int j);
 bool ctis_empty(coord_tab_t *t);
+int cttaille(coord_tab_t *t);
+
+void dfilterCoordIndSpecial(data_chain *l, Coord coordSpecial);
 #endif

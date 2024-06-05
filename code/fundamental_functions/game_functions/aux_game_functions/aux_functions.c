@@ -52,12 +52,6 @@ void copy_remove_pawn_from_index_to_index(Game *g, int indStart, int indArrive, 
         }
     }
 
-    // On supprime ind arrivé du nuage s'il en faisait parti
-    // if (isInCloud(g, color, indArrive))
-    // {
-    //     popi(g->cloud[color], indArrive);
-    // }
-
     if (indStart != indArrive)
     {
         int lig = get_pawn_value(g, color, indStart, LIG);
@@ -84,7 +78,10 @@ void copy_remove_pawn_from_index_to_index(Game *g, int indStart, int indArrive, 
 
         for (int k = 1; k < 9; k++)
         {
-            put_pawn_value(g, color, indArrive, k, get_pawn_value(g, color, indStart, k));
+            if (k != FRIENDLY)
+            {
+                put_pawn_value(g, color, indArrive, k, get_pawn_value(g, color, indStart, k));
+            }
         }
         if (isInCloud(g, color, indStart))
         {
@@ -418,7 +415,7 @@ void free_game(Game *g)
 Coord give_coord(Game *g, bool iw, int ind)
 {
     Coord init_coord_dame_rafle = {.i = get_pawn_value(g, iw, ind, LIG),
-                        .j = get_pawn_value(g, iw, ind, COL)};
+                                   .j = get_pawn_value(g, iw, ind, COL)};
     return init_coord_dame_rafle;
 }
 

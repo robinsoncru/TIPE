@@ -17,7 +17,8 @@ void pawnMoveCancel(Game *g, bool is_white, int ind, bool left);
 void recreateCloud(Game *g, cloud_chain *l, int indFromCaseSurvivor, int pbaSurvivor, bool iw);
 coord_bool_t biDeplNGE(Game *g, bool color, int ind);
 void cancelBidepl(Game *g, int oldInd, coord_bool_t data, bool iw);
-Coord promotionNGE(Game *g, int index_choice);
+Coord promotionNGE(Game *g, int index_choice, bool iw);
+
 void cancelPromotion(Game *g, int indPawnBeforeProm, Coord pos_potential_foe_from_prom, bool iw);
 void cancelDeplQueen(Game *g, int ind_queen, data_chain *chainy, Coord init_coord_dame_rafle, bool iw);
 

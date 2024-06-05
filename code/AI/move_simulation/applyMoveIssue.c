@@ -10,14 +10,15 @@ void pawnMoveIssue(Game *g, memory_move_t *mem, int index)
 
 void promotionIssue(Game *g, memory_move_t *mem, int index)
 {
+
+    bool iw = mem->is_white;
     if (!mem->prom_need_break_cloud)
     {
-        mem->pos_potential_foe_from_prom = promotionNGE(g, index);
+        mem->pos_potential_foe_from_prom = promotionNGE(g, index, iw);
     }
     Coord pos = mem->pos_potential_foe_from_prom;
     int ind = ind_from_coord(g, mem->coordMovePawn);
 
-    bool iw = mem->is_white;
     if (pos.i != -1)
     {
         assert(pos.j != -1);

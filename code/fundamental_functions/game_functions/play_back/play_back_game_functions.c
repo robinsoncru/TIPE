@@ -56,9 +56,8 @@ void recreateCloud(Game *g, cloud_chain *l, int indFromCaseSurvivor, int pbaSurv
     g->lengthCloud[iw]++;
 }
 
-Coord promotionNGE(Game *g, int index_choice)
+Coord promotionNGE(Game *g, int index_choice, bool iw)
 {
-    bool iw = g->is_white;
     assertAndLog(is_empty(g->inds_move_back), "Il reste des amis dans les NGE");
     /* Promote the pawn at the ind in pmetre : do nothing, become a queen or become an ennemy pawn */
     // Return the index of the ennemy pawn created, -1 else
@@ -203,14 +202,19 @@ data_chain *eatRafleNGE(Game *g, int indEater, bool is_white, PathTree *t, Path 
         coord_tab_t *tamis = NULL;
         if (get_pawn_value(g, !is_white, eatenInd, FRIENDLY) > 0)
         {
-            tamis = friendTabToCoordTab(g, eatenInd, !is_white);
+            tamis = friendTabToCoordTab(g, eatenInd, !is_white, indEater);
         }
 
         int indEnn = get_pawn_value(g, !is_white, eatenInd, ENNEMY);
         Coord c_enn = coord_init();
-        if (indEnn != VOID_INDEX)
+        if (indEnn == indEater)
         {
-            c_enn = coord_from_ind(g, !is_white, indEnn);
+            c_enn.i = -2;
+            c_enn.j = -2;
+        }
+        else if (indEnn != VOID_INDEX)
+        {
+            c_enn = coord_from_ind(g, indEnn, is_white);
         }
 
         pawn_info data_eaten = {.relationship = {.friendsId = tamis,
@@ -223,6 +227,9 @@ data_chain *eatRafleNGE(Game *g, int indEater, bool is_white, PathTree *t, Path 
         workTree = pathTreeChild(workTree, dj, di);
     }
     assertAndLog(!dis_empty(chainy), "eatrafleNGE : Rien a manger");
+    // Parcours chainy à la recherche de coord (-2, -2)
+    Coord pos_final_eater = coord_from_ind(g, indEater, is_white);
+    dfilterCoordIndSpecial(chainy, pos_final_eater);
     return chainy;
 }
 
@@ -234,11 +241,15 @@ data_chain *rafleNGE(Game *g, int indMovePawn)
     assert(isValidIndexInGame(g, indMovePawn, isWhite));
 
     g->currentTree = rafleTreeCalc(g, isWhite, g->ind_move);
+    // if (g->currentRafle == emptyTree)
+    // {
+    //     return NULL; // rien a manger
+    // }
 
     printf("lazyRafle called\n");
     Path *r = lazyRafle(g->currentTree);
     printf("eatRafle called\n");
-    data_chain *chainy = eatRafleNGE(g, g->ind_move, g->is_white, g->currentTree, r);
+    data_chain *chainy = eatRafleNGE(g, g->ind_move, isWhite, g->currentTree, r);
     printf("pathFree called\n");
     pathFree(r);
     return chainy;
@@ -258,15 +269,17 @@ void cancelRafle(Game *g, int indMovedPawn, Coord init_pos, data_chain *chainy, 
         while (t != NULL && !ctis_empty(t))
         {
             c = ctpop(t);
-            putFriendByInd(g, reborn_ind, ind_from_coord(g, c), iw, true);
+            putFriendByInd(g, reborn_ind, ind_from_coord(g, c), !iw, true);
         }
         ctfree(reborn_pawn.relationship.friendsId);
         reborn_pawn.relationship.friendsId = NULL;
         c = reborn_pawn.relationship.pos_foe;
         if (c.i != -1)
         {
+            int ind_enn_reborn = ind_from_coord(g, c);
             assertAndLog(c.j != -1, "cancel rafle case enn pas valide");
-            put_pawn_value(g, !iw, reborn_ind, ENNEMY, ind_from_coord(g, c));
+            put_pawn_value(g, !iw, reborn_ind, ENNEMY, ind_enn_reborn);
+            put_pawn_value(g, iw, ind_enn_reborn, ENNEMY, reborn_ind);
         }
         put_pawn_value(g, !iw, reborn_ind, QUEEN, bool_to_int(reborn_pawn.relationship.queen));
     }
@@ -309,7 +322,7 @@ void lienEnnemitieNGE(bool is_white, int lig, int col, int ind, Game *g)
 {
     assertAndLog(is_empty(g->inds_move_back), "Il reste des amis dans les NGE");
 
-    assertAndLog(isValidIndexInGame(g, ind, is_white) && canBeEnnemy(g, ind, g->is_white, get_case_damier(g, lig, col)),
+    assertAndLog(isValidIndexInGame(g, ind, is_white) && canBeEnnemy(g, ind, is_white, get_case_damier(g, lig, col)),
                  "lienEnnemitieIssue : peut pas etre ennemi");
     Case c = get_case_damier(g, lig, col);
     assert(c.ind_pawn != -1);

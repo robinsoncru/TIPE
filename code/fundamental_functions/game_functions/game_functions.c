@@ -177,8 +177,9 @@ data_chain *queenDepl(Game *g, int ind, bool color, Coord pos_dame, bool isNGE)
 
     if (isNGE)
     {
+        // if (canEat(g, color, ind, lig, col, ))
         chainy = rafleNGE(g, ind);
-        if (!dis_empty(chainy))
+        if (chainy == NULL)
         {
             doMoveBack = false;
         }
@@ -232,7 +233,7 @@ data_chain *queenDepl(Game *g, int ind, bool color, Coord pos_dame, bool isNGE)
 
 void promotion(Game *g)
 {
-    Coord pos = promotionNGE(g, VOID_INDEX);
+    Coord pos = promotionNGE(g, VOID_INDEX, g->is_white);
     if (pos.i != -1)
     {
         assert(pos.j != -1);

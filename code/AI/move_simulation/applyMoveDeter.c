@@ -157,7 +157,7 @@ memory_move_t *rafleDeter(Game *g, int indMovePawn, PathTree *rafleTree, Path *r
     memory_move_t *mem = initMemMove(indMovePawn, type);
     mem->init_coord_dame_rafle = give_coord(g, iw, indMovePawn);
     mem->chainy = rafleNGE(g, indMovePawn);
-
+    assertAndLog(mem->chainy != NULL && !dis_empty(mem->chainy), "rafle Deter aucune rafle");
     generateCloudDuePawnMove(g, mem);
 
     return mem;

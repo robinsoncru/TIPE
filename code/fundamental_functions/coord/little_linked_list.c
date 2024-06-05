@@ -232,6 +232,39 @@ void dfree(data_chain *l)
     free(l);
 }
 
+void dfilterCoordIndSpecial(data_chain *l, Coord coordSpecial)
+{
+    // Remplace dans l les coord (-2, -2) des amis par les coord Speciales
+    while (!dis_empty(l))
+    {
+        l = l->next;
+        pawn_info data = l->data;
+        coord_tab_t *t = l->data.relationship.friendsId;
+        Coord c_enn = data.relationship.pos_foe;
+        if (c_enn.i == -2)
+        {
+            assertAndLog(c_enn.j == -2, "dfilterCoordIndSpecial : Enn Case -2 trouvé mais pas complète ");
+            l->data.relationship.pos_foe = coordSpecial;
+        }
+        if (t != NULL)
+        {
+
+            int taille = cttaille(t);
+            Coord c;
+
+            for (int i = 0; i < taille; i++)
+            {
+                c = t->tab[i];
+                if (c.i == -2)
+                {
+                    assertAndLog(c.j == -2, "dfilterCoordIndSpecial : Ami Case -2 trouvé mais pas complète ");
+                    t->tab[i] = coordSpecial;
+                }
+            }
+        }
+    }
+}
+
 // Opération pour manipuler un tableau de coordonnées dynamique
 
 coord_tab_t *create_coord_tab(int size)
@@ -299,6 +332,12 @@ bool ctis_empty(coord_tab_t *t)
 {
     assertAndLog(t != NULL, "ctis_empty : null");
     return t->index_actu == -1;
+}
+
+int cttaille(coord_tab_t *t)
+{
+    assert(t->index_actu < t->sizetab);
+    return t->index_actu + 1;
 }
 
 // For the other Kchain_list
