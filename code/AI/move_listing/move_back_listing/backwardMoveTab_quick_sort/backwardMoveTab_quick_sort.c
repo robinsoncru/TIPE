@@ -1,4 +1,4 @@
-#include "quick_sort.h"
+#include "backwardMoveTab_quick_sort.h"
 #include <stdio.h>
 
 void exchange(backwardMoveTab_t* t, int i, int j){

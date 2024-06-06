@@ -1,0 +1,51 @@
+#include "esperance_calc.h"
+#include "../../move_simulation/applyMoveAI.h"
+#include "../../../structures_fondamentales/fmemory.h"
+
+float getProba(issue_t outcome){
+    int probaDueToGhostPawn = (outcome.pba >= 0) ? outcome.pba : 1;
+    int probaDueToPromotion = (outcome.pba_promotion >= 0) ? outcome.pba_promotion : 1;
+    return 1. / ((float) (probaDueToPromotion * probaDueToGhostPawn));
+}
+
+float esperanceAlphaBetaPrunning(float (*f)(alphaBetaArg), alphaBetaArg alphaBetaArg, Move move){
+    memory_move_t* mem = applyDeter(alphaBetaArg.g, move);
+
+    float S = 0;
+    float currentProba;
+    int nbOutcomes = mem->lenghtIssues;
+    issue_t* outcomeTab = mem->issues;
+
+    int initialIndex = (mem->prom_need_break_cloud) ? 2 : 0;
+    for (int i = initialIndex; i < nbOutcomes; i++) {
+        applyIssue(alphaBetaArg.g, mem, i);
+        currentProba = getProba(outcomeTab[i]);
+        S += currentProba * f(alphaBetaArg);
+        applyRecipIssue(alphaBetaArg.g, mem, i);
+    }
+
+    applyRecipDeter(alphaBetaArg.g, mem);
+
+    return S;
+}
+
+float esperanceHeuristique(AI ai, Game* g, Move move){
+    float perspective = g->is_white ? 1 : -1;
+    memory_move_t* mem = applyDeter(g, move);
+
+    float S = 0;
+    float currentProba;
+    int nbOutcomes = mem->lenghtIssues;
+    issue_t* outcomeTab = mem->issues;
+
+    for (int i = 0; i < nbOutcomes; i++) {
+        applyIssue(g, mem, i);
+        currentProba = getProba(outcomeTab[i]);
+        S += currentProba * ai.ecrasement(perspective * ai.analyse(g));
+        applyRecipIssue(g, mem, i);
+    }
+
+    applyRecipDeter(g, mem);
+
+    return S;
+}
