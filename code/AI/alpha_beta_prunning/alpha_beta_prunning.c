@@ -21,7 +21,7 @@ float alphaBetaMax(alphaBetaArg arg){
     for (int i = 0; i < tabSize; i++) {
         arg.alpha = max;
         esperance = esperanceAlphaBetaPrunning(alphaBetaMin,
-            arg, moveTab->tab[i]);
+            arg, moveTab->tab[i], true);
         if (max < esperance) {
             max = esperance;
         }
@@ -29,6 +29,7 @@ float alphaBetaMax(alphaBetaArg arg){
             return max; //coupure beta
         }
     }
+    moveTabFree(moveTab);
     return max;
 }
 
@@ -47,7 +48,7 @@ float alphaBetaMin(alphaBetaArg arg){
     for (int i = 0; i < tabSize; i++) {
         arg.beta = min;
         esperance = esperanceAlphaBetaPrunning(alphaBetaMax,
-        arg, moveTab->tab[i]);
+        arg, moveTab->tab[i], true);
         if (min > esperance) {
             min = esperance;
         }
@@ -55,6 +56,7 @@ float alphaBetaMin(alphaBetaArg arg){
             return min; //coupure alpha
         }
     }
+    moveTabFree(moveTab);
     return min;
 }
 
@@ -74,15 +76,24 @@ Move alphaBetaPrunning(Game *g, AI ai){
     int tabSize = moveTab->size;
     float esperance;
     float max = -INFINITY;
-    Move bestMove;
+    int bestMoveIndex;
     arg.depth--;
     for (int i = 0; i < tabSize; i++) {
         arg.alpha = max;
-        esperance = esperanceAlphaBetaPrunning(alphaBetaMin, arg, moveTab->tab[i]);
+        esperance = esperanceAlphaBetaPrunning(alphaBetaMin, arg,
+            moveTab->tab[i], false);
         if (max <= esperance) {
             max = esperance;
-            bestMove = moveTab->tab[i];
+            bestMoveIndex = i;
         }
     }
-    return bestMove;
+    //libere tout le monde sauf le move qu'on retourne
+    //faudra le liberer apres l'avoir applique
+    for (int i = 0; i < bestMoveIndex; i++) {
+        moveFree(moveTab->tab[i]);
+    }
+    for (int i = bestMoveIndex + 1; i < tabSize; i++) {
+        moveFree(moveTab->tab[i]);
+    }
+    return moveTab->tab[bestMoveIndex];
 }
