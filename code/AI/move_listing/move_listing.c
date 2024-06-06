@@ -7,7 +7,7 @@
 #include "rafle_listing/rafle_listing.h"
 #include "../../fundamental_functions/game_functions/access_functions/access_functions.h"
 #include "../../fundamental_functions/game_functions/Logic/logic_functions.h"
-#include "move_back_listing/quick_sort/quick_sort.h"
+#include "move_back_listing/backwardMoveTab_quick_sort/backwardMoveTab_quick_sort.h"
 #include <stdlib.h>
 
 void listMovesMoveBackAux(Game *g, int *nbMoves, Move *temporaryResult,

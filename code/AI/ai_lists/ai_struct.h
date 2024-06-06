@@ -8,5 +8,7 @@ typedef struct AI{
     float (*analyse)(Game*);
     //fonction d'ecrasement
     float (*ecrasement)(float);
+    //profondeur de recherche
+    int depth;
 }AI;
 #endif
