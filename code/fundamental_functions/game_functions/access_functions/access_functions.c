@@ -202,3 +202,13 @@ Coord coord_init()
     Coord c = {.i = -1, .j = -1};
     return c;
 }
+
+void extractFriendsFromMove(memory_move_t *mem, backwardMoveTab_t *t_backs) {
+    /* copie le donnée de t_backs dans mem concernant les amis qui reculent */
+    mem->inds_move_back = create_list(t_backs->n);
+    mem->move_back_left_or_right = create_list(t_backs->n);
+    for (int i=0; i<t_backs->n; i++) {
+        push(mem->inds_move_back, t_backs->tab[i].indMovedPawn);
+        push(mem->move_back_left_or_right, t_backs->tab[i].dir);
+    }
+}

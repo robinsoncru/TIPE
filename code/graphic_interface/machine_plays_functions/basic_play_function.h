@@ -8,7 +8,6 @@ int play_a_move(int move, int ind_pawn, Game *g, GraphicCache *cache, int nb_cou
 int random_index(Game *g);
 int plannifier_index(Game *g, int nb_coups, int* l_coups);
 int plannifier_index_color(int nb_coups, int *l_coups, bool color);
-void auto_put_index(Game *g, int indPawnPlayed);
 int random_play();
 Move extract_random_move_from_tab_move(MoveTab *t);
 int extract_pmetre_from_move(Move m);

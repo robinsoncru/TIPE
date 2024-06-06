@@ -4,7 +4,6 @@
 #include "../../../fundamental_functions/coord/coord.h"
 #include "../../../rafle/calc/path_tree.h"
 #include "../../../rafle/rafle_choice/path_struct.h"
-#include "../move_back_listing/backwardMoveTab_struct.h"
 
 
 typedef struct Move
@@ -42,4 +41,5 @@ typedef struct MoveTab
 void moveTabFree(MoveTab *moveTab);
 void printMove(Move m);
 void printMoveTab(MoveTab *t);
+void moveFree(Move coup);
 #endif

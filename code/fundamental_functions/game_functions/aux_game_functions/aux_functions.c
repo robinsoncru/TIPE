@@ -543,3 +543,9 @@ void cleanMemMoveBack(memory_move_t *mem)
     mem->move_back_left_or_right = NULL;
     mem->friends_which_move_back = NULL;
 }
+
+
+void auto_put_index(Game *g, int indPawnPlayed)
+{
+    g->ind_move = indPawnPlayed;
+}

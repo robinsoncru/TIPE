@@ -24,4 +24,6 @@ bool has_friend(Game *g, int ind, int color);
 float zero_fun(Game *g);
 Coord to_coord(int i, int j);
 Coord coord_init();
+
+void extractFriendsFromMove(memory_move_t *mem, backwardMoveTab_t *t_backs);
 #endif

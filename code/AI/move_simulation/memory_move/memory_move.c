@@ -33,8 +33,9 @@ void freeMemMove(memory_move_t *mem)
     if (mem->issues != NULL)
         free(mem->issues);
     if (mem->move_back_left_or_right != NULL)
-        free(mem->move_back_left_or_right);
-    if (mem->friends_which_move_back != NULL) free(mem->friends_which_move_back);
+        freeIntChain(mem->move_back_left_or_right);
+    if (mem->friends_which_move_back != NULL)
+        free(mem->friends_which_move_back);
     cfree(mem->load_cloud);
     free(mem);
 }
