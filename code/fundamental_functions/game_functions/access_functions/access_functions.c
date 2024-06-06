@@ -185,7 +185,7 @@ coord_tab_t *friendTabToCoordTab(Game *g, int ind, bool color, int indSpecial)
     return t;
 }
 
-float zero_fun(Game *g)
+double zero_fun(Game *g)
 {
     return 0.0;
 }

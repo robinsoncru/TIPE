@@ -13,8 +13,8 @@ int compare(Game* g, AI ai, Move a, Move b){
     //-1 if score(a) > score(b)
     //0 if score(a) == score(b)
     //1 if score(a) < score(b)
-    float scoreA = esperanceHeuristique(ai, g, a);
-    float scoreB = esperanceHeuristique(ai, g, b);
+    double scoreA = esperanceHeuristique(ai, g, a);
+    double scoreB = esperanceHeuristique(ai, g, b);
     if (scoreA > scoreB) {
         return -1;
     }

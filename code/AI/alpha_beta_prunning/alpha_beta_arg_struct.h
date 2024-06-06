@@ -8,7 +8,7 @@ typedef struct alphaBetaArg {
     int depth;
     AI ai;
     Game* g;
-    float alpha, beta;
+    double alpha, beta;
 } alphaBetaArg;
 
 #endif

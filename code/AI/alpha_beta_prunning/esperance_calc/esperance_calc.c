@@ -2,17 +2,17 @@
 #include "../../move_simulation/applyMoveAI.h"
 #include "../../../structures_fondamentales/fmemory.h"
 
-float getProba(issue_t outcome){
+double getProba(issue_t outcome){
     int probaDueToGhostPawn = (outcome.pba >= 0) ? outcome.pba : 1;
     int probaDueToPromotion = (outcome.pba_promotion >= 0) ? outcome.pba_promotion : 1;
-    return 1. / ((float) (probaDueToPromotion * probaDueToGhostPawn));
+    return 1. / ((double) (probaDueToPromotion * probaDueToGhostPawn));
 }
 
-float esperanceAlphaBetaPrunning(float (*f)(alphaBetaArg), alphaBetaArg alphaBetaArg, Move move, bool shouldFreeMove){
+double esperanceAlphaBetaPrunning(double (*f)(alphaBetaArg), alphaBetaArg alphaBetaArg, Move move, bool shouldFreeMove){
     memory_move_t* mem = applyDeter(alphaBetaArg.g, move, shouldFreeMove);
 
-    float S = 0;
-    float currentProba;
+    double S = 0;
+    double currentProba;
     int nbOutcomes = mem->lenghtIssues;
     issue_t* outcomeTab = mem->issues;
 
@@ -29,12 +29,12 @@ float esperanceAlphaBetaPrunning(float (*f)(alphaBetaArg), alphaBetaArg alphaBet
     return S;
 }
 
-float esperanceHeuristique(AI ai, Game* g, Move move){
-    float perspective = g->is_white ? 1 : -1;
+double esperanceHeuristique(AI ai, Game* g, Move move){
+    double perspective = g->is_white ? 1 : -1;
     memory_move_t* mem = applyDeter(g, move, false);
 
-    float S = 0;
-    float currentProba;
+    double S = 0;
+    double currentProba;
     int nbOutcomes = mem->lenghtIssues;
     issue_t* outcomeTab = mem->issues;
 

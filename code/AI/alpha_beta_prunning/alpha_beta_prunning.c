@@ -4,19 +4,19 @@
 #include "moveTab_quick_sort/moveTab_quick_sort.h"
 #include <math.h>
 
-float alphaBetaMin(alphaBetaArg arg);
+double alphaBetaMin(alphaBetaArg arg);
 
-float alphaBetaMax(alphaBetaArg arg){
+double alphaBetaMax(alphaBetaArg arg){
     if (arg.depth <= 0) {
-        float perspective = arg.g->is_white ? 1  : -1;
+        double perspective = arg.g->is_white ? 1  : -1;
         return arg.ai.ecrasement(perspective * arg.ai.analyse(arg.g));
     }
     MoveTab* moveTab = listMoves(arg.g);
     moveTabQuickSort(arg.g, moveTab, arg.ai);
 
     int tabSize = moveTab->size;
-    float esperance;
-    float max = -INFINITY;
+    double esperance;
+    double max = -INFINITY;
     arg.depth--;
     for (int i = 0; i < tabSize; i++) {
         arg.alpha = max;
@@ -33,17 +33,17 @@ float alphaBetaMax(alphaBetaArg arg){
     return max;
 }
 
-float alphaBetaMin(alphaBetaArg arg){
+double alphaBetaMin(alphaBetaArg arg){
     if (arg.depth <= 0) {
-        float perspective = arg.g->is_white ? 1 : -1;
+        double perspective = arg.g->is_white ? 1 : -1;
         return arg.ai.ecrasement(perspective * arg.ai.analyse(arg.g));
     }
     MoveTab* moveTab = listMoves(arg.g);
     moveTabQuickSort(arg.g, moveTab, arg.ai);
 
     int tabSize = moveTab->size;
-    float esperance;
-    float min = INFINITY;
+    double esperance;
+    double min = INFINITY;
     arg.depth--;
     for (int i = 0; i < tabSize; i++) {
         arg.beta = min;
@@ -74,8 +74,8 @@ Move alphaBetaPrunning(Game *g, AI ai){
     moveTabQuickSort(g, moveTab, ai);
 
     int tabSize = moveTab->size;
-    float esperance;
-    float max = -INFINITY;
+    double esperance;
+    double max = -INFINITY;
     int bestMoveIndex;
     arg.depth--;
     for (int i = 0; i < tabSize; i++) {

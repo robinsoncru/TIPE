@@ -306,7 +306,7 @@ void lienAmitie(int lig, int col, Game *g)
 */
 
 // Play back and return if the pawn has moved or not
-void moveBackNGE(Game *g, bool autoplay, bool use_heuristique, float (*f)(Game *), memory_move_t *mem)
+void moveBackNGE(Game *g, bool autoplay, bool use_heuristique, double (*f)(Game *), memory_move_t *mem)
 {
     // mem vaut NULL lors du jeu avec effet graphique
     bool iw = g->is_white;
@@ -339,8 +339,8 @@ void moveBackNGE(Game *g, bool autoplay, bool use_heuristique, float (*f)(Game *
                 {
                     assertAndLog(false, "pas encore teste move Back heurist");
 
-                    float eval_gauche = 0;
-                    float eval_droite = 0;
+                    double eval_gauche = 0;
+                    double eval_droite = 0;
                     if (recul_droite && recul_gauche)
                     {
                         lazzyMoveBack(g, ind, true);
@@ -414,7 +414,7 @@ void moveBackNGE(Game *g, bool autoplay, bool use_heuristique, float (*f)(Game *
 
 // Functions to move back a pawn because the friend has just moved
 
-void moveBack(Game *g, bool autoplay, bool use_heuristique, float (*f)(Game *))
+void moveBack(Game *g, bool autoplay, bool use_heuristique, double (*f)(Game *))
 {
     /* Suppose move on the just pawn. Move back the pawn referred by inds_move_back to the case localised by the coord coordForMoveBack */
     moveBackNGE(g, autoplay, use_heuristique, f, NULL);

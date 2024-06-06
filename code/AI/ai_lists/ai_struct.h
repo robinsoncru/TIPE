@@ -5,9 +5,9 @@
 
 typedef struct AI{
     //quantifie le niveau d'avantage des blancs sur les noirs
-    float (*analyse)(Game*);
+    double (*analyse)(Game*);
     //fonction d'ecrasement
-    float (*ecrasement)(float);
+    double (*ecrasement)(double);
     //profondeur de recherche
     int depth;
 }AI;

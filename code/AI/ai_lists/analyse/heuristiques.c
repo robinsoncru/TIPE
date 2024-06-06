@@ -1,6 +1,6 @@
 #include "heuristiques.h"
 
-float heuristique_miam_trivial(Game *g)
+double heuristique_miam_trivial(Game *g)
 {
     // Favorise d'avoir plus de pion, temps constant
     bool color = g->is_white;
@@ -27,7 +27,7 @@ float heuristique_miam_trivial(Game *g)
     }
 }
 
-float heuristique_border(Game *g)
+double heuristique_border(Game *g)
 {
     // Favorise les pions proches de la ligne ennemie
     return 0;
