@@ -7,37 +7,66 @@ char *typeNames[8] = {"pawn move", "promotion", "pawn move back", "bi deplacemen
 
 void moveFree(Move coup)
 {
-    PathTree *lastEncounteredTree = emptyTree;
-    if (coup.type == rafleType)
-    {
-        pathFree(coup.rafle);
-        if (lastEncounteredTree != coup.rafleTree)
-        {
-            lastEncounteredTree = coup.rafleTree;
-            PathTree *m = lastEncounteredTree;
-            pathTreeFree(m);
-        }
-        coup.rafleTree = emptyTree;
-    }
-    if (coup.type == pawnMoveBackType)
-    {
-        free(coup.backwardPawnMoves->tab);
-        free(coup.backwardPawnMoves);
+    switch (coup.type) {
+        case pawnMoveBackType:
+            free(coup.backwardPawnMoves->tab);
+            free(coup.backwardPawnMoves);
+            break;
+
+        default:
+            break;
     }
 }
 
-// la liberation des arbres de rafles est non triviale
-// car plusieurs coups peuvent avoir un seul et meme arbre associe
-// cependant, en remarquant que les rafles rattachees a un meme arbre
-// sont adjacentes dans le moveTab, on en deduit qu'il suffit de garder
-// en memoire le dernier arbre croise pour effacer sans erreurs
-void moveTabFree(MoveTab *moveTab)
+
+void moveTabFree(MoveTab *moveTab, int startIndex, int endIndex)
 {
-    int n = moveTab->size;
-    for (int i = 0; i < n; i++)
+    PathTree* lastEncounteredTree = emptyTree;
+    PathTree* currentTree;
+    Move currentMove;
+    for (int i = startIndex; i < endIndex; i++)
     {
-        moveFree(moveTab->tab[i]);
+        currentMove = moveTab->tab[i];
+        switch (currentMove.type) {
+            case pawnMoveBackType:
+                free(currentMove.backwardPawnMoves->tab);
+                free(currentMove.backwardPawnMoves);
+                break;
+
+            case rafleType:
+                pathFree(currentMove.rafle);
+                break;
+
+            default:
+                break;
+        }
     }
     free(moveTab->tab);
     free(moveTab);
+}
+
+void moveTabFreeTrees(MoveTab* moveTab, int startIndex, int endIndex){
+    // la liberation des arbres de rafles est non triviale
+    // car plusieurs coups peuvent avoir un seul et meme arbre associe
+    // cependant, en remarquant que les rafles rattachees a un meme arbre
+    // sont adjacentes dans le moveTab, on en deduit qu'il suffit de garder
+    // en memoire le dernier arbre croise pour effacer sans erreurs
+    PathTree* lastEncounteredTree = emptyTree;
+    PathTree* currentTree;
+    Move currentMove;
+    for (int i = startIndex; i < endIndex; i++) {
+        currentMove = moveTab->tab[i];
+        switch (currentMove.type) {
+            case rafleType:
+                currentTree = currentMove.rafleTree;
+                if (currentTree != lastEncounteredTree) {
+                    lastEncounteredTree = currentTree;
+                    pathTreeFree(currentTree);
+                }
+                break;
+            
+            default:
+                break;
+        }
+    }
 }

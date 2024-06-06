@@ -25,7 +25,6 @@ double esperanceAlphaBetaPrunning(double (*f)(alphaBetaArg), alphaBetaArg alphaB
     }
 
     applyRecipDeter(alphaBetaArg.g, mem);
-    freeMemMove(mem);
     return S;
 }
 
@@ -46,6 +45,5 @@ double esperanceHeuristique(AI ai, Game* g, Move move){
     }
 
     applyRecipDeter(g, mem);
-    freeMemMove(mem);
     return S;
 }

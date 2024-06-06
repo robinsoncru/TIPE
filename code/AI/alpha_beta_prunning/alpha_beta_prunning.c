@@ -3,6 +3,7 @@
 #include "esperance_calc/esperance_calc.h"
 #include "moveTab_quick_sort/moveTab_quick_sort.h"
 #include <math.h>
+#include <stdlib.h>
 
 double alphaBetaMin(alphaBetaArg arg);
 
@@ -18,7 +19,8 @@ double alphaBetaMax(alphaBetaArg arg){
     double esperance;
     double max = -INFINITY;
     arg.depth--;
-    for (int i = 0; i < tabSize; i++) {
+    int i;
+    for (i = 0; i < tabSize; i++) {
         arg.alpha = max;
         esperance = esperanceAlphaBetaPrunning(alphaBetaMin,
             arg, moveTab->tab[i], true);
@@ -26,10 +28,12 @@ double alphaBetaMax(alphaBetaArg arg){
             max = esperance;
         }
         if (max >= arg.beta) {
+            moveTabFreeTrees(moveTab, 0, tabSize);
+            moveTabFree(moveTab, i + 1, tabSize);
             return max; //coupure beta
         }
     }
-    moveTabFree(moveTab);
+    moveTabFreeTrees(moveTab, 0, tabSize);
     return max;
 }
 
@@ -45,7 +49,8 @@ double alphaBetaMin(alphaBetaArg arg){
     double esperance;
     double min = INFINITY;
     arg.depth--;
-    for (int i = 0; i < tabSize; i++) {
+    int i;
+    for (i = 0; i < tabSize; i++) {
         arg.beta = min;
         esperance = esperanceAlphaBetaPrunning(alphaBetaMax,
         arg, moveTab->tab[i], true);
@@ -53,10 +58,12 @@ double alphaBetaMin(alphaBetaArg arg){
             min = esperance;
         }
         if (min <= arg.alpha) {
+            moveTabFreeTrees(moveTab, 0, tabSize);
+            moveTabFree(moveTab, i + 1, tabSize);
             return min; //coupure alpha
         }
     }
-    moveTabFree(moveTab);
+    moveTabFreeTrees(moveTab, 0, tabSize);
     return min;
 }
 
@@ -89,11 +96,43 @@ Move alphaBetaPrunning(Game *g, AI ai){
     }
     //libere tout le monde sauf le move qu'on retourne
     //faudra le liberer apres l'avoir applique
-    for (int i = 0; i < bestMoveIndex; i++) {
-        moveFree(moveTab->tab[i]);
+    Move bestMove = moveTab->tab[bestMoveIndex];
+    Move currentMove;
+    PathTree* currentTree;
+    switch (bestMove.type) {
+        case rafleType:
+            for (int i = 0; i < tabSize; i++) {
+                currentTree = moveTab->tab[i].rafleTree;
+                if (currentTree != bestMove.rafleTree) {
+                    pathTreeFree(currentTree);
+                }
+            }
+
+            for (int i = 0; i < bestMoveIndex; i++) {
+                pathFree(moveTab->tab[i].rafle);
+            }
+            for (int i = bestMoveIndex + 1; i < tabSize; i++) {
+                pathFree(moveTab->tab[i].rafle);
+            }
+            break;
+
+        case pawnMoveBackType:
+            for (int i = 0; i < bestMoveIndex; i++) {
+                currentMove = moveTab->tab[i];
+                free(currentMove.backwardPawnMoves->tab);
+                free(currentMove.backwardPawnMoves);
+            }
+            for (int i = bestMoveIndex + 1; i < tabSize; i++) {
+                currentMove = moveTab->tab[i];
+                free(currentMove.backwardPawnMoves->tab);
+                free(currentMove.backwardPawnMoves);
+            }
+            break;
+
+        default:
+            break;
     }
-    for (int i = bestMoveIndex + 1; i < tabSize; i++) {
-        moveFree(moveTab->tab[i]);
-    }
-    return moveTab->tab[bestMoveIndex];
+    free(moveTab->tab);
+    free(moveTab);
+    return bestMove;
 }

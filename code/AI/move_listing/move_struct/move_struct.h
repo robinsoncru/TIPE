@@ -38,7 +38,8 @@ typedef struct MoveTab
     Move *tab;
 } MoveTab;
 
-void moveTabFree(MoveTab *moveTab);
+void moveTabFree(MoveTab *moveTab, int startIndex, int endIndex);
+void moveTabFreeTrees(MoveTab* moveTab, int startIndex, int endIndex);
 void printMove(Move m);
 void printMoveTab(MoveTab *t);
 void moveFree(Move coup);
