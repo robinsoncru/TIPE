@@ -93,9 +93,10 @@ void test_start_game(Game *g, GraphicCache *cache)
     }
 
     change_pawn_place(g, 4, true, 12, 2);
-    change_pawn_place(g, 5, true, 12, 6);
+    // change_pawn_place(g, 5, true, 12, 6);
     biDeplNGE(g, true, 4);
-    biDeplNGE(g, true, 5);
+    biDeplNGE(g, true, 6);
+    // biDeplNGE(g, true, 1);
 
 
     // change_pawn_place(g, 0, false, 6, 8);

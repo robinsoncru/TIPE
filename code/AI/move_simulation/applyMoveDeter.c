@@ -180,7 +180,6 @@ memory_move_t *biDeplDeter(Game *g, int indMovePawn, moveType type)
 {
     memory_move_t *mem = initMemMove(indMovePawn, type);
 
-    assertAndLog(canBiDepl(g, indMovePawn, g->is_white), "biDeplDeter : on ne peut pas BiDepl");
     mem->ghost_pawn_created_bidepl = biDeplNGE(g, g->is_white, indMovePawn);
 
     // Le pion en avançant peut tuer le nuage

@@ -120,6 +120,8 @@ void cancelPromotion(Game *g, int indPawnBeforeProm, Coord pos_potential_foe_fro
 coord_bool_t biDeplNGE(Game *g, bool color, int ind)
 {
     // On suppose le coup legal
+    assertAndLog(canBiDepl(g, ind, color), "biDeplNGE : on ne peut pas BiDepl");
+
     bool depl = int_to_bool(rand() % 2);
     // Depl le pion a droite ou a gauche et creera l'autre ghost pawn de l'autre cote
     int dj = depl ? 1 : -1;

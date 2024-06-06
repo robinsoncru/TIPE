@@ -186,10 +186,10 @@ int play_a_move(int move, int ind_pawn, Game *g, GraphicCache *cache, int nb_cou
         Move m;
         // if (!g->is_white)
         // {
-        printf("%d score %f ", g->is_white, heuristique_miam_trivial(g));
+        // printf("%d score %f ", g->is_white, heuristique_miam_trivial(g));
         flush();
-        // MoveTab *t = listMoves(g);
-        // print_moves(t);
+        MoveTab *t = listMoves(g);
+        print_moves(t);
         // // Coord cma = {.i = 9, .j = 9};
         // // }
         // // else
