@@ -5,7 +5,7 @@
 char *typeNames[8] = {"pawn move", "promotion", "pawn move back", "bi deplacement",
                       "deplacement de dame", "rafle", "lien amitie", "lien ennemitie"};
 
-void moveFree(Move coup)
+void moveFreeBackwardMoveTab(Move coup)
 {
     switch (coup.type) {
         case pawnMoveBackType:
@@ -18,6 +18,22 @@ void moveFree(Move coup)
     }
 }
 
+void moveFree(Move coup){
+    switch (coup.type) {
+        case pawnMoveBackType:
+            free(coup.backwardPawnMoves->tab);
+            free(coup.backwardPawnMoves);
+            break;
+
+        case rafleType:
+            pathFree(coup.rafle);
+            pathTreeFree(coup.rafleTree);
+            break;
+        
+        default:
+            break;
+    }
+}
 
 void moveTabFree(MoveTab *moveTab, int startIndex, int endIndex)
 {

@@ -51,7 +51,7 @@ memory_move_t *applyDeter(Game *g, Move coup, bool shouldFreeMove)
     mem->indMovePawn = -1; // Sécurité pour être sur de ne pas se baser sur l'indice
 
     if(shouldFreeMove){
-        moveFree(coup);
+        moveFreeBackwardMoveTab(coup);
     }
     // print_data_chain(mem->chainy);
     return mem;
