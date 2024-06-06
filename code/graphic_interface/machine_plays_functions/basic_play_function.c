@@ -184,32 +184,34 @@ int play_a_move(int move, int ind_pawn, Game *g, GraphicCache *cache, int nb_cou
         printv("ind select");
 
         Move m;
-        if (!g->is_white)
-        {
-            MoveTab *t = listMoves(g);
-            print_moves(t);
-            // Coord cma = {.i = 9, .j = 9};
-            // }
-            // else
-            // {
-            //     m.manipulatedPawn = random_index(g);
-            // }
-            m = t->tab[0];
-            mem = applyDeter(g, m); // Tester un eclatement de nuage
-            // picture_this(g);
-            for (int j = 0; j < mem->lenghtIssues; j++)
-            {
-                applyIssue(g, mem, j);
-                // print_state_game(g, PBA);
-                usleep(1000 * 100);
-                applyRecipIssue(g, mem, j);
-                // print_state_game(g, PBA);
-            }
-            applyRecipDeter(g, mem);
-            // print_state_game(g, PBA);
-            // print_liensAmitie(g);
-        }
-        endTurnGameManagement(g, g->is_white, m.manipulatedPawn, IND_CHANGE_ALLOWED, false); // Parce que ce sont des NGE
+        // if (!g->is_white)
+        // {
+        printf("%d score %f ", g->is_white, heuristique_miam_trivial(g));
+        flush();
+        // MoveTab *t = listMoves(g);
+        // print_moves(t);
+        // // Coord cma = {.i = 9, .j = 9};
+        // // }
+        // // else
+        // // {
+        // //     m.manipulatedPawn = random_index(g);
+        // // }
+        // m = t->tab[0];
+        // mem = applyDeter(g, m); // Tester un eclatement de nuage
+        // // picture_this(g);
+        // for (int j = 0; j < mem->lenghtIssues; j++)
+        // {
+        //     applyIssue(g, mem, j);
+        //     // print_state_game(g, PBA);
+        //     usleep(1000 * 100);
+        //     applyRecipIssue(g, mem, j);
+        //     // print_state_game(g, PBA);
+        // }
+        // applyRecipDeter(g, mem);
+        // // print_state_game(g, PBA);
+        // // print_liensAmitie(g);
+        // }
+        // endTurnGameManagement(g, g->is_white, m.manipulatedPawn, IND_CHANGE_ALLOWED, false); // Parce que ce sont des NGE
     }
 
     return nb_coups + 1;
