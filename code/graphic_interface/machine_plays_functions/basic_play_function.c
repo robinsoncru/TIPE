@@ -200,16 +200,15 @@ int play_a_move(int move, int ind_pawn, Game *g, GraphicCache *cache, int nb_cou
             for (int j = 0; j < mem->lenghtIssues; j++)
             {
                 applyIssue(g, mem, j);
-                print_state_game(g, PBA);
+                // print_state_game(g, PBA);
                 usleep(1000 * 100);
                 applyRecipIssue(g, mem, j);
-                print_state_game(g, PBA);
+                // print_state_game(g, PBA);
             }
             applyRecipDeter(g, mem);
-            print_state_game(g, PBA);
+            // print_state_game(g, PBA);
             // print_liensAmitie(g);
         }
-
         endTurnGameManagement(g, g->is_white, m.manipulatedPawn, IND_CHANGE_ALLOWED, false); // Parce que ce sont des NGE
     }
 

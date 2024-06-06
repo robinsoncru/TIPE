@@ -74,7 +74,7 @@ void test_start_game(Game *g, GraphicCache *cache)
     // change_pawn_place(g, 1, false, get_pawn_value(g, false, 1, LIG) - 1, NB_CASE_LG-3);
 
     // Config photo diapo
-    int endBlanc = 4;
+    int endBlanc = 6;
     int endNoir = 4;
     for (int i = NB_PAWNS - 1; i >= endBlanc; i--)
     {
@@ -87,10 +87,16 @@ void test_start_game(Game *g, GraphicCache *cache)
     }
 
     for (int i=0; i<4; i++) {
-        change_pawn_place(g, i, true, get_pawn_value(g, true, i, LIG)+2, get_pawn_value(g, true, i, COL));
-        change_pawn_place(g, i, false, get_pawn_value(g, false, i, LIG)-2, get_pawn_value(g, false, i, COL));
-        lienAmitieNGE(2, 0, i, false, g);
+        change_pawn_place(g, i, true, get_pawn_value(g, true, i, LIG)+4, get_pawn_value(g, true, i, COL));
+        change_pawn_place(g, i, false, get_pawn_value(g, false, i, LIG)-4, get_pawn_value(g, false, i, COL));
+        lienAmitieNGE(4, 0, i, false, g);
     }
+
+    change_pawn_place(g, 4, true, 12, 2);
+    change_pawn_place(g, 5, true, 12, 6);
+    biDeplNGE(g, true, 4);
+    biDeplNGE(g, true, 5);
+
 
     // change_pawn_place(g, 0, false, 6, 8);
     // change_pawn_place(g, 0, true, 2, 8);
