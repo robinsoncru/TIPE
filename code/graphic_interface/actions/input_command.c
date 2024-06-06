@@ -384,7 +384,7 @@ void onRUp(Game *g, GraphicCache *cache)
     // memory_move_t *mem;
     // for (int i = 0; i < coups->size; i++)
     // {
-    //     mem = applyDeter(g, coups->tab[i]);
+    //     mem = applyDeter(g, coups->tab[i], true);
     //     picture_this(g);
     //     for (int j = 0; j < mem->lenghtIssues; j++)
     //     {

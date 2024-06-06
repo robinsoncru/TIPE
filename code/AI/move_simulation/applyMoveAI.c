@@ -1,6 +1,6 @@
 #include "applyMoveAI.h"
 
-memory_move_t *applyDeter(Game *g, Move coup)
+memory_move_t *applyDeter(Game *g, Move coup, bool shouldFreeMove)
 {
     // passer les pointeurs pour legereté
     memory_move_t *mem;
@@ -50,7 +50,9 @@ memory_move_t *applyDeter(Game *g, Move coup)
     mem->coordMovePawn = coord_from_ind(g, mem->indMovePawn, mem->is_white);
     mem->indMovePawn = -1; // Sécurité pour être sur de ne pas se baser sur l'indice
 
-    moveFree(coup);
+    if(shouldFreeMove){
+        moveFree(coup);
+    }
     // print_data_chain(mem->chainy);
     return mem;
 }

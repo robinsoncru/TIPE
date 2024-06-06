@@ -197,7 +197,7 @@ int play_a_move(int move, int ind_pawn, Game *g, GraphicCache *cache, int nb_cou
         // //     m.manipulatedPawn = random_index(g);
         // // }
         // m = t->tab[0];
-        // mem = applyDeter(g, m); // Tester un eclatement de nuage
+        // mem = applyDeter(g, m, true); // Tester un eclatement de nuage
         // // picture_this(g);
         // for (int j = 0; j < mem->lenghtIssues; j++)
         // {

@@ -8,8 +8,8 @@ float getProba(issue_t outcome){
     return 1. / ((float) (probaDueToPromotion * probaDueToGhostPawn));
 }
 
-float esperanceAlphaBetaPrunning(float (*f)(alphaBetaArg), alphaBetaArg alphaBetaArg, Move move){
-    memory_move_t* mem = applyDeter(alphaBetaArg.g, move);
+float esperanceAlphaBetaPrunning(float (*f)(alphaBetaArg), alphaBetaArg alphaBetaArg, Move move, bool shouldFreeMove){
+    memory_move_t* mem = applyDeter(alphaBetaArg.g, move, shouldFreeMove);
 
     float S = 0;
     float currentProba;
@@ -31,7 +31,7 @@ float esperanceAlphaBetaPrunning(float (*f)(alphaBetaArg), alphaBetaArg alphaBet
 
 float esperanceHeuristique(AI ai, Game* g, Move move){
     float perspective = g->is_white ? 1 : -1;
-    memory_move_t* mem = applyDeter(g, move);
+    memory_move_t* mem = applyDeter(g, move, false);
 
     float S = 0;
     float currentProba;

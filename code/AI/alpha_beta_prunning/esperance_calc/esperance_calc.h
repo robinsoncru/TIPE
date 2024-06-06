@@ -5,7 +5,7 @@
 #include "../../move_listing/move_listing.h"
 #include "../../ai_lists/ai_struct.h"
 
-float esperanceAlphaBetaPrunning(float (*f)(alphaBetaArg), alphaBetaArg alphaBetaArg, Move move);
+float esperanceAlphaBetaPrunning(float (*f)(alphaBetaArg), alphaBetaArg alphaBetaArg, Move move, bool shouldFreeMove);
 //retourne l'esperance des appels reccusrsifs
 //de l'elagage alpha-beta
 
