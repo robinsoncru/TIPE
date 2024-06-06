@@ -2,6 +2,7 @@
 #define PLAYMOVE
 
 #include "applyMoveIssue.h"
+#include "../ai_lists/analyse/heuristiques.h"
 
 memory_move_t *applyDeter(Game *g, Move coup);
 void applyIssue(Game *g, memory_move_t *mem, int nbIssue);

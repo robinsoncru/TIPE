@@ -1,4 +1,4 @@
-#include "applyMoveIssue.h"
+#include "applyMoveAI.h"
 
 memory_move_t *applyDeter(Game *g, Move coup)
 {

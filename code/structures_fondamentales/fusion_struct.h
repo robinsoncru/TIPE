@@ -8,5 +8,6 @@
 #include "fmemory.h"
 #include "fpath_struct.h"
 #include "backwardMoveTab_struct.h"
+#include "fmaths_struct.h"
 
 #endif
