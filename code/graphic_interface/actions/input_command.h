@@ -6,6 +6,7 @@
 #include "../../AI/move_listing/move_max.h"
 #include "../../AI/move_listing/move_listing.h"
 #include "../../AI/move_listing/move_listing_debug/print_moves.h"
+#include "../../AI/alpha_beta_prunning/alpha_beta_prunning.h"
 #include <SDL2/SDL_events.h>
 #include <stdio.h>
 
@@ -31,6 +32,10 @@ void onZUp(Game* g, GraphicCache* cache);
 void onKUp(Game* g, GraphicCache* cache);
 //void onAUp(Game* g, GraphicCache* cache);
 void onRUp(Game* g, GraphicCache* cache);
+
+void onQUp(Game* g);
+//calcule et imprime le meilleur coup
+//selon l'IA qui a la main
 
 void checkLienAmitie(int i, int j, Game *g, GraphicCache *cache, bool screen_switch);
 void checkLienEnnemitie(int i, int j, Game *g, GraphicCache *cache, bool screen_switch);

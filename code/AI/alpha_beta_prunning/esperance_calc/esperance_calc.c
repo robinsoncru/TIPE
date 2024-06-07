@@ -19,7 +19,7 @@ double esperanceAlphaBetaPrunning(double (*f)(alphaBetaArg), alphaBetaArg alphaB
     int initialIndex = (mem->prom_need_break_cloud) ? 2 : 0;
     for (int i = initialIndex; i < nbOutcomes; i++) {
         applyIssue(alphaBetaArg.g, mem, i);
-        currentProba = getProba(outcomeTab[i]);
+        currentProba = (nbOutcomes > 1) ? getProba(outcomeTab[i]) : 1;
         S += currentProba * f(alphaBetaArg);
         applyRecipIssue(alphaBetaArg.g, mem, i);
     }
@@ -39,7 +39,7 @@ double esperanceHeuristique(AI ai, Game* g, Move move){
 
     for (int i = 0; i < nbOutcomes; i++) {
         applyIssue(g, mem, i);
-        currentProba = getProba(outcomeTab[i]);
+        currentProba = (nbOutcomes > 1) ? getProba(outcomeTab[i]) : 1;
         S += currentProba * ai.ecrasement(perspective * ai.analyse(g));
         applyRecipIssue(g, mem, i);
     }
