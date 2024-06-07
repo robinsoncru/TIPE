@@ -67,7 +67,7 @@ void quickSortAux(Game* g, MoveTab* t, AI ai, int deb, int fin){
     //      deb   fin
     //       V     V
     //[ ??? | ... | ??? ]
-    if (deb < fin) {
+    if (deb < fin - 1) {
         int pivot = (rand() % (fin - deb)) + deb;
         int i, k;
         triDrapeauNeerlandais(g, t, ai, pivot, deb, fin, &i, &k);

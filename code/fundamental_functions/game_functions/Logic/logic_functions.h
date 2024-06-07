@@ -15,7 +15,7 @@ bool needPutMoveBack(Game *g);
 
 bool caseIsAccessible(Game* g, bool is_white, int i, int j);
 
-bool canPromotion(Game *g);
+bool canPromotion(Game *g, int indPromotedPawn, bool colorPromotedPawn);
 
 bool canBeFriend(Game *g, int ind, bool color, Case c);
 bool canBeEnnemy(Game *g, int ind, bool color, Case c);

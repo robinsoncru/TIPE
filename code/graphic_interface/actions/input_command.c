@@ -121,7 +121,7 @@ void checkLienEnnemitie(int i, int j, Game *g, GraphicCache *cache, bool screen_
 
 void checkPromotion(Game *g, GraphicCache *cache, bool autoplay)
 {
-    if (canPromotion(g))
+    if (canPromotion(g, g->ind_move, g->is_white))
     {
         promotion(g);
         endTurnGraphics(g, cache);
@@ -427,7 +427,7 @@ void onRUp(Game *g, GraphicCache *cache)
 
 void onWUp(Game *g, GraphicCache *cache)
 {
-g->is_white = !g->is_white;
+    g->is_white = !g->is_white;
     g->ind_move = NEUTRAL_IND;
     g->indCheck = IND_CHANGE_ALLOWED;
     if (g->currentTree != emptyTree)
@@ -437,4 +437,11 @@ g->is_white = !g->is_white;
         pathTreeFree(m);
     }    
     endTurnGraphics(g, cache);
+}
+
+void onQUp(Game *g){
+    AI playingAI = *g->players[g->is_white];
+    Move bestMove = alphaBetaPrunning(g, playingAI);
+    printf("meilleur coup pour les %s\n", g->is_white ? "blancs" : "noirs");
+    print_move(bestMove);
 }

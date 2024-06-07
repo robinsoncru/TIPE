@@ -95,7 +95,14 @@ int maxMoves(Game *g)
 {
     bool iw = g->is_white;
     int casualPawns = g->nb_pawns[iw] - g->nbFoe[iw] - g->nbFriendNoQueen[iw] - g->lengthCloud[iw] - g->nbQueenWithFriend[iw] - g->nbQueenWithoutFriend[iw];
-    return g->lengthCloud[iw] * possibleMoveForOneGhostPawn() + g->nbQueenWithFriend[iw] * possibleMoveForOneQueenWithFriend(g) +
-           g->nbQueenWithoutFriend[iw] * possibleMoveForOneQueenWithoutFriend(g) + g->nbFoe[iw] * possibleMoveForOneFoe(g) +
-           g->nbFriendNoQueen[iw] * possibleMoveForOneFriendNoQueen(g) + casualPawns * possibleMoveForOneCasualPawn(g);
+    int ghostPawnMoves = possibleMoveForOneGhostPawn();
+    int queenWithFriendMoves = possibleMoveForOneQueenWithFriend(g);
+    int queenWithoutFriend = possibleMoveForOneQueenWithoutFriend(g);
+    int foe = possibleMoveForOneFoe(g);
+    int friendNoQueen = possibleMoveForOneFriendNoQueen(g);
+    int moveForCasualPawns = possibleMoveForOneCasualPawn(g);
+    int res = g->lengthCloud[iw] * ghostPawnMoves + g->nbQueenWithFriend[iw] * queenWithFriendMoves +
+           g->nbQueenWithoutFriend[iw] * queenWithoutFriend + g->nbFoe[iw] * foe +
+           g->nbFriendNoQueen[iw] * friendNoQueen + casualPawns * moveForCasualPawns;
+    return res;
 }
