@@ -148,11 +148,11 @@ bool caseIsAccessible(Game *g, bool is_white, int i, int j)
     return !outOfBounds(i, j) && get_case_damier(g, i, j).ind_pawn == VOID_INDEX;
 }
 
-bool canPromotion(Game *g)
+bool canPromotion(Game *g, int indPromotedPawn, bool colorPromotedPawn)
 {
-    bool iw = g->is_white;
     // return isPawnValid(g) && !isInCloud(g, iw, g->ind_move) && !int_to_bool(get_pawn_value(g, iw, g->ind_move, QUEEN));
-    return isPawnValid(g) && !isInCloud(g, iw, g->ind_move);
+
+    return isValidIndexInGame(g, indPromotedPawn, colorPromotedPawn) && !isInCloud(g, colorPromotedPawn, g->ind_move);
 }
 
 // Seul un pion plein peut faire eclater le nuage

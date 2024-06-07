@@ -18,7 +18,7 @@ GraphicCache *initCache()
     // l'aleatoire, ca permet d'avoir des resultats reproductibles
     // utiles pour les tests des regles quantiques
     // J'ai besoin d'aleatoire car j'ai 15 fois le meme nombre consecutivement, met en comment si tu t'en sers pas stp
-    int seed = time(NULL);
+    int seed = 1717783933;
     printf("Seed %d\n", seed);
     srand(seed);
     // srand(1717763834);

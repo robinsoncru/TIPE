@@ -4,12 +4,8 @@ affichage.o input_command.o on_input.o graphic_cache.o update.o path_tree.o rafl
 path_tree_display.o rafle_management.o four_pack.o path_struct.o rafle_eating.o move_max.o move_listing.o \
 listing_checks.o move_struct.o rafle_listing.o basic_play_function.o precondition.o debug_autoplay.o debug.o \
 print_moves.o memory_move.o applyMoveAI.o applyMoveDeter.o applyMoveIssue.o backwardMoveTab_interface.o \
-<<<<<<< HEAD
-backwardMoveTab_quick_sort.o test_config.o heuristiques.o applyMoveForSure.o
-=======
-backwardMoveTab_quick_sort.o test_config.o heuristiques.o esperance_calc.o moveTab_quick_sort.o \
+applyMoveForSure.o backwardMoveTab_quick_sort.o test_config.o heuristiques.o esperance_calc.o moveTab_quick_sort.o \
 alpha_beta_prunning.o ecrasement.o
->>>>>>> debug-alpha-beta-prunning-2
 	gcc -g -Wall -o dames.out *.o \
 $$(sdl2-config --cflags --libs) -lSDL2_ttf
 
@@ -138,6 +134,7 @@ heuristiques.o: AI/ai_lists/analyse/heuristiques.c
 
 applyMoveForSure.o: AI/move_for_sure/applyMoveForSure.c
 	gcc -g -c -Wall AI/move_for_sure/applyMoveForSure.c
+
 esperance_calc.o: AI/alpha_beta_prunning/esperance_calc/esperance_calc.c
 	gcc -g -c -Wall AI/alpha_beta_prunning/esperance_calc/esperance_calc.c
 

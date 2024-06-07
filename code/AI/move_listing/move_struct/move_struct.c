@@ -36,8 +36,6 @@ void moveFree(Move coup){
 
 void moveTabFree(MoveTab *moveTab, int startIndex, int endIndex)
 {
-    PathTree* lastEncounteredTree = emptyTree;
-    PathTree* currentTree;
     Move currentMove;
     for (int i = startIndex; i < endIndex; i++)
     {

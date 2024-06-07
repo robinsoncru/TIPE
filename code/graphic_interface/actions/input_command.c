@@ -121,7 +121,7 @@ void checkLienEnnemitie(int i, int j, Game *g, GraphicCache *cache, bool screen_
 
 void checkPromotion(Game *g, GraphicCache *cache, bool autoplay)
 {
-    if (canPromotion(g))
+    if (canPromotion(g, g->ind_move, g->is_white))
     {
         promotion(g);
         endTurnGraphics(g, cache);

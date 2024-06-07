@@ -287,7 +287,6 @@ int main(int argc, char *argv[])
     //test_start_game(g, cache);
     // moveBackListingTest(g, cache);
     alphaBetaPrunningTest(g);
-    queenRafleTest(g);
     // end debug
 
     if (cache->statut != EXIT_SUCCESS)

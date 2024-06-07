@@ -7,6 +7,7 @@
 #include "../../fundamental_functions/game_functions/access_functions/access_functions.h"
 #include "../../fundamental_functions/game_functions/Logic/logic_functions.h"
 #include "move_back_listing/backwardMoveTab_quick_sort/backwardMoveTab_quick_sort.h"
+#include <stddef.h>
 #include <stdlib.h>
 
 void listMovesMoveBackAux(Game *g, int *nbMoves, Move *temporaryResult,
@@ -114,7 +115,7 @@ void listMovesPromotion(Game *g, Move *temporaryResult, int *nbMoves)
 
     for (int k = 0; k < g->nb_pawns[g->is_white]; k++)
     {
-        if (canBePromoted(g, g->is_white, k))
+        if (canPromotion(g, k, g->is_white))
         {
             currentMove.manipulatedPawn = k;
             temporaryResult[*nbMoves] = currentMove;
@@ -308,7 +309,8 @@ MoveTab *listMoves(Game *g)
     }
     else
     {
-        temporaryResult = malloc(maxMoves(g) * sizeof(Move));
+        int majoration = maxMoves(g);
+        temporaryResult = malloc(majoration * sizeof(Move));
         nbMoves = 0;
         listMovesPromotion(g, temporaryResult, &nbMoves);
 
