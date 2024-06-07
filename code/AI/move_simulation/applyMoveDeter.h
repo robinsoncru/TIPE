@@ -21,8 +21,8 @@ memory_move_t *biDeplDeter(Game *g, int indMovePawn, moveType type);
 memory_move_t *pawnMoveDeter(Game *g, int indMovePawn, bool left, moveType type);
 memory_move_t *promotionDeter(Game *g, int indPawn, moveType type);
 memory_move_t *moveBackDeter(Game *g, moveType type, backwardMoveTab_t *t_backs);
-memory_move_t *rafleDeter(Game *g, int indMovePawn, PathTree *rafleTree, Path *rafle, moveType type);
-memory_move_t *queenDeplDeter(Game *g, int indMovePawn, Coord pos_dame, PathTree *rafleTree, Path *rafle, moveType type);
+memory_move_t *rafleDeter(Game *g, int indMovePawn, PathTree *rafleTree, Path *rafle, moveType type, Coord pos_dame);
+memory_move_t *queenDeplDeter(Game *g, int indMovePawn, Coord pos_dame, moveType type);
 memory_move_t *initMemMove(int indMovePawn, moveType type);
 memory_move_t *biDeplDeter(Game *g, int indMovePawn, moveType type);
 

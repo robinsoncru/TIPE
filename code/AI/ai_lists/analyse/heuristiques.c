@@ -59,6 +59,7 @@ float heuristique_miam(Game *g)
             }
         }
     }
+    return 0;
 }
 
 float heuristique_border(Game *g)

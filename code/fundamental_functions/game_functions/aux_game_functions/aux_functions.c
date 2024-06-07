@@ -421,9 +421,9 @@ void free_game(Game *g)
 
 Coord give_coord(Game *g, bool iw, int ind)
 {
-    Coord init_coord_dame_rafle = {.i = get_pawn_value(g, iw, ind, LIG),
+    Coord init_coord_dame_or_rafle = {.i = get_pawn_value(g, iw, ind, LIG),
                                    .j = get_pawn_value(g, iw, ind, COL)};
-    return init_coord_dame_rafle;
+    return init_coord_dame_or_rafle;
 }
 
 void doubleTabInit(int t[2])

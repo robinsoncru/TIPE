@@ -197,10 +197,12 @@ data_chain *eatRafleNGE(Game *g, int indEater, bool is_white, PathTree *t, Path 
             break;
         }
         getDirsFromCode(dirCode, &di, &dj);
-
+        // si dame, depl avant
         int lig_pawn_eaten = get_pawn_value(g, is_white, indEater, LIG) + di;
         int col_pawn_eaten = get_pawn_value(g, is_white, indEater, COL) + dj;
         int eatenInd = get_case_damier(g, lig_pawn_eaten, col_pawn_eaten).ind_pawn;
+
+        assertAndLog(isValidIndexInGame(g, eatenInd, !is_white), "Rafle NGE : La case où on mange le pion est vide");
 
         coord_tab_t *tamis = NULL;
         if (get_pawn_value(g, !is_white, eatenInd, FRIENDLY) > 0)
@@ -235,20 +237,19 @@ data_chain *eatRafleNGE(Game *g, int indEater, bool is_white, PathTree *t, Path 
     return chainy;
 }
 
-data_chain *rafleNGE(Game *g, int indMovePawn)
+data_chain *rafleNGE(Game *g, int indMovePawn, PathTree *currentTree, Path *r, Coord pos_depart_manger_rafle)
 {
-    assert(g->currentTree == emptyTree);
+    // Mange la rafle devant lui
     assertAndLog(is_empty(g->inds_move_back), "Il reste des amis dans les NGE");
     bool isWhite = g->is_white;
     assert(isValidIndexInGame(g, indMovePawn, isWhite));
-
-    g->currentTree = rafleTreeCalc(g, isWhite, g->ind_move);
-    assertAndLog(g->currentTree != emptyTree, "Pb calc rafle");
-
-    // printf("lazyRafle called\n");
-    Path *r = lazyRafle(g->currentTree);
     // printf("eatRafle called\n");
-    data_chain *chainy = eatRafleNGE(g, g->ind_move, isWhite, g->currentTree, r);
+
+    // On déplace le pion devant la rafle, si c'est un pion simple il ne bouge pas
+    change_pawn_place(g, indMovePawn, isWhite, pos_depart_manger_rafle.i, pos_depart_manger_rafle.j);
+    
+    data_chain *chainy = eatRafleNGE(g, g->ind_move, isWhite, currentTree, r);
+    // Il se peut de passer emptyRafle donc chainy est aussi vide
     // printf("pathFree called\n");
     pathFree(r);
     return chainy;
@@ -285,11 +286,6 @@ void cancelRafle(Game *g, int indMovedPawn, Coord init_pos, data_chain *chainy, 
     free(chainy);
 
     change_pawn_place(g, indMovedPawn, iw, init_pos.i, init_pos.j);
-}
-
-void cancelDeplQueen(Game *g, int ind_queen, data_chain *chainy, Coord init_coord_dame_rafle, bool iw)
-{
-    cancelRafle(g, ind_queen, init_coord_dame_rafle, chainy, iw);
 }
 
 void lienAmitieNGE(int lig, int col, int ind, bool is_white, Game *g)

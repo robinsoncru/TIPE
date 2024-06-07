@@ -15,7 +15,7 @@ memory_move_t *initMemMove(int indMovePawn, moveType type)
     mem->ghost_pawn_created_bidepl.b = false;
     mem->ghost_pawn_created_bidepl.c = coord_init();
     mem->pos_potential_foe_from_prom = coord_init();
-    mem->init_coord_dame_rafle = coord_init();
+    mem->init_coord_dame_or_rafle = coord_init();
     mem->left = false;
     mem->had_become_a_queen = false;
     mem->survivor_pba = -1;

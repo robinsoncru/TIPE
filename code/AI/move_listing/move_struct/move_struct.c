@@ -7,18 +7,18 @@ char *typeNames[8] = {"pawn move", "promotion", "pawn move back", "bi deplacemen
 
 void moveFree(Move coup)
 {
-    PathTree *lastEncounteredTree = emptyTree;
-    if (coup.type == rafleType)
-    {
-        pathFree(coup.rafle);
-        if (lastEncounteredTree != coup.rafleTree)
-        {
-            lastEncounteredTree = coup.rafleTree;
-            PathTree *m = lastEncounteredTree;
-            pathTreeFree(m);
-        }
-        coup.rafleTree = emptyTree;
-    }
+    // PathTree *lastEncounteredTree = emptyTree;
+    // if (coup.type == rafleType)
+    // {
+    //     pathFree(coup.rafle);
+    //     if (lastEncounteredTree != coup.rafleTree)
+    //     {
+    //         lastEncounteredTree = coup.rafleTree;
+    //         PathTree *m = lastEncounteredTree;
+    //         pathTreeFree(m);
+    //     }
+    //     coup.rafleTree = emptyTree;
+    // }
     if (coup.type == pawnMoveBackType)
     {
         free(coup.backwardPawnMoves->tab);

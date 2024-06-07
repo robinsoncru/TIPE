@@ -131,8 +131,10 @@ void listMovesBefriend(Game *g, int selectedPawn, Move *temporaryResult, int *nb
 
     for (int k = 0; k < g->nb_pawns[!g->is_white]; k++)
     {
-        if (isFriendable(g, k, !g->is_white))
+        Coord c = coord_from_ind(g, k, !g->is_white);
+        if (canBeFriend(g, selectedPawn, g->is_white, get_case_damier(g, c.i, c.j)))
         {
+            // Isfriend pas valide, modif, a verifier
             currentMove.lig = get_pawn_value(g, !g->is_white, k, LIG);
             currentMove.col = get_pawn_value(g, !g->is_white, k, COL);
             temporaryResult[*nbMoves] = currentMove;
@@ -151,6 +153,7 @@ void listMovesEnnemy(Game *g, int selectedPawn, Move *temporaryResult, int *nbMo
     {
         if (isEnnemiable(g, k, !g->is_white))
         {
+            // IsEnnemiable pas valide
             currentMove.lig = get_pawn_value(g, !g->is_white, k, LIG);
             currentMove.col = get_pawn_value(g, !g->is_white, k, COL);
             temporaryResult[*nbMoves] = currentMove;
@@ -167,15 +170,17 @@ void listMovesForGhostPawns(Game *g, int selectedPawn, Move *temporaryResult, in
 
 void listMovesForQueen(Game *g, int selectedPawn, Move *temporaryResult, int *nbMoves)
 {
-
-    listMovesBefriend(g, selectedPawn, temporaryResult, nbMoves);
+    // Une reine ne peut pas gagner de nouveau mais seulement garder ses anciens
 
     pawn p = get_pawn(g, g->is_white, selectedPawn);
-    Coord pos = {.i = p.lig, .j = p.col};
+    Coord selectedPawnPos = {.i = p.lig, .j = p.col};
     // possible cases where to move for a queen
     Move currentMove;
     currentMove.manipulatedPawn = selectedPawn;
     currentMove.type = queenDeplType;
+
+
+    listRafles(g, selectedPawn, selectedPawnPos, temporaryResult, nbMoves);
 
     int possibleShifts[2] = {-1, 1};
     Coord dir;
@@ -188,7 +193,7 @@ void listMovesForQueen(Game *g, int selectedPawn, Move *temporaryResult, int *nb
             dir.j = possibleShifts[j];
             for (int k = 1; k < NB_CASE_LG; k++)
             {
-                currentMove.pos_dame = add(pos, dir);
+                currentMove.pos_dame = add(selectedPawnPos, dir);
                 if (!caseIsAccessible(g, g->is_white,
                     currentMove.pos_dame.i, currentMove.pos_dame.j))
                 {

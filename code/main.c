@@ -86,16 +86,17 @@ void test_start_game(Game *g, GraphicCache *cache)
         killPawnByInd(g, false, i);
     }
 
+    change_pawn_place(g, 4, true, 10, 8);
+    promote(g, true, 4);
     for (int i=0; i<4; i++) {
         change_pawn_place(g, i, true, get_pawn_value(g, true, i, LIG)+4, get_pawn_value(g, true, i, COL));
         change_pawn_place(g, i, false, get_pawn_value(g, false, i, LIG)-4, get_pawn_value(g, false, i, COL));
-        lienAmitieNGE(4, 0, i, false, g);
+        // lienAmitieNGE(12, 2, i, false, g);
     }
 
-    change_pawn_place(g, 4, true, 12, 2);
     // change_pawn_place(g, 5, true, 12, 6);
-    biDeplNGE(g, true, 4);
-    biDeplNGE(g, true, 6);
+    // biDeplNGE(g, true, 4);
+    // biDeplNGE(g, true, 6);
     // biDeplNGE(g, true, 1);
 
 
@@ -267,7 +268,7 @@ void test_start_game(Game *g, GraphicCache *cache)
     // print_pawns(g, true);
     // print_pawns(g, false);
     // print_liensAmitie(g);
-    print_state_game(g, PBA);
+    print_state_game(g, QUEEN);
     // print_liensAmitie(g);
 }
 

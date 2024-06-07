@@ -20,9 +20,8 @@ void cancelBidepl(Game *g, int oldInd, coord_bool_t data, bool iw);
 Coord promotionNGE(Game *g, int index_choice, bool iw);
 
 void cancelPromotion(Game *g, int indPawnBeforeProm, Coord pos_potential_foe_from_prom, bool iw);
-void cancelDeplQueen(Game *g, int ind_queen, data_chain *chainy, Coord init_coord_dame_rafle, bool iw);
 
-data_chain *rafleNGE(Game *g, int indMovePawn);
+data_chain *rafleNGE(Game *g, int indMovePawn, PathTree *currentTree, Path *r, Coord pos_depart_manger_rafle);
 void cancelRafle(Game *g, int indMovedPawn, Coord init_pos, data_chain *chainy, bool iw);
 void cancelLienAmitie(Game *g, int indPawn, int lig, int col, bool iw);
 void lienAmitieNGE(int lig, int col, int ind, bool is_white, Game *g);

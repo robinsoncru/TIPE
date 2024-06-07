@@ -152,24 +152,26 @@ memory_move_t *moveBackDeter(Game *g, moveType type, backwardMoveTab_t *t_backs)
     return mem;
 }
 
-memory_move_t *rafleDeter(Game *g, int indMovePawn, PathTree *rafleTree, Path *rafle, moveType type)
+memory_move_t *rafleDeter(Game *g, int indMovePawn, PathTree *rafleTree, Path *rafle, moveType type, Coord pos_dame)
 {
     bool iw = g->is_white;
     memory_move_t *mem = initMemMove(indMovePawn, type);
-    mem->init_coord_dame_rafle = give_coord(g, iw, indMovePawn);
-    mem->chainy = rafleNGE(g, indMovePawn);
+    mem->init_coord_dame_or_rafle = give_coord(g, iw, indMovePawn);
+
+    mem->chainy = rafleNGE(g, indMovePawn, rafleTree, rafle, pos_dame);
     assertAndLog(mem->chainy != NULL && !dis_empty(mem->chainy), "rafle Deter aucune rafle");
     generateCloudDuePawnMove(g, mem);
 
     return mem;
 }
 
-memory_move_t *queenDeplDeter(Game *g, int indMovePawn, Coord pos_dame, PathTree *rafleTree, Path *rafle, moveType type)
+memory_move_t *queenDeplDeter(Game *g, int indMovePawn, Coord pos_dame, moveType type)
 {
+    // c'est un déplacement simple de la dame sans rafle
     bool iw = g->is_white;
     memory_move_t *mem = initMemMove(indMovePawn, type);
-    mem->init_coord_dame_rafle = give_coord(g, iw, indMovePawn);
-    mem->chainy = queenDepl(g, indMovePawn, iw, pos_dame, true);
+    mem->init_coord_dame_or_rafle = give_coord(g, iw, indMovePawn);
+    queenDepl(g, indMovePawn, iw, pos_dame, true);
 
     generateCloudDuePawnMove(g, mem);
 
@@ -224,7 +226,8 @@ void cancelQueenDeplDeter(Game *g, memory_move_t *mem)
 {
 
     int ind = ind_from_coord(g, mem->coordMovePawn);
-    cancelDeplQueen(g, ind, mem->chainy, mem->init_coord_dame_rafle, mem->is_white);
+    Coord pos_init = mem->init_coord_dame_or_rafle;
+    change_pawn_place(g, ind, mem->is_white, pos_init.i, pos_init.j);
     freeMemMove(mem);
 }
 
@@ -232,7 +235,7 @@ void cancelRafleDeter(Game *g, memory_move_t *mem)
 {
 
     int ind = ind_from_coord(g, mem->coordMovePawn);
-    cancelRafle(g, ind, mem->init_coord_dame_rafle, mem->chainy, mem->is_white);
+    cancelRafle(g, ind, mem->init_coord_dame_or_rafle, mem->chainy, mem->is_white);
     freeMemMove(mem);
 }
 
