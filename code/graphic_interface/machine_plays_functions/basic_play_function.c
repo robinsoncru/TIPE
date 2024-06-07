@@ -186,31 +186,34 @@ int play_a_move(int move, int ind_pawn, Game *g, GraphicCache *cache, int nb_cou
         Move m;
         // if (!g->is_white)
         // {
-        printf("%d score %f ", g->is_white, heuristique_miam_trivial(g));
+        // printf("%d score %f ", g->is_white, heuristique_miam_trivial(g));
         flush();
-        // MoveTab *t = listMoves(g);
-        // print_moves(t);
+        MoveTab *t = listMoves(g);
+        print_moves(t);
         // // Coord cma = {.i = 9, .j = 9};
         // // }
         // // else
         // // {
         // //     m.manipulatedPawn = random_index(g);
         // // }
-        // m = t->tab[0];
-        // mem = applyDeter(g, m, true); // Tester un eclatement de nuage
-        // // picture_this(g);
-        // for (int j = 0; j < mem->lenghtIssues; j++)
-        // {
-        //     applyIssue(g, mem, j);
-        //     // print_state_game(g, PBA);
-        //     usleep(1000 * 100);
-        //     applyRecipIssue(g, mem, j);
-        //     // print_state_game(g, PBA);
-        // }
-        // applyRecipDeter(g, mem);
-        // // print_state_game(g, PBA);
-        // // print_liensAmitie(g);
-        // }
+        m = t->tab[20];
+        print_move(m);
+        printf("pion selec %d", m.manipulatedPawn);
+        flush();
+        mem = applyDeter(g, m); // Tester un eclatement de nuage
+        // picture_this(g);
+        for (int j = 0; j < mem->lenghtIssues; j++)
+        {
+            applyIssue(g, mem, j);
+            // print_state_game(g, QUEEN);
+            usleep(1000 * 100);
+            applyRecipIssue(g, mem, j);
+            // print_state_game(g, PBA);
+        }
+        applyRecipDeter(g, mem);
+        // print_state_game(g, QUEEN);
+        // print_liensAmitie(g);
+        
         // endTurnGameManagement(g, g->is_white, m.manipulatedPawn, IND_CHANGE_ALLOWED, false); // Parce que ce sont des NGE
     }
 

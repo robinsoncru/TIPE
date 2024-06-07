@@ -26,11 +26,11 @@ memory_move_t *applyDeter(Game *g, Move coup, bool shouldFreeMove)
         break;
 
     case queenDeplType:
-        mem = queenDeplDeter(g, coup.manipulatedPawn, coup.pos_dame, coup.rafleTree, coup.rafle, coup.type);
+        mem = queenDeplDeter(g, coup.manipulatedPawn, coup.pos_dame, coup.type);
         break;
 
     case rafleType:
-        mem = rafleDeter(g, coup.manipulatedPawn, coup.rafleTree, coup.rafle, coup.type);
+        mem = rafleDeter(g, coup.manipulatedPawn, coup.rafleTree, coup.rafle, coup.type, coup.pos_dame);
         break;
 
     case lienAmitieType:

@@ -26,6 +26,7 @@ SDL_Color black = {0, 0, 0, 255};
 SDL_Color gold = {255, 215, 0, 255};
 SDL_Color silver = {192, 192, 192, 255};
 SDL_Color turquoise = {48, 213, 200};
+SDL_Color pink = {255,20,147};
 
 /*
 
@@ -418,7 +419,7 @@ void display_damier(SDL_Renderer *render, Game *g)
             if (g->damier[i][j].color)
                 drawRect(render, white, g->damier[i][j].rect);
             else
-                drawRect(render, red, g->damier[i][j].rect);
+                drawRect(render, pink, g->damier[i][j].rect);
 
             if (!freeCase(g->damier[i][j]))
                 drawLosange(render, g->damier[i][j], g->allPawns[g->damier[i][j].pawn_color][g->damier[i][j].ind_pawn], g);

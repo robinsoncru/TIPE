@@ -158,7 +158,7 @@ void pawnMove(Game *g, bool is_white, int ind, bool left)
 //     // Do a move back only if the queen didn'l eat
 // }
 
-data_chain *queenDepl(Game *g, int ind, bool color, Coord pos_dame, bool isNGE)
+void queenDepl(Game *g, int ind, bool color, Coord pos_dame, bool isNGE)
 {
     /* Selon qu'on souhaite des effets graphiques ou pas, on appelle rafleNGE ou rafle
     et on applique endTurnGameManagement */
@@ -172,21 +172,12 @@ data_chain *queenDepl(Game *g, int ind, bool color, Coord pos_dame, bool isNGE)
 
     // Gonna check if the queen can take a rafle
 
-    assert(g->currentTree == emptyTree);
+    assertAndLog(g->currentTree == emptyTree, "arbre de g non vide");
     bool isWhite = g->is_white;
-    data_chain *chainy = NULL;
 
-    if (isNGE)
+    if (!isNGE)
     {
-        // if (canEat(g, color, ind, lig, col, ))
-        chainy = rafleNGE(g, ind);
-        if (!dis_empty(chainy))
-        {
-            doMoveBack = false;
-        }
-    }
-    else
-    {
+        // si le coup est réelle, on peut avoir une rafle à la fin
         g->currentTree = rafleTreeCalc(g, isWhite, g->ind_move);
 
         Path *r = lazyRafle(g->currentTree);
@@ -194,6 +185,7 @@ data_chain *queenDepl(Game *g, int ind, bool color, Coord pos_dame, bool isNGE)
         doMoveBack = !had_eaten;
         pathFree(r);
     }
+    // Sinon la rafle de la dame est traité dans ralfeDeter
 
     if (doMoveBack && has_friend(g, ind, color))
     {
@@ -212,7 +204,6 @@ data_chain *queenDepl(Game *g, int ind, bool color, Coord pos_dame, bool isNGE)
         endTurnGameManagement(g, color, ind, IND_CHANGE_ALLOWED, false);
         // Do a move back only if the queen didn'l eat
     }
-    return chainy;
 }
 
 /*

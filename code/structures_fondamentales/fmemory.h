@@ -24,7 +24,7 @@ struct memory_move_t
                  nuage */
     Coord pos_potential_foe_from_prom;
     coord_bool_t ghost_pawn_created_bidepl;
-    Coord init_coord_dame_rafle; // Enregistre la position d'origine lors d'une rafle ou d'une dame déplacé
+    Coord init_coord_dame_or_rafle; // Enregistre la position d'origine lors d'une rafle ou d'une dame déplacé
     data_chain *chainy;
     int indMovePawn;
     bool left;

@@ -7,9 +7,6 @@
 #include "../../rafle/rafle.h"
 #include "play_back/play_back_game_functions.h"
 
-
-
-
 // play functions
 
 void cancelMoveBack(Game *g, int ind, bool left);
@@ -21,13 +18,6 @@ void cancelLazzyMoveBack(Game *g, int indMovePawnBack, bool left);
 
 void pawnMove(Game *g, bool is_white, int ind, bool left);
 
-
-
-
-
-
-
-
 /* Implementation des règles propres aux dames quantiques:
 -Promotion : selectionne le pion et tape p (sur le clavier)
 -Lien d'amitié (peut on avoir pls liens d'amitié pour un pion ? Nous on ne prendra que deux pions amis au max) : selectionne
@@ -35,7 +25,6 @@ void pawnMove(Game *g, bool is_white, int ind, bool left);
 -Ennemie pour la vie (de même) : selectionne (clic gauche) le pion puis clic droit sur l'autre pion ennemi du camp opposé
 -Un pion est soit ami, soit ennemi
 */
-
 
 /* PROMOTION */
 void promotion(Game *g);
@@ -62,5 +51,6 @@ void lienEnnemitie(int lig, int col, Game *g);
 void biDepl(Game *g, int ind, bool color);
 
 /* QUEEN DEPL */
-data_chain *queenDepl(Game *g, int ind, bool color, Coord pos_dame, bool isNGE);
+
+void queenDepl(Game *g, int ind, bool color, Coord pos_dame, bool isNGE);
 #endif // GAME_FUNCTIONS

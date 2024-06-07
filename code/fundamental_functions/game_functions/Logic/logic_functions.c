@@ -122,9 +122,20 @@ bool canMoveBack(Game *g, bool is_white, int ind, bool left)
 
 bool canBiDepl(Game *g, int ind, bool color)
 {
-    /* On ne peut pas bidepl une dame. Si le pion est ami ou ennemi, le pion clone a gauche conservera cette amitie ou ennemitie */
-    return isPawnValid(g) && !int_to_bool(get_pawn_value(g, color, ind, QUEEN)) && canMove(g, color, ind, true) &&
-           canMove(g, color, ind, false);
+    /* On ne peut pas bidepl une dame. Si le pion est ami ou ennemi, c'est impossible. Un seul pion plein
+    peut crée un nuage, une fois crée, le bidepl n'est plus possible pour les pions pleins */
+    bool move_valid = isValidIndexInGame(g, ind, color) && !int_to_bool(get_pawn_value(g, color, ind, QUEEN)) &&
+                      canMove(g, color, ind, true) && canMove(g, color, ind, false) &&
+                      get_pawn_value(g, color, ind, FRIENDLY) == 0 &&
+                      get_pawn_value(g, color, ind, ENNEMY) == -1;
+    if (move_valid && !isInCloud(g, color, ind) && !is_empty(g->cloud[color]))
+    {
+        return false;
+    }
+    else
+    {
+        return move_valid;
+    }
 }
 
 bool needPutMoveBack(Game *g)
