@@ -189,7 +189,7 @@ int play_a_move(int move, int ind_pawn, Game *g, GraphicCache *cache, int nb_cou
         // printf("%d score %f ", g->is_white, heuristique_miam_trivial(g));
         flush();
         MoveTab *t = listMoves(g);
-        // print_moves(t);
+        print_moves(t);
         // // Coord cma = {.i = 9, .j = 9};
         // // }
         // // else
@@ -199,8 +199,9 @@ int play_a_move(int move, int ind_pawn, Game *g, GraphicCache *cache, int nb_cou
         assert(t->size > 0);
         int rand_choice = rand() % t->size;
         m = t->tab[rand_choice];
-        print_move(m);
+        print_state_game(g);
         printf("pion selec %d", m.manipulatedPawn);
+        print_move(m);
         flush();
         // mem = applyDeter(g, m); // Tester un eclatement de nuage
         // // picture_this(g);
@@ -216,7 +217,8 @@ int play_a_move(int move, int ind_pawn, Game *g, GraphicCache *cache, int nb_cou
         // print_state_game(g, QUEEN);
         // print_liensAmitie(g);
         applyForSure(g, cache, m);
-        moveTabFree(t);
+        moveTabFreeTrees(t, 0, t->size);
+        moveTabFree(t, 0, t->size);
         print_state_game(g);
         // endTurnGameManagement(g, g->is_white, m.manipulatedPawn, IND_CHANGE_ALLOWED, false); // Parce que ce sont des NGE
     }

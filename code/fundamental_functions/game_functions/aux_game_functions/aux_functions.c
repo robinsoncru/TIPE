@@ -280,8 +280,10 @@ void simplyPawnMove(Game *g, bool is_white, int ind, bool left)
     change_pawn_place(g, ind, is_white, i + di, j + dj);
 }
 
-void AleatStormBreaks(Game *g, bool color)
+int AleatStormBreaks(Game *g, bool color)
 {
+    // On renvoie l'indice du survivant pour sécuriser le endTurnGameManagement
+    assertAndLog(g->lengthCloud[color] > 0, "AleatStormBreak : le nuage est vide");
     int_chain *l = g->cloud[color];
     int ind = VOID_INDEX;
 
@@ -305,8 +307,8 @@ void AleatStormBreaks(Game *g, bool color)
 
     // printf("%d %d %d %d", get_pawn_value(g, color, ind, LIG), get_pawn_value(g, color, ind, COL), ind, color);
     // flush();
-    if (ind != VOID_INDEX && canStormBreaksForTheOthers(g, ind, color))
-        AleatStormBreaks(g, !color);
+    assertAndLog(ind != VOID_INDEX, "AleatStormBreak : le dernier pion du nuage est nulle");
+    return ind;
 }
 
 Coord CanMoveOrEatQueen(Game *g, bool color, int lig, int col, int ind, bool screen_switch)

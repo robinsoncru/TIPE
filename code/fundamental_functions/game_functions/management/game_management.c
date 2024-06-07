@@ -66,9 +66,16 @@ void endTurnGameManagement(Game *g, bool is_white, int indMovedPawn, int indChec
                 promote(g, is_white, indMovedPawn);
             }
             if (canStormBreaks(g, indMovedPawn, is_white))
-                AleatStormBreaks(g, is_white);
-            else if (canStormBreaksForTheOthers(g, indMovedPawn, is_white))
-                AleatStormBreaks(g, !is_white);
+            {
+                indMovedPawn = AleatStormBreaks(g, is_white); // indMovedPawn peut devenir dame ou tuer un autre
+                // nuage
+                endTurnGameManagementNGE(g, indMovedPawn, IND_NORMAL, false);
+            }
+            if (canStormBreaksForTheOthers(g, indMovedPawn, is_white))
+            {
+                int indEnn = AleatStormBreaks(g, !is_white); // Idem indEnn peut devenir dame
+                endTurnGameManagementNGE(g, indEnn, IND_NORMAL, false);
+            }
         }
         else
         {
@@ -79,7 +86,9 @@ void endTurnGameManagement(Game *g, bool is_white, int indMovedPawn, int indChec
             }
             if (canStormBreaksForTheOthers(g, indMovedPawn, !is_white))
             {
-                AleatStormBreaks(g, is_white); // Et il peut faire éclater un nuage de pions
+                int indEnn = AleatStormBreaks(g, is_white); // Et il peut faire éclater un nuage de pions
+                // En éclatant, indEnn peut devenir une dame
+                endTurnGameManagementNGE(g, indEnn, IND_NORMAL, false);
             }
         }
 
@@ -89,7 +98,9 @@ void endTurnGameManagement(Game *g, bool is_white, int indMovedPawn, int indChec
     {
         if (canStormBreaksForTheOthers(g, indMovedPawn, is_white))
         {
-            AleatStormBreaks(g, !is_white);
+            int indEnn = AleatStormBreaks(g, !is_white); // Et il peut faire éclater un nuage de pions
+            // En éclatant, indEnn peut devenir une dame
+            endTurnGameManagementNGE(g, indEnn, IND_NORMAL, false);
         }
     }
     g->ind_move = NEUTRAL_IND;

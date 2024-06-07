@@ -26,7 +26,7 @@ void simplyPawnMove(Game *g, bool is_white, int ind, bool left);
 void putPawnMoveBack(Game *g, bool left);
 
 void stormBreaksNGE(Game *g, bool color, int index, memory_move_t *mem);
-void AleatStormBreaks(Game *g, bool color);
+int AleatStormBreaks(Game *g, bool color);
 void handleCloudDuePawnMoveNGE(Game *g, int indMovedPawn, Coord pos_survivor, cloud_chain *l);
 Coord CanMoveOrEatQueen(Game *g, bool color, int lig, int col, int ind, bool screen_switch);
 Coord give_coord(Game *g, bool iw, int ind);

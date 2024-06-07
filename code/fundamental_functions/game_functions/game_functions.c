@@ -501,9 +501,24 @@ void biDepl(Game *g, int ind, bool color)
     int newInd = ind_from_coord(g, data.c);
     // Maybe the clone pawn is near a pawn of the opposite color
     if (canStormBreaks(g, newInd, color))
-        AleatStormBreaks(g, color);
-    else if (canStormBreaksForTheOthers(g, newInd, color))
-        AleatStormBreaks(g, !color);
+    {
+        newInd = AleatStormBreaks(g, color);
+        endTurnGameManagementNGE(g, newInd, IND_NORMAL, false);
+    }
+    if (canStormBreaksForTheOthers(g, newInd, color))
+    {
+        int indEnn = AleatStormBreaks(g, !color);
+        endTurnGameManagementNGE(g, indEnn, IND_NORMAL, false);
+    }
 
-    endTurnGameManagement(g, color, ind, IND_CHANGE_ALLOWED, false);
+    if (isValidIndexInGame(g, ind, color))
+    {
+        // Le pion ind a pu être tué lors de l'éclatement du nuage
+        endTurnGameManagement(g, color, ind, IND_CHANGE_ALLOWED, false);
+    }
+    else
+    {
+        // Dans ce cas là on appelle avec newInd, qui a déjà été appelé mais c'est pas grave
+        endTurnGameManagement(g, color, newInd, IND_CHANGE_ALLOWED, false);
+    }
 }
