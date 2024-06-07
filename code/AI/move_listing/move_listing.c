@@ -114,7 +114,7 @@ void listMovesPromotion(Game *g, Move *temporaryResult, int *nbMoves)
 
     for (int k = 0; k < g->nb_pawns[g->is_white]; k++)
     {
-        if (isPromotable(g, k, g->is_white))
+        if (canBePromoted(g, g->is_white, k))
         {
             currentMove.manipulatedPawn = k;
             temporaryResult[*nbMoves] = currentMove;
@@ -148,10 +148,12 @@ void listMovesEnnemy(Game *g, int selectedPawn, Move *temporaryResult, int *nbMo
     Move currentMove;
     currentMove.manipulatedPawn = selectedPawn;
     currentMove.type = lienEnnemitieType;
-
+    Coord currentPawnCoordinates;
     for (int k = 0; k < g->nb_pawns[!g->is_white]; k++)
     {
-        if (isEnnemiable(g, k, !g->is_white))
+        currentPawnCoordinates = coord_from_ind(g, k, !g->is_white);
+        if (canBeEnnemy(g, selectedPawn, g->is_white,
+            get_case_damier(g, currentPawnCoordinates.i, currentPawnCoordinates.j)))
         {
             // IsEnnemiable pas valide
             currentMove.lig = get_pawn_value(g, !g->is_white, k, LIG);
