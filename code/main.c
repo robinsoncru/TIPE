@@ -75,7 +75,7 @@ void test_start_game(Game *g, GraphicCache *cache)
 
     // Config photo diapo
     int endBlanc = 6;
-    int endNoir = 4;
+    int endNoir = 6;
     for (int i = NB_PAWNS - 1; i >= endBlanc; i--)
     {
         killPawnByInd(g, true, i);
@@ -87,7 +87,7 @@ void test_start_game(Game *g, GraphicCache *cache)
     }
 
     change_pawn_place(g, 4, true,  10, 12);
-    promote(g, true, 4);
+    // promote(g, true, 4);
     for (int i=0; i<4; i++) {
         change_pawn_place(g, i, true, get_pawn_value(g, true, i, LIG)+4, get_pawn_value(g, true, i, COL));
         change_pawn_place(g, i, false, get_pawn_value(g, false, i, LIG)-4, get_pawn_value(g, false, i, COL));
@@ -268,7 +268,7 @@ void test_start_game(Game *g, GraphicCache *cache)
     // print_pawns(g, true);
     // print_pawns(g, false);
     // print_liensAmitie(g);
-    print_state_game(g, QUEEN);
+    print_state_game(g);
     // print_liensAmitie(g);
 }
 

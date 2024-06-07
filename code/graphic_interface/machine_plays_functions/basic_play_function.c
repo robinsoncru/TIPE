@@ -181,7 +181,7 @@ int play_a_move(int move, int ind_pawn, Game *g, GraphicCache *cache, int nb_cou
     {
         // MoveTab *coups = listMoves(g);
         memory_move_t *mem;
-        printv("ind select");
+        printf("Nb coup %d color %d", nb_coups, g->is_white);
 
         Move m;
         // if (!g->is_white)
@@ -189,31 +189,35 @@ int play_a_move(int move, int ind_pawn, Game *g, GraphicCache *cache, int nb_cou
         // printf("%d score %f ", g->is_white, heuristique_miam_trivial(g));
         flush();
         MoveTab *t = listMoves(g);
-        print_moves(t);
+        // print_moves(t);
         // // Coord cma = {.i = 9, .j = 9};
         // // }
         // // else
         // // {
         // //     m.manipulatedPawn = random_index(g);
         // // }
-        m = t->tab[20];
+        assert(t->size > 0);
+        int rand_choice = rand() % t->size;
+        m = t->tab[rand_choice];
         print_move(m);
         printf("pion selec %d", m.manipulatedPawn);
         flush();
-        mem = applyDeter(g, m, true); // Tester un eclatement de nuage
-        // picture_this(g);
-        for (int j = 0; j < mem->lenghtIssues; j++)
-        {
-            applyIssue(g, mem, j);
-            // print_state_game(g, QUEEN);
-            usleep(1000 * 100);
-            applyRecipIssue(g, mem, j);
-            // print_state_game(g, PBA);
-        }
-        applyRecipDeter(g, mem);
+        // mem = applyDeter(g, m); // Tester un eclatement de nuage
+        // // picture_this(g);
+        // for (int j = 0; j < mem->lenghtIssues; j++)
+        // {
+        //     applyIssue(g, mem, j);
+        //     // print_state_game(g, QUEEN);
+        //     usleep(1000 * 100);
+        //     applyRecipIssue(g, mem, j);
+        //     // print_state_game(g, PBA);
+        // }
+        // applyRecipDeter(g, mem);
         // print_state_game(g, QUEEN);
         // print_liensAmitie(g);
-        
+        applyForSure(g, cache, m);
+        moveTabFree(t);
+        print_state_game(g);
         // endTurnGameManagement(g, g->is_white, m.manipulatedPawn, IND_CHANGE_ALLOWED, false); // Parce que ce sont des NGE
     }
 
