@@ -31,7 +31,7 @@ bool endTurnGameManagementNGE(Game *g, int indMovedPawn, int indCheck, bool doMo
             {
                 promote(g, iw, indMovedPawn);
                 become_a_queen = true;
-            } // A verif
+            }
         }
         else
         {
@@ -60,49 +60,20 @@ void endTurnGameManagement(Game *g, bool is_white, int indMovedPawn, int indChec
     {
         if (indCheck != IND_BAD_CHOICE)
         {
-
-            if (canBePromoted(g, is_white, indMovedPawn))
-            {
-                promote(g, is_white, indMovedPawn);
-            }
-            if (canStormBreaks(g, indMovedPawn, is_white))
-            {
-                indMovedPawn = AleatStormBreaks(g, is_white); // indMovedPawn peut devenir dame ou tuer un autre
-                // nuage
-                endTurnGameManagementNGE(g, indMovedPawn, IND_NORMAL, false);
-            }
-            if (canStormBreaksForTheOthers(g, indMovedPawn, is_white))
-            {
-                int indEnn = AleatStormBreaks(g, !is_white); // Idem indEnn peut devenir dame
-                endTurnGameManagementNGE(g, indEnn, IND_NORMAL, false);
-            }
+            handlePawnGhostAndPromotion(g, is_white, indMovedPawn);
         }
         else
         {
-            if (canBePromoted(g, !is_white, indMovedPawn))
-            // Le pion devenu noir peut très bien devenir une dame
-            {
-                promote(g, !is_white, indMovedPawn);
-            }
-            if (canStormBreaksForTheOthers(g, indMovedPawn, !is_white))
-            {
-                int indEnn = AleatStormBreaks(g, is_white); // Et il peut faire éclater un nuage de pions
-                // En éclatant, indEnn peut devenir une dame
-                endTurnGameManagementNGE(g, indEnn, IND_NORMAL, false);
-            }
+            handlePawnGhostAndPromotion(g, !is_white, indMovedPawn);
         }
 
         g->is_white = !g->is_white;
     }
     else
     {
-        if (canStormBreaksForTheOthers(g, indMovedPawn, is_white))
-        {
-            int indEnn = AleatStormBreaks(g, !is_white); // Et il peut faire éclater un nuage de pions
-            // En éclatant, indEnn peut devenir une dame
-            endTurnGameManagementNGE(g, indEnn, IND_NORMAL, false);
-        }
+        handlePawnGhostAndPromotion(g, is_white, indMovedPawn);
     }
+
     g->ind_move = NEUTRAL_IND;
     g->indCheck = indCheck;
     if (g->currentTree != emptyTree)
@@ -110,5 +81,29 @@ void endTurnGameManagement(Game *g, bool is_white, int indMovedPawn, int indChec
         PathTree *m = g->currentTree;
         g->currentTree = NULL;
         pathTreeFree(m);
+    }
+}
+
+void handlePawnGhostAndPromotion(Game *g, bool color, int ind)
+{
+    // Gère les rétroactions des nuages et des promotions
+    int indJesus;
+    while (ind != VOID_INDEX)
+    {
+        indJesus = VOID_INDEX;
+        if (canBePromoted(g, color, ind))
+        {
+            promote(g, color, ind);
+        }
+        if (canStormBreaks(g, ind, color))
+        {
+            indJesus = AleatStormBreaks(g, color);
+        }
+        else if (canStormBreaksForTheOthers(g, ind, color))
+        {
+            indJesus = AleatStormBreaks(g, !color);
+            color = !color;
+        }
+        ind = indJesus;
     }
 }

@@ -249,9 +249,6 @@ data_chain *rafleNGE(Game *g, int indMovePawn, PathTree *currentTree, Path *r, C
     change_pawn_place(g, indMovePawn, isWhite, pos_depart_manger_rafle.i, pos_depart_manger_rafle.j);
     
     data_chain *chainy = eatRafleNGE(g, g->ind_move, isWhite, currentTree, r);
-    // Il se peut de passer emptyRafle donc chainy est aussi vide
-    // printf("pathFree called\n");
-    pathFree(r);
     return chainy;
 }
 

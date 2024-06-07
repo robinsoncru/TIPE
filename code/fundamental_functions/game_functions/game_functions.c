@@ -503,12 +503,18 @@ void biDepl(Game *g, int ind, bool color)
     if (canStormBreaks(g, newInd, color))
     {
         newInd = AleatStormBreaks(g, color);
-        endTurnGameManagementNGE(g, newInd, IND_NORMAL, false);
+        if (canBePromoted(g, color, newInd))
+        {
+            promote(g, color, newInd);
+        }
     }
     if (canStormBreaksForTheOthers(g, newInd, color))
     {
         int indEnn = AleatStormBreaks(g, !color);
-        endTurnGameManagementNGE(g, indEnn, IND_NORMAL, false);
+        if (canBePromoted(g, !color, indEnn))
+        {
+            promote(g, !color, indEnn);
+        }
     }
 
     if (isValidIndexInGame(g, ind, color))
