@@ -200,7 +200,7 @@ int play_a_move(int move, int ind_pawn, Game *g, GraphicCache *cache, int nb_cou
         print_move(m);
         printf("pion selec %d", m.manipulatedPawn);
         flush();
-        mem = applyDeter(g, m); // Tester un eclatement de nuage
+        mem = applyDeter(g, m, true); // Tester un eclatement de nuage
         // picture_this(g);
         for (int j = 0; j < mem->lenghtIssues; j++)
         {

@@ -407,7 +407,7 @@ void onRUp(Game *g, GraphicCache *cache)
     printf("\nnombre de coups : %d\n", moveTab->size);
     printf("utilite memoire : %lf\n", ((double)actualNbCoups) / ((double)majoration));
     print_moves(moveTab);
-    moveTabFree(moveTab);
+    moveTabFree(moveTab, 0, actualNbCoups);
     flush();
 }
 
