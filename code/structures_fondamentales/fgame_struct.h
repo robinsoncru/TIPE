@@ -14,7 +14,9 @@
 #include <time.h>
 #include <unistd.h> // Pour le temps de sommeil
 
-
+typedef struct AI AI;
+//la structure Game contient
+//les IA qui s'affrontent
 
 // Game structure
 typedef struct
@@ -45,7 +47,7 @@ typedef struct
     Indeed, we need a free indice to create a new ennemy pawn, not necessary the first free indice */
     int ind_move, indCheck;
     int_chain *inds_move_back;
-    int players[2]; //the first is white, the second black, useful to be able to identify AIs
+    AI* players[2];
     bool is_white;
     int_chain *cloud[2];
     int lengthCloud[2];
