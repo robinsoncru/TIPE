@@ -38,12 +38,12 @@ float heuristique_miam(Game *g)
     border s'en occupera */
     bool color = g->is_white;
     int nb_color_actu = g->nb_pawns[color];
-    int nb_color_oppose = g->nb_pawns[!color];
-    int nb_dame_color_actu = g->nbQueenWithFriend[color] + g->nbQueenWithoutFriend[color];
-    int nb_dame_color_opp = g->nbQueenWithFriend[!color] + g->nbQueenWithoutFriend[!color];
+    // int nb_color_oppose = g->nb_pawns[!color];
+    // int nb_dame_color_actu = g->nbQueenWithFriend[color] + g->nbQueenWithoutFriend[color];
+    // int nb_dame_color_opp = g->nbQueenWithFriend[!color] + g->nbQueenWithoutFriend[!color];
 
-    // Est ce qu'on peut manger ?
-    int combien_fois_manger = 0;
+    // // Est ce qu'on peut manger ?
+    // int combien_fois_manger = 0;
     for (int ind = 0; ind < nb_color_actu; ind++)
     {
         int di, dj;

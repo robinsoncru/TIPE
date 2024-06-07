@@ -102,7 +102,7 @@ int play_a_move(int move, int ind_pawn, Game *g, GraphicCache *cache, int nb_cou
     // printf("choisi :\n");
     // print_move(m);
     int indFriend;
-    Coord coord, coordi;
+    Coord coordi;
     if (!isNGE)
     {
 
@@ -180,9 +180,10 @@ int play_a_move(int move, int ind_pawn, Game *g, GraphicCache *cache, int nb_cou
     else
     {
         // MoveTab *coups = listMoves(g);
-        memory_move_t *mem;
         printf("Nb coup %d color %d", nb_coups, g->is_white);
-
+        if (nb_coups == 34) {
+            printf("je m'arrete");
+        }
         Move m;
         // if (!g->is_white)
         // {
@@ -199,7 +200,7 @@ int play_a_move(int move, int ind_pawn, Game *g, GraphicCache *cache, int nb_cou
         assert(t->size > 0);
         int rand_choice = rand() % t->size;
         m = t->tab[rand_choice];
-        print_state_game(g);
+        // print_state_game(g);
         printf("pion selec %d", m.manipulatedPawn);
         print_move(m);
         flush();
