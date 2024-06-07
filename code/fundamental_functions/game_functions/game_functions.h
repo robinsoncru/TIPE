@@ -53,4 +53,6 @@ void biDepl(Game *g, int ind, bool color);
 /* QUEEN DEPL */
 
 void queenDepl(Game *g, int ind, bool color, Coord pos_dame, bool isNGE);
+void queenDeplDueMoveStruct(Game *g, int ind, bool color, Coord pos_dame);
+
 #endif // GAME_FUNCTIONS

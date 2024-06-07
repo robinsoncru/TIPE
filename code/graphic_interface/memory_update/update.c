@@ -20,7 +20,7 @@ int update(Game *g, GraphicCache *cache, int nb_coups, int *l_coups, int *l_depl
     {
         cache->ticksArray[CHANGE_TICKS] = 0;
 
-        change_damier(g);
+        // change_damier(g);
         cache->txtMessage->display = false;
         g->indCheck = IND_NORMAL;
     }

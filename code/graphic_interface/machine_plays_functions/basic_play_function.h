@@ -3,6 +3,7 @@
 
 #include "debug_autoplay.h"
 #include "../../AI/move_simulation/applyMoveAI.h"
+#include "../../AI/move_for_sure/applyMoveForSure.h"
 
 int play_a_move(int move, int ind_pawn, Game *g, GraphicCache *cache, int nb_coups, int *l_coups, int *l_depl, bool isNGE);
 int random_index(Game *g);

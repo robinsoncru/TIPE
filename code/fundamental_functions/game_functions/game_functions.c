@@ -206,6 +206,36 @@ void queenDepl(Game *g, int ind, bool color, Coord pos_dame, bool isNGE)
     }
 }
 
+void queenDeplDueMoveStruct(Game *g, int ind, bool color, Coord pos_dame)
+{
+    /* Déplace la reine à partir d'un move, donc c'est un simple déplacement sans rafle */
+    // Suppose que l'entree est valide
+    int lig = pos_dame.i;
+    int col = pos_dame.j;
+    assertAndLog(is_empty(g->inds_move_back), "Les amis sont toujours la");
+
+    change_pawn_place(g, ind, color, lig, col);
+
+    // Gonna check if the queen can take a rafle
+
+    assertAndLog(g->currentTree == emptyTree, "arbre de g non vide");
+
+    if (has_friend(g, ind, color))
+    {
+        for (int i = 0; i < MAX_NB_PAWNS; i++)
+        {
+            if (isValidIndexInGame(g, i, !color) && getFriendByInd(g, ind, i, color) && !alreadyInList(g->inds_move_back, i))
+            {
+                push(g->inds_move_back, i);
+            }
+            // le pion indique a partir de son indice
+        }
+    }
+
+    endTurnGameManagement(g, color, ind, IND_CHANGE_ALLOWED, false);
+    // Do a move back only if the queen didn'l eat
+}
+
 /*
 
 

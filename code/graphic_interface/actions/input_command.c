@@ -183,6 +183,21 @@ void checkQueenDepl(Game *g, GraphicCache *cache, bool iw, int lig, int col, boo
     }
 }
 
+
+
+/* Rafle function with the choice */
+
+void rafleForSure(Game *g, GraphicCache *cache, bool color, int indMovePawn, PathTree *currentTree, Path *r, Coord pos_depart_manger_rafle)
+{
+    // Libère le chemin r après utilisation
+    // Utilisé pour pion et dame
+    change_pawn_place(g, indMovePawn, color, pos_depart_manger_rafle.i, pos_depart_manger_rafle.j);
+    eatRafle(g, indMovePawn, color, currentTree, r);
+    pathFree(r);
+    endTurnGameManagement(g, color, indMovePawn, IND_CHANGE_ALLOWED, false);
+    endTurnGraphics(g, cache);
+}
+
 /*
 
 

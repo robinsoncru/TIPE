@@ -80,7 +80,85 @@ void picture_this(Game *g)
     error();
 }
 
-void print_state_game(Game *g, int which_pmetre)
+void print_state_game(Game *g)
+{
+    // Affiche color, ind, queen
+    //         ennemy, ami, pba
+    // Affiche toutes les caract
+    printf("\n     ");
+    for (int i = 0; i < NB_CASE_LG; i++)
+    {
+        // La matrice est mieux affiché
+        if (i < 10)
+        {
+            printf(" ");
+        }
+        printf("%d     ", i);
+    }
+    printf("\n");
+    for (int i = 2 * NB_CASE_LG - 1; i > -1; i--)
+    {
+        if (i % 2 == 1)
+        {
+            if (i < 20)
+            {
+                printf("%d  |", i/2);
+            }
+            else
+            {
+                printf("%d |", i/2);
+            }
+        }
+        else {
+            printf("   |");
+        }
+        for (int j = 0; j < NB_CASE_LG; j++)
+        {
+            Case c = g->damier[i/2][j];
+            if (freeCase(c))
+            {
+                printf("      |");
+            }
+            else
+            {
+                pawn p = g->allPawns[c.pawn_color][c.ind_pawn];
+                if (i % 2 == 1)
+                {
+                    if (c.ind_pawn < 10)
+                    {
+                        printf("%d~ %d~%d|", c.pawn_color, c.ind_pawn, p.queen);
+                    }
+                    else
+                    {
+                        printf("%d~%d~%d|", c.pawn_color, c.ind_pawn, p.queen);
+                    }
+                }
+                else
+                {
+                    if (c.ind_pawn < 10)
+                    {
+                        if (p.ennemy != VOID_INDEX)
+                        {
+                            printf(" %d~%d~%d|", p.ennemy, p.friendly, p.pba);
+                        }
+                        else
+                        {
+                            printf("%d~%d~%d|", p.ennemy, p.friendly, p.pba);
+                        }
+                    }
+                    else
+                    {
+                        printf("%d~%d~%d|", p.ennemy, p.friendly, p.pba);
+                    }
+                }
+            }
+        }
+        printf("\n");
+    }
+    flush();
+}
+
+void print_state_game_one_pmetre(Game *g, int which_pmetre)
 {
 
     printf("\n     ");
@@ -183,8 +261,8 @@ void print_data_chain(data_chain *l)
     while (!dis_empty(l))
     {
         l = l->next;
-        printf("coul %d (i %d) (j %d) Enn (i %d) (j %d)\n", l->data.pawncolor, l->data.coord.i, 
-        l->data.coord.j, l->data.relationship.pos_foe.i, l->data.relationship.pos_foe.j);
+        printf("coul %d (i %d) (j %d) Enn (i %d) (j %d)\n", l->data.pawncolor, l->data.coord.i,
+               l->data.coord.j, l->data.relationship.pos_foe.i, l->data.relationship.pos_foe.j);
         coord_tab_t *t = l->data.relationship.friendsId;
         if (t != NULL)
         {

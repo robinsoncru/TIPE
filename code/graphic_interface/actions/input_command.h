@@ -36,6 +36,7 @@ void checkLienAmitie(int i, int j, Game *g, GraphicCache *cache, bool screen_swi
 void checkLienEnnemitie(int i, int j, Game *g, GraphicCache *cache, bool screen_switch);
 void checkQueenDepl(Game *g, GraphicCache *cache, bool iw, int lig, int col, bool autoplay);
 void checkPawnMove(Game *g, GraphicCache *cache, bool left, bool autoplay);
-void checkPawnMoveBack(Game *g, GraphicCache *cache, bool autoplay);
 void checkBiDepl(Game *g, GraphicCache *cache, bool autoplay);
+void checkPromotion(Game *g, GraphicCache *cache, bool autoplay);
+void rafleForSure(Game *g, GraphicCache *cache, bool color, int indMovePawn, PathTree *currentTree, Path *r, Coord pos_depart_manger_rafle);
 #endif //INPUT_COMMAND
