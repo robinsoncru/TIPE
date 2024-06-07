@@ -27,7 +27,6 @@ void moveFree(Move coup){
 
         case rafleType:
             pathFree(coup.rafle);
-            pathTreeFree(coup.rafleTree);
             break;
         
         default:
