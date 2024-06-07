@@ -168,46 +168,50 @@ void listMovesForGhostPawns(Game *g, int selectedPawn, Move *temporaryResult, in
     listMovesMovePawn(g, selectedPawn, temporaryResult, nbMoves);
 }
 
-void listMovesForQueen(Game *g, int selectedPawn, Move *temporaryResult, int *nbMoves)
+void listMovesForQueen(Game *g, int selectedPawnIndex, Move *temporaryResult, int *nbMoves)
 {
     // Une reine ne peut pas gagner de nouveau mais seulement garder ses anciens
 
-    pawn p = get_pawn(g, g->is_white, selectedPawn);
-    Coord selectedPawnPos = {.i = p.lig, .j = p.col};
+    pawn selectedPawn = get_pawn(g, g->is_white, selectedPawnIndex);
+    Coord selectedPawnPos = {.i = selectedPawn.lig, .j = selectedPawn.col};
     // possible cases where to move for a queen
     Move currentMove;
-    currentMove.manipulatedPawn = selectedPawn;
+    currentMove.manipulatedPawn = selectedPawnIndex;
     currentMove.type = queenDeplType;
+    currentMove.pos_dame = selectedPawnPos;
 
 
-    listRafles(g, selectedPawn, selectedPawnPos, temporaryResult, nbMoves);
+    listRafles(g, selectedPawnIndex, selectedPawnPos, temporaryResult, nbMoves);
 
     int possibleShifts[2] = {-1, 1};
-    Coord dir;
+    Coord moveDirection;
     int oldNbMoves;
     for (int i = 0; i < 2; i++)
     {
         for (int j = 0; j < 2; j++)
         {
-            dir.i = possibleShifts[i];
-            dir.j = possibleShifts[j];
+            moveDirection.i = possibleShifts[i];
+            moveDirection.j = possibleShifts[j];
+            currentMove.pos_dame = selectedPawnPos;
             for (int k = 1; k < NB_CASE_LG; k++)
             {
-                currentMove.pos_dame = add(selectedPawnPos, dir);
+                currentMove.pos_dame = add(currentMove.pos_dame, moveDirection);
+                // printf("pos pion dame %d %d\n", currentMove.pos_dame.i, currentMove.pos_dame.j);
+                flush();
                 if (!caseIsAccessible(g, g->is_white,
                     currentMove.pos_dame.i, currentMove.pos_dame.j))
                 {
                     break;
                 }
                 oldNbMoves = *nbMoves;
-                listRafles(g, selectedPawn, currentMove.pos_dame, temporaryResult, nbMoves);
+                
+                listRafles(g, selectedPawnIndex, currentMove.pos_dame, temporaryResult, nbMoves);
+                
                 if (oldNbMoves == *nbMoves)
                 { // s'il n'y a aucune rafle a jouer
                     temporaryResult[*nbMoves] = currentMove;
                     *nbMoves = *nbMoves + 1;
                 }
-                dir.i += possibleShifts[i];
-                dir.j += possibleShifts[j];
             }
         }
     }

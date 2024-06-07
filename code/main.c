@@ -86,7 +86,7 @@ void test_start_game(Game *g, GraphicCache *cache)
         killPawnByInd(g, false, i);
     }
 
-    change_pawn_place(g, 4, true, 10, 8);
+    change_pawn_place(g, 4, true,  10, 12);
     promote(g, true, 4);
     for (int i=0; i<4; i++) {
         change_pawn_place(g, i, true, get_pawn_value(g, true, i, LIG)+4, get_pawn_value(g, true, i, COL));

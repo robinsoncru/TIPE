@@ -196,7 +196,8 @@ int play_a_move(int move, int ind_pawn, Game *g, GraphicCache *cache, int nb_cou
         // // {
         // //     m.manipulatedPawn = random_index(g);
         // // }
-        m = t->tab[0];
+        m = t->tab[20];
+        print_move(m);
         printf("pion selec %d", m.manipulatedPawn);
         flush();
         mem = applyDeter(g, m); // Tester un eclatement de nuage
@@ -204,13 +205,13 @@ int play_a_move(int move, int ind_pawn, Game *g, GraphicCache *cache, int nb_cou
         for (int j = 0; j < mem->lenghtIssues; j++)
         {
             applyIssue(g, mem, j);
-            print_state_game(g, QUEEN);
+            // print_state_game(g, QUEEN);
             usleep(1000 * 100);
             applyRecipIssue(g, mem, j);
             // print_state_game(g, PBA);
         }
         applyRecipDeter(g, mem);
-        print_state_game(g, QUEEN);
+        // print_state_game(g, QUEEN);
         // print_liensAmitie(g);
         
         // endTurnGameManagement(g, g->is_white, m.manipulatedPawn, IND_CHANGE_ALLOWED, false); // Parce que ce sont des NGE
