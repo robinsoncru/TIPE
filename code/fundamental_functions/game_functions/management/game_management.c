@@ -84,6 +84,27 @@ void endTurnGameManagement(Game *g, bool is_white, int indMovedPawn, int indChec
     }
 }
 
+void enTurnGameManagementForGhosts(Game *g, int ind, int newInd, bool color, int indCheck)
+{
+    // Ind : pion qui se bidepl
+    // newInd : pion crée suite au bidepl
+    handlePawnGhostAndPromotion(g, color, ind);
+    // ind peut casser le nuage
+    if (isValidIndexInGame(g, newInd, color)) {
+        // tout comme newInd, donc on vérif les deux
+        handlePawnGhostAndPromotion(g, color, newInd);
+    }
+
+    g->ind_move = NEUTRAL_IND;
+    g->indCheck = indCheck;
+    if (g->currentTree != emptyTree)
+    {
+        PathTree *m = g->currentTree;
+        g->currentTree = NULL;
+        pathTreeFree(m);
+    }
+}
+
 void handlePawnGhostAndPromotion(Game *g, bool color, int ind)
 {
     // Gère les rétroactions des nuages et des promotions

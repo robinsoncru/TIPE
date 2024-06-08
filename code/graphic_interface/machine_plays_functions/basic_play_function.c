@@ -180,7 +180,6 @@ int play_a_move(int move, int ind_pawn, Game *g, GraphicCache *cache, int nb_cou
     else
     {
         // MoveTab *coups = listMoves(g);
-        printf("Nb coup %d color %d", nb_coups, g->is_white);
         if (nb_coups == 34) {
             printf("je m'arrete");
         }
@@ -203,6 +202,8 @@ int play_a_move(int move, int ind_pawn, Game *g, GraphicCache *cache, int nb_cou
         // print_state_game(g);
         printf("pion selec %d", m.manipulatedPawn);
         print_move(m);
+
+        printf("Nb coup %d color %d", nb_coups, g->is_white);
         flush();
         // mem = applyDeter(g, m); // Tester un eclatement de nuage
         // // picture_this(g);
@@ -221,7 +222,6 @@ int play_a_move(int move, int ind_pawn, Game *g, GraphicCache *cache, int nb_cou
         moveTabFreeTrees(t, 0, t->size);
         moveTabFree(t, 0, t->size);
         print_state_game(g);
-        printf(" Fin appelle Nb coup %d color %d", nb_coups, g->is_white);
         flush();
         // endTurnGameManagement(g, g->is_white, m.manipulatedPawn, IND_CHANGE_ALLOWED, false); // Parce que ce sont des NGE
     }

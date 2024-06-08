@@ -49,7 +49,7 @@ void initTabIssueColor(Game *g, int what_kind_of_creation, memory_move_t *mem, b
         // On joue directement une config du nuage lors après l'initialisation
         free(mem->issues);
         mem->issues = malloc(mem->lenghtIssues * sizeof(issue_t));
-        // Les trois premières cases du tableau sont laissées vides
+        // Les deux premières cases du tableau sont laissées vides
         for (int i = 0; i < 2; i++)
         {
             mem->issues[i].pba_promotion = 3;

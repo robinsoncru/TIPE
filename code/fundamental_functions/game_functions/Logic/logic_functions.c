@@ -152,7 +152,7 @@ bool canPromotion(Game *g, int indPromotedPawn, bool colorPromotedPawn)
 {
     // return isPawnValid(g) && !isInCloud(g, iw, g->ind_move) && !int_to_bool(get_pawn_value(g, iw, g->ind_move, QUEEN));
 
-    return isValidIndexInGame(g, indPromotedPawn, colorPromotedPawn) && !isInCloud(g, colorPromotedPawn, g->ind_move);
+    return isValidIndexInGame(g, indPromotedPawn, colorPromotedPawn) && !isInCloud(g, colorPromotedPawn, indPromotedPawn);
 }
 
 // Seul un pion plein peut faire eclater le nuage
