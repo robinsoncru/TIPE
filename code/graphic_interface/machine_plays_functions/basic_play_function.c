@@ -173,16 +173,10 @@ int play_a_move(int move, int ind_pawn, Game *g, GraphicCache *cache, int nb_cou
     else
     {
 
-        // assert(t->size > 0);
-        // int rand_choice = rand() % t->size;
-        // m = t->tab[rand_choice];
-        // // print_state_game(g);
-        // printf("pion selec %d", m.manipulatedPawn);
-        // print_move(m);
-
-        // printf("Nb coup %d color %d", nb_coups, g->is_white);
-        // flush();
-        // endTurnGameManagement(g, g->is_white, m.manipulatedPawn, IND_CHANGE_ALLOWED, false); // Parce que ce sont des NGE
+        print_state_game(g);
+        printf("Score %f, couleur %d", heuristique_border_trivial(g), g->is_white);
+        flush();
+        endTurnGameManagement(g, g->is_white, 0, IND_CHANGE_ALLOWED, false); // Parce que ce sont des NGE
     }
 
     return nb_coups + 1;
