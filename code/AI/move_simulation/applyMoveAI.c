@@ -47,10 +47,11 @@ memory_move_t *applyDeter(Game *g, Move coup, bool shouldFreeMove)
         break;
     }
     mem->is_white = g->is_white;
-    mem->coordMovePawn = coord_from_ind(g, mem->indMovePawn, mem->is_white);
+    mem->movePawn.coord = coord_from_ind(g, mem->indMovePawn, mem->is_white);
     mem->indMovePawn = -1; // Sécurité pour être sur de ne pas se baser sur l'indice
 
-    if(shouldFreeMove){
+    if (shouldFreeMove)
+    {
         moveFreeBackwardMoveTab(coup);
     }
     // print_data_chain(mem->chainy);
@@ -99,13 +100,39 @@ void applyIssue(Game *g, memory_move_t *mem, int nbIssue)
     }
 }
 
+void cancelPromQueenPromoted(Game *g, cloud_queen_t *pawn, bool color)
+{
+    if (validCoord(pawn->coord) && pawn->had_become_queen)
+    {
+        int ind = ind_from_coord(g, pawn->coord);
+        put_pawn_value(g, color, ind, QUEEN, 0);
+        pawn->had_become_queen = false;
+    }
+}
+
 void applyRecipIssue(Game *g, memory_move_t *mem, int index)
 {
-    cancelSelectedIssue(g, mem, index);
+    bool color = mem->is_white;
+    cancelPromQueenPromoted(g, &mem->movePawn, color);
+    if (!mem->is_deter)
+    {
+        cancelPromQueenPromoted(g, &mem->pawnCloudOtherColor, !color);
+        cancelPromQueenPromoted(g, &mem->pawnCloudSameColor, color);
+        if (mem->type == biDeplType)
+        {
+            cancelSelectedIssueBiDepl(g, mem, index);
+        }
+        else
+        {
+            cancelSelectedIssue(g, mem, index);
+        }
+    }
 }
 
 void applyRecipDeter(Game *g, memory_move_t *mem)
 {
+    // On annule d'abord la promotion des pièces pion joué et survivants de nuages
+
     switch (mem->type)
     {
     case pawnMoveType:
@@ -144,4 +171,5 @@ void applyRecipDeter(Game *g, memory_move_t *mem)
         assertAndLog(false, "reconnait pas type move");
         break;
     }
+    freeMemMove(mem);
 }

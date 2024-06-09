@@ -8,5 +8,6 @@
 
 memory_move_t *initMemMove(int indMovePawn, moveType type);
 void freeMemMove(memory_move_t *mem);
+cloud_queen_t init_cloud_queen();
 
 #endif

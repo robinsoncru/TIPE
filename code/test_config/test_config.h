@@ -10,4 +10,7 @@ void alphaBetaPrunningTest(Game* g);
 
 void rafleTest(Game* g);
 void queenRafleTest(Game* g);
+void confidPhotoDiapo(Game *g);
+void configNuagePawnMove(Game *g);
+void configBiDeplKillNuageAndNuageEnn(Game *g);
 #endif

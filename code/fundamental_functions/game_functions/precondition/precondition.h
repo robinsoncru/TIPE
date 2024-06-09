@@ -12,5 +12,6 @@ bool outOfBounds(int i, int j);
 bool eatingIsOutOfBounds(int i, int j, int add0, int add1);
 bool isInCloud(Game *g, bool color, int ind);
 bool enoughPawns(Game *g, bool color);
+bool validCoord(Coord c);
 
 #endif

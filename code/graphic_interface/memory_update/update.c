@@ -59,31 +59,11 @@ int update(Game *g, GraphicCache *cache, int nb_coups, int *l_coups, int *l_depl
         {
             if (g->is_white)
             {
-                // if (nb_coups % 2 == 1)
-                // {
-                //     nb_coups = play_a_move(VOID_INDEX, 0, g, cache, nb_coups, l_coups, l_depl, isNGE);
-                // }
-                // else
-                // {
-
-                //     nb_coups = play_a_move(VOID_INDEX, 0, g, cache, nb_coups, l_coups, l_depl, isNGE);
-                // }
-                // nb_coups = play_a_move(VOID_INDEX, random_index(g), g, cache, nb_coups, l_coups, l_depl, isNGE);
-
                 nb_coups = play_a_move(VOID_INDEX, VOID_INDEX, g, cache, nb_coups, l_coups, l_depl, true);
             }
             else
             {
-                // if (nb_coups % 2 == 1)
-                // {
-                //     // nb_coups = play_a_move(VOID_INDEX   nb_coups = play_a_move(PAWNM, random_index(g), g, cache, nb_coups, l_coups, l_depl, isNGE);
-                // }
-                // else
-                // {
-                //     // nb_coups = play_a_move(VOID_INDEX   nb_coups = play_a_move(PAWNM, random_index(g), g, cache, nb_coups, l_coups, l_depl, isNGE);
-                // }
                 nb_coups = play_a_move(VOID_INDEX, VOID_INDEX, g, cache, nb_coups, l_coups, l_depl, isNGE);
-                // nb_coups = play_a_move(VOID_INDEX, plannifier_index(g, nb_coups, l_coups), g, cache, nb_coups, l_coups, l_depl, isNGE);
             }
             // print_pawns(g, g->is_white);
         }

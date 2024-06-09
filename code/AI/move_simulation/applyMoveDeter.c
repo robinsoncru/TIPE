@@ -87,20 +87,68 @@ void generateCloudDuePawnMove(Game *g, memory_move_t *mem)
     }
 }
 
-void lightnightStrike(Game *g, memory_move_t *mem, int index)
+void handlePromSurvivorPawns(Game *g, memory_move_t *mem, bool color, int indEnnSurv, int indSameColorSurv, int pbaEnn, int pba)
 {
-    // Eclate le nuage si necessaire, index décide de la position du survivant
-    bool iw = g->is_white;
-    lightnightStrikeColor(g, mem, index, !iw);
+    if (isValidIndexInGame(g, indEnnSurv, !color))
+    {
+        if (canBePromoted(g, !color, indEnnSurv))
+        {
+            promote(g, !color, indEnnSurv);
+            mem->pawnCloudOtherColor.had_become_queen = true;
+        }
+        mem->pawnCloudOtherColor.coord = coord_from_ind(g, indEnnSurv, !color);
+        mem->pawnCloudOtherColor.old_pba = pbaEnn;
+    }
+
+    if (isValidIndexInGame(g, indSameColorSurv, color))
+    {
+        if (canBePromoted(g, color, indSameColorSurv))
+        {
+            promote(g, color, indSameColorSurv);
+            mem->pawnCloudSameColor.had_become_queen = true;
+        }
+        mem->pawnCloudSameColor.coord = coord_from_ind(g, indSameColorSurv, color);
+        mem->pawnCloudSameColor.old_pba = pba;
+    }
 }
 
-void lightnightStrikeColor(Game *g, memory_move_t *mem, int index, bool color)
+void lightnightStrike(Game *g, memory_move_t *mem, int index, bool color)
 {
-    // Eclate le nuage si necessaire, index décide de la position du survivant
-    if (!mem->is_deter)
+    // Eclate le nuage adverse si necessaire, index décide de la position du survivant
+    Coord pos_surv_enn = mem->issues[index].pos_survivor;
+    int pba = -1;
+    int indEnnSurv = stormBreaksNGE(g, !color, mem->load_cloud_other, pos_surv_enn);
+    int indSurvSameColor = VOID_INDEX;
+    if (canStormBreaksForTheOthers(g, indEnnSurv, !color))
     {
-        stormBreaksNGE(g, color, index, mem);
+        assertAndLog(cis_empty(mem->load_cloud_same_color), "lightnightstrike charg du friend cloud_chain non vide");
+        Coord pos_surv = giveCoordLastInCloud(g, color);
+        indSurvSameColor = ind_from_coord(g, pos_surv);
+        pba = get_pawn_value(g, color, indSurvSameColor, PBA);
+        stormBreaksNGE(g, color, mem->load_cloud_same_color, pos_surv);
     }
+    handlePromSurvivorPawns(g, mem, color, indEnnSurv, indSurvSameColor, -1, pba);
+    // Pba enn deja enregistré dans issue
+}
+
+void lightnightStrikeDueBiDepl(Game *g, memory_move_t *mem, int index)
+{
+    bool color = mem->is_white;
+    Coord pos_surv = mem->issues[index].pos_survivor;
+    int indSurv = stormBreaksNGE(g, color, mem->load_cloud_same_color, pos_surv);
+    // est ce que indSurv peut niquer l'autre nuage
+    int indSurvEnn = VOID_INDEX;
+    int pbaEnn = -1;
+    if (canStormBreaksForTheOthers(g, indSurv, color))
+    {
+        assertAndLog(cis_empty(mem->load_cloud_other), "lightnightstrikedubidepl charg du friend cloud_chain non vide");
+        Coord pos_surv_enn = giveCoordLastInCloud(g, !color);
+        indSurvEnn = ind_from_coord(g, pos_surv_enn);
+        pbaEnn = get_pawn_value(g, !color, indSurvEnn, PBA);
+        stormBreaksNGE(g, !color, mem->load_cloud_other, pos_surv_enn);
+    }
+    handlePromSurvivorPawns(g, mem, color, indSurvEnn, indSurv, pbaEnn, -1);
+    // La pbaSameColor est deja enregistré dans issues
 }
 
 memory_move_t *pawnMoveDeter(Game *g, int indMovePawn, bool left, moveType type)
@@ -183,9 +231,14 @@ memory_move_t *biDeplDeter(Game *g, int indMovePawn, moveType type)
     memory_move_t *mem = initMemMove(indMovePawn, type);
 
     mem->ghost_pawn_created_bidepl = biDeplNGE(g, g->is_white, indMovePawn);
+    int indNewGhost = ind_from_coord(g, mem->ghost_pawn_created_bidepl.c);
 
     // Le pion en avançant peut tuer le nuage
     if (canStormBreaks(g, indMovePawn, g->is_white))
+    {
+        initTabIssueColor(g, CREATE_CLOUD_TAB, mem, g->is_white);
+    }
+    else if (canStormBreaks(g, indNewGhost, g->is_white))
     {
         initTabIssueColor(g, CREATE_CLOUD_TAB, mem, g->is_white);
     }
@@ -194,63 +247,54 @@ memory_move_t *biDeplDeter(Game *g, int indMovePawn, moveType type)
 
 void cancelPromotionDeter(Game *g, memory_move_t *mem)
 {
-    int ind = ind_from_coord(g, mem->coordMovePawn);
+    int ind = ind_from_coord(g, mem->movePawn.coord);
     cancelPromotion(g, ind, mem->pos_potential_foe_from_prom, mem->is_white);
-
-    freeMemMove(mem);
 }
 
 void cancelPawnMoveDeter(Game *g, memory_move_t *mem)
 {
     bool iw = mem->is_white;
 
-    int ind = ind_from_coord(g, mem->coordMovePawn);
+    int ind = ind_from_coord(g, mem->movePawn.coord);
     pawnMoveCancel(g, iw, ind, mem->left);
-    freeMemMove(mem);
 }
 
 void cancelPawnMoveBackDeter(Game *g, memory_move_t *mem)
 {
     cancelAllMoveBack(g, mem);
-    freeMemMove(mem);
 }
 
 void cancelBiDeplDeter(Game *g, memory_move_t *mem)
 {
-    int ind = ind_from_coord(g, mem->coordMovePawn);
+    int ind = ind_from_coord(g, mem->movePawn.coord);
     cancelBidepl(g, ind, mem->ghost_pawn_created_bidepl, mem->is_white);
-    freeMemMove(mem);
 }
 
 void cancelQueenDeplDeter(Game *g, memory_move_t *mem)
 {
 
-    int ind = ind_from_coord(g, mem->coordMovePawn);
+    int ind = ind_from_coord(g, mem->movePawn.coord);
     Coord pos_init = mem->init_coord_dame_or_rafle;
     change_pawn_place(g, ind, mem->is_white, pos_init.i, pos_init.j);
-    freeMemMove(mem);
 }
 
 void cancelRafleDeter(Game *g, memory_move_t *mem)
 {
 
-    int ind = ind_from_coord(g, mem->coordMovePawn);
+    int ind = ind_from_coord(g, mem->movePawn.coord);
     cancelRafle(g, ind, mem->init_coord_dame_or_rafle, mem->chainy, mem->is_white);
-    freeMemMove(mem);
 }
 
 void cancelLienAmitieDeter(Game *g, memory_move_t *mem)
 {
 
-    int ind = ind_from_coord(g, mem->coordMovePawn);
+    int ind = ind_from_coord(g, mem->movePawn.coord);
     cancelLienAmitie(g, ind, mem->lig, mem->col, mem->is_white);
-    freeMemMove(mem);
 }
 
 void cancelLienEnnemitieDeter(Game *g, memory_move_t *mem)
 {
 
-    int ind = ind_from_coord(g, mem->coordMovePawn);
+    int ind = ind_from_coord(g, mem->movePawn.coord);
     cancelLienEnnemitie(g, ind, mem->lig, mem->col, mem->is_white);
-    freeMemMove(mem);
 }

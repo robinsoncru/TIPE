@@ -17,7 +17,7 @@
 
 */
 
-bool endTurnGameManagementNGE(Game *g, int indMovedPawn, int indCheck, bool doMoveBack)
+void endTurnGameManagementNGE(Game *g, int indMovedPawn, int indCheck, bool doMoveBack, memory_move_t *mem)
 {
     // Appeler toujours apres endTurnGameManagement lorsqu'il n'y a plus d'appel recursif sur les coups à faire
     bool become_a_queen = false;
@@ -42,7 +42,6 @@ bool endTurnGameManagementNGE(Game *g, int indMovedPawn, int indCheck, bool doMo
                 become_a_queen = true;
             }
         }
-        // g->is_white = !g->is_white;
 
         if (g->currentTree != emptyTree)
         {
@@ -51,7 +50,7 @@ bool endTurnGameManagementNGE(Game *g, int indMovedPawn, int indCheck, bool doMo
             pathTreeFree(m);
         }
     }
-    return become_a_queen;
+    mem->movePawn.had_become_queen = become_a_queen;
 }
 
 void endTurnGameManagement(Game *g, bool is_white, int indMovedPawn, int indCheck, bool doMoveBack)

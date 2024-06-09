@@ -7,10 +7,12 @@
 #include "../AI/ai_lists/ecrasement/ecrasement.h"
 #include <stdlib.h>
 
-void intChainShuffle(int_chain* l){
+void intChainShuffle(int_chain *l)
+{
     int n = taille_list(l);
     int tmp, j;
-    for (int i = 0; i < n; i++) {
+    for (int i = 0; i < n; i++)
+    {
         tmp = get(l, i);
         j = rand() % (i + 1);
         seti(l, i, get(l, j));
@@ -18,9 +20,11 @@ void intChainShuffle(int_chain* l){
     }
 }
 
-void moveBackListingTest(Game* g, GraphicCache* cache){
+void moveBackListingTest(Game *g, GraphicCache *cache)
+{
     int nbPawnsToKill = g->nb_pawns[true] - 5;
-    for (int i = 0; i < nbPawnsToKill; i++) {
+    for (int i = 0; i < nbPawnsToKill; i++)
+    {
         killPawnByInd(g, true, 0);
     }
     change_pawn_place(g, 0, true, 0, 0);
@@ -29,21 +33,23 @@ void moveBackListingTest(Game* g, GraphicCache* cache){
     change_pawn_place(g, 3, true, 2, 2);
     change_pawn_place(g, 4, true, 2, 4);
 
-    for (int i = 0; i < 5; i++) {
+    for (int i = 0; i < 5; i++)
+    {
         push(g->inds_move_back, i);
     }
     intChainShuffle(g->inds_move_back);
 }
 
-void alphaBetaPrunningTest(Game* g){
-    //test de l'elagage alpha beta avec
-    //ll'heuristique triviale ainsi que
-    //l'ecrasement arctangeante
-    AI* whitePlayer = malloc(sizeof(AI));
-    AI* blackPlayer = malloc(sizeof(AI));
+void alphaBetaPrunningTest(Game *g)
+{
+    // test de l'elagage alpha beta avec
+    // ll'heuristique triviale ainsi que
+    // l'ecrasement arctangeante
+    AI *whitePlayer = malloc(sizeof(AI));
+    AI *blackPlayer = malloc(sizeof(AI));
 
     int testDepth = 5;
-    double (*testAnalyse)(Game*) = heuristique_miam_trivial;
+    double (*testAnalyse)(Game *) = heuristique_miam_trivial;
     double (*testEcrasement)(double) = erf;
 
     whitePlayer->depth = testDepth;
@@ -58,14 +64,17 @@ void alphaBetaPrunningTest(Game* g){
     g->players[false] = blackPlayer;
 }
 
-void rafleTest(Game* g){
+void rafleTest(Game *g)
+{
     int nbBlacksToKill = NB_PAWNS - 4;
     int nbWhitesToKill = NB_PAWNS - 1;
 
-    for (int i = 0; i < nbBlacksToKill; i++) {
+    for (int i = 0; i < nbBlacksToKill; i++)
+    {
         killPawnByInd(g, false, 0);
     }
-    for (int i = 0; i < nbWhitesToKill; i++) {
+    for (int i = 0; i < nbWhitesToKill; i++)
+    {
         killPawnByInd(g, true, 0);
     }
 
@@ -76,14 +85,17 @@ void rafleTest(Game* g){
     change_pawn_place(g, 3, false, 3, 5);
 }
 
-void queenRafleTest(Game* g){
+void queenRafleTest(Game *g)
+{
     int nbBlacksToKill = NB_PAWNS - 5;
     int nbWhitesToKill = NB_PAWNS - 1;
 
-    for (int i = 0; i < nbBlacksToKill; i++) {
+    for (int i = 0; i < nbBlacksToKill; i++)
+    {
         killPawnByInd(g, false, 0);
     }
-    for (int i = 0; i < nbWhitesToKill; i++) {
+    for (int i = 0; i < nbWhitesToKill; i++)
+    {
         killPawnByInd(g, true, 0);
     }
 
@@ -96,4 +108,130 @@ void queenRafleTest(Game* g){
     change_pawn_place(g, 3, false, 4, 10);
     change_pawn_place(g, 4, false, 4, 12);
     promote(g, false, 4);
+}
+
+void confidPhotoDiapo(Game *g)
+{
+    int endBlanc = 6;
+    int endNoir = 6;
+    for (int i = NB_PAWNS - 1; i >= endBlanc; i--)
+    {
+        killPawnByInd(g, true, i);
+    }
+
+    for (int i = NB_PAWNS - 1; i >= endNoir; i--)
+    {
+        killPawnByInd(g, false, i);
+    }
+
+    change_pawn_place(g, 4, true, 10, 12);
+    // promote(g, true, 4);
+    for (int i = 0; i < 4; i++)
+    {
+        change_pawn_place(g, i, true, get_pawn_value(g, true, i, LIG) + 4, get_pawn_value(g, true, i, COL));
+        change_pawn_place(g, i, false, get_pawn_value(g, false, i, LIG) - 4, get_pawn_value(g, false, i, COL));
+        // lienAmitieNGE(12, 2, i, false, g);
+    }
+}
+
+void configStratMiam(Game *g)
+{
+
+    // change_pawn_place(g, 0, true, 8, 10);
+    // change_pawn_place(g, 1, true, 7, 9);
+    // change_pawn_place(g, 2, true, 5, 11);
+    // change_pawn_place(g, 3, true, 3, 11);
+
+    // change_pawn_place(g, 8, false, 2, 0);
+}
+
+void configStratBorder(Game *g)
+{
+
+    // strat border
+    // change_pawn_place(g, 0, true, 12, 2);
+    // change_pawn_place(g, 1, true, 5, 3);
+    // // change_pawn_place(g, 2, true, 5, 11);
+    // // change_pawn_place(g, 3, true, 3, 11);
+
+    // change_pawn_place(g, 2, false, 8, 6);
+    // change_pawn_place(g, 5, false, 6, 10);
+    // change_pawn_place(g, 3, false, 14, 6);
+    // sous config Nuage apres rafle
+
+    // biDepl(g, 9, false);
+    // biDepl(g, 11, false);
+
+    // biDepl(g, 13, false);
+
+    // biDepl(g, 15, false);
+
+    // change_pawn_place(g, 16, false, 3, 9);
+    // g->is_white = true;
+}
+
+// Laissé en commentaire, ça compile plus vite
+
+void configNuagePawnMove(Game *g) {
+    int endBlanc = 6;
+    int endNoir = 3;
+    for (int i = NB_PAWNS - 1; i >= endBlanc; i--)
+    {
+        killPawnByInd(g, true, i);
+    }
+
+    for (int i = NB_PAWNS - 1; i >= endNoir; i--)
+    {
+        killPawnByInd(g, false, i);
+    }
+    biDeplNGE(g, true, 2);
+
+    // promote(g, true, 4);
+    for (int i = endNoir-1; i >-1; i--)
+    {
+        change_pawn_place(g, i, false, get_pawn_value(g, false, i, LIG)-1, get_pawn_value(g, false, i, COL)+5);
+        // lienAmitieNGE(12, 2, i, false, g);
+    }
+    biDeplNGE(g, false, 0);
+    biDeplNGE(g, false, 3);
+
+
+    change_pawn_place(g, 2, true, 13, 5);
+    change_pawn_place(g, 4, true, 10, 6);
+    biDeplNGE(g, true, 6);
+    biDeplNGE(g, true, 6);
+
+}
+
+void configBiDeplKillNuageAndNuageEnn(Game *g) {
+    int endBlanc = 6;
+    int endNoir = 3;
+    for (int i = NB_PAWNS - 1; i >= endBlanc; i--)
+    {
+        killPawnByInd(g, true, i);
+    }
+
+    for (int i = NB_PAWNS - 1; i >= endNoir; i--)
+    {
+        killPawnByInd(g, false, i);
+    }
+    biDeplNGE(g, true, 2);
+
+    // promote(g, true, 4);
+    for (int i = endNoir-1; i >-1; i--)
+    {
+        change_pawn_place(g, i, false, get_pawn_value(g, false, i, LIG)-1, get_pawn_value(g, false, i, COL)+5);
+        // lienAmitieNGE(12, 2, i, false, g);
+    }
+
+
+    change_pawn_place(g, 2, true, 14, 4);
+    change_pawn_place(g, 4, true, 10, 6);
+    // biDeplNGE(g, true, 6);
+    // biDeplNGE(g, true, 6);
+    biDeplNGE(g, false, 1);
+    change_pawn_place(g, 3, false, 14, 2);
+
+    change_pawn_place(g, 1, false, 1, 13);
+    biDeplNGE(g, false, 1);
 }

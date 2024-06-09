@@ -13,8 +13,8 @@ void initTabIssue(Game *g, int what_kind_of_creation, memory_move_t *mem);
 void initTabIssueColor(Game *g, int what_kind_of_creation, memory_move_t *mem, bool color);
 void generateCloudDuePawnMove(Game *g, memory_move_t *mem);
 
-void lightnightStrike(Game *g, memory_move_t *mem, int index);
-void lightnightStrikeColor(Game *g, memory_move_t *mem, int index, bool color);
+void lightnightStrike(Game *g, memory_move_t *mem, int index, bool color);
+void lightnightStrikeDueBiDepl(Game *g, memory_move_t *mem, int index);
 void cancelPromotionDeter(Game *g, memory_move_t *mem);
 memory_move_t *biDeplDeter(Game *g, int indMovePawn, moveType type);
 

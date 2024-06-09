@@ -5,12 +5,14 @@ bool freeCase(Case c)
     return c.ind_pawn == -1;
 }
 
-bool isValidIndexInGame(Game *g, int ind, bool color) {
-    return 0 <= ind && ind < g->nb_pawns[color]  && g->allPawns[color][ind].alive;
+bool isValidIndexInGame(Game *g, int ind, bool color)
+{
+    return 0 <= ind && ind < g->nb_pawns[color] && g->allPawns[color][ind].alive;
 }
 
-bool isValidIndex(int ind) {
-    return 0 <= ind && ind < 2*NB_PAWNS;
+bool isValidIndex(int ind)
+{
+    return 0 <= ind && ind < 2 * NB_PAWNS;
 }
 
 bool isPawnValid(Game *g)
@@ -31,6 +33,11 @@ bool inGame(int lig, int col)
     return !outOfBounds(lig, col);
 }
 
+bool validCoord(Coord c)
+{
+    return inGame(c.i, c.j);
+}
+
 // Checks if eating from position (i, j) in the (add0, add1) direction leads to an out of bounds position
 bool eatingIsOutOfBounds(int i, int j, int di, int dj)
 {
@@ -42,6 +49,7 @@ bool isInCloud(Game *g, bool color, int ind)
     return (g->allPawns[color][ind].pba > 1);
 }
 
-bool enoughPawns(Game *g, bool color) {
+bool enoughPawns(Game *g, bool color)
+{
     return g->nb_pawns[color] > 0;
 }

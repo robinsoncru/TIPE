@@ -28,6 +28,7 @@ GraphicCache *initCache()
     }
     fclose(flux);
     srand(seed);
+    // srand(1717928962);
     // srand(1717844705); // PB rafle
     // srand(1717783933); // Seed plante maxmoves
 

@@ -424,7 +424,7 @@ void free_game(Game *g)
 Coord give_coord(Game *g, bool iw, int ind)
 {
     Coord init_coord_dame_or_rafle = {.i = get_pawn_value(g, iw, ind, LIG),
-                                   .j = get_pawn_value(g, iw, ind, COL)};
+                                      .j = get_pawn_value(g, iw, ind, COL)};
     return init_coord_dame_or_rafle;
 }
 
@@ -493,11 +493,45 @@ void change_pawn_place_coord(Game *g, int ind, bool color, Coord pos)
     change_pawn_place(g, ind, color, pos.i, pos.j);
 }
 
-void stormBreaksNGE(Game *g, bool color, int index, memory_move_t *mem)
+// Coord giveCoordBetterPBA(Game *g, bool color)
+// {
+//     // Parcours les pions fantomes et renvoie la position de la meilleur pba de présence, on cherche donc l'inf
+//     // des valeurs
+//     assertAndLog(g->lengthCloud[color]>0, "personne dans nuage");
+//     int_chain *l = g->cloud[color];
+//     int taille = taille_list(l);
+//     int ind0 = get(l, l->ind_actu);
+//     int pba_min = get_pawn_value(g, color, ind0, PBA); // C'est pour correctement init le min
+//     int indmin = ind0;
+//     int pba;
+//     int ind_actu;
+//     for (int i = 0; i < taille; i++)
+//     {
+//         ind_actu = get(l, i);
+//         pba = get_pawn_value(g, color, ind_actu, PBA);
+//         if (pba < pba_min)
+//         {
+//             pba_min = pba;
+//             indmin = ind_actu;
+//         }
+//     }
+//     return coord_from_ind(g, indmin, color);
+// }
+
+Coord giveCoordLastInCloud(Game *g, bool color)
+{
+    // Parcours les pions fantomes et renvoie la position de la meilleur pba de présence, on cherche donc l'inf
+    // des valeurs
+    assertAndLog(g->lengthCloud[color]>0, "personne dans nuage");
+    int_chain *l = g->cloud[color];
+    int ind0 = get(l, 0); // On renvoie la dernière valeur dans le cloud, qui est celle qui sera conservé après
+    // éclatement du nuage
+    return coord_from_ind(g, ind0, color);
+}
+
+int stormBreaksNGE(Game *g, bool color, cloud_chain *load, Coord pos_survivor)
 {
     // Liste chaine et valeur du pawn survivor modifies par effet de bord
-    cloud_chain *load = mem->load_cloud;
-    Coord pos_survivor = mem->issues[index].pos_survivor;
     int_chain *l = g->cloud[color];
     int ind = VOID_INDEX;
 
@@ -522,6 +556,7 @@ void stormBreaksNGE(Game *g, bool color, int index, memory_move_t *mem)
     g->lengthCloud[color] = 0;
     change_pawn_place_coord(g, ind, color, pos_survivor); // Dans le cloud, tous les pions ont
     // la même valeur donc on prend le dernier et on le bouge à la place du survivor
+    return ind;
 }
 
 void initFriendsWhichMoveBack(memory_move_t *mem, int taille)
@@ -545,7 +580,6 @@ void cleanMemMoveBack(memory_move_t *mem)
     mem->move_back_left_or_right = NULL;
     mem->friends_which_move_back = NULL;
 }
-
 
 void auto_put_index(Game *g, int indPawnPlayed)
 {

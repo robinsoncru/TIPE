@@ -94,13 +94,6 @@ int play_a_move(int move, int ind_pawn, Game *g, GraphicCache *cache, int nb_cou
     // assertAndLog(move == VOID_INDEX, "move decide dans play_a_move");
 
     usleep(1000 * 100);
-
-    // MoveTab *t_moves = listMoves(g);
-    // print_moves(t_moves);
-    // Move m = extract_random_move_from_tab_move(t_moves);
-    // move = extract_pmetre_from_move(m);
-    // printf("choisi :\n");
-    // print_move(m);
     int indFriend;
     Coord coordi;
     if (!isNGE)
@@ -179,50 +172,32 @@ int play_a_move(int move, int ind_pawn, Game *g, GraphicCache *cache, int nb_cou
     }
     else
     {
-        // MoveTab *coups = listMoves(g);
-        if (nb_coups == 34) {
-            printf("je m'arrete");
-        }
-        Move m;
-        // if (!g->is_white)
-        // {
-        // printf("%d score %f ", g->is_white, heuristique_miam_trivial(g));
-        flush();
-        MoveTab *t = listMoves(g);
-        print_moves(t);
-        // // Coord cma = {.i = 9, .j = 9};
-        // // }
-        // // else
-        // // {
-        // //     m.manipulatedPawn = random_index(g);
-        // // }
-        assert(t->size > 0);
-        int rand_choice = rand() % t->size;
-        m = t->tab[rand_choice];
-        // print_state_game(g);
-        printf("pion selec %d", m.manipulatedPawn);
-        print_move(m);
 
-        printf("Nb coup %d color %d", nb_coups, g->is_white);
-        flush();
-        // mem = applyDeter(g, m); // Tester un eclatement de nuage
-        // // picture_this(g);
-        // for (int j = 0; j < mem->lenghtIssues; j++)
-        // {
-        //     applyIssue(g, mem, j);
-        //     // print_state_game(g, QUEEN);
-        //     usleep(1000 * 100);
-        //     applyRecipIssue(g, mem, j);
-        //     // print_state_game(g, PBA);
-        // }
-        // applyRecipDeter(g, mem);
-        // print_state_game(g, QUEEN);
-        // print_liensAmitie(g);
-        applyForSure(g, cache, m);
-        moveTabFreeTrees(t, 0, t->size);
-        moveTabFree(t, 0, t->size);
-        print_state_game(g);
-        flush();
+        // assert(t->size > 0);
+        // int rand_choice = rand() % t->size;
+        // m = t->tab[rand_choice];
+        // // print_state_game(g);
+        // printf("pion selec %d", m.manipulatedPawn);
+        // print_move(m);
+
+        // printf("Nb coup %d color %d", nb_coups, g->is_white);
+        // flush();
+        if (g->is_white)
+        {
+            printf("Nb coup %d couleur %d", nb_coups, g->is_white);
+            flush();
+            Move m = {.backwardPawnMoves = NULL, .left = true, .col = -1, .lig = -1, .manipulatedPawn = 2, .pos_dame = coord_init(), .rafle = NULL, .rafleTree = NULL, .type = biDeplType};
+            memory_move_t *mem = applyDeter(g, m, true);
+            for (int i = 0; i < mem->lenghtIssues; i++)
+            {
+                applyIssue(g, mem, i);
+                print_state_game(g);
+                applyRecipIssue(g, mem, i);
+            }
+            applyRecipDeter(g, mem);
+            print_state_game(g);
+            flush();
+        }
         // endTurnGameManagement(g, g->is_white, m.manipulatedPawn, IND_CHANGE_ALLOWED, false); // Parce que ce sont des NGE
     }
 
