@@ -13,4 +13,6 @@ void queenRafleTest(Game* g);
 void confidPhotoDiapo(Game *g);
 void configNuagePawnMove(Game *g);
 void configBiDeplKillNuageAndNuageEnn(Game *g);
+void configNuageQueenDepl(Game *g);
+void configNuageRafle(Game *g);
 #endif

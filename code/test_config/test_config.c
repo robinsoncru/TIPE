@@ -5,6 +5,7 @@
 #include "../AI/ai_lists/ai_struct.h"
 #include "../AI/ai_lists/analyse/heuristiques.h"
 #include "../AI/ai_lists/ecrasement/ecrasement.h"
+#include "test_config.h"
 #include <stdlib.h>
 
 void intChainShuffle(int_chain *l)
@@ -196,10 +197,12 @@ void configNuagePawnMove(Game *g) {
     biDeplNGE(g, false, 3);
 
 
-    change_pawn_place(g, 2, true, 13, 5);
-    change_pawn_place(g, 4, true, 10, 6);
-    biDeplNGE(g, true, 6);
-    biDeplNGE(g, true, 6);
+    change_pawn_place(g, 6, true, 13, 3);
+    change_pawn_place(g, 2, true, 15, 1);
+    change_pawn_place(g, 0, false, 0, 14);
+    change_pawn_place(g, 1, true, 10, 6);
+    // biDeplNGE(g, true, 6);
+    // biDeplNGE(g, true, 6);
 
 }
 
@@ -235,3 +238,93 @@ void configBiDeplKillNuageAndNuageEnn(Game *g) {
     change_pawn_place(g, 1, false, 1, 13);
     biDeplNGE(g, false, 1);
 }
+
+void configNuageQueenDepl(Game *g) {
+    int endBlanc = 6;
+    int endNoir = 3;
+    for (int i = NB_PAWNS - 1; i >= endBlanc; i--)
+    {
+        killPawnByInd(g, true, i);
+    }
+
+    for (int i = NB_PAWNS - 1; i >= endNoir; i--)
+    {
+        killPawnByInd(g, false, i);
+    }
+    biDeplNGE(g, true, 2);
+
+    // promote(g, true, 4);
+    for (int i = endNoir-1; i >-1; i--)
+    {
+        change_pawn_place(g, i, false, get_pawn_value(g, false, i, LIG)-1, get_pawn_value(g, false, i, COL)+5);
+        // lienAmitieNGE(12, 2, i, false, g);
+    }
+    biDeplNGE(g, false, 0);
+    biDeplNGE(g, false, 3);
+
+
+    change_pawn_place(g, 6, true, 13, 3);
+    change_pawn_place(g, 2, true, 15, 1);
+    change_pawn_place(g, 0, false, 0, 14);
+    change_pawn_place(g, 1, true, 9, 7);
+    promote(g, true, 1);
+    // biDeplNGE(g, true, 6);
+    // biDeplNGE(g, true, 6);
+
+}
+
+void configNuageRafle(Game *g) {
+    int endBlanc = 6;
+    int endNoir = 3;
+    for (int i = NB_PAWNS - 1; i >= endBlanc; i--)
+    {
+        killPawnByInd(g, true, i);
+    }
+
+    for (int i = NB_PAWNS - 1; i >= endNoir; i--)
+    {
+        killPawnByInd(g, false, i);
+    }
+    biDeplNGE(g, true, 2);
+
+    // promote(g, true, 4);
+    for (int i = endNoir-1; i >-1; i--)
+    {
+        change_pawn_place(g, i, false, get_pawn_value(g, false, i, LIG)-1, get_pawn_value(g, false, i, COL)+5);
+        // lienAmitieNGE(12, 2, i, false, g);
+    }
+    biDeplNGE(g, false, 0);
+    biDeplNGE(g, false, 3);
+
+
+    // change_pawn_place(g, 6, true, 13, 3);
+    // change_pawn_place(g, 2, true, 15, 1);
+    change_pawn_place(g, 0, false, 0, 14);
+    change_pawn_place(g, 2, false, 10, 6);
+    change_pawn_place(g, 1, true, 9, 7);
+    promote(g, true, 1);
+    // biDeplNGE(g, true, 6);
+    // biDeplNGE(g, true, 6);
+
+}
+
+// JOUER DES NGE AVEC PLAY_A_MOVE
+
+// if (g->is_white)
+//         {
+//             printf("Nb coup %d couleur %d", nb_coups, g->is_white);
+//             flush();
+//             PathTree *t = rafleTreeCalc(g, true, 1);
+//             Path *r = lazyRafle(t);
+//             Move m = {.backwardPawnMoves = NULL, .left = true, .col = -1, .lig = -1, .manipulatedPawn = 1, .pos_dame = {.i = 9, .j = 7}, .rafle = r, .rafleTree = t, .type = rafleType};
+//             memory_move_t *mem = applyDeter(g, m, true);
+//             for (int i = 0; i < mem->lenghtIssues; i++)
+//             {
+//                 applyIssue(g, mem, i);
+//                 print_state_game(g);
+//                 applyRecipIssue(g, mem, i);
+//             }
+//             applyRecipDeter(g, mem);
+//             print_state_game(g);
+//             flush();
+//         }

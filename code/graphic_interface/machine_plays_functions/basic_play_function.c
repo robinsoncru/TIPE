@@ -182,22 +182,6 @@ int play_a_move(int move, int ind_pawn, Game *g, GraphicCache *cache, int nb_cou
 
         // printf("Nb coup %d color %d", nb_coups, g->is_white);
         // flush();
-        if (g->is_white)
-        {
-            printf("Nb coup %d couleur %d", nb_coups, g->is_white);
-            flush();
-            Move m = {.backwardPawnMoves = NULL, .left = true, .col = -1, .lig = -1, .manipulatedPawn = 2, .pos_dame = coord_init(), .rafle = NULL, .rafleTree = NULL, .type = biDeplType};
-            memory_move_t *mem = applyDeter(g, m, true);
-            for (int i = 0; i < mem->lenghtIssues; i++)
-            {
-                applyIssue(g, mem, i);
-                print_state_game(g);
-                applyRecipIssue(g, mem, i);
-            }
-            applyRecipDeter(g, mem);
-            print_state_game(g);
-            flush();
-        }
         // endTurnGameManagement(g, g->is_white, m.manipulatedPawn, IND_CHANGE_ALLOWED, false); // Parce que ce sont des NGE
     }
 
