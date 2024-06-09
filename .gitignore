@@ -6,3 +6,4 @@ code/.vscode/*
 code/.vscode
 code/*.out
 code/rafle/*.out
+*/seed_used.txt

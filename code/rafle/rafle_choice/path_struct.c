@@ -54,7 +54,7 @@ Path* pathCopy(Path* path){
     res->n = path->n;
     res->deb = path->deb;
     res->fin = path->fin;
-    for (int k = res->deb; k < path->deb; k++) {
+    for (int k = 0; k < path->c; k++) {
         pathSet(pathGet(k, path), k, res);
     }
     return res;

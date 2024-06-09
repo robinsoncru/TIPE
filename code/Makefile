@@ -5,7 +5,7 @@ path_tree_display.o rafle_management.o four_pack.o path_struct.o rafle_eating.o 
 listing_checks.o move_struct.o rafle_listing.o basic_play_function.o precondition.o debug_autoplay.o debug.o \
 print_moves.o memory_move.o applyMoveAI.o applyMoveDeter.o applyMoveIssue.o backwardMoveTab_interface.o \
 applyMoveForSure.o backwardMoveTab_quick_sort.o test_config.o heuristiques.o esperance_calc.o moveTab_quick_sort.o \
-alpha_beta_prunning.o ecrasement.o
+alpha_beta_prunning.o ecrasement.o move_counting.o rafle_counting.o
 	gcc -g -Wall -o dames.out *.o \
 $$(sdl2-config --cflags --libs) -lSDL2_ttf
 
@@ -146,3 +146,9 @@ alpha_beta_prunning.o: AI/alpha_beta_prunning/alpha_beta_prunning.c
 
 ecrasement.o: AI/ai_lists/ecrasement/ecrasement.c
 	gcc -g -c -Wall AI/ai_lists/ecrasement/ecrasement.c
+
+move_counting.o: AI/move_listing/move_counting/move_counting.c
+	gcc -g -c -Wall AI/move_listing/move_counting/move_counting.c
+
+rafle_counting.o: AI/move_listing/move_counting/rafle_counting/rafle_counting.c
+	gcc -g -c -Wall AI/move_listing/move_counting/rafle_counting/rafle_counting.c

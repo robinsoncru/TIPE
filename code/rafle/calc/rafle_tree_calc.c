@@ -21,7 +21,7 @@ void spitOut(Game *g, bool eatingColor, int indEater, int iEater, int jEater, in
     put_pawn_value(g, eatingColor, indEater, COL, jEater - 2 * add1);
 }
 
-PathTree *divideAndGather(Game *g, bool eatingColor, int indEater, int i, int j);
+PathTree *DivideAndGather(Game *g, bool eatingColor, int indEater, int i, int j);
 
 PathTree *rafleTreeCalcAux(Game *g, bool eatingColor, int indEater, int add0, int add1)
 {
@@ -34,7 +34,7 @@ PathTree *rafleTreeCalcAux(Game *g, bool eatingColor, int indEater, int add0, in
     int i = get_pawn_value(g, eatingColor, indEater, LIG);
     int j = get_pawn_value(g, eatingColor, indEater, COL);
 
-    PathTree *res = divideAndGather(g, eatingColor, indEater, i, j);
+    PathTree *res = DivideAndGather(g, eatingColor, indEater, i, j);
 
     spitOut(g, eatingColor, indEater, i, j, indVictim, add0, add1);
 
@@ -46,12 +46,12 @@ PathTree *rafleTreeCalc(Game *g, bool eatingColor, int indSerialKiller)
     int i = get_pawn_value(g, eatingColor, indSerialKiller, LIG);
     int j = get_pawn_value(g, eatingColor, indSerialKiller, COL);
 
-    PathTree *res = divideAndGather(g, eatingColor, indSerialKiller, i, j);
+    PathTree *res = DivideAndGather(g, eatingColor, indSerialKiller, i, j);
 
     return res;
 }
 
-PathTree *divideAndGather(Game *g, bool eatingColor, int indEater, int i, int j)
+PathTree *DivideAndGather(Game *g, bool eatingColor, int indEater, int i, int j)
 {
     /*
     Pour un pion donne avec ses coordonnees,
