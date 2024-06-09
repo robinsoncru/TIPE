@@ -10,9 +10,12 @@ void alphaBetaPrunningTest(Game* g);
 
 void rafleTest(Game* g);
 void queenRafleTest(Game* g);
-void confidPhotoDiapo(Game *g);
+void configPhotoDiapo(Game *g);
 void configNuagePawnMove(Game *g);
 void configBiDeplKillNuageAndNuageEnn(Game *g);
 void configNuageQueenDepl(Game *g);
 void configNuageRafle(Game *g);
+void configPhotoDiapo(Game *g);
+void configAtome(Game *g);
+void configGrandAtome(Game *g);
 #endif
