@@ -93,3 +93,19 @@ double heuristique_border_trivial(Game *g)
     }
     return score;
 }
+
+double heuristique_border(Game *g)
+{
+    // Renvoie la ligne moyenne des pions, plus elle est proche du bord opposé, plus le score est élevé
+    // La variance est ajouté avec un poids en cas de besoin pour forcer les pions à rester groupé sur la même ligne
+    bool color = g->is_white;
+    double qualite_variance;
+    if (color)
+    {
+        return esperanceLignesPions(g, color);
+    }
+    else
+    {
+        return NB_CASE_LG - esperanceLignesPions(g, color);
+    }
+}

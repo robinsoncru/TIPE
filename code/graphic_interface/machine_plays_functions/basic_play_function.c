@@ -174,7 +174,8 @@ int play_a_move(int move, int ind_pawn, Game *g, GraphicCache *cache, int nb_cou
     {
 
         print_state_game(g);
-        printf("Score %f, couleur %d", heuristique_border_trivial(g), g->is_white);
+        double val_heur = heuristique_border(g);
+        printf("Score %f, couleur %d", val_heur, g->is_white);
         flush();
         endTurnGameManagement(g, g->is_white, 0, IND_CHANGE_ALLOWED, false); // Parce que ce sont des NGE
     }
