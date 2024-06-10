@@ -18,4 +18,5 @@ void configNuageRafle(Game *g);
 void configPhotoDiapo(Game *g);
 void configAtome(Game *g);
 void configGrandAtome(Game *g);
+void configFenteYoung(Game *g);
 #endif

@@ -179,18 +179,45 @@ int play_a_move(int move, int ind_pawn, Game *g, GraphicCache *cache, int nb_cou
         printf("Score %f, couleur %d", val_heur, g->is_white);
         flush();
         endTurnGameManagement(g, g->is_white, 0, IND_CHANGE_ALLOWED, false); // Parce que ce sont des NGE
-        
     }
 
     return nb_coups + 1;
 }
 
-int automaticRandomPlay(Game* g, GraphicCache* cache, int nbCoups){
-    MoveTab* t = listMoves(g);
+int automaticRandomPlay(Game *g, GraphicCache *cache, int nbCoups)
+{
+    MoveTab *t = listMoves(g);
     printf("nombre de coups : %d\n", nbCoups);
     assertAndLog(t->size > 0, "\nfin de la partie");
     int randIndex = rand() % t->size;
     Move m = t->tab[randIndex];
+    applyForSure(g, cache, m);
+    print_state_game(g);
+    moveTabFreeTrees(t, 0, t->size);
+    moveTabFree(t, 0, t->size);
+    return nbCoups + 1;
+}
+
+int automaticBiDeplPlayWhenPossible(Game *g, GraphicCache *cache, int nbCoups)
+{
+    MoveTab *t = listMoves(g);
+    printf("nombre de coups : %d\n", nbCoups);
+    assertAndLog(t->size > 0, "\nfin de la partie");
+    Move m;
+    bool biDeplavailable = false;
+    for (int i = 0; i < t->size; i++)
+    {
+        if (t->tab[i].type == biDeplType)
+        {
+            m = t->tab[i];
+            biDeplavailable = true;
+        }
+    }
+    if (!biDeplavailable)
+    {
+        int randIndex = rand() % t->size;
+        m = t->tab[randIndex];
+    }
     applyForSure(g, cache, m);
     print_state_game(g);
     moveTabFreeTrees(t, 0, t->size);

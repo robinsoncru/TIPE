@@ -27,6 +27,15 @@ double heuristique_miam_trivial(Game *g)
     }
 }
 
+double heuristique_miam_trivial_no_queen(Game *g)
+{
+    // Favorise d'avoir plus de pion, temps constant
+    bool color = g->is_white;
+    int nb_color_actu = g->nb_pawns[color];
+    int nb_color_oppose = g->nb_pawns[!color];
+    return nb_color_actu - nb_color_oppose;
+}
+
 // float heuristique_miam(Game *g)
 // {
 //     /* Plus précis mais en n*n ou n est le nombre de pion, de plus, la situation peut être bien évalué mais
@@ -100,12 +109,15 @@ double heuristique_border(Game *g)
     // La variance est ajouté avec un poids en cas de besoin pour forcer les pions à rester groupé sur la même ligne
     bool color = g->is_white;
     double qualite_variance;
+    double qualite_esp = 5;
+    double score = 0;
     if (color)
     {
-        return esperanceLignesPions(g, color);
+        score = esperanceLignesPions(g, color);
     }
     else
     {
-        return NB_CASE_LG - esperanceLignesPions(g, color);
+        score = NB_CASE_LG - esperanceLignesPions(g, color);
     }
+    return qualite_esp * score + heuristique_miam_trivial_no_queen(g);
 }

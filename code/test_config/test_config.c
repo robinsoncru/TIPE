@@ -414,3 +414,22 @@ void configGrandAtome(Game *g)
 //             print_state_game(g);
 //             flush();
 //         }
+
+void configFenteYoung(Game *g)
+{
+    int endBlanc = 1;
+    int endNoir = 9;
+    for (int i = NB_PAWNS - 1; i >= endBlanc; i--)
+    {
+        killPawnByInd(g, true, i);
+    }
+
+    for (int i = NB_PAWNS - 1; i >= endNoir; i--)
+    {
+        killPawnByInd(g, false, i);
+    }
+
+    change_pawn_place(g, 0, true, 0, 8);
+    change_pawn_place(g, 8, false, 4, 8);
+    biDeplNGE(g, true, 0);
+}

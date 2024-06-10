@@ -13,5 +13,6 @@ int plannifier_index_color(int nb_coups, int *l_coups, bool color);
 int random_play();
 Move extract_random_move_from_tab_move(MoveTab *t);
 int extract_pmetre_from_move(Move m);
+int automaticBiDeplPlayWhenPossible(Game *g, GraphicCache *cache, int nbCoups);
 
 #endif
