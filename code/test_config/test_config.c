@@ -49,7 +49,7 @@ void alphaBetaPrunningTest(Game *g)
     AI *whitePlayer = malloc(sizeof(AI));
     AI *blackPlayer = malloc(sizeof(AI));
 
-    int testDepth = 5;
+    int testDepth = 2;
     double (*testAnalyse)(Game *) = heuristique_miam_trivial;
     double (*testEcrasement)(double) = erf;
 

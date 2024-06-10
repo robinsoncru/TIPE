@@ -1,7 +1,7 @@
 #include "memory_move.h"
 
-cloud_queen_t init_cloud_queen() {
-    cloud_queen_t res = {.coord = coord_init(), .had_become_queen = false, .old_pba = -1};
+pawn_archive_t init_cloud_queen() {
+    pawn_archive_t res = {.coord = coord_init(), .had_become_queen = false, .old_pba = -1};
     return res;
 }
 

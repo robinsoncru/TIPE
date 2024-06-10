@@ -92,11 +92,6 @@ void listMovesBiDepl(Game *g, int selectedPawn, Move *temporaryResult, int *nbMo
     currentMove.type = biDeplType;
     if (canBiDepl(g, selectedPawn, g->is_white))
     {
-        if (selectedPawn == 9)
-        {
-            printv("stop");
-            print_state_game(g);
-        }
         temporaryResult[*nbMoves] = currentMove;
         *nbMoves = *nbMoves + 1;
     }
