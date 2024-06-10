@@ -229,7 +229,7 @@ memory_move_t *queenDeplDeter(Game *g, int indMovePawn, Coord pos_dame, moveType
 memory_move_t *biDeplDeter(Game *g, int indMovePawn, moveType type)
 {
     memory_move_t *mem = initMemMove(indMovePawn, type);
-
+    print_state_game(g);
     mem->ghost_pawn_created_bidepl = biDeplNGE(g, g->is_white, indMovePawn);
     int indNewGhost = ind_from_coord(g, mem->ghost_pawn_created_bidepl.c);
 

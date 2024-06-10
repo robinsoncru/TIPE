@@ -121,6 +121,7 @@ void cancelPromotion(Game *g, int indPawnBeforeProm, Coord pos_potential_foe_fro
 coord_bool_t biDeplNGE(Game *g, bool color, int ind)
 {
     // On suppose le coup legal
+    print_state_game(g);
     assertAndLog(canBiDepl(g, ind, color), "biDeplNGE : on ne peut pas BiDepl");
 
     bool depl = int_to_bool(rand() % 2);

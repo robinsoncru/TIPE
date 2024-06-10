@@ -419,7 +419,7 @@ void display_damier(SDL_Renderer *render, Game *g)
             if (g->damier[i][j].color)
                 drawRect(render, white, g->damier[i][j].rect);
             else
-                drawRect(render, gold, g->damier[i][j].rect);
+                drawRect(render, pink, g->damier[i][j].rect);
 
             if (!freeCase(g->damier[i][j]))
                 drawLosange(render, g->damier[i][j], g->allPawns[g->damier[i][j].pawn_color][g->damier[i][j].ind_pawn], g);

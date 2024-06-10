@@ -4,7 +4,8 @@ memory_move_t *applyDeter(Game *g, Move coup, bool shouldFreeMove)
 {
     // passer les pointeurs pour legereté
     memory_move_t *mem;
-    auto_put_index(g, coup.manipulatedPawn);
+    int ind_actu_coup_a_jouer = ind_from_coord(g, coup.coordManipulatedPawn);
+    auto_put_index(g, ind_actu_coup_a_jouer);
     // On utilise parfois g dans les fonctions Deter
 
     switch (coup.type)

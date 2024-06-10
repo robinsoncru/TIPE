@@ -12,7 +12,7 @@
 #include <stdlib.h>
 
 void listMovesMoveBackAux(Game *g, int *nbMoves, Move *temporaryResult,
-    Move currentMove, backwardMoveTab_t *backTab, int i)
+                          Move currentMove, backwardMoveTab_t *backTab, int i)
 {
     // entree : backTab a contient les indices du groupe d'amis
     // dans un ordre arbitraire
@@ -29,32 +29,32 @@ void listMovesMoveBackAux(Game *g, int *nbMoves, Move *temporaryResult,
         bool canMoveBackRight, canMoveBackLeft;
         int addLine = g->is_white ? -1 : 1;
         canMoveBackLeft = caseIsAccessible(g, g->is_white,
-            initialState.lig + addLine, initialState.col - 1);
+                                           initialState.lig + addLine, initialState.col - 1);
         canMoveBackRight = caseIsAccessible(g, g->is_white,
-            initialState.lig + addLine, initialState.col + 1);
+                                            initialState.lig + addLine, initialState.col + 1);
         if (canMoveBackLeft)
         {
             change_pawn_place(g, manipulatedPawn, g->is_white,
-                initialState.lig + addLine, initialState.col - 1);
+                              initialState.lig + addLine, initialState.col - 1);
             backwardMoveTabSetDir(backTab, i, LEFT);
             listMovesMoveBackAux(g, nbMoves, temporaryResult,
-                currentMove, backTab, i + 1);
+                                 currentMove, backTab, i + 1);
         }
         if (canMoveBackRight)
         {
             change_pawn_place(g, manipulatedPawn, g->is_white,
-                initialState.lig + addLine, initialState.col + 1);
+                              initialState.lig + addLine, initialState.col + 1);
             backwardMoveTabSetDir(backTab, i, RIGHT);
             listMovesMoveBackAux(g, nbMoves, temporaryResult,
-                currentMove, backTab, i + 1);
+                                 currentMove, backTab, i + 1);
         }
         change_pawn_place(g, manipulatedPawn, g->is_white,
-            initialState.lig, initialState.col);
+                          initialState.lig, initialState.col);
         if (!canMoveBackLeft && !canMoveBackRight)
         {
             backwardMoveTabSetDir(backTab, i, NO_MOVE);
             listMovesMoveBackAux(g, nbMoves, temporaryResult,
-                currentMove, backTab, i + 1);
+                                 currentMove, backTab, i + 1);
         }
     }
 }
@@ -74,8 +74,9 @@ Move *listMovesMoveBack(Game *g, int *resSize)
     }
     backwardMoveTabQuickSort(g, backTab);
     listMovesMoveBackAux(g, &nbMoves, temporaryResult,
-        currentMove, backTab, 0);
-    if (nbMoves == 0) { //si les pions a reculer sont tous bloques
+                         currentMove, backTab, 0);
+    if (nbMoves == 0)
+    { // si les pions a reculer sont tous bloques
         currentMove.type = passType;
         temporaryResult[0] = currentMove;
         *resSize = 1;
@@ -91,6 +92,11 @@ void listMovesBiDepl(Game *g, int selectedPawn, Move *temporaryResult, int *nbMo
     currentMove.type = biDeplType;
     if (canBiDepl(g, selectedPawn, g->is_white))
     {
+        if (selectedPawn == 9)
+        {
+            printv("stop");
+            print_state_game(g);
+        }
         temporaryResult[*nbMoves] = currentMove;
         *nbMoves = *nbMoves + 1;
     }
@@ -159,7 +165,7 @@ void listMovesEnnemy(Game *g, int selectedPawn, Move *temporaryResult, int *nbMo
     {
         currentPawnCoordinates = coord_from_ind(g, k, !g->is_white);
         if (canBeEnnemy(g, selectedPawn, g->is_white,
-            get_case_damier(g, currentPawnCoordinates.i, currentPawnCoordinates.j)))
+                        get_case_damier(g, currentPawnCoordinates.i, currentPawnCoordinates.j)))
         {
             // IsEnnemiable pas valide
             currentMove.lig = get_pawn_value(g, !g->is_white, k, LIG);
@@ -188,7 +194,6 @@ void listMovesForQueen(Game *g, int selectedPawnIndex, Move *temporaryResult, in
     currentMove.type = queenDeplType;
     currentMove.pos_dame = selectedPawnPos;
 
-
     listRafles(g, selectedPawnIndex, selectedPawnPos, temporaryResult, nbMoves);
 
     int possibleShifts[2] = {-1, 1};
@@ -207,14 +212,14 @@ void listMovesForQueen(Game *g, int selectedPawnIndex, Move *temporaryResult, in
                 // printf("pos pion dame %d %d\n", currentMove.pos_dame.i, currentMove.pos_dame.j);
                 flush();
                 if (!caseIsAccessible(g, g->is_white,
-                    currentMove.pos_dame.i, currentMove.pos_dame.j))
+                                      currentMove.pos_dame.i, currentMove.pos_dame.j))
                 {
                     break;
                 }
                 oldNbMoves = *nbMoves;
-                
+
                 listRafles(g, selectedPawnIndex, currentMove.pos_dame, temporaryResult, nbMoves);
-                
+
                 if (oldNbMoves == *nbMoves)
                 { // s'il n'y a aucune rafle a jouer
                     temporaryResult[*nbMoves] = currentMove;
@@ -232,8 +237,7 @@ void listMovesForPawn(Game *g, int selectedPawn, Move *temporaryResult, int *nbM
     Coord tmpPos = {.i = get_pawn_value(g, g->is_white, selectedPawn, LIG),
                     .j = get_pawn_value(g, g->is_white, selectedPawn, COL)};
     listRafles(g, selectedPawn, tmpPos, temporaryResult, nbMoves);
-    if (get_pawn_value(g, g->is_white, selectedPawn, FRIENDLY) == VOID_INDEX
-        && get_pawn_value(g, g->is_white, selectedPawn, ENNEMY) == VOID_INDEX)
+    if (get_pawn_value(g, g->is_white, selectedPawn, FRIENDLY) == VOID_INDEX && get_pawn_value(g, g->is_white, selectedPawn, ENNEMY) == VOID_INDEX)
     {
         listMovesBefriend(g, selectedPawn, temporaryResult, nbMoves);
         listMovesEnnemy(g, selectedPawn, temporaryResult, nbMoves);
@@ -265,7 +269,7 @@ void listMovesRafleCount(Move *temporaryResult, int nbMoves, int *rafleCount, in
     *length = maxRafleLength;
 }
 
-MoveTab *listMovesFilterRafles(Move *temporaryResult, int nbMoves)
+MoveTab *listMovesFilterRafles(Game *g, Move *temporaryResult, int nbMoves)
 {
     int rafleCount, length;
     listMovesRafleCount(temporaryResult, nbMoves, &rafleCount, &length);
@@ -300,6 +304,13 @@ MoveTab *listMovesFilterRafles(Move *temporaryResult, int nbMoves)
         }
         break;
     }
+
+    // Dans tous les cas, enregistre les coord du pions
+    for (int k = 0; k < nbMoves; k++)
+    {
+        res->tab[k].coordManipulatedPawn = coord_from_ind(g, res->tab[k].manipulatedPawn, g->is_white);
+    }
+
     free(temporaryResult);
     return res;
 }
@@ -340,5 +351,5 @@ MoveTab *listMoves(Game *g)
         }
     }
     assertAndLog(majoration >= nbMoves, "Erreur dans la majoration.");
-    return listMovesFilterRafles(temporaryResult, nbMoves);
+    return listMovesFilterRafles(g, temporaryResult, nbMoves);
 }

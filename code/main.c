@@ -33,7 +33,7 @@ int main(int argc, char *argv[])
     // init the graphic cache
     GraphicCache *cache = initCache();
     //configNuageRafle(g);
-    test_start_game(g, cache);
+    // test_start_game(g, cache);
     // moveBackListingTest(g, cache);
     alphaBetaPrunningTest(g);
     // end debug

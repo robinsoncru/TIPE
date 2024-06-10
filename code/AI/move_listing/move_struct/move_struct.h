@@ -10,6 +10,7 @@ typedef struct Move
 {
     enum moveType type;
     int manipulatedPawn;
+    Coord coordManipulatedPawn;
 
     // wether or not the movement of the pawn
     // is made to the left, used in moving and
