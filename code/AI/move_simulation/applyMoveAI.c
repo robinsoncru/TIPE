@@ -88,11 +88,11 @@ void applyIssue(Game *g, memory_move_t *mem, int nbIssue)
         break;
 
     case lienAmitieType:
-        lienAmitieIssue(g, mem->indMovePawn, mem->lig, mem->col, mem);
+        lienAmitieIssue(g, mem->movePawn.coord, mem->lig, mem->col, mem);
         break;
 
     case lienEnnemitieType:
-        lienEnnemitieIssue(g, mem->indMovePawn, mem->lig, mem->col, mem);
+        lienEnnemitieIssue(g, mem->movePawn.coord, mem->lig, mem->col, mem);
         break;
 
     default:
