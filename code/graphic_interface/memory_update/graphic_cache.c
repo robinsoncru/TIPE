@@ -32,12 +32,14 @@ GraphicCache *initCache()
     // fclose(flux);
     // srand(seed);
 
+    srand(1717970583);
     //srand(1717933419);
     // srand(1717844705); // PB rafle
-    srand(1717783933); // Seed plante maxmoves
+    // srand(1717783933); // Seed plante maxmoves
     //srand(1717783518); // Seed plante rafle
     // srand(1717958782);
     // srand(1717959482); // Seed de pat/stalemate
+    // srand(1717933419);
 
     // init cache
     GraphicCache *cache = malloc(sizeof(GraphicCache));

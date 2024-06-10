@@ -1,4 +1,5 @@
 #include "basic_play_function.h"
+#include <stdio.h>
 
 int random_index_color(Game *g, bool color)
 {
@@ -186,4 +187,17 @@ int play_a_move(int move, int ind_pawn, Game *g, GraphicCache *cache, int nb_cou
     }
 
     return nb_coups + 1;
+}
+
+int automaticRandomPlay(Game* g, GraphicCache* cache, int nbCoups){
+    MoveTab* t = listMoves(g);
+    printf("nombre de coups : %d\n", nbCoups);
+    assertAndLog(t->size > 0, "\nfin de la partie");
+    int randIndex = rand() % t->size;
+    Move m = t->tab[randIndex];
+    applyForSure(g, cache, m);
+    print_state_game(g);
+    moveTabFreeTrees(t, 0, t->size);
+    moveTabFree(t, 0, t->size);
+    return nbCoups + 1;
 }
