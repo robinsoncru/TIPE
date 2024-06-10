@@ -302,6 +302,7 @@ MoveTab *listMovesFilterRafles(Game *g, Move *temporaryResult, int nbMoves)
                 res->size++;
             }
         }
+        nbMoves = rafleCount;
         break;
     }
 

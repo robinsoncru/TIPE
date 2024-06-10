@@ -174,11 +174,11 @@ int play_a_move(int move, int ind_pawn, Game *g, GraphicCache *cache, int nb_cou
     else
     {
 
-        // print_state_game(g);
-        // double val_heur = heuristique_border(g);
-        // printf("Score %f, couleur %d", val_heur, g->is_white);
-        // flush();
-        // endTurnGameManagement(g, g->is_white, 0, IND_CHANGE_ALLOWED, false); // Parce que ce sont des NGE
+        print_state_game(g);
+        double val_heur = heuristique_border(g);
+        printf("Score %f, couleur %d", val_heur, g->is_white);
+        flush();
+        endTurnGameManagement(g, g->is_white, 0, IND_CHANGE_ALLOWED, false); // Parce que ce sont des NGE
         
     }
 
