@@ -86,7 +86,8 @@ enum moveType
     queenDeplType,
     rafleType,
     lienAmitieType,
-    lienEnnemitieType
+    lienEnnemitieType,
+    passType //passer son tour quand on est force de faire un recul impossible
 };
 
 typedef enum moveType moveType;

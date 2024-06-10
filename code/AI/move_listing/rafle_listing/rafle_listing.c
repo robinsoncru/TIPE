@@ -49,7 +49,7 @@ void listRafles(Game* g, int selectedPawn, Coord tmpPos, Move* temporaryResult, 
         currentMove.rafleTree = tree;
         currentMove.pos_dame = tmpPos;
 
-        Path* currentPath = pathCreate(pathTreeDepth(tree) + 1);
+        Path* currentPath = pathCreate(pathTreeDepth(tree));
         listPathsOfTrees(tree, currentPath, currentMove, temporaryResult, nbMoves);
         pathFree(currentPath);
     }

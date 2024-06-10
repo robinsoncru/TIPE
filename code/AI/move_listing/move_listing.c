@@ -7,6 +7,7 @@
 #include "../../fundamental_functions/game_functions/access_functions/access_functions.h"
 #include "../../fundamental_functions/game_functions/Logic/logic_functions.h"
 #include "move_back_listing/backwardMoveTab_quick_sort/backwardMoveTab_quick_sort.h"
+#include "move_counting/move_counting.h"
 #include <stddef.h>
 #include <stdlib.h>
 
@@ -74,7 +75,11 @@ Move *listMovesMoveBack(Game *g, int *resSize)
     backwardMoveTabQuickSort(g, backTab);
     listMovesMoveBackAux(g, &nbMoves, temporaryResult,
         currentMove, backTab, 0);
-    *resSize = nbMoves;
+    if (nbMoves == 0) { //si les pions a reculer sont tous bloques
+        currentMove.type = passType;
+        temporaryResult[0] = currentMove;
+        *resSize = 1;
+    }
     return temporaryResult;
 }
 
@@ -303,13 +308,14 @@ MoveTab *listMoves(Game *g)
 {
     Move *temporaryResult;
     int nbMoves;
+    int majoration;
     if (!is_empty(g->inds_move_back))
     {
         temporaryResult = listMovesMoveBack(g, &nbMoves);
     }
     else
     {
-        int majoration = maxMoves(g);
+        majoration = countMoves(g);
         temporaryResult = malloc(majoration * sizeof(Move));
         nbMoves = 0;
         listMovesPromotion(g, temporaryResult, &nbMoves);
@@ -333,6 +339,6 @@ MoveTab *listMoves(Game *g)
             }
         }
     }
-
+    assertAndLog(majoration >= nbMoves, "Erreur dans la majoration.");
     return listMovesFilterRafles(temporaryResult, nbMoves);
 }

@@ -42,6 +42,10 @@ void applyForSure(Game *g, GraphicCache *cache, Move coup)
         checkLienEnnemitie(coup.lig, coup.col, g, cache, false);
         break;
 
+    case passType:
+        //il y a effectivement des cas ou on ne peut pas jouer
+        break;
+
     default:
         assertAndLog(false, "Apply for sure : reconnait pas type move");
         break;
