@@ -57,14 +57,15 @@ int update(Game *g, GraphicCache *cache, int nb_coups, int *l_coups, int *l_depl
         // Autoplay take over
         if (cache->autoplay)
         {
-            if (g->is_white)
-            {
-                nb_coups = play_a_move(VOID_INDEX, VOID_INDEX, g, cache, nb_coups, l_coups, l_depl, true);
-            }
-            else
-            {
-                nb_coups = play_a_move(VOID_INDEX, VOID_INDEX, g, cache, nb_coups, l_coups, l_depl, isNGE);
-            }
+            // if (g->is_white)
+            // {
+            //     nb_coups = play_a_move(VOID_INDEX, VOID_INDEX, g, cache, nb_coups, l_coups, l_depl, true);
+            // }
+            // else
+            // {
+            //     nb_coups = play_a_move(VOID_INDEX, VOID_INDEX, g, cache, nb_coups, l_coups, l_depl, isNGE);
+            // }
+            nb_coups = automaticRandomPlay(g, cache, nb_coups);
             // print_pawns(g, g->is_white);
         }
     }

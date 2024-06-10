@@ -15,13 +15,19 @@ double esperanceAlphaBetaPrunning(double (*f)(alphaBetaArg), alphaBetaArg alphaB
     double currentProba;
     int nbOutcomes = mem->lenghtIssues;
     issue_t* outcomeTab = mem->issues;
-
-    int initialIndex = (mem->prom_need_break_cloud) ? 2 : 0;
-    for (int i = initialIndex; i < nbOutcomes; i++) {
-        applyIssue(alphaBetaArg.g, mem, i);
-        currentProba = (nbOutcomes > 1) ? getProba(outcomeTab[i]) : 1;
-        S += currentProba * f(alphaBetaArg);
-        applyRecipIssue(alphaBetaArg.g, mem, i);
+    switch (nbOutcomes) {
+        case 1:
+            S += f(alphaBetaArg);
+            break;
+        
+        default:
+            for (int i = 0; i < nbOutcomes; i++) {
+                applyIssue(alphaBetaArg.g, mem, i);
+                currentProba = getProba(outcomeTab[i]);
+                S += currentProba * f(alphaBetaArg);
+                applyRecipIssue(alphaBetaArg.g, mem, i);
+            }
+            break;
     }
 
     applyRecipDeter(alphaBetaArg.g, mem);
@@ -37,11 +43,19 @@ double esperanceHeuristique(AI ai, Game* g, Move move){
     int nbOutcomes = mem->lenghtIssues;
     issue_t* outcomeTab = mem->issues;
 
-    for (int i = 0; i < nbOutcomes; i++) {
-        applyIssue(g, mem, i);
-        currentProba = (nbOutcomes > 1) ? getProba(outcomeTab[i]) : 1;
-        S += currentProba * ai.ecrasement(perspective * ai.analyse(g));
-        applyRecipIssue(g, mem, i);
+    switch (nbOutcomes) {
+    case 1:
+        S+= ai.ecrasement(perspective * ai.analyse(g));
+        break;
+    
+    default:
+        for (int i = 0; i < nbOutcomes; i++) {
+            applyIssue(g, mem, i);
+            currentProba = getProba(outcomeTab[i]);
+            S += currentProba * ai.ecrasement(perspective * ai.analyse(g));
+            applyRecipIssue(g, mem, i);
+        }
+        break;
     }
 
     applyRecipDeter(g, mem);

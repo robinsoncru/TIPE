@@ -131,6 +131,10 @@ void cancelSelectedIssue(Game *g, memory_move_t *mem, int index)
     // positions originales
     bool iw = mem->is_white;
     int index_origin;
+    if (mem->type == promotionType) {
+        int ind = ind_from_coord(g, mem->movePawn.coord);
+        cancelPromotion(g, ind, mem->pos_potential_foe_from_prom, mem->is_white);
+    }
     if (mem->prom_need_break_cloud)
     {
         index_origin = 2;                                             // Dans une promotion, le premier elm de la pile est à l'indice 2

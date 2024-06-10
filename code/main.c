@@ -32,7 +32,7 @@ int main(int argc, char *argv[])
     Game *g = create_game();
     // init the graphic cache
     GraphicCache *cache = initCache();
-    configGrandAtome(g);
+    //configNuageRafle(g);
     test_start_game(g, cache);
     // moveBackListingTest(g, cache);
     alphaBetaPrunningTest(g);

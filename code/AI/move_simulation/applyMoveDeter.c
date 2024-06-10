@@ -247,8 +247,8 @@ memory_move_t *biDeplDeter(Game *g, int indMovePawn, moveType type)
 
 void cancelPromotionDeter(Game *g, memory_move_t *mem)
 {
-    int ind = ind_from_coord(g, mem->movePawn.coord);
-    cancelPromotion(g, ind, mem->pos_potential_foe_from_prom, mem->is_white);
+    // int ind = ind_from_coord(g, mem->movePawn.coord);
+    // cancelPromotion(g, ind, mem->pos_potential_foe_from_prom, mem->is_white);
 }
 
 void cancelPawnMoveDeter(Game *g, memory_move_t *mem)
