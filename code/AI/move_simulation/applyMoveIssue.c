@@ -93,18 +93,18 @@ void rafleIssue(Game *g, memory_move_t *mem, int index)
     endTurnGameManagementNGE(g, ind, IND_CHANGE_ALLOWED, false, mem);
 }
 
-void lienAmitieIssue(Game *g, int indPawn, int lig, int col, memory_move_t *mem)
+void lienAmitieIssue(Game *g, Coord posPawnWhichNeedAFriend, int lig, int col, memory_move_t *mem)
 {
     int ind = ind_from_coord(g, mem->movePawn.coord);
-
+    int indPawn = ind_from_coord(g, posPawnWhichNeedAFriend);
     lienAmitieNGE(lig, col, indPawn, mem->is_white, g);
     endTurnGameManagementNGE(g, ind, IND_CHANGE_ALLOWED, false, mem);
 }
 
-void lienEnnemitieIssue(Game *g, int indPawn, int lig, int col, memory_move_t *mem)
+void lienEnnemitieIssue(Game *g, Coord posPawnWhichNeedAFoe, int lig, int col, memory_move_t *mem)
 {
     int ind = ind_from_coord(g, mem->movePawn.coord);
-
+int indPawn = ind_from_coord(g, posPawnWhichNeedAFoe);
     lienEnnemitieNGE(mem->is_white, lig, col, indPawn, g);
     endTurnGameManagementNGE(g, ind, IND_CHANGE_ALLOWED, false, mem);
 }

@@ -66,6 +66,7 @@ int update(Game *g, GraphicCache *cache, int nb_coups, int *l_coups, int *l_depl
             //     nb_coups = play_a_move(VOID_INDEX, VOID_INDEX, g, cache, nb_coups, l_coups, l_depl, isNGE);
             // }
             nb_coups = automaticRandomPlay(g, cache, nb_coups);
+            // nb_coups = play_a_move(VOID_INDEX, VOID_INDEX, g, cache, nb_coups, l_coups, l_depl, true);
             // print_pawns(g, g->is_white);
         }
     }

@@ -32,8 +32,8 @@ int main(int argc, char *argv[])
     Game *g = create_game();
     // init the graphic cache
     GraphicCache *cache = initCache();
-    //configNuageRafle(g);
-    // test_start_game(g, cache);
+    // configGrandAtome(g);
+    test_start_game(g, cache);
     // moveBackListingTest(g, cache);
     alphaBetaPrunningTest(g);
     // end debug
