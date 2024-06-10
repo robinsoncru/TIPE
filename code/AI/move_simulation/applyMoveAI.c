@@ -11,11 +11,11 @@ memory_move_t *applyDeter(Game *g, Move coup, bool shouldFreeMove)
     switch (coup.type)
     {
     case pawnMoveType:
-        mem = pawnMoveDeter(g, coup.manipulatedPawn, coup.left, coup.type);
+        mem = pawnMoveDeter(g, ind_actu_coup_a_jouer, coup.left, coup.type);
         break;
 
     case promotionType:
-        mem = promotionDeter(g, coup.manipulatedPawn, coup.type);
+        mem = promotionDeter(g, ind_actu_coup_a_jouer, coup.type);
         break;
 
     case pawnMoveBackType:
@@ -23,15 +23,15 @@ memory_move_t *applyDeter(Game *g, Move coup, bool shouldFreeMove)
         break;
 
     case biDeplType:
-        mem = biDeplDeter(g, coup.manipulatedPawn, coup.type);
+        mem = biDeplDeter(g, ind_actu_coup_a_jouer, coup.type);
         break;
 
     case queenDeplType:
-        mem = queenDeplDeter(g, coup.manipulatedPawn, coup.pos_dame, coup.type);
+        mem = queenDeplDeter(g, ind_actu_coup_a_jouer, coup.pos_dame, coup.type);
         break;
 
     case rafleType:
-        mem = rafleDeter(g, coup.manipulatedPawn, coup.rafleTree, coup.rafle, coup.type, coup.pos_dame);
+        mem = rafleDeter(g, ind_actu_coup_a_jouer, coup.rafleTree, coup.rafle, coup.type, coup.pos_dame);
         break;
 
     case lienAmitieType:
@@ -101,7 +101,7 @@ void applyIssue(Game *g, memory_move_t *mem, int nbIssue)
     }
 }
 
-void cancelPromQueenPromoted(Game *g, cloud_queen_t *pawn, bool color)
+void cancelPromQueenPromoted(Game *g, pawn_archive_t *pawn, bool color)
 {
     if (validCoord(pawn->coord) && pawn->had_become_queen)
     {
@@ -113,6 +113,7 @@ void cancelPromQueenPromoted(Game *g, cloud_queen_t *pawn, bool color)
 
 void applyRecipIssue(Game *g, memory_move_t *mem, int index)
 {
+    // print_state_game(g);
     bool color = mem->is_white;
     cancelPromQueenPromoted(g, &mem->movePawn, color);
     if (!mem->is_deter)
@@ -128,6 +129,7 @@ void applyRecipIssue(Game *g, memory_move_t *mem, int index)
             cancelSelectedIssue(g, mem, index);
         }
     }
+    // print_state_game(g);
 }
 
 void applyRecipDeter(Game *g, memory_move_t *mem)

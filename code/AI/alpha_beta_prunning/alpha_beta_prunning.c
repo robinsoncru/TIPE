@@ -79,6 +79,7 @@ Move alphaBetaPrunning(Game *g, AI ai){
 
     MoveTab* moveTab = listMoves(g);
     print_moves(moveTab);
+    // print_state_game(g);
     moveTabQuickSort(g, moveTab, ai);
 
     int tabSize = moveTab->size;

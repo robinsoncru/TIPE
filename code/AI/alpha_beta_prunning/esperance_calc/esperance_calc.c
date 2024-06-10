@@ -37,7 +37,7 @@ double esperanceAlphaBetaPrunning(double (*f)(alphaBetaArg), alphaBetaArg alphaB
 double esperanceHeuristique(AI ai, Game* g, Move move){
     double perspective = g->is_white ? 1 : -1;
     memory_move_t* mem = applyDeter(g, move, false);
-
+    // print_state_game(g);
     double S = 0;
     double currentProba;
     int nbOutcomes = mem->lenghtIssues;
@@ -50,14 +50,19 @@ double esperanceHeuristique(AI ai, Game* g, Move move){
     
     default:
         for (int i = 0; i < nbOutcomes; i++) {
+            // print_state_game(g);
             applyIssue(g, mem, i);
             currentProba = getProba(outcomeTab[i]);
             S += currentProba * ai.ecrasement(perspective * ai.analyse(g));
             applyRecipIssue(g, mem, i);
+            // print_state_game(g);
         }
         break;
     }
 
+    // print_state_game(g);
     applyRecipDeter(g, mem);
+    // print_state_game(g);
+    // printv("test");
     return S;
 }

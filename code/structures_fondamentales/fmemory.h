@@ -18,7 +18,7 @@ typedef struct
     Coord coord;
     int old_pba; /* On ne garde que la proba du survivor qu'on enregistre lors de l'eclatement du
                        nuage */
-} cloud_queen_t;
+} pawn_archive_t;
 
 typedef struct memory_move_t memory_move_t;
 
@@ -44,12 +44,12 @@ struct memory_move_t
     int_chain *move_back_left_or_right;
     bool prom_need_break_cloud;
     bool is_white; // Couleur du jeu durant le tour
-    cloud_queen_t movePawn;
+    pawn_archive_t movePawn;
     /*On enregistre les coordonnées du pion plutot que son indice qui change
      Enregistre une éventuelle promotion de la dame, il est aussi
      utilisé pour une promotion d'un pion devenu de la couleur opposé juste après une promotion */
-    cloud_queen_t pawnCloudSameColor;
-    cloud_queen_t pawnCloudOtherColor;
+    pawn_archive_t pawnCloudSameColor;
+    pawn_archive_t pawnCloudOtherColor;
     /* Enregistre les déplacements gauche ou droite des pions qui reculent, à opti avec une bool_chain */
     int_chain *inds_move_back;
 };
