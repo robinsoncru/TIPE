@@ -183,8 +183,6 @@ void checkQueenDepl(Game *g, GraphicCache *cache, bool iw, int lig, int col, boo
     }
 }
 
-
-
 /* Rafle function with the choice */
 
 void rafleForSure(Game *g, GraphicCache *cache, bool color, int indMovePawn, PathTree *currentTree, Path *r, Coord pos_depart_manger_rafle)
@@ -435,13 +433,29 @@ void onWUp(Game *g, GraphicCache *cache)
         PathTree *m = g->currentTree;
         g->currentTree = NULL;
         pathTreeFree(m);
-    }    
+    }
     endTurnGraphics(g, cache);
 }
 
-void onQUp(Game *g){
+void onQUp(Game *g)
+{
     AI playingAI = *g->players[g->is_white];
     Move bestMove = alphaBetaPrunning(g, playingAI);
     printf("meilleur coup pour les %s\n", g->is_white ? "blancs" : "noirs");
     print_move(bestMove);
+}
+
+void onFUp(Game *g, GraphicCache *cache)
+{
+    if (g->is_white)
+    {
+        // Config pour que seulement les blancs joue. F pour Fente d'Youngs
+        AI playingAI = *g->players[g->is_white];
+        Move bestMove = alphaBetaPrunning(g, playingAI);
+        printf("meilleur coup pour les %s\n", g->is_white ? "blancs" : "noirs");
+        // print_move(bestMove);
+        print_move_write_file_while_endgame(g, bestMove);
+
+        applyForSure(g, cache, bestMove);
+    }
 }

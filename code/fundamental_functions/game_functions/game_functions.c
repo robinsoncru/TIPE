@@ -255,7 +255,7 @@ void queenDeplDueMoveStruct(Game *g, int ind, bool color, Coord pos_dame)
 
 void promotion(Game *g)
 {
-    Coord pos = promotionNGE(g, VOID_INDEX, g->is_white);
+    Coord pos = promotionNGE(g, VOID_INDEX, g->is_white, g->ind_move);
     if (pos.i != -1)
     {
         assert(pos.j != -1);

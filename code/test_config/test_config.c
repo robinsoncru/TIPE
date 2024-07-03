@@ -45,12 +45,36 @@ void alphaBetaPrunningTest(Game *g)
 {
     // test de l'elagage alpha beta avec
     // ll'heuristique triviale ainsi que
-    // l'ecrasement arctangeante
+    // l'ecrasement erf
     AI *whitePlayer = malloc(sizeof(AI));
     AI *blackPlayer = malloc(sizeof(AI));
 
     int testDepth = 2;
     double (*testAnalyse)(Game *) = heuristique_miam_trivial;
+    double (*testEcrasement)(double) = erf;
+
+    whitePlayer->depth = testDepth;
+    whitePlayer->analyse = testAnalyse;
+    whitePlayer->ecrasement = testEcrasement;
+
+    blackPlayer->depth = testDepth;
+    blackPlayer->analyse = testAnalyse;
+    blackPlayer->ecrasement = testEcrasement;
+
+    g->players[true] = whitePlayer;
+    g->players[false] = blackPlayer;
+}
+
+void alphaBetaPrunningTestStratBorder(Game *g)
+{
+    // test de l'elagage alpha beta avec
+    // ll'heuristique Border ainsi que
+    // l'ecrasement erf
+    AI *whitePlayer = malloc(sizeof(AI));
+    AI *blackPlayer = malloc(sizeof(AI));
+
+    int testDepth = 1;
+    double (*testAnalyse)(Game *) = heuristique_border;
     double (*testEcrasement)(double) = erf;
 
     whitePlayer->depth = testDepth;
@@ -418,7 +442,7 @@ void configGrandAtome(Game *g)
 void configFenteYoung(Game *g)
 {
     int endBlanc = 1;
-    int endNoir = 9;
+    int endNoir = 11;
     for (int i = NB_PAWNS - 1; i >= endBlanc; i--)
     {
         killPawnByInd(g, true, i);
@@ -431,5 +455,7 @@ void configFenteYoung(Game *g)
 
     change_pawn_place(g, 0, true, 0, 8);
     change_pawn_place(g, 8, false, 4, 8);
+    change_pawn_place(g, 9, false, 5, 7);
+    change_pawn_place(g, 10, false, 5, 9);
     biDeplNGE(g, true, 0);
 }

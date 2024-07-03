@@ -50,5 +50,5 @@ void applyForSure(Game *g, GraphicCache *cache, Move coup)
         assertAndLog(false, "Apply for sure : reconnait pas type move");
         break;
     }
-    // moveFree(coup);
+    moveFree(coup);
 }

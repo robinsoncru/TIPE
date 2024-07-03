@@ -7,5 +7,7 @@
 
 void print_move(Move m);
 void print_moves(MoveTab *t);
+void print_moves_write_file_while_endgame(Game *g, MoveTab *t);
+void print_move_write_file_while_endgame(Game *g, Move m);
 
 #endif

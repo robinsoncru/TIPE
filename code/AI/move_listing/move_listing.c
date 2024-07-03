@@ -311,6 +311,34 @@ MoveTab *listMovesFilterRafles(Game *g, Move *temporaryResult, int nbMoves)
     return res;
 }
 
+MoveTab *listMovesFilterNoRafleNoPromotion(Game *g, Move *temporaryResult, int nbMoves)
+{
+    // listMovesRafleCount(temporaryResult, nbMoves, &rafleCount, &length);
+
+    MoveTab *res = malloc(sizeof(MoveTab));
+    Move currentMove;
+    res->size = 0;
+    res->tab = malloc(nbMoves * sizeof(Move));
+    for (int k = 0; k < nbMoves; k++)
+    {
+        currentMove = temporaryResult[k];
+        if (currentMove.type != rafleType && currentMove.type != promotionType)
+        {
+            res->tab[res->size] = currentMove;
+            res->size++;
+        }
+    }
+
+    // Dans tous les cas, enregistre les coord du pions
+    for (int k = 0; k < res->size; k++)
+    {
+        res->tab[k].coordManipulatedPawn = coord_from_ind(g, res->tab[k].manipulatedPawn, g->is_white);
+    }
+
+    free(temporaryResult);
+    return res;
+}
+
 MoveTab *listMoves(Game *g)
 {
     Move *temporaryResult;
@@ -348,4 +376,43 @@ MoveTab *listMoves(Game *g)
     }
     assertAndLog(majoration >= nbMoves, "Erreur dans la majoration.");
     return listMovesFilterRafles(g, temporaryResult, nbMoves);
+}
+
+MoveTab *listMovesNoRafleNoPromotion(Game *g)
+{
+    Move *temporaryResult;
+    int nbMoves;
+    int majoration;
+    if (!is_empty(g->inds_move_back))
+    {
+        temporaryResult = listMovesMoveBack(g, &nbMoves);
+    }
+    else
+    {
+        majoration = countMoves(g);
+        temporaryResult = malloc(majoration * sizeof(Move));
+        nbMoves = 0;
+        listMovesPromotion(g, temporaryResult, &nbMoves);
+
+        for (int k = 0; k < g->nb_pawns[g->is_white]; k++)
+        {
+            if (get_pawn_value(g, g->is_white, k, ALIVE))
+            {
+                if (get_pawn_value(g, g->is_white, k, QUEEN))
+                {
+                    listMovesForQueen(g, k, temporaryResult, &nbMoves);
+                }
+                else if (get_pawn_value(g, g->is_white, k, PBA) != 1)
+                {
+                    listMovesForGhostPawns(g, k, temporaryResult, &nbMoves);
+                }
+                else
+                {
+                    listMovesForPawn(g, k, temporaryResult, &nbMoves);
+                }
+            }
+        }
+    }
+    assertAndLog(majoration >= nbMoves, "Erreur dans la majoration.");
+    return listMovesFilterNoRafleNoPromotion(g, temporaryResult, nbMoves);
 }

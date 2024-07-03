@@ -35,7 +35,7 @@ int main(int argc, char *argv[])
     configFenteYoung(g);
     test_start_game(g, cache);
     // moveBackListingTest(g, cache);
-    // alphaBetaPrunningTest(g);
+    alphaBetaPrunningTestStratBorder(g);
     // end debug
 
     if (cache->statut != EXIT_SUCCESS)

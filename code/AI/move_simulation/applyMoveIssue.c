@@ -12,12 +12,12 @@ void promotionIssue(Game *g, memory_move_t *mem, int index)
 {
 
     bool iw = mem->is_white;
+    int ind = ind_from_coord(g, mem->movePawn.coord);
     if (!mem->prom_need_break_cloud)
     {
-        mem->pos_potential_foe_from_prom = promotionNGE(g, index, iw);
+        mem->pos_potential_foe_from_prom = promotionNGE(g, index, iw, ind);
     }
     Coord pos = mem->pos_potential_foe_from_prom;
-    int ind = ind_from_coord(g, mem->movePawn.coord);
 
     if (pos.i != -1)
     {
@@ -104,7 +104,7 @@ void lienAmitieIssue(Game *g, Coord posPawnWhichNeedAFriend, int lig, int col, m
 void lienEnnemitieIssue(Game *g, Coord posPawnWhichNeedAFoe, int lig, int col, memory_move_t *mem)
 {
     int ind = ind_from_coord(g, mem->movePawn.coord);
-int indPawn = ind_from_coord(g, posPawnWhichNeedAFoe);
+    int indPawn = ind_from_coord(g, posPawnWhichNeedAFoe);
     lienEnnemitieNGE(mem->is_white, lig, col, indPawn, g);
     endTurnGameManagementNGE(g, ind, IND_CHANGE_ALLOWED, false, mem);
 }
@@ -131,7 +131,8 @@ void cancelSelectedIssue(Game *g, memory_move_t *mem, int index)
     // positions originales
     bool iw = mem->is_white;
     int index_origin;
-    if (mem->type == promotionType) {
+    if (mem->type == promotionType)
+    {
         int ind = ind_from_coord(g, mem->movePawn.coord);
         cancelPromotion(g, ind, mem->pos_potential_foe_from_prom, mem->is_white);
     }

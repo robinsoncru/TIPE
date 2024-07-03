@@ -109,6 +109,10 @@ void onInput(Game *g, GraphicCache *cache, SDL_Event event)
             onQUp(g);
             break;
 
+        case SDLK_f:
+            onFUp(g);
+            break;
+
         default:
             printv("Aucune touche reconnue");
             assert(false);

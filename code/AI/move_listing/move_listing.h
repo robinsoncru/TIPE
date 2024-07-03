@@ -10,4 +10,5 @@
 #include "listing_checks/listing_checks.h"
 
 MoveTab* listMoves(Game* g);
+MoveTab *listMovesNoRafleNoPromotion(Game *g);
 #endif

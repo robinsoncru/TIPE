@@ -6,6 +6,7 @@
 #include "../../AI/move_listing/move_max.h"
 #include "../../AI/move_listing/move_listing.h"
 #include "../../AI/move_listing/move_listing_debug/print_moves.h"
+#include "../../AI/move_for_sure/applyMoveForSure.h"
 #include "../../AI/alpha_beta_prunning/alpha_beta_prunning.h"
 #include <SDL2/SDL_events.h>
 #include <stdio.h>
@@ -23,7 +24,7 @@ void onBUP(Game *g, GraphicCache *cache, bool autoplay);
 void onLUP(Game *g);
 void onAUP(GraphicCache *cache);
 void onWUp(Game *g, GraphicCache *cache);
-
+void onFUp(Game *g, GraphicCache *cache);
 
 //void onAUp(Game* g, GraphicCache* cache);
 //void onZUp(Game* g, GraphicCache* cache);

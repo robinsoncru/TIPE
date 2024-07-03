@@ -56,20 +56,19 @@ void recreateCloud(Game *g, cloud_chain *l, int indFromCaseSurvivor, int pbaSurv
     g->lengthCloud[iw]++;
 }
 
-Coord promotionNGE(Game *g, int index_choice, bool iw)
+Coord promotionNGE(Game *g, int index_choice, bool iw, int ind)
 {
     assertAndLog(is_empty(g->inds_move_back), "Il reste des amis dans les NGE");
     /* Promote the pawn at the ind in pmetre : do nothing, become a queen or become an ennemy pawn */
     // Return the index of the ennemy pawn created, -1 else
-    assertAndLog(canPromotion(g, g->ind_move, g->is_white),
+    assertAndLog(canPromotion(g, ind, iw),
         "Le pion ind_move ne peut pas etre mis en promotion");
-
-    int ind = g->ind_move;
     int choice;
     if (index_choice == VOID_INDEX)
     {
         choice = rand() % 3;
-        printf("(choix %d)", choice);
+        printf("\nPromotion coup de dé %d\n", choice);
+        flush();
     }
     else
     {
@@ -121,7 +120,6 @@ void cancelPromotion(Game *g, int indPawnBeforeProm, Coord pos_potential_foe_fro
 coord_bool_t biDeplNGE(Game *g, bool color, int ind)
 {
     // On suppose le coup legal
-    print_state_game(g);
     assertAndLog(canBiDepl(g, ind, color), "biDeplNGE : on ne peut pas BiDepl");
 
     bool depl = int_to_bool(rand() % 2);

@@ -174,7 +174,6 @@ int play_a_move(int move, int ind_pawn, Game *g, GraphicCache *cache, int nb_cou
     else
     {
 
-        print_state_game(g);
         double val_heur = heuristique_border(g);
         printf("Score %f, couleur %d", val_heur, g->is_white);
         flush();
@@ -192,7 +191,7 @@ int automaticRandomPlay(Game *g, GraphicCache *cache, int nbCoups)
     int randIndex = rand() % t->size;
     Move m = t->tab[randIndex];
     applyForSure(g, cache, m);
-    print_state_game(g);
+    // print_state_game(g);
     moveTabFreeTrees(t, 0, t->size);
     moveTabFree(t, 0, t->size);
     return nbCoups + 1;
@@ -219,7 +218,7 @@ int automaticBiDeplPlayWhenPossible(Game *g, GraphicCache *cache, int nbCoups)
         m = t->tab[randIndex];
     }
     applyForSure(g, cache, m);
-    print_state_game(g);
+    // print_state_game(g);
     moveTabFreeTrees(t, 0, t->size);
     moveTabFree(t, 0, t->size);
     return nbCoups + 1;

@@ -20,19 +20,19 @@ GraphicCache *initCache()
     // utiles pour les tests des regles quantiques
     // J'ai besoin d'aleatoire car j'ai 15 fois le meme nombre consecutivement, met en comment si tu t'en sers pas stp
 
-    // int seed = time(NULL);
-    // FILE *flux = fopen("seed_used.txt", "w");
-    // // Ecrit la graine dans le file seed_used dans code pour la récup en cas de pépin
-    // if (flux != NULL) {
-    //     fprintf(flux, "Derniere seed %d", seed);
-    // }
-    // else {
-    //     assertAndLog(false, "file mal ouvert");
-    // }
-    // fclose(flux);
-    // srand(seed);
+    int seed = time(NULL);
+    FILE *flux = fopen("seed_used.txt", "w");
+    // Ecrit la graine dans le file seed_used dans code pour la récup en cas de pépin
+    if (flux != NULL) {
+        fprintf(flux, "Derniere seed %d", seed);
+    }
+    else {
+        assertAndLog(false, "file mal ouvert");
+    }
+    fclose(flux);
+    srand(seed);
 
-    srand(1718035826);
+    // srand(1718050185); // ca marche jusqu'au bout
     //srand(1717933419);
     // srand(1717844705); // PB rafle
     // srand(1717783933); // Seed plante maxmoves
